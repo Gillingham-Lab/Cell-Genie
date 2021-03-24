@@ -33,6 +33,11 @@ class Organism
         return $this->id;
     }
 
+    public function getFullName(): ?string
+    {
+        return "{$this->name}, {$this->type}";
+    }
+
     public function getName(): ?string
     {
         return $this->name;

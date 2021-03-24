@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Cell;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 
 class CellCrudController extends AbstractCrudController
 {
@@ -13,14 +14,12 @@ class CellCrudController extends AbstractCrudController
         return Cell::class;
     }
 
-    /*
-    public function configureFields(string $pageName): iterable
+    /*public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id'),
             TextField::new('title'),
             TextEditorField::new('description'),
         ];
-    }
-    */
+    }*/
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\BoxRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -44,6 +45,16 @@ class Box
      */
     private Collection $entries;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="box")
+     */
+    private $cellAliquotes;
+
+    public function __construct()
+    {
+        $this->cellAliquotes = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,6 +92,36 @@ class Box
     public function setCols(int $cols): self
     {
         $this->cols = $cols;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CellAliquote[]
+     */
+    public function getCellAliquotes(): Collection
+    {
+        return $this->cellAliquotes;
+    }
+
+    public function addCellAliquote(CellAliquote $cellAliquote): self
+    {
+        if (!$this->cellAliquotes->contains($cellAliquote)) {
+            $this->cellAliquotes[] = $cellAliquote;
+            $cellAliquote->setBox($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCellAliquote(CellAliquote $cellAliquote): self
+    {
+        if ($this->cellAliquotes->removeElement($cellAliquote)) {
+            // set the owning side to null (unless already changed)
+            if ($cellAliquote->getBox() === $this) {
+                $cellAliquote->setBox(null);
+            }
+        }
 
         return $this;
     }

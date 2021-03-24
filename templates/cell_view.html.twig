@@ -1,0 +1,29 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block title %}Cell Genie: Cells{% endblock %}
+
+{% block body_main %}
+
+    <div class="row">
+        <div class="row col-sm-3">
+            <h1>{{ cell.name }}</h1>
+
+            <dl class="row">
+                {{ macros.definition_row("ID", cell.id) }}
+                {{ macros.definition_row("Organism", cell.organism.fullName) }}
+                {{ macros.definition_row("Tissue", cell.tissue.name) }}
+                {{ macros.definition_row("Age", cell.age) }}
+                {{ macros.definition_row("Morphology", cell.morphology.name) }}
+                {{ macros.definition_row("Culture type", cell.cultureType) }}
+                {{ macros.definition_row("Cancer", cell.isCancer ? "Yes" : "No") }}
+                {{ macros.definition_row("Engineered", cell.isEngineered ? "Yes" : "No") }}
+            </dl>
+        </div>
+
+
+        <div class="row col-sm-9 pl-5">
+            <h2>Storage</h2>
+        </div>
+    </div>
+{% endblock %}

@@ -17,11 +17,10 @@ class Cell
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="ulid", unique=True)
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
-    private ?Ulid $id = null;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -59,7 +58,7 @@ class Cell
     private ?Cell $parent = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Organism::class)
+     * @ORM\ManyToOne(targetEntity=Morphology::class)
      */
     private Morphology $morphology;
 
@@ -68,21 +67,12 @@ class Cell
      */
     private Organism $organism;
 
-    public function __construct(
-        string $name,
-        Morphology $morphology,
-        Organism $organism,
-        Cell $parent = null
-    ) {
-        $this->name = $name;
-        $this->morphology = $morphology;
-        $this->organism = $organism;
-        $this->parent = $parent;
+    /**
+     * @ORM\ManyToOne(targetEntity=Tissue::class)
+     */
+    private Tissue $tissue;
 
-        $this->children = new ArrayCollection();
-    }
-
-    public function getId(): ?Ulid
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -99,6 +89,54 @@ class Cell
         return $this;
     }
 
+    public function getAge(): ?string
+    {
+        return $this->age;
+    }
+
+    public function setAge(string $age): self
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+
+    public function getCultureType(): string
+    {
+        return $this->cultureType;
+    }
+
+    public function setCultureType(string $cultureType): self
+    {
+        $this->cultureType = $cultureType;
+
+        return $this;
+    }
+
+    public function getIsCancer(): bool
+    {
+        return $this->isCancer;
+    }
+
+    public function setIsCancer(bool $isCancer): self
+    {
+        $this->isCancer = $isCancer;
+
+        return $this;
+    }
+
+    public function getIsEngineered(): bool
+    {
+        return $this->isEngineered;
+    }
+
+    public function setIsEngineered(bool $isEngineered): self
+    {
+        $this->isEngineered = $isEngineered;
+
+        return $this;
+    }
+
     public function getMorphology(): Morphology
     {
         return $this->morphology;
@@ -107,6 +145,18 @@ class Cell
     public function setMorphology(Morphology $morphology): self
     {
         $this->morphology = $morphology;
+
+        return $this;
+    }
+
+    public function getTissue(): Tissue
+    {
+        return $this->tissue;
+    }
+
+    public function setTissue(Tissue $tissue): self
+    {
+        $this->tissue = $tissue;
 
         return $this;
     }

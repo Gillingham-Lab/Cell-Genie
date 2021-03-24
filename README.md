@@ -9,5 +9,5 @@ Make sure `php` and `composer` are available.
 ```shell
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
-composer require --dev doctrine/doctrine-fixtures-bundle
+php bin/console doctrine:fixtures:load
 ```
