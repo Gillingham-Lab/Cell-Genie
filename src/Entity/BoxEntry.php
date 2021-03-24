@@ -18,19 +18,19 @@ class BoxEntry
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=BoxEntry::class, inversedBy="entries")
      */
-    private $box;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $boxRow;
+    private Box $box;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $boxCol;
+    private int $boxRow;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private int $boxCol;
 
     public function getId(): ?int
     {
@@ -42,19 +42,19 @@ class BoxEntry
         return $this->box;
     }
 
-    public function setBox(string $box): self
+    public function setBox(Box $box): self
     {
         $this->box = $box;
 
         return $this;
     }
 
-    public function getBoxRow(): ?string
+    public function getBoxRow(): ?int
     {
         return $this->boxRow;
     }
 
-    public function setBoxRow(string $boxRow): self
+    public function setBoxRow(int $boxRow): self
     {
         $this->boxRow = $boxRow;
 

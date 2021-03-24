@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BoxRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,6 +32,16 @@ class Box
      * @ORM\Column(type="integer")
      */
     private $cols;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes")
+     */
+    private Rack $rack;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BoxEntry::class, mappedBy="box")
+     */
+    private Collection $entries;
 
     public function getId(): ?int
     {

@@ -28,6 +28,26 @@ class Cell
     private string $name;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $age;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $cultureType;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $isCancer = true;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $isEngineered = false;
+
+    /**
      * @ORM\OneToMany(targetEntity=Cell::class, mappedBy="parent")
      */
     private Collection $children;
@@ -37,8 +57,27 @@ class Cell
      */
     private ?Cell $parent = null;
 
-    public function __construct()
-    {
+    /**
+     * @ORM\ManyToOne(targetEntity=Organism::class)
+     */
+    private Morphology $morphology;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Organism::class)
+     */
+    private Organism $organism;
+
+    public function __construct(
+        string $name,
+        Morphology $morphology,
+        Organism $organism,
+        Cell $parent = null
+    ) {
+        $this->name = $name;
+        $this->morphology = $morphology;
+        $this->organism = $organism;
+        $this->parent = $parent;
+
         $this->children = new ArrayCollection();
     }
 
@@ -55,6 +94,30 @@ class Cell
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getMorphology(): Morphology
+    {
+        return $this->morphology;
+    }
+
+    public function setMorphology(Morphology $morphology): self
+    {
+        $this->morphology = $morphology;
+
+        return $this;
+    }
+
+    public function getOrganism(): Organism
+    {
+        return $this->organism;
+    }
+
+    public function setOrganism(Organism $organism): self
+    {
+        $this->organism = $organism;
 
         return $this;
     }

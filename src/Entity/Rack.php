@@ -27,6 +27,11 @@ class Rack
      */
     private $maxBoxes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Box::class, mappedBy="rack")
+     */
+    private Box $boxes;
+
     public function getId(): ?int
     {
         return $this->id;
