@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\RackRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,7 +32,7 @@ class Rack
     /**
      * @ORM\OneToMany(targetEntity=Box::class, mappedBy="rack")
      */
-    private Box $boxes;
+    private Collection $boxes;
 
     public function getId(): ?int
     {
