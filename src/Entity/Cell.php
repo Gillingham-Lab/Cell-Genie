@@ -53,7 +53,7 @@ class Cell
     private Collection $children;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="children")
+     * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="children", fetch="EAGER")
      */
     private ?Cell $parent = null;
 
@@ -111,6 +111,36 @@ class Cell
      * @ORM\Column(type="text", nullable=true)
      */
     private ?string $originComment = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $medium = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $freezing = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $thawing = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $cultureConditions = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $splitting = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $trypsin = null;
 
     public function __construct()
     {
@@ -346,6 +376,102 @@ class Cell
     public function setOriginComment(?string $originComment): self
     {
         $this->originComment = $originComment;
+
+        return $this;
+    }
+
+    public function getMedium(): ?string
+    {
+        if ($this->medium === null and $this->parent) {
+            return $this->parent->getMedium();
+        }
+
+        return $this->medium;
+    }
+
+    public function setMedium(?string $medium): self
+    {
+        $this->medium = $medium;
+
+        return $this;
+    }
+
+    public function getFreezing(): ?string
+    {
+        if ($this->freezing === null and $this->parent) {
+            return $this->parent->getFreezing();
+        }
+
+        return $this->freezing;
+    }
+
+    public function setFreezing(?string $freezing): self
+    {
+        $this->freezing = $freezing;
+
+        return $this;
+    }
+
+    public function getThawing(): ?string
+    {
+        if ($this->thawing === null and $this->parent) {
+            return $this->parent->getThawing();
+        }
+
+        return $this->thawing;
+    }
+
+    public function setThawing(?string $thawing): self
+    {
+        $this->thawing = $thawing;
+
+        return $this;
+    }
+
+    public function getCultureConditions(): ?string
+    {
+        if ($this->cultureConditions === null and $this->parent) {
+            return $this->parent->getCultureConditions();
+        }
+
+        return $this->cultureConditions;
+    }
+
+    public function setCultureConditions(?string $cultureConditions): self
+    {
+        $this->cultureConditions = $cultureConditions;
+
+        return $this;
+    }
+
+    public function getSplitting(): ?string
+    {
+        if ($this->splitting === null and $this->parent) {
+            return $this->parent->getSplitting();
+        }
+
+        return $this->splitting;
+    }
+
+    public function setSplitting(?string $splitting): self
+    {
+        $this->splitting = $splitting;
+
+        return $this;
+    }
+
+    public function getTrypsin(): ?string
+    {
+        if ($this->trypsin === null and $this->parent) {
+            return $this->parent->getTrypsin();
+        }
+
+        return $this->trypsin;
+    }
+
+    public function setTrypsin(?string $trypsin): self
+    {
+        $this->trypsin = $trypsin;
 
         return $this;
     }

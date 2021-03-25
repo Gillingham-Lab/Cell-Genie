@@ -11,6 +11,11 @@
 
             <dl class="row">
                 {{ macros.definition_row("ID", cell.id) }}
+                {% if cell.parent %}
+                    {{ macros.definition_row("Parent", cell.parent.name, url("app_cell_view", {"cellId": cell.parent.id})) }}
+                {% else %}
+                    {{ macros.definition_row("Parent", "none") }}
+                {% endif %}
                 {{ macros.definition_row("Organism", cell.organism.fullName) }}
                 {{ macros.definition_row("Tissue", cell.tissue.name) }}
                 {{ macros.definition_row("Age", cell.age) }}
@@ -26,13 +31,25 @@
                 {% if boxes|length == 0 %}
                     <em>No aliquotes registered.</em>
                 {% else %}
+                    {% set found = null %}
                     <nav>
                         <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
-                            {% for x in boxes %}
-                                <a class="nav-item nav-link {{ loop.first ? "active" : "" }}"
+                            {% for box in boxes %}
+                                {% if aliquote %}
+                                    {% for a in box.cellAliquotes %}
+                                        {% if a.id == aliquote.id %}
+                                            {% set found = box %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% elseif loop.first %}
+                                    {% set found = box %}
+                                {% endif %}
+
+
+                                <a class="nav-item nav-link {{ found and found.id == box.id ? "active" : "" }}"
                                    id="box-tab-{{ loop.index }}"
                                    data-toggle="tab" href="#box-{{ loop.index }}" role="tab"
-                                   aria-controls="box-{{ loop.index }}" aria-selected="{{ loop.first ? "true" : "false" }}"
+                                   aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
                                 >Box {{ loop.index }}</a>
                             {% endfor %}
                         </div>
@@ -40,7 +57,7 @@
 
                     <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
                         {% for box in boxes %}
-                            <div class="tab-pane fade {{ loop.first ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                            <div class="tab-pane fade {{ found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
                                 <h6>{{ box.fullLocation }}</h6>
                                 {{ macros.make_box(box, cell, aliquote) }}
                             </div>
@@ -50,8 +67,29 @@
             </div>
         </div>
 
+        {% if aliquote %}
         <div class="row col-sm-12 mt-5">
             <div class="full-width flex-fill">
+                <h3>Aliquote details</h3>
+
+                <div class="row">
+                <dl class="row col-sm-6">
+                    {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("m. d. Y") : "unknown") }}
+                    {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
+                    {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
+                    {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
+                    {{ macros.definition_row("Vials left", aliquote.vials) }}
+                    {{ macros.definition_row("Cell count", "#{aliquote.cellCount/1000}k") }}
+                    {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
+                </dl>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row col-sm-12 mt-5">
+            <div class="full-width flex-fill">
+                <h3>Details</h3>
                 <nav>
                     <div class="nav nav-tabs nav-fill" id="box-tab-navigation" role="tablist">
                         <a class="nav-item nav-link active" id="cell-info-origin" data-toggle="tab" href="#cell-info-origin-content" role="tab" aria-selected="true">
@@ -76,10 +114,10 @@
                     <div class="tab-pane fade show active" id="cell-info-origin-content" role="tabpanel" aria-labelledby="cell-info-origin">
                         <div class="row">
                             <div class="col-sm-12 col-md-6">
-                                <h3>Origin</h3>
+                                <h4>Origin</h4>
                                 <p>{{ cell.origin ?? "unknown" }}</p>
 
-                                <h3>Acquisition</h3>
+                                <h4>Acquisition</h4>
                                 <dl class="row">
                                     {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
                                     {{ macros.definition_row("Vendor PN", cell.vendorId ?? "unknown") }}
@@ -89,28 +127,44 @@
                                 </dl>
 
                                 {% if cell.originComment %}
-                                    <h3>Comment</h3>
+                                    <h4>Comment</h4>
                                     <p>{{ cell.originComment }}</p>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="cell-info-culturing-content" role="tabpanel" aria-labelledby="cell-info-culturing">
-                        Culturing
+                        <h4>Medium</h4>
+                        <div class="mb-5">{{ (cell.medium ?? "unknown")|raw }}</div>
+
+                        <h4>Trypsin</h4>
+                        <div class="mb-5">{{ (cell.trypsin ?? "unknown")|raw }}</div>
+
+                        <h4>Recommended splitting</h4>
+                        <div class="mb-5">{{ (cell.splitting ?? "unknown")|raw }}</div>
+
+                        <h4>Recommended freezing</h4>
+                        <div class="mb-5">{{ (cell.freezing ?? "unknown")|raw }}</div>
+
+                        <h4>Recommended thawing</h4>
+                        <div class="mb-5">{{ (cell.thawing ?? "unknown")|raw }}</div>
+
+                        <h4>Culture conditions</h4>
+                        <div class="mb-5">{{ (cell.cultureConditions ?? "unknown")|raw }}</div>
                     </div>
                     <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
-                        Experiments
+                        Experiments.
                     </div>
                     <div class="tab-pane fade" id="cell-info-testing-content" role="tabpanel" aria-labelledby="cell-info-testing">
                         {% if aliquote %}
-                            <h3>Mycoplasma</h3>
-                            <p>{{ (aliquote.mycoplasma ?? "no data")|raw }}</p>
+                            <h4>Mycoplasma</h4>
+                            <div class="mb-5">{{ (aliquote.mycoplasma ?? "no data")|raw }}</div>
 
-                            <h3>Typing</h3>
-                            <p>{{ (aliquote.typing ?? "no data")|raw }}</p>
+                            <h4>Typing</h4>
+                            <div class="mb-5">{{ (aliquote.typing ?? "no data")|raw }}</div>
 
-                            <h3>History</h3>
-                            <p>{{ (aliquote.history ?? "no data")|raw }}</p>
+                            <h4>History</h4>
+                            <div class="mb-5">{{ (aliquote.history ?? "no data")|raw }}</div>
                         {% else %}
                             <em>No aliquote selected</em>
                         {% endif %}

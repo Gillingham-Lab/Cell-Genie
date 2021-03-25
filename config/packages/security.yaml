@@ -38,3 +38,4 @@ security:
          - { path: ^/admin, roles: ROLE_USER }
          - { path: ^/profile, roles: ROLE_USER }
          - { path: ^/$, roles: ROLE_USER }
+         - { path: ^/cells, roles: ROLE_USER }

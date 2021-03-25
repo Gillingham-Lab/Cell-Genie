@@ -75,6 +75,11 @@ class CellAliquote
      */
     private $cell;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cryoMedium;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -208,6 +213,18 @@ class CellAliquote
     public function setCell(?Cell $cell): self
     {
         $this->cell = $cell;
+
+        return $this;
+    }
+
+    public function getCryoMedium(): ?string
+    {
+        return $this->cryoMedium;
+    }
+
+    public function setCryoMedium(?string $cryoMedium): self
+    {
+        $this->cryoMedium = $cryoMedium;
 
         return $this;
     }

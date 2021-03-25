@@ -5,10 +5,24 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row flex-xl-nowrap">
-            <div class="col-12 col-md-3 col-xl-2 border-right">
+            <div class="col-12 col-md-3 col-xl-2 border-right pt-3">
+                <h5>Cell cultures</h5>
+
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <h6><a class="nav-link" href="{{ url("app_cells") }}">Cells</a></h6>
+                        <h6><a class="nav-link" href="{{ url("app_cells") }}"><span class="fas fa-disease mr-2"></span> Cell database</a></h6>
+                    </li>
+
+                    <li class="nav-item">
+                        <h6><a class="nav-link" href="#"><span class="fas fa-flask mr-2"></span> Experiments</a></h6>
+                    </li>
+
+                    <li class="nav-item">
+                        <h6><a class="nav-link" href="#"><span class="fas fa-tablets mr-2"></span> Compounds</a></h6>
+                    </li>
+
+                    <li class="nav-item">
+                        <h6><a class="nav-link" href="#"><span class="fas fa-bullseye mr-2"></span> Protein Targets</a></h6>
                     </li>
                 </ul>
             </div>

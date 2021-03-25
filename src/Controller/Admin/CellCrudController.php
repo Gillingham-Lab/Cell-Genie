@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\F;
 
@@ -38,8 +39,10 @@ class CellCrudController extends AbstractCrudController
             AssociationField::new("morphology"),
             AssociationField::new("organism"),
             AssociationField::new("tissue"),
+            TextField::new("cultureType"),
             BooleanField::new("isCancer"),
             BooleanField::new("isEngineered"),
+
             FormField::addPanel("Origins"),
             TextareaField::new("origin"),
             TextField::new("vendor", "Vendor"),
@@ -49,6 +52,20 @@ class CellCrudController extends AbstractCrudController
                 ->setFormat("MEDIUM"),
             NumberField::new("price"),
             AssociationField::new("boughtBy"),
+
+            FormField::addPanel("Experimental Conditions"),
+            TextEditorField::new("medium", label: "Recommended cell medium")
+                ->hideOnIndex(),
+            TextEditorField::new("trypsin", label: "Required trypsin")
+                ->hideOnIndex(),
+            TextEditorField::new("splitting", label: "Recommended splitting protocol")
+                ->hideOnIndex(),
+            TextEditorField::new("freezing", label: "Recommended freezing conditions")
+                ->hideOnIndex(),
+            TextEditorField::new("thawing", label: "Recommended thawing conditions")
+                ->hideOnIndex(),
+            TextEditorField::new("cultureConditions", label: "Growth conditions for incubator")
+                ->hideOnIndex(),
         ];
     }
 }

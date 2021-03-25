@@ -30,6 +30,7 @@ class CellAliquoteCrudController extends AbstractCrudController
             DateTimeField::new('aliquoted_on')
                 ->setFormat("MEDIUM"),
             AssociationField::new('aliquoted_by'),
+            TextField::new("cryoMedium"),
             AssociationField::new("box"),
             TextField::new("vialColor"),
             IntegerField::new("passage"),

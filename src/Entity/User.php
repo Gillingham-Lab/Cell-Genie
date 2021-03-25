@@ -20,7 +20,7 @@ class User implements UserInterface
      * @ORM\Column(type="ulid", unique=True)
      * @ORM\CustomIdGenerator(class=UlidGenerator::class)
      */
-    private ?Ulid $id;
+    private ?Ulid $id = null;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -42,6 +42,18 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private string $password;
+
+    private ?string $plainPassword = null;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isAdmin;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isActive;
 
     public function __toString(): string
     {
@@ -95,7 +107,10 @@ class User implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        $roles[] = 'ROLE_ADMIN';
+
+        if ($this->getIsAdmin() or true) {
+            $roles[] = 'ROLE_ADMIN';
+        }
 
         return array_unique($roles);
     }
@@ -122,6 +137,23 @@ class User implements UserInterface
         return $this;
     }
 
+    public function hasPlainPassword(): bool
+    {
+        return $this->plainPassword !== null;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -139,6 +171,30 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
+    }
+
+    public function getIsAdmin(): ?bool
+    {
+        return $this->isAdmin;
+    }
+
+    public function setIsAdmin(?bool $isAdmin): self
+    {
+        $this->isAdmin = $isAdmin;
+
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(?bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
     }
 }
