@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Box;
 use App\Entity\Cell;
+use App\Entity\CellAliquote;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Rack;
@@ -41,6 +42,7 @@ class DashboardController extends AbstractDashboardController
 
             MenuItem::section("Cells"),
             MenuItem::linkToCrud("Cells", 'fa', Cell::class),
+            MenuItem::linkToCrud("Aliquotes", 'fa', CellAliquote::class),
             MenuItem::linkToCrud("Organisms", "fa", Organism::class),
             MenuItem::linkToCrud("Tissue Types", "fa", Tissue::class),
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),

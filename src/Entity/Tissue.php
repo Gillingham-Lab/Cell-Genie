@@ -23,6 +23,11 @@ class Tissue
      */
     private $name;
 
+    public function __toString(): string
+    {
+        return $this->getName() ?? "unknown";
+    }
+
     public function getId(): ?int
     {
         return $this->id;

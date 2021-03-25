@@ -57,17 +57,23 @@ class CellAliquote
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private string $mycoplasma;
+    private ?string $mycoplasma = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private string $typing;
+    private ?string $typing = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private string $history;
+    private ?string $history = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="cellAliquotes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $cell;
 
     public function getId(): ?int
     {
@@ -190,6 +196,18 @@ class CellAliquote
     public function setHistory(?string $history): self
     {
         $this->history = $history;
+
+        return $this;
+    }
+
+    public function getCell(): ?Cell
+    {
+        return $this->cell;
+    }
+
+    public function setCell(?Cell $cell): self
+    {
+        $this->cell = $cell;
 
         return $this;
     }

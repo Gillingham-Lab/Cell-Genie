@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Box;
+use App\Entity\Cell;
+use App\Entity\CellAliquote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +21,18 @@ class BoxRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Box::class);
+    }
+
+    public function findByAliquotedCell(Cell $cell)
+    {
+        return $this->createQueryBuilder("b")
+            ->leftJoin("b.cellAliquotes", "a", conditionType: Join::ON)
+            ->where("a.cell = :val")
+            ->andWhere("a.vials > 0")
+            ->setParameter("val", $cell)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

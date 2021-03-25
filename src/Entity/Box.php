@@ -36,9 +36,9 @@ class Box
     private $cols;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes")
+     * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes", fetch="EAGER")
      */
-    private Rack $rack;
+    private ?Rack $rack = null;
 
     /**
      * @ORM\OneToMany(targetEntity=BoxEntry::class, mappedBy="box")
@@ -48,16 +48,27 @@ class Box
     /**
      * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="box")
      */
-    private $cellAliquotes;
+    private Collection $cellAliquotes;
 
     public function __construct()
     {
         $this->cellAliquotes = new ArrayCollection();
+        $this->entries = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFullLocation();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getFullLocation(): string
+    {
+        return "{$this->rack->getName()}/{$this->name}";
     }
 
     public function getName(): ?string
@@ -96,6 +107,18 @@ class Box
         return $this;
     }
 
+    public function getRack(): ?Rack
+    {
+        return $this->rack;
+    }
+
+    public function setRack(Rack $rack): self
+    {
+        $this->rack = $rack;
+
+        return $this;
+    }
+
     /**
      * @return Collection|CellAliquote[]
      */
@@ -124,5 +147,15 @@ class Box
         }
 
         return $this;
+    }
+
+    public function getAliquoteCount(): int
+    {
+        $count = 0;
+        foreach ($this->cellAliquotes as $aliquote) {
+            $count += $aliquote->getVials();
+        }
+
+        return $count;
     }
 }

@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Entity\Box;
 use App\Entity\Cell;
+use App\Entity\CellAliquote;
 use App\Entity\Morphology;
 use App\Entity\Organism;
+use App\Entity\Rack;
 use App\Entity\Tissue;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -59,6 +62,61 @@ class AppFixtures extends Fixture
             ->setTissue($tissue_cervix)
         ;
         $manager->persist($cell3);
+
+        $rack = (new Rack())
+            ->setMaxBoxes(9)
+            ->setName("Rack 1")
+        ;
+        $manager->persist($rack);
+
+        $box = (new Box())
+            ->setCols(9)
+            ->setRows(9)
+            ->setName("HEK293 cells")
+            ->setRack($rack)
+        ;
+        $manager->persist($box);
+
+        $secondBox = (new Box())
+            ->setCols(8)
+            ->setRows(8)
+            ->setName("Old cells")
+            ->setRack($rack)
+        ;
+        $manager->persist($secondBox);
+
+        $hekAliquote = (new CellAliquote())
+            ->setCell($cell)
+            ->setBox($box)
+            ->setAliquotedOn(new \DateTime("now"))
+            ->setCellCount(2000000)
+            ->setVialColor("red")
+            ->setVials(18)
+            ->setPassage(5);
+        ;
+        $manager->persist($hekAliquote);
+
+        $oldHekAliquote = (new CellAliquote())
+            ->setCell($cell)
+            ->setBox($secondBox)
+            ->setAliquotedOn(new \DateTime("2020-03-25 13:00:00"))
+            ->setCellCount(5000000)
+            ->setVialColor("green")
+            ->setVials(3)
+            ->setPassage(15);
+        ;
+        $manager->persist($oldHekAliquote);
+
+        $helaAliquote = (new CellAliquote())
+            ->setCell($cell3)
+            ->setBox($box)
+            ->setAliquotedOn(new \DateTime("now"))
+            ->setCellCount(1000000)
+            ->setVialColor("yellow")
+            ->setVials(5)
+            ->setPassage(9)
+        ;
+        $manager->persist($helaAliquote);
 
         $manager->flush();
     }

@@ -19,11 +19,6 @@ class BoxEntry
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=BoxEntry::class, inversedBy="entries")
-     */
-    private Box $box;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private int $boxRow;

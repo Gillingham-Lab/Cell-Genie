@@ -2,3 +2,60 @@
     <dt class="col-sm-4">{{ n }}</dt>
     <dd class="col-sm-8">{{ d }}</dd>
 {% endmacro %}
+
+{% macro make_box(box, currentCell, currentAliquote = null) %}
+    {% set contents = [] %}
+    {% for aliquote in box.cellAliquotes %}
+        {% for i in range(0, aliquote.vials-1) %}
+            {% set contents = contents|merge([aliquote]) %}
+        {% endfor %}
+    {% endfor %}
+
+    <svg width="200" height="200">
+        {% if box.cols < box.rows %}
+            {% set s = 200/box.rows %}
+        {% else %}
+            {% set s = 200/box.cols %}
+        {% endif %}
+
+    {% set r = s/2 %}
+
+    {% for i in range(0, box.rows) %}
+        {% for j in range(0, box.cols) %}
+            {% set n = i*box.cols + j %}
+
+            {% if n<contents|length %}
+                {% if currentAliquote %}
+                    {% if currentAliquote.id == contents[n].id %}
+                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: skyblue; "/>
+                    {% else %}
+                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: none; "/>
+                    {% endif %}
+                {% else %}
+                    <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: none; "/>
+                {% endif %}
+
+                {% if currentCell.id == contents[n].cell.id %}
+                    <a
+                        href="{{ url("app_cell_aliquote_view", {"cellId": contents[n].cell.id, "aliquoteId": contents[n].id}) }}"
+                        data-toggle="tooltip" data-placement="bottom"
+                        title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}"
+                    >
+                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" style="fill: {{ contents[n].vialColor }}"></circle>
+                    </a>
+                {% else %}
+                    <a
+                        href="{{ url("app_cell_aliquote_view", {"cellId": contents[n].cell.id, "aliquoteId": contents[n].id}) }}"
+                        data-toggle="tooltip" data-placement="bottom"
+                        title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}"
+                    >
+                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" style="fill: gray"></circle>
+                    </a>
+                {% endif %}
+            {% else %}
+                <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: none; "/>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    </svg>
+{% endmacro %}

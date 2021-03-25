@@ -21,9 +21,105 @@
             </dl>
         </div>
 
-
         <div class="row col-sm-9 pl-5">
-            <h2>Storage</h2>
+            <div class="bg-light">
+                {% if boxes|length == 0 %}
+                    <em>No aliquotes registered.</em>
+                {% else %}
+                    <nav>
+                        <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
+                            {% for x in boxes %}
+                                <a class="nav-item nav-link {{ loop.first ? "active" : "" }}"
+                                   id="box-tab-{{ loop.index }}"
+                                   data-toggle="tab" href="#box-{{ loop.index }}" role="tab"
+                                   aria-controls="box-{{ loop.index }}" aria-selected="{{ loop.first ? "true" : "false" }}"
+                                >Box {{ loop.index }}</a>
+                            {% endfor %}
+                        </div>
+                    </nav>
+
+                    <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
+                        {% for box in boxes %}
+                            <div class="tab-pane fade {{ loop.first ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                                <h6>{{ box.fullLocation }}</h6>
+                                {{ macros.make_box(box, cell, aliquote) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row col-sm-12 mt-5">
+            <div class="full-width flex-fill">
+                <nav>
+                    <div class="nav nav-tabs nav-fill" id="box-tab-navigation" role="tablist">
+                        <a class="nav-item nav-link active" id="cell-info-origin" data-toggle="tab" href="#cell-info-origin-content" role="tab" aria-selected="true">
+                            Origin
+                        </a>
+                        <a class="nav-item nav-link" id="cell-info-culturing" data-toggle="tab" href="#cell-info-culturing-content" role="tab" aria-selected="false">
+                            Culturing
+                        </a>
+                        <a class="nav-item nav-link" id="cell-info-experiments" data-toggle="tab" href="#cell-info-experiments-content" role="tab" aria-selected="false">
+                            Experiments
+                        </a>
+                        <a class="nav-item nav-link {{ aliquote ? "" : "disabled" }}" id="cell-info-testing" data-toggle="tab" href="#cell-info-testing-content" role="tab" aria-selected="false">
+                            Aliquote testing
+                        </a>
+                        <a class="nav-item nav-link" id="cell-info-further" data-toggle="tab" href="#cell-info-further-content" role="tab" aria-selected="false">
+                            Further Info
+                        </a>
+                    </div>
+                </nav>
+
+                <div class="tab-content border-light border border-top-0 p-5" id="cell-info-content">
+                    <div class="tab-pane fade show active" id="cell-info-origin-content" role="tabpanel" aria-labelledby="cell-info-origin">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <h3>Origin</h3>
+                                <p>{{ cell.origin ?? "unknown" }}</p>
+
+                                <h3>Acquisition</h3>
+                                <dl class="row">
+                                    {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
+                                    {{ macros.definition_row("Vendor PN", cell.vendorId ?? "unknown") }}
+                                    {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
+                                    {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
+                                    {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. d. Y") : "unknown") }}
+                                </dl>
+
+                                {% if cell.originComment %}
+                                    <h3>Comment</h3>
+                                    <p>{{ cell.originComment }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="cell-info-culturing-content" role="tabpanel" aria-labelledby="cell-info-culturing">
+                        Culturing
+                    </div>
+                    <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
+                        Experiments
+                    </div>
+                    <div class="tab-pane fade" id="cell-info-testing-content" role="tabpanel" aria-labelledby="cell-info-testing">
+                        {% if aliquote %}
+                            <h3>Mycoplasma</h3>
+                            <p>{{ (aliquote.mycoplasma ?? "no data")|raw }}</p>
+
+                            <h3>Typing</h3>
+                            <p>{{ (aliquote.typing ?? "no data")|raw }}</p>
+
+                            <h3>History</h3>
+                            <p>{{ (aliquote.history ?? "no data")|raw }}</p>
+                        {% else %}
+                            <em>No aliquote selected</em>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="cell-info-further-content" role="tabpanel" aria-labelledby="cell-info-further">
+                        Further Info
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

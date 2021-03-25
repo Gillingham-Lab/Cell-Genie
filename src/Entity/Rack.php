@@ -34,6 +34,11 @@ class Rack
      */
     private Collection $boxes;
 
+    public function __toString(): string
+    {
+        return $this->getName() ?? "unknown";
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +64,36 @@ class Rack
     public function setMaxBoxes(int $maxBoxes): self
     {
         $this->maxBoxes = $maxBoxes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Box[]
+     */
+    public function getBoxes(): Collection
+    {
+        return $this->boxes;
+    }
+
+    public function addBox(Box $box): self
+    {
+        if (!$this->boxes->contains($box)) {
+            $this->boxes[] = $box;
+            $box->setRack($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBox(Box $box): self
+    {
+        if ($this->boxes->removeElement($box)) {
+            // set the owning side to null (unless already changed)
+            if ($box->getRack() === $this) {
+                $box->setRack(null);
+            }
+        }
 
         return $this;
     }

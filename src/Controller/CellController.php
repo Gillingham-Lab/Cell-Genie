@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\BoxRepository;
+use App\Repository\CellAliquoteRepository;
 use App\Repository\CellRepository;
 use Doctrine\DBAL\Types\ConversionException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,6 +15,8 @@ class CellController extends AbstractController
 {
     public function __construct(
         private CellRepository $cellRepository,
+        private BoxRepository $boxRepository,
+        private CellAliquoteRepository $cellAliquoteRepository,
     ) {
 
     }
@@ -31,7 +35,8 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/{cellId}", name: "app_cell_view")]
-    public function cell_overview(string $cellId): Response
+    #[Route("/cells/{cellId}/{aliquoteId}", name: "app_cell_aliquote_view")]
+    public function cell_overview(string $cellId, string $aliquoteId = null): Response
     {
         try {
             $cell = $this->cellRepository->find($cellId);
@@ -44,8 +49,18 @@ class CellController extends AbstractController
             return $this->redirectToRoute("app_cells");
         }
 
+        $boxes = $this->boxRepository->findByAliquotedCell($cell);
+
+        if ($aliquoteId) {
+            $aliquote = $this->cellAliquoteRepository->find($aliquoteId);
+        } else {
+            $aliquote = null;
+        }
+
         return $this->render('cell_view.html.twig', [
             "cell" => $cell,
+            "boxes" => $boxes,
+            "aliquote" => $aliquote,
         ]);
     }
 }

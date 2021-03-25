@@ -28,12 +28,17 @@ class Organism
      */
     private $type;
 
+    public function __toString(): string
+    {
+        return $this->getFullName() ?? "unknown";
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getFullName(): ?string
+    public function getFullName(): string
     {
         return "{$this->name}, {$this->type}";
     }

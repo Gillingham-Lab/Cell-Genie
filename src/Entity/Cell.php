@@ -23,7 +23,7 @@ class Cell
     private ?int $id = null;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=True)
      */
     private string $name;
 
@@ -71,6 +71,57 @@ class Cell
      * @ORM\ManyToOne(targetEntity=Tissue::class)
      */
     private Tissue $tissue;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="cell", orphanRemoval=true)
+     */
+    private $cellAliquotes;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $origin = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $vendor = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $vendorId = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTimeInterface $acquiredOn = null;
+
+    /**
+     * @ORM\Column(type="decimal", precision=7, scale=2, nullable=true)
+     */
+    private $price = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private ?User $boughtBy = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $originComment = null;
+
+    public function __construct()
+    {
+        $this->cellAliquotes = new ArrayCollection();
+        $this->children = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
+    }
 
     public function getId(): ?int
     {
@@ -169,6 +220,132 @@ class Cell
     public function setOrganism(Organism $organism): self
     {
         $this->organism = $organism;
+
+        return $this;
+    }
+
+    public function getParent(): ?Cell
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Cell $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CellAliquote[]
+     */
+    public function getCellAliquotes(): Collection
+    {
+        return $this->cellAliquotes;
+    }
+
+    public function addCellAliquote(CellAliquote $cellAliquote): self
+    {
+        if (!$this->cellAliquotes->contains($cellAliquote)) {
+            $this->cellAliquotes[] = $cellAliquote;
+            $cellAliquote->setCell($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCellAliquote(CellAliquote $cellAliquote): self
+    {
+        if ($this->cellAliquotes->removeElement($cellAliquote)) {
+            // set the owning side to null (unless already changed)
+            if ($cellAliquote->getCell() === $this) {
+                $cellAliquote->setCell(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+
+        return $this;
+    }
+
+    public function getVendor(): ?string
+    {
+        return $this->vendor;
+    }
+
+    public function setVendor(?string $vendor): self
+    {
+        $this->vendor = $vendor;
+
+        return $this;
+    }
+
+    public function getVendorId(): ?string
+    {
+        return $this->vendorId;
+    }
+
+    public function setVendorId(?string $vendorId): self
+    {
+        $this->vendorId = $vendorId;
+
+        return $this;
+    }
+
+    public function getAcquiredOn(): ?\DateTimeInterface
+    {
+        return $this->acquiredOn;
+    }
+
+    public function setAcquiredOn(?\DateTimeInterface $acquiredOn): self
+    {
+        $this->acquiredOn = $acquiredOn;
+
+        return $this;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?string $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getBoughtBy(): ?User
+    {
+        return $this->boughtBy;
+    }
+
+    public function setBoughtBy(?User $boughtBy): self
+    {
+        $this->boughtBy = $boughtBy;
+
+        return $this;
+    }
+
+    public function getOriginComment(): ?string
+    {
+        return $this->originComment;
+    }
+
+    public function setOriginComment(?string $originComment): self
+    {
+        $this->originComment = $originComment;
 
         return $this;
     }
