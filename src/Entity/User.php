@@ -108,7 +108,7 @@ class User implements UserInterface
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        if ($this->getIsAdmin() or true) {
+        if ($this->getIsAdmin()) {
             $roles[] = 'ROLE_ADMIN';
         }
 
@@ -176,7 +176,7 @@ class User implements UserInterface
 
     public function getIsAdmin(): ?bool
     {
-        return $this->isAdmin;
+        return $this->isAdmin ?? false;
     }
 
     public function setIsAdmin(?bool $isAdmin): self
@@ -188,7 +188,7 @@ class User implements UserInterface
 
     public function getIsActive(): ?bool
     {
-        return $this->isActive;
+        return $this->isActive ?? true;
     }
 
     public function setIsActive(?bool $isActive): self

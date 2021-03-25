@@ -21,6 +21,8 @@ class UserFixtures extends Fixture
         $admin = (new User())
             ->setEmail("admin@example.com")
             ->setFullName("Admin Example")
+            ->setIsAdmin(true)
+            ->setIsActive(true)
         ;
         $admin->setPassword($this->passwordEncoder->encodePassword($admin, "CHANGEME"));
 

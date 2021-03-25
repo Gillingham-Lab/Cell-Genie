@@ -52,7 +52,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Boxes", "fa", Box::class),
 
             MenuItem::section("Users"),
-            MenuItem::linkToCrud("Users", 'fa', User::class),
+            MenuItem::linkToCrud("Users", 'fa', User::class)->setPermission("ROLE_ADMIN"),
 
             #MenuItem::linkToExitImpersonation('Stop impersonation', 'fa fa-exit'),
             MenuItem::linkToLogout('Logout', 'fa fa-exit'),
