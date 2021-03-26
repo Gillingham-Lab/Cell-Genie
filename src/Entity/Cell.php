@@ -60,17 +60,17 @@ class Cell
     /**
      * @ORM\ManyToOne(targetEntity=Morphology::class)
      */
-    private Morphology $morphology;
+    private ?Morphology $morphology = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Organism::class)
      */
-    private Organism $organism;
+    private ?Organism $organism = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Tissue::class)
      */
-    private Tissue $tissue;
+    private ?Tissue $tissue = null;
 
     /**
      * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="cell", orphanRemoval=true)
@@ -218,36 +218,36 @@ class Cell
         return $this;
     }
 
-    public function getMorphology(): Morphology
+    public function getMorphology(): ?Morphology
     {
         return $this->morphology;
     }
 
-    public function setMorphology(Morphology $morphology): self
+    public function setMorphology(?Morphology $morphology): self
     {
         $this->morphology = $morphology;
 
         return $this;
     }
 
-    public function getTissue(): Tissue
+    public function getTissue(): ?Tissue
     {
         return $this->tissue;
     }
 
-    public function setTissue(Tissue $tissue): self
+    public function setTissue(?Tissue $tissue): self
     {
         $this->tissue = $tissue;
 
         return $this;
     }
 
-    public function getOrganism(): Organism
+    public function getOrganism(): ?Organism
     {
         return $this->organism;
     }
 
-    public function setOrganism(Organism $organism): self
+    public function setOrganism(?Organism $organism): self
     {
         $this->organism = $organism;
 

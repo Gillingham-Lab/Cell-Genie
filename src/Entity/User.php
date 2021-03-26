@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -54,6 +56,16 @@ class User implements UserInterface
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $isActive;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Experiment::class, mappedBy="owner")
+     */
+    private $experiments;
+
+    public function __construct()
+    {
+        $this->experiments = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -194,6 +206,36 @@ class User implements UserInterface
     public function setIsActive(?bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Experiment[]
+     */
+    public function getExperiments(): Collection
+    {
+        return $this->experiments;
+    }
+
+    public function addExperiment(Experiment $experiment): self
+    {
+        if (!$this->experiments->contains($experiment)) {
+            $this->experiments[] = $experiment;
+            $experiment->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperiment(Experiment $experiment): self
+    {
+        if ($this->experiments->removeElement($experiment)) {
+            // set the owning side to null (unless already changed)
+            if ($experiment->getOwner() === $this) {
+                $experiment->setOwner(null);
+            }
+        }
 
         return $this;
     }

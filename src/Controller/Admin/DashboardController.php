@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 use App\Entity\Box;
 use App\Entity\Cell;
 use App\Entity\CellAliquote;
+use App\Entity\ExperimentType;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Rack;
@@ -41,21 +42,24 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linktoDashboard('Dashboard', 'fa fa-home'),
 
             MenuItem::section("Cells"),
-            MenuItem::linkToCrud("Cells", 'fa', Cell::class),
-            MenuItem::linkToCrud("Aliquotes", 'fa', CellAliquote::class),
+            MenuItem::linkToCrud("Cells", 'fas fa-disease', Cell::class),
+            MenuItem::linkToCrud("Aliquotes", 'fas fa-vials', CellAliquote::class),
             MenuItem::linkToCrud("Organisms", "fa", Organism::class),
-            MenuItem::linkToCrud("Tissue Types", "fa", Tissue::class),
+            MenuItem::linkToCrud("Tissue Types", "fas fa-kidneys", Tissue::class),
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),
 
             MenuItem::section("Storage"),
-            MenuItem::linkToCrud("Racks", 'fa', Rack::class),
-            MenuItem::linkToCrud("Boxes", "fa", Box::class),
+            MenuItem::linkToCrud("Racks", 'fas fa-boxes', Rack::class),
+            MenuItem::linkToCrud("Boxes", "fas fa-box", Box::class),
+
+            MenuItem::section("Experimental"),
+            MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
 
             MenuItem::section("Users"),
             MenuItem::linkToCrud("Users", 'fa', User::class)->setPermission("ROLE_ADMIN"),
 
             #MenuItem::linkToExitImpersonation('Stop impersonation', 'fa fa-exit'),
-            MenuItem::linkToLogout('Logout', 'fa fa-exit'),
+            MenuItem::linkToLogout('Logout', 'fas fa-sign-out-alt'),
         ];
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }

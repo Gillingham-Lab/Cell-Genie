@@ -12,6 +12,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Organism</th>
                 <th scope="col">Tissue</th>
+                <th scope="col">Morphology</th>
                 <th scope="col">Cancer</th>
                 <th scope="col">Engineered</th>
                 <th scope="col">Options</th>
@@ -22,8 +23,9 @@
             <tr>
                 <th>{{ cell.id }}</th>
                 <td>{{ cell.name }}</td>
-                <td>{{ cell.organism.name }}</td>
-                <td>{{ cell.tissue.name }}</td>
+                <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
+                <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
+                <td>{{ cell.morphology ? cell.morphology.name : "undefined" }}</td>
                 <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
                 <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
                 <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a></td>

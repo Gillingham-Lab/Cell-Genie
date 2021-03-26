@@ -36,10 +36,14 @@ class CellCrudController extends AbstractCrudController
             TextField::new('name'),
             TextField::new('age'),
             AssociationField::new("parent"),
-            AssociationField::new("morphology"),
-            AssociationField::new("organism"),
-            AssociationField::new("tissue"),
-            TextField::new("cultureType"),
+            AssociationField::new("morphology")
+                ->setRequired(true),
+            AssociationField::new("organism")
+                ->setRequired(true),
+            AssociationField::new("tissue")
+                ->setRequired(true),
+            TextField::new("cultureType")
+                ->setRequired(true),
             BooleanField::new("isCancer"),
             BooleanField::new("isEngineered"),
 

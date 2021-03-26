@@ -16,10 +16,10 @@
                 {% else %}
                     {{ macros.definition_row("Parent", "none") }}
                 {% endif %}
-                {{ macros.definition_row("Organism", cell.organism.fullName) }}
-                {{ macros.definition_row("Tissue", cell.tissue.name) }}
+                {{ macros.definition_row("Organism", cell.organism ? cell.organism.fullName : "undefined") }}
+                {{ macros.definition_row("Tissue", cell.tissue ? cell.tissue.name : "undefined") }}
                 {{ macros.definition_row("Age", cell.age) }}
-                {{ macros.definition_row("Morphology", cell.morphology.name) }}
+                {{ macros.definition_row("Morphology", cell.morphology ? cell.morphology.name : "undefined") }}
                 {{ macros.definition_row("Culture type", cell.cultureType) }}
                 {{ macros.definition_row("Cancer", cell.isCancer ? "Yes" : "No") }}
                 {{ macros.definition_row("Engineered", cell.isEngineered ? "Yes" : "No") }}
@@ -134,37 +134,59 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="cell-info-culturing-content" role="tabpanel" aria-labelledby="cell-info-culturing">
-                        <h4>Medium</h4>
-                        <div class="mb-5">{{ (cell.medium ?? "unknown")|raw }}</div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Medium</h4>
+                                <div class="mb-5">{{ (cell.medium ?? "unknown")|raw }}</div>
+                            </div>
 
-                        <h4>Trypsin</h4>
-                        <div class="mb-5">{{ (cell.trypsin ?? "unknown")|raw }}</div>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Trypsin</h4>
+                                <div class="mb-5">{{ (cell.trypsin ?? "unknown")|raw }}</div>
+                            </div>
 
-                        <h4>Recommended splitting</h4>
-                        <div class="mb-5">{{ (cell.splitting ?? "unknown")|raw }}</div>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Recommended splitting</h4>
+                                <div class="mb-5">{{ (cell.splitting ?? "unknown")|raw }}</div>
+                            </div>
 
-                        <h4>Recommended freezing</h4>
-                        <div class="mb-5">{{ (cell.freezing ?? "unknown")|raw }}</div>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Recommended freezing</h4>
+                                <div class="mb-5">{{ (cell.freezing ?? "unknown")|raw }}</div>
+                            </div>
 
-                        <h4>Recommended thawing</h4>
-                        <div class="mb-5">{{ (cell.thawing ?? "unknown")|raw }}</div>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Recommended thawing</h4>
+                                <div class="mb-5">{{ (cell.thawing ?? "unknown")|raw }}</div>
+                            </div>
 
-                        <h4>Culture conditions</h4>
-                        <div class="mb-5">{{ (cell.cultureConditions ?? "unknown")|raw }}</div>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Culture conditions</h4>
+                                <div class="mb-5">{{ (cell.cultureConditions ?? "unknown")|raw }}</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
                         Experiments.
                     </div>
                     <div class="tab-pane fade" id="cell-info-testing-content" role="tabpanel" aria-labelledby="cell-info-testing">
                         {% if aliquote %}
-                            <h4>Mycoplasma</h4>
-                            <div class="mb-5">{{ (aliquote.mycoplasma ?? "no data")|raw }}</div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <h4>Mycoplasma</h4>
+                                    <div class="mb-5">{{ (aliquote.mycoplasma ?? "no data")|raw }}</div>
+                                </div>
 
-                            <h4>Typing</h4>
-                            <div class="mb-5">{{ (aliquote.typing ?? "no data")|raw }}</div>
+                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <h4>Typing</h4>
+                                    <div class="mb-5">{{ (aliquote.typing ?? "no data")|raw }}</div>
+                                </div>
 
-                            <h4>History</h4>
-                            <div class="mb-5">{{ (aliquote.history ?? "no data")|raw }}</div>
+                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <h4>History</h4>
+                                    <div class="mb-5">{{ (aliquote.history ?? "no data")|raw }}</div>
+                                </div>
+                            </div>
                         {% else %}
                             <em>No aliquote selected</em>
                         {% endif %}
