@@ -6,12 +6,16 @@ namespace App\Controller\Admin;
 use App\Entity\Box;
 use App\Entity\Cell;
 use App\Entity\CellAliquote;
+use App\Entity\Chemical;
+use App\Entity\CultureFlask;
 use App\Entity\ExperimentType;
 use App\Entity\Morphology;
 use App\Entity\Organism;
+use App\Entity\Protein;
 use App\Entity\Rack;
 use App\Entity\Tissue;
 use App\Entity\User;
+use App\Entity\Vendor;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -48,12 +52,16 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Tissue Types", "fas fa-kidneys", Tissue::class),
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),
 
-            MenuItem::section("Storage"),
-            MenuItem::linkToCrud("Racks", 'fas fa-boxes', Rack::class),
-            MenuItem::linkToCrud("Boxes", "fas fa-box", Box::class),
-
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
+            MenuItem::linkToCrud("Protein targets", "fas fa-bullseye", Protein::class),
+            MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
+
+            MenuItem::section("Inventory"),
+            MenuItem::linkToCrud("Racks", 'fas fa-boxes', Rack::class),
+            MenuItem::linkToCrud("Boxes", "fas fa-box", Box::class),
+            MenuItem::linkToCrud("Vendors", "fas fa-store-alt", Vendor::class),
+            MenuItem::linkToCrud("Culture flasks", 'fas', CultureFlask::class),
 
             MenuItem::section("Users"),
             MenuItem::linkToCrud("Users", 'fa', User::class)->setPermission("ROLE_ADMIN"),

@@ -31,7 +31,7 @@ class ExperimentTypeCrudController extends AbstractCrudController
 
             FormField::addPanel("Experimental detail")
                 ->hideOnIndex(),
-            TextField::new("wellplate", "Recommended wellplate"),
+            AssociationField::new("wellplate", "Recommended wellplate"),
             TextEditorField::new("description", "Experimental procedure")
                 ->hideOnIndex(),
             TextEditorField::new("lysing", "Lysis conditions")

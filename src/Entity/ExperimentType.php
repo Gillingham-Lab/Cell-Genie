@@ -27,38 +27,40 @@ class ExperimentType
 
     /**
      * @ORM\OneToMany(targetEntity=Experiment::class, mappedBy="experimentType", orphanRemoval=true)
+     * @var ?Collection|Experiment[]
      */
     private ?Collection $experiments;
 
     /**
      * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="children")
      */
-    private $parent;
+    private ?self $parent = null;
 
     /**
      * @ORM\OneToMany(targetEntity=ExperimentType::class, mappedBy="parent")
+     * @var ?Collection|self[]
      */
-    private $children;
+    private ?Collection $children;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity=CultureFlask::class)
      */
-    private $wellplate;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $lysing;
+    private ?CultureFlask $wellplate = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $seeding;
+    private ?string $lysing = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $seeding = null;
 
     public function __construct()
     {
@@ -162,7 +164,7 @@ class ExperimentType
 
     public function getDescription(): ?string
     {
-        return $this->description;
+        return $this->description ?? $this->parent?->getWellplate();
     }
 
     public function setDescription(?string $description): self
@@ -172,12 +174,12 @@ class ExperimentType
         return $this;
     }
 
-    public function getWellplate(): ?string
+    public function getWellplate(): ?CultureFlask
     {
-        return $this->wellplate;
+        return $this->wellplate ?? $this->parent?->getWellplate();
     }
 
-    public function setWellplate(?string $wellplate): self
+    public function setWellplate(?CultureFlask $wellplate): self
     {
         $this->wellplate = $wellplate;
 
@@ -186,7 +188,7 @@ class ExperimentType
 
     public function getLysing(): ?string
     {
-        return $this->lysing;
+        return $this->lysing ?? $this->parent?->getLysing();
     }
 
     public function setLysing(?string $lysing): self
@@ -198,7 +200,7 @@ class ExperimentType
 
     public function getSeeding(): ?string
     {
-        return $this->seeding;
+        return $this->seeding ?? $this->parent?->getSeeding();
     }
 
     public function setSeeding(?string $seeding): self

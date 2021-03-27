@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\ProteinRepository;
+use App\Repository\ChemicalRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=ProteinRepository::class)
+ * @ORM\Entity(repositoryClass=ChemicalRepository::class)
  */
-class Protein
+class Chemical
 {
     /**
      * @ORM\Id
@@ -18,6 +18,11 @@ class Protein
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $longName = "";
 
     /**
      * @ORM\Column(type="string", length=10)
@@ -29,19 +34,18 @@ class Protein
         minMessage: "Must be at least {{ min }} character long.",
         maxMessage: "Only up to {{ max }} characters allowed.",
     )]
-    private $shortName;
+    private string $shortName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
-    #[Assert\NotBlank]
-    private $longName;
+    private string $smiles = "";
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     #[Assert\Url]
-    private $proteinAtlasUri;
+    private ?string $labjournal = null;
 
     #[Pure]
     public function __toString(): string
@@ -52,18 +56,6 @@ class Protein
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getShortName(): ?string
-    {
-        return $this->shortName;
-    }
-
-    public function setShortName(string $shortName): self
-    {
-        $this->shortName = $shortName;
-
-        return $this;
     }
 
     public function getLongName(): ?string
@@ -78,14 +70,38 @@ class Protein
         return $this;
     }
 
-    public function getProteinAtlasUri(): ?string
+    public function getShortName(): ?string
     {
-        return $this->proteinAtlasUri;
+        return $this->shortName;
     }
 
-    public function setProteinAtlasUri(?string $proteinAtlasUri): self
+    public function setShortName(string $shortName): self
     {
-        $this->proteinAtlasUri = $proteinAtlasUri;
+        $this->shortName = $shortName;
+
+        return $this;
+    }
+
+    public function getSmiles(): ?string
+    {
+        return $this->smiles;
+    }
+
+    public function setSmiles(string $smiles): self
+    {
+        $this->smiles = $smiles;
+
+        return $this;
+    }
+
+    public function getLabjournal(): ?string
+    {
+        return $this->labjournal;
+    }
+
+    public function setLabjournal(?string $labjournal): self
+    {
+        $this->labjournal = $labjournal;
 
         return $this;
     }
