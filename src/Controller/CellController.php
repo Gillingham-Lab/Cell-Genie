@@ -34,8 +34,8 @@ class CellController extends AbstractController
         ]);
     }
 
-    #[Route("/cells/{cellId}", name: "app_cell_view")]
-    #[Route("/cells/{cellId}/{aliquoteId}", name: "app_cell_aliquote_view")]
+    #[Route("/cells/view/{cellId}", name: "app_cell_view")]
+    #[Route("/cells/view/{cellId}/{aliquoteId}", name: "app_cell_aliquote_view")]
     public function cell_overview(string $cellId, string $aliquoteId = null): Response
     {
         try {
@@ -61,6 +61,31 @@ class CellController extends AbstractController
             "cell" => $cell,
             "boxes" => $boxes,
             "aliquote" => $aliquote,
+        ]);
+    }
+
+    #[Route("/cells/consume/{aliquoteId}", name: "app_cell_consume_aliquote")]
+    public function consumeAliquote($aliquoteId): Response
+    {
+        $aliquote = $this->cellAliquoteRepository->find($aliquoteId);
+
+        if (!$aliquote) {
+            $this->addFlash("error", "Aliquote does not exist.");
+            return $this->redirectToRoute("app_cells");
+        }
+
+        if ($aliquote->getVials() <= 0) {
+            $this->addFlash("error", "There are no aliquote left to consume.");
+        } else {
+            $aliquote->setVials($aliquote->getVials() - 1);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash("success", "Aliquote was consumed.");
+        }
+
+        return $this->redirectToRoute("app_cell_aliquote_view", [
+            "cellId" => $aliquote->getCell()->getId(),
+            "aliquoteId" => $aliquoteId
         ]);
     }
 }

@@ -49,7 +49,7 @@ class CellCrudController extends AbstractCrudController
 
             FormField::addPanel("Origins"),
             TextareaField::new("origin"),
-            TextField::new("vendor", "Vendor"),
+            AssociationField::new("vendor", "Vendor"),
             TextField::new("vendorId", "Vendor PN")
                 ->setHelp("Product number of the vendor."),
             DateField::new("acquiredOn")

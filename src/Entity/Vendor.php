@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use App\Repository\VendorRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @ORM\Entity(repositoryClass=VendorRepository::class)
@@ -37,6 +38,12 @@ class Vendor
      * @ORM\Column(type="boolean")
      */
     private bool $hasDiscount = false;
+
+    #[Pure]
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
 
     public function getId(): ?int
     {

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Chemical;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
@@ -25,6 +26,8 @@ class ChemicalCrudController extends AbstractCrudController
             TextField::new('longName'),
             TextField::new('smiles'),
             UrlField::new('labjournal'),
+            AssociationField::new("vendor", "Vendor"),
+            TextField::new("vendorId", "Vendor PN")
         ];
     }
 }

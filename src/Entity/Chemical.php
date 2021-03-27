@@ -55,6 +55,16 @@ class Chemical
      */
     private $experiments;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Vendor::class)
+     */
+    private ?Vendor $vendor = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $vendorId = null;
+
     public function __construct()
     {
         $this->experiments = new ArrayCollection();
@@ -142,6 +152,30 @@ class Chemical
         if ($this->experiments->removeElement($experiment)) {
             $experiment->removeChemical($this);
         }
+
+        return $this;
+    }
+
+    public function getVendor(): ?Vendor
+    {
+        return $this->vendor;
+    }
+
+    public function setVendor(?Vendor $vendor): self
+    {
+        $this->vendor = $vendor;
+
+        return $this;
+    }
+
+    public function getVendorId(): ?string
+    {
+        return $this->vendorId;
+    }
+
+    public function setVendorId(?string $vendorId): self
+    {
+        $this->vendorId = $vendorId;
 
         return $this;
     }

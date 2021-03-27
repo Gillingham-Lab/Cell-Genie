@@ -57,7 +57,7 @@
 
                     <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
                         {% for box in boxes %}
-                            <div class="tab-pane fade {{ found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                            <div class="tab-pane fade {{ found and found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
                                 <h6>{{ box.fullLocation }}</h6>
                                 {{ macros.make_box(box, cell, aliquote) }}
                             </div>
@@ -71,6 +71,14 @@
         <div class="row col-sm-12 mt-5">
             <div class="full-width flex-fill">
                 <h3>Aliquote details</h3>
+
+                <div class="pb-3">
+                    {% if aliquote.vials > 0 %}
+                        <a href="{{ url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id}) }}" class="btn btn-primary">Consume</a>
+                    {% else %}
+                        <em class="alert-warning">No aliquote left.</em>
+                    {% endif %}
+                </div>
 
                 <div class="row">
                 <dl class="row col-sm-6">

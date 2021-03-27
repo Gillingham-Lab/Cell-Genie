@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\CultureFlask;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -28,6 +29,8 @@ class CultureFlaskCrudController extends AbstractCrudController
             IntegerField::new("rows"),
             IntegerField::new("cols"),
             TextareaField::new('comment'),
+            AssociationField::new("vendor", "Vendor"),
+            TextField::new("vendorId", "Vendor PN")
         ];
     }
 }

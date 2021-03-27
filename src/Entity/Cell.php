@@ -83,9 +83,9 @@ class Cell
     private ?string $origin = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity=Vendor::class)
      */
-    private ?string $vendor = null;
+    private ?Vendor $vendor = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -314,12 +314,12 @@ class Cell
         return $this;
     }
 
-    public function getVendor(): ?string
+    public function getVendor(): ?Vendor
     {
         return $this->vendor;
     }
 
-    public function setVendor(?string $vendor): self
+    public function setVendor(?Vendor $vendor): self
     {
         $this->vendor = $vendor;
 
