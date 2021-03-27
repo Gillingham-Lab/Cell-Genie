@@ -8,6 +8,7 @@ use App\Entity\Cell;
 use App\Entity\CellAliquote;
 use App\Entity\Chemical;
 use App\Entity\CultureFlask;
+use App\Entity\Experiment;
 use App\Entity\ExperimentType;
 use App\Entity\Morphology;
 use App\Entity\Organism;
@@ -54,6 +55,7 @@ class DashboardController extends AbstractDashboardController
 
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
+            MenuItem::linkToCrud("Experiments", 'fas', Experiment::class),
             MenuItem::linkToCrud("Protein targets", "fas fa-bullseye", Protein::class),
             MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
 

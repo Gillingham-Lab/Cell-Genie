@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ChemicalRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -47,6 +49,16 @@ class Chemical
      */
     #[Assert\Url]
     private ?string $labjournal = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="chemicals")
+     */
+    private $experiments;
+
+    public function __construct()
+    {
+        $this->experiments = new ArrayCollection();
+    }
 
     #[Pure]
     public function __toString(): string
@@ -103,6 +115,33 @@ class Chemical
     public function setLabjournal(?string $labjournal): self
     {
         $this->labjournal = $labjournal;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Experiment[]
+     */
+    public function getExperiments(): Collection
+    {
+        return $this->experiments;
+    }
+
+    public function addExperiment(Experiment $experiment): self
+    {
+        if (!$this->experiments->contains($experiment)) {
+            $this->experiments[] = $experiment;
+            $experiment->addChemical($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperiment(Experiment $experiment): self
+    {
+        if ($this->experiments->removeElement($experiment)) {
+            $experiment->removeChemical($this);
+        }
 
         return $this;
     }

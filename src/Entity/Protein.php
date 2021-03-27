@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ProteinRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -43,6 +45,16 @@ class Protein
      */
     #[Assert\Url]
     private $proteinAtlasUri;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="proteinTargets")
+     */
+    private $experiments;
+
+    public function __construct()
+    {
+        $this->experiments = new ArrayCollection();
+    }
 
     #[Pure]
     public function __toString(): string
@@ -87,6 +99,33 @@ class Protein
     public function setProteinAtlasUri(?string $proteinAtlasUri): self
     {
         $this->proteinAtlasUri = $proteinAtlasUri;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Experiment[]
+     */
+    public function getExperiments(): Collection
+    {
+        return $this->experiments;
+    }
+
+    public function addExperiment(Experiment $experiment): self
+    {
+        if (!$this->experiments->contains($experiment)) {
+            $this->experiments[] = $experiment;
+            $experiment->addProteinTarget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperiment(Experiment $experiment): self
+    {
+        if ($this->experiments->removeElement($experiment)) {
+            $experiment->removeProteinTarget($this);
+        }
 
         return $this;
     }

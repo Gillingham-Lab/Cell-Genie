@@ -142,10 +142,16 @@ class Cell
      */
     private ?string $trypsin = null;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="cells")
+     */
+    private $experiments;
+
     public function __construct()
     {
         $this->cellAliquotes = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->experiments = new ArrayCollection();
     }
 
     public function __toString()
@@ -472,6 +478,33 @@ class Cell
     public function setTrypsin(?string $trypsin): self
     {
         $this->trypsin = $trypsin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Experiment[]
+     */
+    public function getExperiments(): Collection
+    {
+        return $this->experiments;
+    }
+
+    public function addExperiment(Experiment $experiment): self
+    {
+        if (!$this->experiments->contains($experiment)) {
+            $this->experiments[] = $experiment;
+            $experiment->addCell($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperiment(Experiment $experiment): self
+    {
+        if ($this->experiments->removeElement($experiment)) {
+            $experiment->removeCell($this);
+        }
 
         return $this;
     }
