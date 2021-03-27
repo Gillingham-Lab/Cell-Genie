@@ -44,7 +44,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         return [
-            MenuItem::linktoDashboard('Dashboard', 'fa fa-home'),
+            MenuItem::linkToRoute("Back to the App", "fas fa-home", "app_homepage"),
+            MenuItem::linkToLogout('Logout', 'fas fa-sign-out-alt'),
 
             MenuItem::section("Cells"),
             MenuItem::linkToCrud("Cells", 'fas fa-disease', Cell::class),
@@ -69,7 +70,6 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Users", 'fa', User::class)->setPermission("ROLE_ADMIN"),
 
             #MenuItem::linkToExitImpersonation('Stop impersonation', 'fa fa-exit'),
-            MenuItem::linkToLogout('Logout', 'fas fa-sign-out-alt'),
         ];
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
