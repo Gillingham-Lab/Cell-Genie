@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Cell;
 use App\Entity\Protein;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +20,18 @@ class ProteinRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Protein::class);
+    }
+
+    public function findByCell(Cell $cell)
+    {
+        return $this->createQueryBuilder("p")
+            ->leftJoin("p.experiments", "e", conditionType: Join::ON)
+            ->leftJoin("e.cells", "ce", conditionType: Join::ON)
+            ->andWhere("ce = :cell")
+            ->setParameter("cell", $cell)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**

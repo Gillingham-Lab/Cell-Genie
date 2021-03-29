@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Cell;
 use App\Entity\ExperimentType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +20,19 @@ class ExperimentTypeRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ExperimentType::class);
+    }
+
+    public function findByCell(Cell $cell)
+    {
+        return $this->createQueryBuilder("et")
+            ->distinct()
+            ->leftJoin("et.experiments", "e", conditionType: Join::ON)
+            ->leftJoin("e.cells", "ce", conditionType: Join::ON)
+            ->andWhere("ce = :cell")
+            ->setParameter("cell", $cell)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

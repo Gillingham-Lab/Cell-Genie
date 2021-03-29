@@ -90,7 +90,7 @@ class Cell
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $vendorId = null;
+    private ?string $vendorPN = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -326,14 +326,14 @@ class Cell
         return $this;
     }
 
-    public function getVendorId(): ?string
+    public function getVendorPn(): ?string
     {
-        return $this->vendorId;
+        return $this->vendorPN;
     }
 
-    public function setVendorId(?string $vendorId): self
+    public function setVendorId(?string $vendorPN): self
     {
-        $this->vendorId = $vendorId;
+        $this->vendorPN = $vendorPN;
 
         return $this;
     }

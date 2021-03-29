@@ -6,6 +6,9 @@ namespace App\Controller;
 use App\Repository\BoxRepository;
 use App\Repository\CellAliquoteRepository;
 use App\Repository\CellRepository;
+use App\Repository\ChemicalRepository;
+use App\Repository\ExperimentTypeRepository;
+use App\Repository\ProteinRepository;
 use Doctrine\DBAL\Types\ConversionException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +20,9 @@ class CellController extends AbstractController
         private CellRepository $cellRepository,
         private BoxRepository $boxRepository,
         private CellAliquoteRepository $cellAliquoteRepository,
+        private ChemicalRepository $chemicalRepository,
+        private ProteinRepository $proteinRepository,
+        private ExperimentTypeRepository $experimentTypeRepository
     ) {
 
     }
@@ -57,10 +63,20 @@ class CellController extends AbstractController
             $aliquote = null;
         }
 
+        // Get associated chemicals
+        $chemicals = $this->chemicalRepository->findByCell($cell);
+        // Get associated proteins
+        $proteins = $this->proteinRepository->findByCell($cell);
+        // Get associated experiment types
+        $experimentTypes = $this->experimentTypeRepository->findByCell($cell);
+
         return $this->render('cell_view.html.twig', [
             "cell" => $cell,
             "boxes" => $boxes,
             "aliquote" => $aliquote,
+            "chemicals" => $chemicals,
+            "proteins" => $proteins,
+            "experimentTypes" => $experimentTypes,
         ]);
     }
 

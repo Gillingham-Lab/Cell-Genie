@@ -175,7 +175,53 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
-                        Experiments.
+                        <div class="row">
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Associated proteins</h4>
+                                <div class="mb-5">
+                                    {% if proteins|length == 0 %}
+                                        none
+                                    {% else %}
+                                        {% for protein in proteins %}
+                                            <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ protein.longName }}"><a>{{ protein.shortName }}</a></span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Experiment types</h4>
+                                <div class="mb-5">
+                                    {% if experimentTypes|length == 0 %}
+                                        none
+                                    {% else %}
+                                        {% for experimentType in experimentTypes %}
+                                            <span class="badge rounded-pill bg-primary text-light"><a>{{ experimentType.name }}</a></span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Experiments</h4>
+                                <div class="mb-5">
+                                    ...
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <h4>Associated compounds</h4>
+                                <div class="mb-5">
+                                    {% if chemicals|length == 0 %}
+                                        none
+                                    {% else %}
+                                        {% for chemical in chemicals %}
+                                            <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ chemical.longName }}"><a>{{ chemical.shortName }}</a></span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="cell-info-testing-content" role="tabpanel" aria-labelledby="cell-info-testing">
                         {% if aliquote %}
