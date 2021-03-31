@@ -63,7 +63,7 @@ class Chemical
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $vendorId = null;
+    private ?string $vendorPN = null;
 
     public function __construct()
     {
@@ -168,14 +168,14 @@ class Chemical
         return $this;
     }
 
-    public function getVendorId(): ?string
+    public function getVendorPN(): ?string
     {
-        return $this->vendorId;
+        return $this->vendorPN;
     }
 
-    public function setVendorId(?string $vendorId): self
+    public function setVendorPN(?string $vendorPN): self
     {
-        $this->vendorId = $vendorId;
+        $this->vendorPN = $vendorPN;
 
         return $this;
     }

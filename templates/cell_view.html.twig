@@ -4,6 +4,7 @@
 {% block title %}Cell Genie: Cells{% endblock %}
 
 {% block body_main %}
+    {% set columnClasses = "col-md-6 col-lg-4 col-xl-4 px-3 mb-3 border-light border-bottom" %}
 
     <div class="row">
         <div class="row col-sm-3">
@@ -15,6 +16,18 @@
                     {{ macros.definition_row("Parent", cell.parent.name, url("app_cell_view", {"cellId": cell.parent.id})) }}
                 {% else %}
                     {{ macros.definition_row("Parent", "none") }}
+                {% endif %}
+                {% if cell.children|length > 0 %}
+                    <dt class="col-sm-4">Children</dt>
+                    <dd class="col-sm-8">
+                        {% for child in cell.children %}
+                            {% set childUrl = url("app_cell_view", {"cellId": child.id}) %}
+
+                            <a class='badge rounded-pill bg-primary text-light' href='{{ childUrl }}'>{{ child.name }}</a>
+                        {% endfor %}
+                    </dd>
+                {% else %}
+                    {{ macros.definition_row("Children", "none") }}
                 {% endif %}
                 {{ macros.definition_row("Organism", cell.organism ? cell.organism.fullName : "undefined") }}
                 {{ macros.definition_row("Tissue", cell.tissue ? cell.tissue.name : "undefined") }}
@@ -143,32 +156,32 @@
                     </div>
                     <div class="tab-pane fade" id="cell-info-culturing-content" role="tabpanel" aria-labelledby="cell-info-culturing">
                         <div class="row">
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Medium</h4>
                                 <div class="mb-5">{{ (cell.medium ?? "unknown")|raw }}</div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Trypsin</h4>
                                 <div class="mb-5">{{ (cell.trypsin ?? "unknown")|raw }}</div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Recommended splitting</h4>
                                 <div class="mb-5">{{ (cell.splitting ?? "unknown")|raw }}</div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Recommended freezing</h4>
                                 <div class="mb-5">{{ (cell.freezing ?? "unknown")|raw }}</div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Recommended thawing</h4>
                                 <div class="mb-5">{{ (cell.thawing ?? "unknown")|raw }}</div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Culture conditions</h4>
                                 <div class="mb-5">{{ (cell.cultureConditions ?? "unknown")|raw }}</div>
                             </div>
@@ -176,7 +189,22 @@
                     </div>
                     <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
                         <div class="row">
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
+                                <h4>Seeding conditions</h4>
+                                <div class="mb-5">
+                                    {{ (cell.seeding ?? "unknown")|raw }}
+                                </div>
+                                <p>Cell count at confluency: {{ cell.countOnConfluence ?? "unknown" }}</p>
+                            </div>
+
+                            <div class="{{ columnClasses }}">
+                                <h4>Lysis conditions</h4>
+                                <div class="mb-5">
+                                    {{ (cell.lysing ?? "unknown")|raw }}
+                                </div>
+                            </div>
+
+                            <div class="{{ columnClasses }}">
                                 <h4>Associated proteins</h4>
                                 <div class="mb-5">
                                     {% if proteins|length == 0 %}
@@ -189,7 +217,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Experiment types</h4>
                                 <div class="mb-5">
                                     {% if experimentTypes|length == 0 %}
@@ -202,14 +230,20 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Experiments</h4>
                                 <div class="mb-5">
-                                    ...
+                                    {% if cell.experiments|length == 0 %}
+                                        none
+                                    {% else %}
+                                        {% for experiment in cell.experiments %}
+                                            <span class="badge rounded-pill bg-primary text-light"><a>{{ experiment.name }}</a></span>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="{{ columnClasses }}">
                                 <h4>Associated compounds</h4>
                                 <div class="mb-5">
                                     {% if chemicals|length == 0 %}
@@ -226,17 +260,17 @@
                     <div class="tab-pane fade" id="cell-info-testing-content" role="tabpanel" aria-labelledby="cell-info-testing">
                         {% if aliquote %}
                             <div class="row">
-                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                <div class="{{ columnClasses }}">
                                     <h4>Mycoplasma</h4>
                                     <div class="mb-5">{{ (aliquote.mycoplasma ?? "no data")|raw }}</div>
                                 </div>
 
-                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                <div class="{{ columnClasses }}">
                                     <h4>Typing</h4>
                                     <div class="mb-5">{{ (aliquote.typing ?? "no data")|raw }}</div>
                                 </div>
 
-                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                <div class="{{ columnClasses }}">
                                     <h4>History</h4>
                                     <div class="mb-5">{{ (aliquote.history ?? "no data")|raw }}</div>
                                 </div>

@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -57,7 +58,7 @@ class CellCrudController extends AbstractCrudController
             NumberField::new("price"),
             AssociationField::new("boughtBy"),
 
-            FormField::addPanel("Experimental Conditions"),
+            FormField::addPanel("Call management conditions"),
             TextEditorField::new("medium", label: "Recommended cell medium")
                 ->hideOnIndex(),
             TextEditorField::new("trypsin", label: "Required trypsin")
@@ -69,6 +70,16 @@ class CellCrudController extends AbstractCrudController
             TextEditorField::new("thawing", label: "Recommended thawing conditions")
                 ->hideOnIndex(),
             TextEditorField::new("cultureConditions", label: "Growth conditions for incubator")
+                ->hideOnIndex(),
+
+            FormField::addPanel("Basic experimental conditions"),
+            TextEditorField::new("seeding", label: "Detailed hints on cell seeding (cell amount, medium volume, time until confluency, wellplate)")
+                ->setHelp("A good seeding recommendation is for a 12-well plate.")
+                ->hideOnIndex(),
+            IntegerField::new("countOnConfluence", label: "Cell count on confluence")
+                ->setHelp("Try to keep the well-plate format consistent between seeding and cell seeding conditions. If you give multiple recommendations, highlight the one used for this field.")
+                ->hideOnIndex(),
+            TextEditorField::new("lysing", label: "Recommended cell lysis")
                 ->hideOnIndex(),
         ];
     }

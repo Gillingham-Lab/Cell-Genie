@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ExperimentCrudController extends AbstractCrudController
@@ -29,6 +30,10 @@ class ExperimentCrudController extends AbstractCrudController
             AssociationField::new("cells"),
             AssociationField::new("proteinTargets"),
             AssociationField::new("chemicals"),
+            TextEditorField::new("lysing", "Lysis conditions")
+                ->hideOnIndex(),
+            TextEditorField::new("seeding", "Seeding conditions")
+                ->hideOnIndex(),
         ];
     }
 }

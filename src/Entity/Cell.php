@@ -145,7 +145,22 @@ class Cell
     /**
      * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="cells")
      */
-    private $experiments;
+    private ?Collection $experiments;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $lysing = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $seeding = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $countOnConfluence = null;
 
     public function __construct()
     {
@@ -268,6 +283,36 @@ class Cell
     public function setParent(?Cell $parent): self
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cell[]
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(Cell $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setCell($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(Cell $child): self
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getCell() === $this) {
+                $child->setCell(null);
+            }
+        }
 
         return $this;
     }
@@ -404,11 +449,7 @@ class Cell
 
     public function getFreezing(): ?string
     {
-        if ($this->freezing === null and $this->parent) {
-            return $this->parent->getFreezing();
-        }
-
-        return $this->freezing;
+        return $this->freezing ?? $this->parent?->getFreezing();
     }
 
     public function setFreezing(?string $freezing): self
@@ -420,11 +461,7 @@ class Cell
 
     public function getThawing(): ?string
     {
-        if ($this->thawing === null and $this->parent) {
-            return $this->parent->getThawing();
-        }
-
-        return $this->thawing;
+        return $this->thawing ?? $this->parent->getThawing();
     }
 
     public function setThawing(?string $thawing): self
@@ -436,11 +473,7 @@ class Cell
 
     public function getCultureConditions(): ?string
     {
-        if ($this->cultureConditions === null and $this->parent) {
-            return $this->parent->getCultureConditions();
-        }
-
-        return $this->cultureConditions;
+        return $this->cultureConditions ?? $this->parent?->getCultureConditions();
     }
 
     public function setCultureConditions(?string $cultureConditions): self
@@ -452,11 +485,7 @@ class Cell
 
     public function getSplitting(): ?string
     {
-        if ($this->splitting === null and $this->parent) {
-            return $this->parent->getSplitting();
-        }
-
-        return $this->splitting;
+        return $this->splitting ?? $this->parent?->getSplitting();
     }
 
     public function setSplitting(?string $splitting): self
@@ -468,11 +497,7 @@ class Cell
 
     public function getTrypsin(): ?string
     {
-        if ($this->trypsin === null and $this->parent) {
-            return $this->parent->getTrypsin();
-        }
-
-        return $this->trypsin;
+        return $this->trypsin ?? $this->parent?->getTrypsin();
     }
 
     public function setTrypsin(?string $trypsin): self
@@ -505,6 +530,42 @@ class Cell
         if ($this->experiments->removeElement($experiment)) {
             $experiment->removeCell($this);
         }
+
+        return $this;
+    }
+
+    public function getLysing(): ?string
+    {
+        return $this->lysing ?? $this->parent?->getLysing();
+    }
+
+    public function setLysing(?string $lysing): self
+    {
+        $this->lysing = $lysing;
+
+        return $this;
+    }
+
+    public function getSeeding(): ?string
+    {
+        return $this->seeding ?? $this->parent?->getSeeding();
+    }
+
+    public function setSeeding(?string $seeding): self
+    {
+        $this->seeding = $seeding;
+
+        return $this;
+    }
+
+    public function getCountOnConfluence(): ?int
+    {
+        return $this->countOnConfluence ?? $this->parent?->getCountOnConfluence();
+    }
+
+    public function setCountOnConfluence(?int $countOnConfluence): self
+    {
+        $this->countOnConfluence = $countOnConfluence;
 
         return $this;
     }

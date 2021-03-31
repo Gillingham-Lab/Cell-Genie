@@ -104,6 +104,30 @@
                     smilesDrawer.draw(tree, canvas, "light", false)
                 })
             })
+
+            canvas = $('[data-smiles-type="large');
+            options = {width: 200, height: 200,
+                bondThickness: 1.0,
+                bondLength: 10,
+                shortBondLength: 0.6,
+                bondSpacing: 0.25 * 10,
+                fontSizeLarge: 6,
+                fontSizeSmall: 4,
+                padding: 20.0,}
+
+            // Initialize the drawer to draw to canvas
+            smilesDrawer = new SmilesDrawer.Drawer(options);
+            // Alternatively, initialize the SVG drawer:
+            // let svgDrawer = new SmilesDrawer.SvgDrawer(options);
+
+            console.log(canvas);
+
+            canvas.each(function(index, canvas) {
+                console.log(canvas.dataset.smiles)
+                SmilesDrawer.parse(canvas.dataset.smiles, function(tree) {
+                    smilesDrawer.draw(tree, canvas, "light", false)
+                })
+            })
         </script>
     </body>
 </html>

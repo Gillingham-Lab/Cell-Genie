@@ -1,0 +1,29 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Cell Genie: Proteins{% endblock %}
+
+{% block body_main %}
+    <h1>Proteins</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Short Name</th>
+            <th scope="col">Long Name</th>
+            <th scope="col"># Experiments</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for protein in proteins %}
+            <tr>
+                <th class="align-middle">{{ protein.id }}</th>
+                <td class="align-middle">{{ protein.shortName }}</td>
+                <td class="align-middle">{{ protein.longName }}</td>
+                <td class="align-middle">{{ protein.experiments|length }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

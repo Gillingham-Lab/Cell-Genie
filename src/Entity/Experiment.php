@@ -19,19 +19,19 @@ class Experiment
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiments")
      * @ORM\JoinColumn(nullable=false)
      */
     #[Assert\NotNull]
-    private $owner;
+    private ?User $owner = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="experiments")
@@ -62,6 +62,16 @@ class Experiment
      * @var Collection|Cell[]
      */
     private Collection $cells;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $lysing = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $seeding = null;
 
     public function __construct()
     {
@@ -191,6 +201,30 @@ class Experiment
     public function removeCell(Cell $cell): self
     {
         $this->cells->removeElement($cell);
+
+        return $this;
+    }
+
+    public function getLysing(): ?string
+    {
+        return $this->lysing ?? $this->experimentType?->getLysing();
+    }
+
+    public function setLysing(?string $lysing): self
+    {
+        $this->lysing = $lysing;
+
+        return $this;
+    }
+
+    public function getSeeding(): ?string
+    {
+        return $this->seeding ?? $this->experimentType?->getSeeding();
+    }
+
+    public function setSeeding(?string $seeding): self
+    {
+        $this->seeding = $seeding;
 
         return $this;
     }

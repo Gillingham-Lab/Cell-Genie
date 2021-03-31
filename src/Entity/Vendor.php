@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\VendorRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -38,6 +40,16 @@ class Vendor
      * @ORM\Column(type="boolean")
      */
     private bool $hasDiscount = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Antibody::class, mappedBy="vendor")
+     */
+    private $antibodies;
+
+    public function __construct()
+    {
+        $this->antibodies = new ArrayCollection();
+    }
 
     #[Pure]
     public function __toString(): string
@@ -94,6 +106,36 @@ class Vendor
     public function setHasDiscount(bool $hasDiscount): self
     {
         $this->hasDiscount = $hasDiscount;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Antibody[]
+     */
+    public function getAntibodies(): Collection
+    {
+        return $this->antibodies;
+    }
+
+    public function addAntibody(Antibody $antibody): self
+    {
+        if (!$this->antibodies->contains($antibody)) {
+            $this->antibodies[] = $antibody;
+            $antibody->setVendor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAntibody(Antibody $antibody): self
+    {
+        if ($this->antibodies->removeElement($antibody)) {
+            // set the owning side to null (unless already changed)
+            if ($antibody->getVendor() === $this) {
+                $antibody->setVendor(null);
+            }
+        }
 
         return $this;
     }

@@ -25,4 +25,19 @@ class CompoundController extends AbstractController
             "chemicals" => $chemicals
         ]);
     }
+
+    #[Route("/compounds/view/{compoundId}", name: "app_compound_view")]
+    public function viewCompound($compoundId): Response
+    {
+        $chemical = $this->chemicalRepository->find($compoundId);
+
+        if (!$chemical) {
+            $this->addFlash("error", "Chemical {$compoundId} was not found.");
+            return $this->redirect("app_compounds", status: Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->render("compound_view.html.twig", [
+            "chemical" => $chemical,
+        ]);
+    }
 }

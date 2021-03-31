@@ -51,9 +51,15 @@ class Protein
      */
     private $experiments;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="proteinTarget")
+     */
+    private $antibodies;
+
     public function __construct()
     {
         $this->experiments = new ArrayCollection();
+        $this->antibodies = new ArrayCollection();
     }
 
     #[Pure]
@@ -125,6 +131,33 @@ class Protein
     {
         if ($this->experiments->removeElement($experiment)) {
             $experiment->removeProteinTarget($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Antibody[]
+     */
+    public function getAntibodies(): Collection
+    {
+        return $this->antibodies;
+    }
+
+    public function addAntibody(Antibody $antibody): self
+    {
+        if (!$this->antibodies->contains($antibody)) {
+            $this->antibodies[] = $antibody;
+            $antibody->addProteinTarget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAntibody(Antibody $antibody): self
+    {
+        if ($this->antibodies->removeElement($antibody)) {
+            $antibody->removeProteinTarget($this);
         }
 
         return $this;
