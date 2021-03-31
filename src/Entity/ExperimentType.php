@@ -62,10 +62,16 @@ class ExperimentType
      */
     private ?string $seeding = null;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="experimentType", cascade={"persist"})
+     */
+    private ?Collection $antibodyDilutions;
+
     public function __construct()
     {
         $this->experiments = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->antibodyDilutions = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -206,6 +212,36 @@ class ExperimentType
     public function setSeeding(?string $seeding): self
     {
         $this->seeding = $seeding;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AntibodyDilution[]
+     */
+    public function getAntibodyDilutions(): Collection
+    {
+        return $this->antibodyDilutions;
+    }
+
+    public function addAntibodyDilution(AntibodyDilution $antibodyDilution): self
+    {
+        if (!$this->antibodyDilutions->contains($antibodyDilution)) {
+            $this->antibodyDilutions[] = $antibodyDilution;
+            $antibodyDilution->setExperimentType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAntibodyDilution(AntibodyDilution $antibodyDilution): self
+    {
+        if ($this->antibodyDilutions->removeElement($antibodyDilution)) {
+            // set the owning side to null (unless already changed)
+            if ($antibodyDilution->getExperimentType() === $this) {
+                $antibodyDilution->setExperimentType(null);
+            }
+        }
 
         return $this;
     }

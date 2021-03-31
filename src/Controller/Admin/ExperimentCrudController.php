@@ -3,8 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Experiment;
+use App\Form\AntibodyDilutionType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -34,6 +36,10 @@ class ExperimentCrudController extends AbstractCrudController
                 ->hideOnIndex(),
             TextEditorField::new("seeding", "Seeding conditions")
                 ->hideOnIndex(),
+
+            CollectionField::new("antibodyDilutions", "Antibody dilutions")
+                ->setEntryType(AntibodyDilutionType::class)
+                ->setEntryIsComplex(true),
         ];
     }
 }

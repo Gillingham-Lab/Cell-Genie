@@ -38,7 +38,7 @@ class Experiment
      * @ORM\JoinColumn(nullable=false)
      */
     #[Assert\NotNull]
-    private ExperimentType $experimentType;
+    private ?ExperimentType $experimentType = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=CultureFlask::class)
@@ -73,11 +73,17 @@ class Experiment
      */
     private ?string $seeding = null;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="experiment", cascade={"persist"})
+     */
+    private $antibodyDilutions;
+
     public function __construct()
     {
         $this->proteinTargets = new ArrayCollection();
         $this->chemicals = new ArrayCollection();
         $this->cells = new ArrayCollection();
+        $this->antibodyDilution = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -225,6 +231,36 @@ class Experiment
     public function setSeeding(?string $seeding): self
     {
         $this->seeding = $seeding;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AntibodyDilution[]
+     */
+    public function getAntibodyDilutions(): Collection
+    {
+        return $this->antibodyDilutions;
+    }
+
+    public function addAntibodyDilution(AntibodyDilution $antibodyDilution): self
+    {
+        if (!$this->antibodyDilutions->contains($antibodyDilution)) {
+            $this->antibodyDilutions[] = $antibodyDilution;
+            $antibodyDilution->setExperiment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAntibodyDilution(AntibodyDilution $antibodyDilution): self
+    {
+        if ($this->antibodyDilutions->removeElement($antibodyDilution)) {
+            // set the owning side to null (unless already changed)
+            if ($antibodyDilution->getExperiment() === $this) {
+                $antibodyDilution->setExperiment(null);
+            }
+        }
 
         return $this;
     }

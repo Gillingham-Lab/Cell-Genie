@@ -21,6 +21,8 @@ class AntibodyCrudController extends AbstractCrudController
         return [
             FormField::addPanel("General properties"),
             IdField::new("id")->hideOnForm(),
+            TextField::new("number", label: "Number")
+                ->setHelp("A short number used to identify the antibody in our system. Different vendor should use different number!"),
             TextField::new("shortName")
                 ->setHelp("A combination of protein target and antibody source or detection would be helpful, such as MGMT (goat), or Goat (VIS 700)"),
             TextField::new("longName"),

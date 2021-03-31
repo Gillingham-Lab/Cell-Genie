@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\AntibodyDilution;
 use App\Entity\ExperimentType;
+use App\Form\AntibodyDilutionType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -17,7 +20,6 @@ class ExperimentTypeCrudController extends AbstractCrudController
     {
         return ExperimentType::class;
     }
-
 
     public function configureFields(string $pageName): iterable
     {

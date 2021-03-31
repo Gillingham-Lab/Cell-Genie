@@ -68,16 +68,27 @@ class Antibody
      */
     private ?String $detection = null;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="antibody", orphanRemoval=true)
+     */
+    private Collection $antibodyDilutions;
+
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private ?string $number = null;
+
     public function __construct()
     {
         $this->proteinTarget = new ArrayCollection();
         $this->secondaryAntibody = new ArrayCollection();
         $this->antibodies = new ArrayCollection();
+        $this->antibodyDilutions = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return $this->getShortName() ?? "unknown";
+        return ($this->number ? $this->number . " | " : "") . ($this->getShortName() ?? "unknown");
     }
 
     public function getId(): ?int
@@ -216,6 +227,48 @@ class Antibody
     public function setDetection(?string $detection): self
     {
         $this->detection = $detection;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AntibodyDilution[]
+     */
+    public function getAntibodyDilutions(): Collection
+    {
+        return $this->antibodyDilutions;
+    }
+
+    public function addAntibodyDilution(AntibodyDilution $antibodyDilution): self
+    {
+        if (!$this->antibodyDilutions->contains($antibodyDilution)) {
+            $this->antibodyDilutions[] = $antibodyDilution;
+            $antibodyDilution->setAntibody($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAntibodyDilution(AntibodyDilution $antibodyDilution): self
+    {
+        if ($this->antibodyDilutions->removeElement($antibodyDilution)) {
+            // set the owning side to null (unless already changed)
+            if ($antibodyDilution->getAntibody() === $this) {
+                $antibodyDilution->setAntibody(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNumber(): ?string
+    {
+        return $this->number;
+    }
+
+    public function setNumber(?string $number): self
+    {
+        $this->number = $number;
 
         return $this;
     }
