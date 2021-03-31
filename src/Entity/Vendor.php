@@ -44,7 +44,17 @@ class Vendor
     /**
      * @ORM\OneToMany(targetEntity=Antibody::class, mappedBy="vendor")
      */
-    private $antibodies;
+    private Collection $antibodies;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $comment = null;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default"=false})
+     */
+    private bool $isPreferred = false;
 
     public function __construct()
     {
@@ -136,6 +146,30 @@ class Vendor
                 $antibody->setVendor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getIsPreferred(): ?bool
+    {
+        return $this->isPreferred;
+    }
+
+    public function setIsPreferred(bool $isPreferred): self
+    {
+        $this->isPreferred = $isPreferred;
 
         return $this;
     }

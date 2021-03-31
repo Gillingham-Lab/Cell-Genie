@@ -1,0 +1,18 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Cell Genie{% endblock %}
+
+{% block body_main %}
+    {% if systemMessages > 0 %}
+        {% for message in systemMessages.messages %}
+            <div>
+                <h2>{{ message.title }}</h2>
+                <p>{{ message.date|date("d. F Y") }} by {{ message.author }}</p>
+
+                <div>
+                    {{ message.body|raw }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

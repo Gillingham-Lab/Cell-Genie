@@ -11,6 +11,7 @@ use App\Entity\Chemical;
 use App\Entity\CultureFlask;
 use App\Entity\Experiment;
 use App\Entity\ExperimentType;
+use App\Entity\Message;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Protein;
@@ -69,7 +70,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Culture flasks", 'fas', CultureFlask::class),
 
             MenuItem::section("Users"),
-            MenuItem::linkToCrud("Users", 'fa', User::class)->setPermission("ROLE_ADMIN"),
+            MenuItem::linkToCrud("Messages", 'fas fa-envelope', Message::class),
+            MenuItem::linkToCrud("Users", 'fas fa-user', User::class)->setPermission("ROLE_ADMIN"),
 
             #MenuItem::linkToExitImpersonation('Stop impersonation', 'fa fa-exit'),
         ];

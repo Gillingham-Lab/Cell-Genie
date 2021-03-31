@@ -34,6 +34,7 @@ class CellCrudController extends AbstractCrudController
             FormField::addPanel("Cell properties"),
             IdField::new('id')
                 ->hideOnForm(),
+            TextField::new('cellNumber'),
             TextField::new('name'),
             TextField::new('age'),
             AssociationField::new("parent"),
@@ -51,7 +52,7 @@ class CellCrudController extends AbstractCrudController
             FormField::addPanel("Origins"),
             TextareaField::new("origin"),
             AssociationField::new("vendor", "Vendor"),
-            TextField::new("vendorId", "Vendor PN")
+            TextField::new("vendorPN", "Vendor PN")
                 ->setHelp("Product number of the vendor."),
             DateField::new("acquiredOn")
                 ->setFormat("MEDIUM"),

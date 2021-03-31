@@ -8,7 +8,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col">Nr</th>
                 <th scope="col">Name</th>
                 <th scope="col">Organism</th>
                 <th scope="col">Tissue</th>
@@ -21,7 +21,7 @@
         <tbody>
         {% for cell in cells %}
             <tr>
-                <th>{{ cell.id }}</th>
+                <th>{{ cell.cellNumber }}</th>
                 <td>{{ cell.name }}</td>
                 <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
                 <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>

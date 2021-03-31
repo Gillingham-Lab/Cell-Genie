@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CellRepository::class)
@@ -84,6 +85,7 @@ class Cell
 
     /**
      * @ORM\ManyToOne(targetEntity=Vendor::class)
+     * @ORM\OrderBy({"isPreferred" = "DESC"})
      */
     private ?Vendor $vendor = null;
 
@@ -162,6 +164,12 @@ class Cell
      */
     private ?int $countOnConfluence = null;
 
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    #[Assert\Length(min: 1, max: 10)]
+    private ?string $cellNumber = "???";
+
     public function __construct()
     {
         $this->cellAliquotes = new ArrayCollection();
@@ -171,7 +179,7 @@ class Cell
 
     public function __toString()
     {
-        return $this->getName();
+        return "{$this->cellNumber} | {$this->name}";
     }
 
     public function getId(): ?int
@@ -433,11 +441,7 @@ class Cell
 
     public function getMedium(): ?string
     {
-        if ($this->medium === null and $this->parent) {
-            return $this->parent->getMedium();
-        }
-
-        return $this->medium;
+        return $this->medium ?? $this->parent?->getMedium();
     }
 
     public function setMedium(?string $medium): self
@@ -461,7 +465,7 @@ class Cell
 
     public function getThawing(): ?string
     {
-        return $this->thawing ?? $this->parent->getThawing();
+        return $this->thawing ?? $this->parent?->getThawing();
     }
 
     public function setThawing(?string $thawing): self
@@ -566,6 +570,18 @@ class Cell
     public function setCountOnConfluence(?int $countOnConfluence): self
     {
         $this->countOnConfluence = $countOnConfluence;
+
+        return $this;
+    }
+
+    public function getCellNumber(): string
+    {
+        return $this->cellNumber ?? "???";
+    }
+
+    public function setCellNumber(string $cellNumber): self
+    {
+        $this->cellNumber = $cellNumber;
 
         return $this;
     }

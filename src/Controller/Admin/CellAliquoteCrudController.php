@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 use App\Entity\CellAliquote;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -28,8 +29,7 @@ class CellAliquoteCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             AssociationField::new("cell"),
-            DateTimeField::new('aliquoted_on')
-                ->setFormat("MEDIUM"),
+            DateField::new('aliquoted_on'),
             AssociationField::new('aliquoted_by'),
             TextField::new("cryoMedium"),
             AssociationField::new("box"),

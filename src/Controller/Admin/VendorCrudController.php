@@ -7,6 +7,7 @@ use App\Entity\Vendor;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
@@ -25,8 +26,10 @@ class VendorCrudController extends AbstractCrudController
                 ->hideOnForm(),
             TextField::new('name'),
             UrlField::new('catalogUrl'),
+            BooleanField::new("isPreferred"),
             BooleanField::new("hasDiscount"),
             BooleanField::new("hasFreeShipping"),
+            TextEditorField::new("comment"),
         ];
     }
 
