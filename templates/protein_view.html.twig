@@ -1,0 +1,138 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block title %}Cell Genie: Protein Target{% endblock %}
+
+{% block body_main %}
+    <h1 class="row">{{ protein.shortName }}</h1>
+
+    <dl class="row mt-3 col-sm-3">
+        {{ macros.definition_row("ID", protein.id) }}
+        {{ macros.definition_row("Short name", protein.shortName) }}
+        {{ macros.definition_row("Name", protein.longName) }}
+        {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "Unknown", protein.proteinAtlasUri ?? null) }}
+        {# Experiment types #}
+        {% if experimentTypes|length > 0 %}
+            <dt class="col-sm-4">Experiment types</dt>
+            <dd class="col-sm-8">
+                {% for experimentType in experimentTypes %}
+                    {% set childUrl = url("app_cell_view", {"cellId": experimentType.id}) %}
+
+                    <a class='badge rounded-pill bg-primary text-light'>{{ experimentType.name }}</a>
+                {% endfor %}
+            </dd>
+        {% else %}
+            {{ macros.definition_row("Experiment types", "none") }}
+        {% endif %}
+    </dl>
+
+        {# <canvas data-smiles-type="large" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}" class="border-light border"></canvas>
+
+        <dl class="row ml-3 col-sm-3">
+            {{ macros.definition_row("ID", chemical.id) }}
+            {{ macros.definition_row("Short name", chemical.shortName) }}
+            {{ macros.definition_row("Name", chemical.longName) }}
+
+            {% if chemical.labjournal %}
+                {{ macros.definition_row("Labjournal", chemical.labjournal, chemical.labjournal) }}
+            {% else %}
+                {{ macros.definition_row("Labjournal", "no entry") }}
+            {% endif %}
+
+            {% if chemical.vendor %}
+                {{ macros.definition_row("Vendor", chemical.vendor.name, chemical.vendor.catalogUrl) }}
+                {{ macros.definition_row("Vendor PN", chemical.vendorPN) }}
+            {% else %}
+            {% endif %}
+        </dl> #}
+
+    <div class="row col-sm-12 mt-5">
+        <div class="full-width flex-fill">
+            <nav>
+                <div class="nav nav-tabs nav-fill" id="box-tab-navigation" role="tablist">
+                    <a class="nav-item nav-link active" id="protein-antibodies-origin" data-toggle="tab" href="#protein-info-antibodies-content" role="tab" aria-selected="true">
+                        Antibodies
+                    </a>
+                    <a class="nav-item nav-link" id="protein-experiments-culturing" data-toggle="tab" href="#protein-info-experiments-content" role="tab" aria-selected="false">
+                        Experiments
+                    </a>
+                </div>
+            </nav>
+
+            <div class="tab-content border-light border border-top-0 p-5" id="cell-info-content">
+                <div class="tab-pane fade show active" id="protein-info-antibodies-content" role="tabpanel" aria-labelledby="cell-info-origin">
+                    <div class="row">
+                        {% for antibody in protein.antibodies %}
+                            <div class="col-sm-6 col-md-4">
+                                <h4>{{ antibody }}</h4>
+                                {% if antibody.vendor %}
+                                    {% if antibody.vendor.catalogUrl %}
+                                        <p>{{ antibody.longName }}, from
+                                            <a href="{{ antibody.vendor.catalogUrl }}">
+                                                {{ antibody.vendor }} <span class="fas fa-external-link-alt"></span>
+                                            </a>
+                                            ( {{ antibody.vendorPN ?? "?" }})
+                                        </p>
+                                    {% else %}
+                                        <p>{{ antibody.longName }}, from {{ antibody.vendor }} ( {{ antibody.vendorPN ?? "?" }})</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p>{{ antibody.longName }}</p>
+                                {% endif %}
+
+                                {# Shows experiment types that have experiments with registered dilutions #}
+                                {% if experimentTypesPerAntibody[antibody.id] %}
+                                    <h5>Experiment types</h5>
+                                    {% for experimentType in experimentTypesPerAntibody[antibody.id] %}
+                                        <span class="badge rounded-pill bg-primary text-light"><a>{{ experimentType.name }}</a></span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {# <div class="col-sm-12 col-md-6">
+                            <h4>Origin</h4>
+                            <p>{{ cell.origin ?? "unknown" }}</p>
+
+                            <h4>Acquisition</h4>
+                            <dl class="row">
+                                {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
+                                {{ macros.definition_row("Vendor PN", cell.vendorId ?? "unknown") }}
+                                {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
+                                {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
+                                {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. d. Y") : "unknown") }}
+                            </dl>
+
+                            {% if cell.originComment %}
+                                <h4>Comment</h4>
+                                <p>{{ cell.originComment }}</p>
+                            {% endif %}
+                        </div> #}
+                    </div>
+                </div>
+
+                <div class="tab-pane fade show active" id="protein-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-origin">
+                    <div class="row">
+                        {# <div class="col-sm-12 col-md-6">
+                            <h4>Origin</h4>
+                            <p>{{ cell.origin ?? "unknown" }}</p>
+
+                            <h4>Acquisition</h4>
+                            <dl class="row">
+                                {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
+                                {{ macros.definition_row("Vendor PN", cell.vendorId ?? "unknown") }}
+                                {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
+                                {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
+                                {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. d. Y") : "unknown") }}
+                            </dl>
+
+                            {% if cell.originComment %}
+                                <h4>Comment</h4>
+                                <p>{{ cell.originComment }}</p>
+                            {% endif %}
+                        </div> #}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

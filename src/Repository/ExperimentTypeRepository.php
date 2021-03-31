@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Antibody;
 use App\Entity\Cell;
 use App\Entity\ExperimentType;
+use App\Entity\Protein;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,6 +32,33 @@ class ExperimentTypeRepository extends ServiceEntityRepository
             ->leftJoin("e.cells", "ce", conditionType: Join::ON)
             ->andWhere("ce = :cell")
             ->setParameter("cell", $cell)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByProtein(Protein $protein)
+    {
+        return $this->createQueryBuilder("et")
+            ->distinct()
+            ->leftJoin("et.experiments", "e", conditionType: Join::ON)
+            ->leftJoin("e.proteinTargets", "p", conditionType: Join::ON)
+            ->andWhere("p = :protein")
+            ->setParameter("protein", $protein)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByAntibody(Antibody $antibody)
+    {
+        return $this->createQueryBuilder("et")
+            ->distinct()
+            ->leftJoin("et.experiments", "e", conditionType: Join::ON)
+            ->leftJoin("e.antibodyDilutions", "dil", conditionType: Join::ON)
+            ->leftJoin("dil.antibody", "ab", conditionType: Join::ON)
+            ->andWhere("ab = :antibody")
+            ->setParameter("antibody", $antibody)
             ->getQuery()
             ->getResult()
         ;
