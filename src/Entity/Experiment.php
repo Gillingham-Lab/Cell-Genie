@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ExperimentRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ExperimentRepository::class)
+ * @ORM\HasLifecycleCallbacks
  */
 class Experiment
 {
@@ -76,7 +79,17 @@ class Experiment
     /**
      * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="experiment", cascade={"persist"})
      */
-    private $antibodyDilutions;
+    private Collection $antibodyDilutions;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $createdAt = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $modifiedAt = null;
 
     public function __construct()
     {
@@ -84,6 +97,19 @@ class Experiment
         $this->chemicals = new ArrayCollection();
         $this->cells = new ArrayCollection();
         $this->antibodyDilution = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps()
+    {
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt(new DateTime("now"));
+        }
+
+        $this->setModifiedAt(new DateTime("now"));
     }
 
     public function getId(): ?int
@@ -261,6 +287,30 @@ class Experiment
                 $antibodyDilution->setExperiment(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getModifiedAt(): ?DateTimeInterface
+    {
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(?DateTimeInterface $modifiedAt): self
+    {
+        $this->modifiedAt = $modifiedAt;
 
         return $this;
     }
