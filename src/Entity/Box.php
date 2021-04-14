@@ -37,6 +37,7 @@ class Box
 
     /**
      * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes", fetch="EAGER")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Rack $rack = null;
 

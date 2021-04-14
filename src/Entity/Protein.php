@@ -48,11 +48,13 @@ class Protein
 
     /**
      * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="proteinTargets")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $experiments;
 
     /**
      * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="proteinTarget")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $antibodies;
 

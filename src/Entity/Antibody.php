@@ -37,6 +37,7 @@ class Antibody
 
     /**
      * @ORM\ManyToOne(targetEntity=Vendor::class, inversedBy="antibodies")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Vendor $vendor = null;
 
@@ -52,13 +53,15 @@ class Antibody
     private Collection $proteinTarget;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Antibody::class, inversedBy="yes")
+     * @ORM\ManyToMany(targetEntity=Antibody::class, inversedBy="antibodies")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @var Collection|self[]
      */
     private Collection $secondaryAntibody;
 
     /**
      * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="secondaryAntibody")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @var Collection|self[]
      */
     private Collection $antibodies;

@@ -55,26 +55,30 @@ class Cell
 
     /**
      * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="children", fetch="EAGER")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Cell $parent = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Morphology::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Morphology $morphology = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Organism::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Organism $organism = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Tissue::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Tissue $tissue = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="cell", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="cell", orphanRemoval=true, cascade={"persist", "remove"})
      */
     private $cellAliquotes;
 
@@ -85,6 +89,7 @@ class Cell
 
     /**
      * @ORM\ManyToOne(targetEntity=Vendor::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @ORM\OrderBy({"isPreferred" = "DESC"})
      */
     private ?Vendor $vendor = null;
@@ -106,6 +111,7 @@ class Cell
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?User $boughtBy = null;
 

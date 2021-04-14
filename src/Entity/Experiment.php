@@ -31,37 +31,41 @@ class Experiment
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiments")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     #[Assert\NotNull]
     private ?User $owner = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="experiments")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     #[Assert\NotNull]
     private ?ExperimentType $experimentType = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=CultureFlask::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?CultureFlask $wellplate = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Protein::class, inversedBy="experiments")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @var Collection|Protein[]
      */
     private Collection $proteinTargets;
 
     /**
      * @ORM\ManyToMany(targetEntity=Chemical::class, inversedBy="experiments")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @var Collection|Chemical[]
      */
     private Collection $chemicals;
 
     /**
      * @ORM\ManyToMany(targetEntity=Cell::class, inversedBy="experiments")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @var Collection|Cell[]
      */
     private Collection $cells;

@@ -13,6 +13,7 @@
                 <th scope="col">Organism</th>
                 <th scope="col">Tissue</th>
                 <th scope="col">Morphology</th>
+                <th scope="col">Aliquotes (Unique)</th>
                 <th scope="col">Cancer</th>
                 <th scope="col">Engineered</th>
                 <th scope="col">Options</th>
@@ -26,6 +27,15 @@
                 <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
                 <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
                 <td>{{ cell.morphology ? cell.morphology.name : "undefined" }}</td>
+                <td>{% if cell.cellAliquotes|length > 0 %}
+                        {% set aliquoteCount = 0 %}
+                        {% for aliquote in cell.cellAliquotes %}
+                            {% set aliquoteCount = aliquoteCount + aliquote.vials %}
+                        {% endfor %}
+                        {{ aliquoteCount }} ({{ cell.cellAliquotes|length }})
+                    {% else %}
+                        0
+                    {% endif %}</td>
                 <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
                 <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
                 <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a></td>

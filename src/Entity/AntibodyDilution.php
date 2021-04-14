@@ -19,7 +19,7 @@ class AntibodyDilution
 
     /**
      * @ORM\ManyToOne(targetEntity=Antibody::class, inversedBy="antibodyDilutions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private ?Antibody $antibody = null;
 
@@ -30,11 +30,13 @@ class AntibodyDilution
 
     /**
      * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="antibodyDilutions")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
     private $experimentType;
 
     /**
      * @ORM\ManyToOne(targetEntity=Experiment::class, inversedBy="antibodyDilutions")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
     private $experiment;
 

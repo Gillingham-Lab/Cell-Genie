@@ -57,6 +57,7 @@ class CultureFlask
 
     /**
      * @ORM\ManyToOne(targetEntity=Vendor::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Vendor $vendor = null;
 

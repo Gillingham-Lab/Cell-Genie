@@ -33,7 +33,7 @@ class CellAliquote
 
     /**
      * @ORM\ManyToOne(targetEntity=Box::class, inversedBy="cellAliquotes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private Box $box;
 
