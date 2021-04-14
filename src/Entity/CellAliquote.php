@@ -28,6 +28,7 @@ class CellAliquote
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?User $aliquoted_by;
 
@@ -74,7 +75,7 @@ class CellAliquote
 
     /**
      * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="cellAliquotes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $cell;
 

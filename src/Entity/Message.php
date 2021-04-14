@@ -41,7 +41,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     #[Assert\NotNull]
     private ?User $author = null;

@@ -33,6 +33,7 @@ class ExperimentType
 
     /**
      * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="children")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?self $parent = null;
 
@@ -49,6 +50,7 @@ class ExperimentType
 
     /**
      * @ORM\ManyToOne(targetEntity=CultureFlask::class)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?CultureFlask $wellplate = null;
 
