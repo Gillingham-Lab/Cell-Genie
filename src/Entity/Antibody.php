@@ -36,7 +36,7 @@ class Antibody
     private string $longName = "";
 
     /**
-     * @ORM\ManyToOne(targetEntity=Vendor::class, inversedBy="antibodies")
+     * @ORM\ManyToOne(targetEntity=Vendor::class, inversedBy="antibodies", fetch="EAGER")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?Vendor $vendor = null;

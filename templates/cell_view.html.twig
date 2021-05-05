@@ -95,7 +95,7 @@
 
                 <div class="row">
                 <dl class="row col-sm-6">
-                    {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("m. d. Y") : "unknown") }}
+                    {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("d. F Y") : "unknown") }}
                     {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
                     {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
                     {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}

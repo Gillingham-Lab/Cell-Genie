@@ -63,3 +63,16 @@
     {% endfor %}
     </svg>
 {% endmacro %}
+
+{% macro vendor_url(vendor, pn) %}
+    {% if pn %}
+        {% if "{pn}" in vendor.catalogUrl %}
+            {% set vendor_url = vendor.catalogUrl|replace({"{pn}": pn}) %}
+        {% else %}
+            {% set vendor_url = vendor.catalogUrl ~ pn %}
+        {% endif %}
+    {% else %}
+        {% set vendor_url = vendor.catalogUrl|replace({"{pn}": ""}) %}
+    {% endif %}
+    <a class="fa fa-external-link" href="{{ vendor_url }}">{{ vendor }}{% if pn %} ({{ pn }}){% endif %}</a>
+{% endmacro %}

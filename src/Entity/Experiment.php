@@ -37,7 +37,7 @@ class Experiment
     private ?User $owner = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="experiments")
+     * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="experiments", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     #[Assert\NotNull]

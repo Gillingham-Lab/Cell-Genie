@@ -25,7 +25,12 @@ class VendorCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             TextField::new('name'),
-            UrlField::new('catalogUrl'),
+            UrlField::new('catalogUrl')
+                ->setHelp(<<<TXT
+                Use {pn} to annotate where the product number should be inserted. If not given, it will 
+                always be attached to the end. If there is no easy catalog access via product number, 
+                add # to the end of the url.    
+                TXT),
             BooleanField::new("isPreferred"),
             BooleanField::new("hasDiscount"),
             BooleanField::new("hasFreeShipping"),
