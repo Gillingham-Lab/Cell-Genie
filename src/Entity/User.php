@@ -13,6 +13,7 @@ use Symfony\Component\Uid\Ulid;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table(name="user_accounts")
  */
 class User implements UserInterface
 {
