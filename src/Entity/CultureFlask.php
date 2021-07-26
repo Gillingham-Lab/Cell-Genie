@@ -62,7 +62,7 @@ class CultureFlask
     private ?Vendor $vendor = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private ?string $vendorId = null;
 
