@@ -81,6 +81,21 @@ class Antibody
      */
     private ?string $number = null;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default"=false})
+     */
+    private bool $validatedInternally = false;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default"=false})
+     */
+    private bool $validatedExternally = false;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $externalReference = null;
+
     public function __construct()
     {
         $this->proteinTarget = new ArrayCollection();
@@ -272,6 +287,42 @@ class Antibody
     public function setNumber(?string $number): self
     {
         $this->number = $number;
+
+        return $this;
+    }
+
+    public function getValidatedInternally(): ?bool
+    {
+        return $this->validatedInternally;
+    }
+
+    public function setValidatedInternally(bool $validatedInternally): self
+    {
+        $this->validatedInternally = $validatedInternally;
+
+        return $this;
+    }
+
+    public function getValidatedExternally(): ?bool
+    {
+        return $this->validatedExternally;
+    }
+
+    public function setValidatedExternally(bool $validatedExternally): self
+    {
+        $this->validatedExternally = $validatedExternally;
+
+        return $this;
+    }
+
+    public function getExternalReference(): ?string
+    {
+        return $this->externalReference;
+    }
+
+    public function setExternalReference(?string $externalReference): self
+    {
+        $this->externalReference = $externalReference;
 
         return $this;
     }

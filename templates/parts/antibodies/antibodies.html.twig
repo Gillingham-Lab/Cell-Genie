@@ -1,5 +1,5 @@
 {% extends 'homepage.html.twig' %}
-{% from 'macros.html.twig' import vendor_url %}
+{% from 'macros.html.twig' import vendor_url, validation_status %}
 
 {% block title %}Cell Genie: Antibodies{% endblock %}
 
@@ -20,8 +20,8 @@
         <tbody>
             {% for primaryAntibody in primaryAntibodies %}
                 <tr>
-                    <th>{{ primaryAntibody.number }}</th>
-                    <td>{{ primaryAntibody.shortName }}; <em>{{ primaryAntibody.longName }}</em></td>
+                    <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
+                    <td>{{ primaryAntibody.shortName }} - <em>{{ primaryAntibody.longName }}</em></td>
                     <td>{% for target in primaryAntibody.proteinTarget %}
                             <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": target.id}) }}'>{{ target }}</a>
                         {% endfor %}</td>
@@ -49,7 +49,7 @@
         {% for entry in secondaryAntibodies %}
             {% set secondaryAntibody = entry[0] %}
             <tr>
-                <th>{{ secondaryAntibody.number }}</th>
+                <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
                 <td>{{ secondaryAntibody.shortName }} - <em>{{ secondaryAntibody.longName }}</em></td>
                 <td>{{ entry.targets }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
