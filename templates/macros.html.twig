@@ -31,12 +31,12 @@
             {% if n<contents|length %}
                 {% if currentAliquote %}
                     {% if currentAliquote.id == contents[n].id %}
-                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: skyblue; "/>
+                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="black" fill="skyblue" stroke-width="1px" />
                     {% else %}
-                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: none; "/>
+                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
                     {% endif %}
                 {% else %}
-                    <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: none; "/>
+                    <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
                 {% endif %}
 
                 {% if currentCell.id == contents[n].cell.id %}
@@ -45,7 +45,7 @@
                         data-toggle="tooltip" data-placement="bottom"
                         title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}"
                     >
-                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" style="fill: {{ contents[n].vialColor }}"></circle>
+                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" fill="{{ contents[n].vialColor }}" stroke="black" stroke-width="1px"></circle>
                     </a>
                 {% else %}
                     <a
@@ -53,11 +53,11 @@
                         data-toggle="tooltip" data-placement="bottom"
                         title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}"
                     >
-                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" style="fill: gray"></circle>
+                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" fill="gray" stroke="black" stroke-width="1px"></circle>
                     </a>
                 {% endif %}
             {% else %}
-                <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" style="stroke: gray; fill: none; "/>
+                <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
             {% endif %}
         {% endfor %}
     {% endfor %}
