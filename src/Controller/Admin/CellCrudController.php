@@ -50,14 +50,20 @@ class CellCrudController extends AbstractCrudController
             BooleanField::new("isEngineered"),
 
             FormField::addPanel("Origins"),
-            TextareaField::new("origin"),
-            AssociationField::new("vendor", "Vendor"),
+            TextareaField::new("origin")
+                ->hideOnIndex(),
+            AssociationField::new("vendor", "Vendor")
+                ->hideOnIndex(),
             TextField::new("vendorPN", "Vendor PN")
+                ->hideOnIndex()
                 ->setHelp("Product number of the vendor."),
             DateField::new("acquiredOn")
+                ->hideOnIndex()
                 ->setFormat("MEDIUM"),
-            NumberField::new("price"),
-            AssociationField::new("boughtBy"),
+            NumberField::new("price")
+                ->hideOnIndex(),
+            AssociationField::new("boughtBy")
+                ->hideOnIndex(),
 
             FormField::addPanel("Call management conditions"),
             TextEditorField::new("medium", label: "Recommended cell medium")
