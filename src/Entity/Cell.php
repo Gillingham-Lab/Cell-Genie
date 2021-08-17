@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Trait\VendorTrait;
 use App\Repository\CellRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Cell
 {
+    use VendorTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -88,21 +92,9 @@ class Cell
     private ?string $origin = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Vendor::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @ORM\OrderBy({"isPreferred" = "DESC"})
-     */
-    private ?Vendor $vendor = null;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $vendorPN = null;
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?\DateTimeInterface $acquiredOn = null;
+    private ?DateTimeInterface $acquiredOn = null;
 
     /**
      * @ORM\Column(type="decimal", precision=7, scale=2, nullable=true)
@@ -302,7 +294,7 @@ class Cell
     }
 
     /**
-     * @return Collection|Cell[]
+     * @return Collection<int, Cell>
      */
     public function getChildren(): Collection
     {
@@ -332,7 +324,7 @@ class Cell
     }
 
     /**
-     * @return Collection|CellAliquote[]
+     * @return Collection<int, CellAliquote>
      */
     public function getCellAliquotes(): Collection
     {
@@ -373,36 +365,12 @@ class Cell
         return $this;
     }
 
-    public function getVendor(): ?Vendor
-    {
-        return $this->vendor;
-    }
-
-    public function setVendor(?Vendor $vendor): self
-    {
-        $this->vendor = $vendor;
-
-        return $this;
-    }
-
-    public function getVendorPn(): ?string
-    {
-        return $this->vendorPN;
-    }
-
-    public function setVendorId(?string $vendorPN): self
-    {
-        $this->vendorPN = $vendorPN;
-
-        return $this;
-    }
-
-    public function getAcquiredOn(): ?\DateTimeInterface
+    public function getAcquiredOn(): ?DateTimeInterface
     {
         return $this->acquiredOn;
     }
 
-    public function setAcquiredOn(?\DateTimeInterface $acquiredOn): self
+    public function setAcquiredOn(?DateTimeInterface $acquiredOn): self
     {
         $this->acquiredOn = $acquiredOn;
 
@@ -518,7 +486,7 @@ class Cell
     }
 
     /**
-     * @return Collection|Experiment[]
+     * @return Collection<int, Experiment>
      */
     public function getExperiments(): Collection
     {

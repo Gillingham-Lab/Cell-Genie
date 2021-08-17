@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Trait\VendorTrait;
 use App\Repository\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Antibody
 {
+    use VendorTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -34,17 +37,6 @@ class Antibody
     #[Assert\NotBlank]
     #[Assert\Length(min: 5, max: 255)]
     private string $longName = "";
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Vendor::class, inversedBy="antibodies", fetch="EAGER")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
-    private ?Vendor $vendor = null;
-
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private ?string $vendorPN = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Protein::class, inversedBy="antibodies")
@@ -138,32 +130,8 @@ class Antibody
         return $this;
     }
 
-    public function getVendor(): ?Vendor
-    {
-        return $this->vendor;
-    }
-
-    public function setVendor(?Vendor $vendor): self
-    {
-        $this->vendor = $vendor;
-
-        return $this;
-    }
-
-    public function getVendorPN(): ?string
-    {
-        return $this->vendorPN;
-    }
-
-    public function setVendorPN(?string $vendorPN): self
-    {
-        $this->vendorPN = $vendorPN;
-
-        return $this;
-    }
-
     /**
-     * @return Collection|Protein[]
+     * @return Collection<int, Protein>
      */
     public function getProteinTarget(): Collection
     {
@@ -187,7 +155,7 @@ class Antibody
     }
 
     /**
-     * @return Collection|self[]
+     * @return Collection<int, self>
      */
     public function getSecondaryAntibody(): Collection
     {
@@ -211,7 +179,7 @@ class Antibody
     }
 
     /**
-     * @return Collection|self[]
+     * @return Collection<int, self>
      */
     public function getAntibodies(): Collection
     {
@@ -250,7 +218,7 @@ class Antibody
     }
 
     /**
-     * @return Collection|AntibodyDilution[]
+     * @return Collection<int, AntibodyDilution>
      */
     public function getAntibodyDilutions(): Collection
     {

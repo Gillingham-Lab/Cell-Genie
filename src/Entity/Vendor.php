@@ -42,11 +42,6 @@ class Vendor
     private bool $hasDiscount = false;
 
     /**
-     * @ORM\OneToMany(targetEntity=Antibody::class, mappedBy="vendor")
-     */
-    private Collection $antibodies;
-
-    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private ?string $comment = null;
@@ -116,36 +111,6 @@ class Vendor
     public function setHasDiscount(bool $hasDiscount): self
     {
         $this->hasDiscount = $hasDiscount;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Antibody[]
-     */
-    public function getAntibodies(): Collection
-    {
-        return $this->antibodies;
-    }
-
-    public function addAntibody(Antibody $antibody): self
-    {
-        if (!$this->antibodies->contains($antibody)) {
-            $this->antibodies[] = $antibody;
-            $antibody->setVendor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAntibody(Antibody $antibody): self
-    {
-        if ($this->antibodies->removeElement($antibody)) {
-            // set the owning side to null (unless already changed)
-            if ($antibody->getVendor() === $this) {
-                $antibody->setVendor(null);
-            }
-        }
 
         return $this;
     }
