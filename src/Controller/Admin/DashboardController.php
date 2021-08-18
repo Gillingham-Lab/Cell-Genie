@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Antibody;
+use App\Entity\AntibodyHost;
 use App\Entity\Box;
 use App\Entity\Cell;
 use App\Entity\CellAliquote;
@@ -61,6 +62,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Experiments", 'fas', Experiment::class),
             MenuItem::linkToCrud("Protein targets", "fas fa-bullseye", Protein::class),
             MenuItem::linkToCrud("Antibodies", "fas", Antibody::class),
+            MenuItem::linkToCrud("Antibody hosts", "fas", AntibodyHost::class),
             MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
 
             MenuItem::section("Inventory"),
