@@ -1,5 +1,5 @@
 {% extends 'homepage.html.twig' %}
-{% from 'macros.html.twig' import vendor_url, validation_status %}
+{% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver %}
 
 {% block title %}Cell Genie: Antibodies{% endblock %}
 
@@ -15,6 +15,7 @@
                 <th>Targets</th>
                 <th>Organism</th>
                 <th>Vendor</th>
+                <th>Antibody Database</th>
             </tr>
         </trhead>
         <tbody>
@@ -28,6 +29,7 @@
                         {% endfor %}</td>
                     <td>{{ entry.hostOrganism }}</td>
                     <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
+                    <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -42,6 +44,7 @@
                 <th>Target Organism</th>
                 <th>Detection</th>
                 <th>Vendor</th>
+                <th>Antibody Database</th>
             </tr>
         </trhead>
         <tbody>
@@ -53,6 +56,7 @@
                 <td>{{ entry.hostName }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
                 <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
+                <td>{% if secondaryAntibody.rrid %}{{ rrid_resolver(secondaryAntibody.rrid)}}{% else %}-{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>

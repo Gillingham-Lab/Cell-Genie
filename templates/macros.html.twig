@@ -93,3 +93,7 @@
         {% endif %}
     {% endif %}
 {% endmacro %}
+
+{% macro rrid_resolver(rrid) %}
+    <a href="https://scicrunch.org/resolver/{{ rrid }}">{{ rrid }}</a>
+{% endmacro %}
