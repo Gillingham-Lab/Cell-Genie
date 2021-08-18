@@ -30,7 +30,7 @@ final class Version20210817150350 extends AbstractMigration
 
         // $this->addSql('ALTER TABLE antibody ALTER vendor_pn TYPE VARCHAR(255)');
         $table = $schema->getTable("antibody");
-        $table->getColumn("vendor_pn")->setType(Type::getType("VARCHAR"))->setLength(255);
+        $table->getColumn("vendor_pn")->setType(Type::getType("string"))->setLength(255);
 
         /*$this->addSql('ALTER TABLE file ADD file_blob_id UUID NOT NULL');
         $this->addSql('ALTER TABLE file ADD title VARCHAR(255) NOT NULL');
