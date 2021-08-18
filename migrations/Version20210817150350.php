@@ -44,7 +44,7 @@ final class Version20210817150350 extends AbstractMigration
         $table->addColumn("file_blob_id", "guid", ["notnull" => true])->setComment("(DC2Type:ulid)");
         $table->addColumn("title", "string", ["notnull" => true])->setLength(255);
         $table->addColumn("description", "text", ["notnull" => true]);
-        $table->addColumn("uploaded_on", "datetime", ["notnull" => false])->setDefault("null");
+        $table->addColumn("uploaded_on", "datetime", ["notnull" => false]);
         $table->getColumn("id")
             ->setType(Type::getType("guid"))
             ->setComment("(DC2Type:ulid)")
