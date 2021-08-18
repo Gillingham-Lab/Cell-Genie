@@ -13,21 +13,20 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Targets</th>
-                <th>Secondaries</th>
+                <th>Organism</th>
                 <th>Vendor</th>
             </tr>
         </trhead>
         <tbody>
-            {% for primaryAntibody in primaryAntibodies %}
+            {% for entry in primaryAntibodies %}
+                {% set primaryAntibody = entry[0] %}
                 <tr>
                     <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
                     <td>{{ primaryAntibody.shortName }} - <em>{{ primaryAntibody.longName }}</em></td>
                     <td>{% for target in primaryAntibody.proteinTarget %}
                             <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": target.id}) }}'>{{ target }}</a>
                         {% endfor %}</td>
-                    <td>{% for secondaryAntibody in primaryAntibody.secondaryAntibody %}
-                            <a class='badge rounded-pill bg-primary text-light' href='#'>{{ secondaryAntibody }}</a>
-                    {% endfor %}</td>
+                    <td>{{ entry.hostOrganism }}</td>
                     <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
                 </tr>
             {% endfor %}
@@ -40,7 +39,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Targets</th>
+                <th>Target Organism</th>
                 <th>Detection</th>
                 <th>Vendor</th>
             </tr>
@@ -51,7 +50,7 @@
             <tr>
                 <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
                 <td>{{ secondaryAntibody.shortName }} - <em>{{ secondaryAntibody.longName }}</em></td>
-                <td>{{ entry.targets }}</td>
+                <td>{{ entry.hostName }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
                 <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
             </tr>

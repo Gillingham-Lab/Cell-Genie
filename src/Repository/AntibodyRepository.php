@@ -24,12 +24,12 @@ class AntibodyRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder("a")
             ->addSelect("pt")
-            ->addSelect("sa")
+            ->addSelect("ho.name as hostOrganism")
             ->leftJoin("a.proteinTarget", "pt", conditionType: Join::ON)
-            ->leftJoin("a.secondaryAntibody", "sa", conditionType: Join::ON)
+            ->leftJoin("a.hostOrganism", "ho", conditionType: Join::ON)
             ->groupBy("a.id")
             ->addGroupBy("pt.id")
-            ->addGroupBy("sa.id")
+            ->addGroupBy("ho.id")
             ->having("count(distinct pt.id) > 0")
             ->getQuery()
             ->getResult()
@@ -40,20 +40,12 @@ class AntibodyRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder("sa");
 
-        if ($withCount) {
-            $qb = $qb->addSelect("count(distinct pa) as targets");
-        }
-
         return $qb
-            #->addSelect("-1 as target_count")
-            #->addSelect("count(sa.id) as antibody_count")
-            #->join("antibody_protein", "ap", conditionType: Join::ON, condition: "a.id = ap.antibody_id")
-            ->leftJoin("sa.antibodies", "pa", conditionType: Join::ON)
-            #->leftJoin("a.antibodies", "sa", conditionType: Join::WITH)
+            ->addSelect("ht.name as hostName")
+            ->leftJoin("sa.hostTarget", "ht", conditionType: Join::ON)
             ->groupBy("sa.id")
-            #->addGroupBy("sa.id")
-            ->having("count(distinct pa.id) > 0")
-            #->andHaving("count(sa.secondaryAntibody.id) = 0")
+            ->addGroupBy("ht.id")
+            ->having("count(distinct ht.id) > 0")
             ->getQuery()
             ->getResult()
             ;
