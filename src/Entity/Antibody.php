@@ -40,21 +40,21 @@ class Antibody
 
     /**
      * @ORM\ManyToMany(targetEntity=Protein::class, inversedBy="antibodies")
-     * @var Collection|Protein[]
+     * @var Collection<int, self)
      */
     private Collection $proteinTarget;
 
     /**
      * @ORM\ManyToMany(targetEntity=Antibody::class, inversedBy="antibodies")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection|self[]
+     * @var Collection<int, self)
      */
     private Collection $secondaryAntibody;
 
     /**
      * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="secondaryAntibody")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection|self[]
+     * @var Collection<int, self)
      */
     private Collection $antibodies;
 
@@ -69,8 +69,10 @@ class Antibody
     private Collection $antibodyDilutions;
 
     /**
-     * @ORM\Column(type="string", length=10, nullable=true)
+     * @ORM\Column(type="string", length=10, nullable=true, unique=True)
      */
+    #[Assert\NotBlank]
+    #[Assert\Unique]
     private ?string $number = null;
 
     /**
@@ -88,6 +90,43 @@ class Antibody
      */
     private ?string $externalReference = null;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="hostTarget")
+     */
+    private ?AntibodyHost $hostOrganism = null;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="secondaries")
+     */
+    private ?AntibodyHost $hostTarget = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $rrid = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $dilution = null;
+
+    /**
+     * @ORM\Column(type="smallint", nullable=true, options={"default": 0})
+     */
+    #[Assert\NotBlank]
+    #[Assert\Range(
+        minMessage: "Storage below -200 °C is not possible.",
+        maxMessage: "Storage above 25 °C does not make sense.",
+        min: -200,
+        max: 25
+    )]
+    private int $storageTemperature = -20;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $clonality;
+
     public function __construct()
     {
         $this->proteinTarget = new ArrayCollection();
@@ -98,7 +137,7 @@ class Antibody
 
     public function __toString(): string
     {
-        return ($this->number ? $this->number . " | " : "") . ($this->getShortName() ?? "unknown");
+        return ($this->getVendorPn() ? $this->getVendorPn() . " | " : "") . ($this->getShortName() ?? "unknown");
     }
 
     public function getId(): ?int
@@ -291,6 +330,78 @@ class Antibody
     public function setExternalReference(?string $externalReference): self
     {
         $this->externalReference = $externalReference;
+
+        return $this;
+    }
+
+    public function getHostOrganism(): ?AntibodyHost
+    {
+        return $this->hostOrganism;
+    }
+
+    public function setHostOrganism(?AntibodyHost $hostOrganism): self
+    {
+        $this->hostOrganism = $hostOrganism;
+
+        return $this;
+    }
+
+    public function getHostTarget(): ?AntibodyHost
+    {
+        return $this->hostTarget;
+    }
+
+    public function setHostTarget(?AntibodyHost $hostTarget): self
+    {
+        $this->hostTarget = $hostTarget;
+
+        return $this;
+    }
+
+    public function getRrid(): ?string
+    {
+        return $this->rrid;
+    }
+
+    public function setRrid(?string $rrid): self
+    {
+        $this->rrid = $rrid;
+
+        return $this;
+    }
+
+    public function getDilution(): ?string
+    {
+        return $this->dilution;
+    }
+
+    public function setDilution(?string $dilution): self
+    {
+        $this->dilution = $dilution;
+
+        return $this;
+    }
+
+    public function getStorageTemperature(): ?int
+    {
+        return $this->storageTemperature;
+    }
+
+    public function setStorageTemperature(?int $storageTemperature): self
+    {
+        $this->storageTemperature = $storageTemperature;
+
+        return $this;
+    }
+
+    public function getClonality(): ?string
+    {
+        return $this->clonality;
+    }
+
+    public function setClonality(?string $clonality): self
+    {
+        $this->clonality = $clonality;
 
         return $this;
     }
