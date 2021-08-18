@@ -125,7 +125,12 @@ class Antibody
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $clonality;
+    private ?string $clonality = "monoclonal";
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $usage = "Western blot";
 
     public function __construct()
     {
@@ -402,6 +407,18 @@ class Antibody
     public function setClonality(?string $clonality): self
     {
         $this->clonality = $clonality;
+
+        return $this;
+    }
+
+    public function getUsage(): ?string
+    {
+        return $this->usage;
+    }
+
+    public function setUsage(?string $usage): self
+    {
+        $this->usage = $usage;
 
         return $this;
     }

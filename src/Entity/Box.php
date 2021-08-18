@@ -7,6 +7,7 @@ use App\Repository\BoxRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=BoxRepository::class)
@@ -18,22 +19,30 @@ class Box
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: "Bux name must contain at least 3 characters",
+        maxMessage: "Only 255 characters allowed"
+    )]
+    private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $rows;
+    #[Assert\GreaterThan(value: 0)]
+    private ?int $rows;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $cols;
+    #[Assert\GreaterThan(value: 0)]
+    private ?int $cols;
 
     /**
      * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes", fetch="EAGER")
@@ -121,7 +130,7 @@ class Box
     }
 
     /**
-     * @return Collection|CellAliquote[]
+     * @return Collection<int, CellAliquote>
      */
     public function getCellAliquotes(): Collection
     {

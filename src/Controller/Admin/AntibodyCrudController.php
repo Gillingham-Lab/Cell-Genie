@@ -37,6 +37,8 @@ class AntibodyCrudController extends AbstractCrudController
                 ->setHelp("Host organism for this antibody. Important to automatically determine secondary antibodies."),
             TextField::new("clonality", label: "Clonality")
                 ->setHelp("Usually, this is either 'monoclonal' or 'polyclonal'."),
+            TextField::new("usage", label: "Purpose")
+                ->setHelp("Highlight the purpose for this antibody (WB, IP, IH, ...). Highlight with 'Only' if the antibody is for a specific purpose."),
 
             FormField::addPanel("Vendor"),
             AssociationField::new("vendor"),
