@@ -55,7 +55,8 @@ class AntibodyCrudController extends AbstractCrudController
 
             FormField::addPanel("Experimental"),
             TextEditorField::new("dilution", label: "Dilution suggestions")
-                ->setHelp("Oftentimes, vendor propose antibody dilutions for specific applications."),
+                ->setHelp("Oftentimes, vendor propose antibody dilutions for specific applications.")
+                ->hideOnIndex(),
             TextField::new("detection", label: "Way of detection")
                 ->setHelp("Leave empty if there is no reporter.")
                 ->hideOnIndex(),

@@ -72,7 +72,6 @@ class Antibody
      * @ORM\Column(type="string", length=10, nullable=true, unique=True)
      */
     #[Assert\NotBlank]
-    #[Assert\Unique]
     private ?string $number = null;
 
     /**
