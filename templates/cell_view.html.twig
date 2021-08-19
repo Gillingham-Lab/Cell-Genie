@@ -72,7 +72,7 @@
                         {% for box in boxes %}
                             <div class="tab-pane fade {{ found and found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
                                 <h6>{{ box.fullLocation }}</h6>
-                                {{ macros.make_box(box, cell, aliquote) }}
+                                {{ macros.make_box(box, boxAliquotes[box.id], cell, aliquote) }}
                             </div>
                         {% endfor %}
                     </div>

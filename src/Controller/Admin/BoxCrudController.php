@@ -27,8 +27,6 @@ class BoxCrudController extends AbstractCrudController
             IntegerField::new("rows"),
             IntegerField::new("cols"),
             AssociationField::new("rack"),
-            IntegerField::new("aliquoteCount", label: "# Aliquotes")
-                ->hideOnForm(),
         ];
     }
 }

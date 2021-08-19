@@ -25,10 +25,21 @@ class BoxRepository extends ServiceEntityRepository
 
     public function findByAliquotedCell(Cell $cell)
     {
-        return $this->createQueryBuilder("b")
+        /*return $this->createQueryBuilder("b")
             ->leftJoin("b.cellAliquotes", "a", conditionType: Join::ON)
             ->where("a.cell = :val")
             ->andWhere("a.vials > 0")
+            ->setParameter("val", $cell)
+            ->getQuery()
+            ->getResult()
+        ;*/
+
+        return $this->createQueryBuilder("b")
+            ->distinct(true)
+            ->select("b")
+            ->leftJoin(CellAliquote::class, "ca", conditionType: Join::WITH, condition: "ca.box = b")
+            ->where("ca.cell = :val")
+            ->andWhere("ca.vials > 0")
             ->setParameter("val", $cell)
             ->getQuery()
             ->getResult()

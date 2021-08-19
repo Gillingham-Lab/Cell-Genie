@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Box;
 use App\Entity\CellAliquote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Validator\Constraints\Collection;
 
 /**
  * @method CellAliquote|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,6 +21,24 @@ class CellAliquoteRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CellAliquote::class);
+    }
+
+    /**
+     * @param Box[] $boxes
+     * @return CellAliquote[]|null
+     */
+    public function findAllFromBoxes(array $boxes)
+    {
+        $qb = $this->createQueryBuilder("ca");
+
+        return $qb->select("ca")
+            ->distinct(True)
+            ->leftJoin("ca.box", "b", Join::ON)
+            ->where("ca.box IN (:boxes)")
+            ->setParameter("boxes", $boxes)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

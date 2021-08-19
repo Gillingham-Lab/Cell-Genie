@@ -7,9 +7,9 @@
     {% endif %}
 {% endmacro %}
 
-{% macro make_box(box, currentCell, currentAliquote = null) %}
+{% macro make_box(box, aliquotes, currentCell, currentAliquote = null) %}
     {% set contents = [] %}
-    {% for aliquote in box.cellAliquotes %}
+    {% for aliquote in aliquotes %}
         {% for i in range(0, aliquote.vials-1) %}
             {% set contents = contents|merge([aliquote]) %}
         {% endfor %}

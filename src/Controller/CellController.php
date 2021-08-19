@@ -55,7 +55,23 @@ class CellController extends AbstractController
             return $this->redirectToRoute("app_cells");
         }
 
+        // Get all boxes that contain aliquotes of the current cell line
         $boxes = $this->boxRepository->findByAliquotedCell($cell);
+
+        // Get all aliquotes from those boxes
+        $aliquotes = $this->cellAliquoteRepository->findAllFromBoxes($boxes);
+
+        // Create an associative array that makes box.id => aliquotes[]
+        $boxAliquotes = [];
+        foreach ($aliquotes as $aliquote) {
+            $aliquoteBox = $aliquote->getBox();
+
+            if (empty($boxAliquotes[$aliquoteBox->getId()])) {
+                $boxAliquotes[$aliquoteBox->getId()] = [];
+            }
+
+            $boxAliquotes[$aliquoteBox->getId()][] = $aliquote;
+        }
 
         if ($aliquoteId) {
             $aliquote = $this->cellAliquoteRepository->find($aliquoteId);
@@ -73,6 +89,7 @@ class CellController extends AbstractController
         return $this->render('cell_view.html.twig', [
             "cell" => $cell,
             "boxes" => $boxes,
+            "boxAliquotes" => $boxAliquotes,
             "aliquote" => $aliquote,
             "chemicals" => $chemicals,
             "proteins" => $proteins,
