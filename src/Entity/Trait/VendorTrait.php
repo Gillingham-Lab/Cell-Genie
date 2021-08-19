@@ -39,7 +39,7 @@ trait VendorTrait
         return $this->vendorPN;
     }
 
-    public function setVendorId(?string $vendorPN): self
+    public function setVendorPn(?string $vendorPN): self
     {
         $this->vendorPN = $vendorPN;
 
