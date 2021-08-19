@@ -5,6 +5,8 @@ namespace App\Entity\Trait;
 
 use App\Entity\Vendor;
 use Doctrine\ORM\Mapping as ORM;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 trait VendorTrait
 {
@@ -42,5 +44,16 @@ trait VendorTrait
         $this->vendorPN = $vendorPN;
 
         return $this;
+    }
+
+    public static function crudFields(): array
+    {
+        return [
+            AssociationField::new("vendor", "Vendor")
+                ->hideOnIndex(),
+            TextField::new("vendorPN", "Vendor PN")
+                ->hideOnIndex()
+                ->setHelp("Product number of the vendor."),
+        ];
     }
 }

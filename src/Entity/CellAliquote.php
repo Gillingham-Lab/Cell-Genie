@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Trait\HasBoxTrait;
 use App\Repository\CellAliquoteRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,6 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CellAliquote
 {
+    use HasBoxTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -31,12 +34,6 @@ class CellAliquote
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private ?User $aliquoted_by;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Box::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
-    private Box $box;
 
     /**
      * @ORM\Column(type="string", length=30)
@@ -109,18 +106,6 @@ class CellAliquote
     public function setAliquotedBy(?User $aliquoted_by): self
     {
         $this->aliquoted_by = $aliquoted_by;
-
-        return $this;
-    }
-
-    public function getBox(): ?Box
-    {
-        return $this->box;
-    }
-
-    public function setBox(?Box $box): self
-    {
-        $this->box = $box;
 
         return $this;
     }

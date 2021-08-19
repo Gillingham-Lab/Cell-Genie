@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\HasBoxTrait;
 use App\Repository\LotRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Lot
 {
+    use HasBoxTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="CUSTOM")

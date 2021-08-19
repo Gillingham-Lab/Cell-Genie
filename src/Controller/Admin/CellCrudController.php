@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cell;
+use App\Entity\Trait\VendorTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -52,11 +53,7 @@ class CellCrudController extends AbstractCrudController
             FormField::addPanel("Origins"),
             TextareaField::new("origin")
                 ->hideOnIndex(),
-            AssociationField::new("vendor", "Vendor")
-                ->hideOnIndex(),
-            TextField::new("vendorPN", "Vendor PN")
-                ->hideOnIndex()
-                ->setHelp("Product number of the vendor."),
+            ... VendorTrait::crudFields(),
             DateField::new("acquiredOn")
                 ->hideOnIndex()
                 ->setFormat("MEDIUM"),

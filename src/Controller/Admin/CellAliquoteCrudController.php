@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\CellAliquote;
+use App\Entity\Trait\HasBoxTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -32,7 +33,8 @@ class CellAliquoteCrudController extends AbstractCrudController
             DateField::new('aliquoted_on'),
             AssociationField::new('aliquoted_by'),
             TextField::new("cryoMedium"),
-            AssociationField::new("box"),
+            ... HasBoxTrait::crudField(),
+            #AssociationField::new("box"),
             TextField::new("vialColor"),
             IntegerField::new("passage"),
             IntegerField::new("cellCount"),
