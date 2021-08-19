@@ -95,5 +95,15 @@
 {% endmacro %}
 
 {% macro rrid_resolver(rrid) %}
-    <a href="https://scicrunch.org/resolver/{{ rrid }}">{{ rrid }}</a>
+    {% if rrid %}
+        <a href="https://scicrunch.org/resolver/{{ rrid }}">{{ rrid }}</a>
+    {% else %}
+        (missing)
+    {% endif %}
+{% endmacro %}
+
+{% macro pillify_proteins(proteins) %}
+    {% for protein in proteins %}
+        <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": protein.id}) }}'>{{ protein }}</a>
+    {% endfor %}
 {% endmacro %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\AntibodyRepository;
+use Doctrine\DBAL\Types\ConversionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,6 +25,26 @@ class AntibodyController extends AbstractController
         return $this->render('parts/antibodies/antibodies.html.twig', [
             "primaryAntibodies" => $primaryAntibodies,
             "secondaryAntibodies" => $secondaryAntibodies,
+        ]);
+    }
+
+    #[Route("/antibodies/view/{antibodyId}", name: "app_antibody_view")]
+    public function viewAntibody(string $antibodyId): Response
+    {
+        try {
+            $antibody = $this->antibodyRepository->find($antibodyId);
+        } catch (ConversionException) {
+            $antibody = null;
+        }
+
+        # Return if antibody was not found.
+        if (!$antibody) {
+            $this->addFlash("error", "Antibody was not found");
+            return $this->redirectToRoute("app_antibodies");
+        }
+
+        return $this->render("parts/antibodies/antibody.html.twig", [
+            "antibody" => $antibody,
         ]);
     }
 }

@@ -137,6 +137,7 @@ class Antibody
      *     joinColumns={@ORM\JoinColumn(name="antibody_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="lot_id", referencedColumnName="id", unique=True)},
      * )
+     * @ORM\OrderBy({"lotNumber" = "ASC"})
      */
     #[Assert\Valid]
     private Collection $lots;
@@ -152,7 +153,7 @@ class Antibody
 
     public function __toString(): string
     {
-        return ($this->getVendorPn() ? $this->getVendorPn() . " | " : "") . ($this->getShortName() ?? "unknown");
+        return ($this->getNumber() ? $this->getNumber() . " | " : "") . ($this->getShortName() ?? "unknown");
     }
 
     public function getId(): ?int

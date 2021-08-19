@@ -1,5 +1,5 @@
 {% extends 'homepage.html.twig' %}
-{% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver %}
+{% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_proteins %}
 
 {% block title %}Cell Genie: Antibodies{% endblock %}
 
@@ -22,11 +22,13 @@
             {% for entry in primaryAntibodies %}
                 {% set primaryAntibody = entry[0] %}
                 <tr>
-                    <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
+                    <th>
+                        <a class="" href="{{ url("app_antibody_view", {"antibodyId": primaryAntibody.id}) }}">
+                            {{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}
+                        </a>
+                    </th>
                     <td>{{ primaryAntibody.shortName }} - <em>{{ primaryAntibody.longName }}</em></td>
-                    <td>{% for target in primaryAntibody.proteinTarget %}
-                            <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": target.id}) }}'>{{ target }}</a>
-                        {% endfor %}</td>
+                    <td>{{ pillify_proteins(primaryAntibody.proteinTarget) }}</td>
                     <td>{{ entry.hostOrganism }}</td>
                     <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
                     <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
@@ -51,7 +53,11 @@
         {% for entry in secondaryAntibodies %}
             {% set secondaryAntibody = entry[0] %}
             <tr>
-                <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
+                <th>
+                    <a class="" href="{{ url("app_antibody_view", {"antibodyId": secondaryAntibody.id}) }}">
+                        {{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}
+                    </a>
+                </th>
                 <td>{{ secondaryAntibody.shortName }} - <em>{{ secondaryAntibody.longName }}</em></td>
                 <td>{{ entry.hostName }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
