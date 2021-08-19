@@ -7,6 +7,11 @@
     {% endif %}
 {% endmacro %}
 
+{% macro definition_row_raw(n, d) %}
+    <dt class="col-sm-4">{{ n }}</dt>
+    <dd class="col-sm-8">{{ d|raw }}</dd>
+{% endmacro %}
+
 {% macro make_box(box, aliquotes, currentCell, currentAliquote = null) %}
     {% set contents = [] %}
     {% for aliquote in aliquotes %}

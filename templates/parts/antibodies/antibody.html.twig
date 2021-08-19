@@ -20,7 +20,7 @@
         <div class="row col-sm-6">
             <dl class="row">
                 {{ macros.definition_row("ID", antibody.number) }}
-                {{ macros.definition_row("Short name", antibody.shortName ~ macros.validation_status(antibody)) }}
+                {{ macros.definition_row_raw("Short name", antibody.shortName ~ macros.validation_status(antibody)) }}
                 {{ macros.definition_row("Long name", antibody.longName) }}
                 {{ macros.definition_row("RRID", macros.rrid_resolver(antibody.rrid)) }}
                 {{ macros.definition_row("Host organism", antibody.hostOrganism) }}
