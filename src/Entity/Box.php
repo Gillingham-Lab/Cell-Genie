@@ -30,24 +30,26 @@ class Box
         minMessage: "Bux name must contain at least 3 characters",
         maxMessage: "Only 255 characters allowed"
     )]
+    #[Assert\NotBlank]
     private ?string $name;
 
     /**
      * @ORM\Column(type="integer")
      */
     #[Assert\GreaterThan(value: 0)]
-    private ?int $rows;
+    private ?int $rows = 1;
 
     /**
      * @ORM\Column(type="integer")
      */
     #[Assert\GreaterThan(value: 0)]
-    private ?int $cols;
+    private ?int $cols = 1;
 
     /**
      * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes", fetch="EAGER")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
+    #[Assert\NotBlank]
     private ?Rack $rack = null;
 
     /**
