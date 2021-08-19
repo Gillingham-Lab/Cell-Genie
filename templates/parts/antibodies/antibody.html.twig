@@ -9,11 +9,11 @@
     <div class="row">
         <div class="row col-sm-12">
             {% if antibody.proteinTarget|length > 0 and not antibody.hostTarget %}
-                <h1>Primary antibody: {{ antibody }}</h1>
+                <h1>Primary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendor.PN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
             {% elseif antibody.hostTarget and antibody.proteinTarget|length == 0 %}
-                <h1>Secondary antibody: {{ antibody }}</h1>
+                <h1>Secondary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendor.PN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
             {% else %}
-                <h1>Antibody: {{ antibody }}</h1>
+                <h1>Antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendor.PN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
             {% endif %}
         </div>
 
@@ -32,6 +32,10 @@
 
                 {% if antibody.proteinTarget|length > 0 %}
                     {{ macros.definition_row("Protein targets", macros.pillify_proteins(antibody.proteinTarget)) }}
+                {% endif %}
+
+                {% if antibody.detection %}
+                    {{ macros.definition_row("Detection", antibody.detection) }}
                 {% endif %}
 
                 {{ macros.definition_row("Store at", antibody.storageTemperature ~ " °C") }}
@@ -64,12 +68,8 @@
                         {% else %}
                             {% for lot in antibody.lots %}
                                 <div class="{{ columnClasses }}">
-                                    <h4><button
-                                                class="btn btn-clipboard btn-secondary btn-sm"
-                                                data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendor.PN ?? "??" }}, Lot# {{ lot.lotNumber }}, RRID:{{ antibody.rrid }})"
-                                        >
-                                            <span class="fa fa-copy"></span>
-                                        </button>
+                                    <h4>
+                                        <a class="fa fa-copy btn-clipboard small" data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendor.PN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"></a>
                                         {{ lot }}
                                     </h4>
                                     <div><strong>Lot#:</strong> {{ lot.lotNumber }}</div>
