@@ -131,12 +131,23 @@ class Antibody
      */
     private ?string $usage = "Western blot";
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Lot::class, cascade={"persist"})
+     * @ORM\JoinTable(name="antibody_lots",
+     *     joinColumns={@ORM\JoinColumn(name="antibody_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="lot_id", referencedColumnName="id", unique=True)},
+     * )
+     */
+    #[Assert\Valid]
+    private Collection $lots;
+
     public function __construct()
     {
         $this->proteinTarget = new ArrayCollection();
         $this->secondaryAntibody = new ArrayCollection();
         $this->antibodies = new ArrayCollection();
         $this->antibodyDilutions = new ArrayCollection();
+        $this->lots = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -418,6 +429,30 @@ class Antibody
     public function setUsage(?string $usage): self
     {
         $this->usage = $usage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lot>
+     */
+    public function getLots(): Collection
+    {
+        return $this->lots;
+    }
+
+    public function addLot(Lot $lot): self
+    {
+        if (!$this->lots->contains($lot)) {
+            $this->lots[] = $lot;
+        }
+
+        return $this;
+    }
+
+    public function removeLot(Lot $lot): self
+    {
+        $this->lots->removeElement($lot);
 
         return $this;
     }

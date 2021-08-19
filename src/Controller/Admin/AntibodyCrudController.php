@@ -3,9 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Antibody;
+use App\Form\AntibodyDilutionType;
+use App\Form\LotType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -41,8 +44,8 @@ class AntibodyCrudController extends AbstractCrudController
                 ->setHelp("Highlight the purpose for this antibody (WB, IP, IH, ...). Highlight with 'Only' if the antibody is for a specific purpose."),
 
             FormField::addPanel("Vendor"),
-            AssociationField::new("vendor"),
-            TextField::new("vendorPN", label: "Vendor product number"),
+            AssociationField::new("vendor")->hideOnIndex(),
+            TextField::new("vendorPN", label: "Vendor product number")->hideOnIndex(),
 
             FormField::addPanel("Validation"),
             BooleanField::new("validatedInternally")
@@ -66,6 +69,13 @@ class AntibodyCrudController extends AbstractCrudController
             AssociationField::new("hostTarget", label: "Host Target")
                 ->setHelp("Add which host this antibody targets. Leave empty for primary antibodies.")
                 ->hideOnIndex(),
+
+            FormField::addPanel("Lot entries"),
+            CollectionField::new("lots", "Lot entries")
+                ->setEntryType(LotType::class)
+                ->setEntryIsComplex(true)
+                ->hideOnIndex()
+                ->allowDelete(True),
         ];
     }
 }
