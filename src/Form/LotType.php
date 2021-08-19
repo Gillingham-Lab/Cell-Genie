@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Form;
 
@@ -42,6 +43,7 @@ class LotType extends AbstractType
                 "required" => true,
                 "data" => $this->security->getUser(),
             ])
+            ->add("box")
             ->add("amount")
             ->add("purity")
             ->add("aliquoteSize")
