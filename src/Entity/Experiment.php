@@ -100,7 +100,7 @@ class Experiment
         $this->proteinTargets = new ArrayCollection();
         $this->chemicals = new ArrayCollection();
         $this->cells = new ArrayCollection();
-        $this->antibodyDilution = new ArrayCollection();
+        $this->antibodyDilutions = new ArrayCollection();
     }
 
     /**
@@ -170,7 +170,7 @@ class Experiment
     }
 
     /**
-     * @return Collection|Protein[]
+     * @return Collection<int, Protein>
      */
     public function getProteinTargets(): Collection
     {
@@ -194,7 +194,7 @@ class Experiment
     }
 
     /**
-     * @return Collection|Chemical[]
+     * @return Collection<int, Chemical>
      */
     public function getChemicals(): Collection
     {
@@ -218,7 +218,7 @@ class Experiment
     }
 
     /**
-     * @return Collection|Cell[]
+     * @return Collection<int, Cell>
      */
     public function getCells(): Collection
     {
@@ -266,7 +266,7 @@ class Experiment
     }
 
     /**
-     * @return Collection|AntibodyDilution[]
+     * @return Collection<int, AntibodyDilution>
      */
     public function getAntibodyDilutions(): Collection
     {
