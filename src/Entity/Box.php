@@ -52,20 +52,8 @@ class Box
     #[Assert\NotBlank]
     private ?Rack $rack = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=BoxEntry::class, mappedBy="box")
-     */
-    private Collection $entries;
-
-    /**
-     * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="box")
-     */
-    private Collection $cellAliquotes;
-
     public function __construct()
     {
-        $this->cellAliquotes = new ArrayCollection();
-        $this->entries = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -129,45 +117,5 @@ class Box
         $this->rack = $rack;
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, CellAliquote>
-     */
-    public function getCellAliquotes(): Collection
-    {
-        return $this->cellAliquotes;
-    }
-
-    public function addCellAliquote(CellAliquote $cellAliquote): self
-    {
-        if (!$this->cellAliquotes->contains($cellAliquote)) {
-            $this->cellAliquotes[] = $cellAliquote;
-            $cellAliquote->setBox($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCellAliquote(CellAliquote $cellAliquote): self
-    {
-        if ($this->cellAliquotes->removeElement($cellAliquote)) {
-            // set the owning side to null (unless already changed)
-            if ($cellAliquote->getBox() === $this) {
-                $cellAliquote->setBox(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getAliquoteCount(): int
-    {
-        $count = 0;
-        foreach ($this->cellAliquotes as $aliquote) {
-            $count += $aliquote->getVials();
-        }
-
-        return $count;
     }
 }

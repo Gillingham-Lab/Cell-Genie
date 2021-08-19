@@ -22,11 +22,11 @@ final class Version20210818072310 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $table = $schema->createTable("antibody_host");
         $table->addColumn("id", "guid")
-            ->setNotnull(true);
+            ->setNotnull(true)
+            ->setComment("(DC2Type:ulid)");
         $table->addColumn("name", "string")
             ->setNotnull(true)
-            ->setLength(255)
-            ->setComment("(DC2Type:ulid)");
+            ->setLength(255);
         $table->setPrimaryKey(["id"]);
     }
 
