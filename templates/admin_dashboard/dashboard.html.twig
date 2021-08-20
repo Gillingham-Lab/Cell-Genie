@@ -1,0 +1,20 @@
+{% extends "@!EasyAdmin/page/content.html.twig" %}
+
+{% block content_title %}
+    Cell Genie Administration
+{% endblock %}
+
+{% block main %}
+    <div class="col-sm-12 col-md-9 col-lg-6">
+        <p>This is the administration part of Cell Genie, which can be used to directly edit and create asserts within this
+            database. Please be careful when modifying entries, as this tool does currently not keep track of database
+            entries.
+        </p>
+
+        <p>Use one of the tools on the left side in order to get to the specific editor for each entry. In a lot of these
+            tables, other entries can be referenced. However, in order to create a reference, you must first create the
+            specific entry. For example, if you create an antibody, you can assign it a protein target - but that protein
+            target must have been created beforehand, you cannot create it at the same time as you create the antibody.
+        </p>
+    </div>
+{% endblock %}

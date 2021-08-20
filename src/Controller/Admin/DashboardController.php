@@ -28,12 +28,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
-    /**
-     * @Route("/admin", name="admin")
-     */
+    #[Route("/admin", name: "admin")]
     public function index(): Response
     {
-        return parent::index();
+        return $this->render('admin_dashboard/dashboard.html.twig');
     }
 
     public function configureDashboard(): Dashboard
