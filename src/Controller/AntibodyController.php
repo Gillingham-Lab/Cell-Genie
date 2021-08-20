@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Repository\AntibodyRepository;
 use Doctrine\DBAL\Types\ConversionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -45,6 +46,15 @@ class AntibodyController extends AbstractController
 
         return $this->render("parts/antibodies/antibody.html.twig", [
             "antibody" => $antibody,
+        ]);
+    }
+
+    #[Route("/antibodies/search", name: "app_antibodies_search")]
+    public function search(Request $request): Response
+    {
+        return $this->render('parts/antibodies/antibodies.html.twig', [
+            "primaryAntibodies" => [],
+            "secondaryAntibodies" => [],
         ]);
     }
 }

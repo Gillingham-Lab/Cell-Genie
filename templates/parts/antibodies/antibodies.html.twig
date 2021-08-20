@@ -3,69 +3,82 @@
 
 {% block title %}Cell Genie: Antibodies{% endblock %}
 
+{% block search %}
+    <form class="form-inline my-2 my-lg-0" action="{{ url("app_antibodies_search") }}" method="post">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+{% endblock %}
+
 {% block body_main %}
-    <h1>Antibodies</h1>
+    <div class="row">
+        <div class="col col-12">
+            <h1>Antibodies</h1>
+        </div>
 
-    <h2>Primary antibodies</h2>
-    <table class="mb-5 mt-3 table">
-        <trhead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Targets</th>
-                <th>Organism</th>
-                <th>Vendor</th>
-                <th>RRID</th>
-            </tr>
-        </trhead>
-        <tbody>
-            {% for entry in primaryAntibodies %}
-                {% set primaryAntibody = entry[0] %}
-                <tr>
-                    <th>
-                        <a class="" href="{{ url("app_antibody_view", {"antibodyId": primaryAntibody.id}) }}">
-                            {{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}
-                        </a>
-                    </th>
-                    <td>{{ primaryAntibody.shortName }} - <em>{{ primaryAntibody.longName }}</em></td>
-                    <td>{{ pillify_proteins(primaryAntibody.proteinTarget) }}</td>
-                    <td>{{ entry.hostOrganism }}</td>
-                    <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
-                    <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="col col-sm-12 col-md-12 col-lg-6">
+            <h2>Primary antibodies</h2>
 
-    <h2>Secondary antibodies</h2>
-    <table class="mb-5 mt-3 table">
-        <trhead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Target Organism</th>
-                <th>Detection</th>
-                <th>Vendor</th>
-                <th>RRID</th>
-            </tr>
-        </trhead>
-        <tbody>
-        {% for entry in secondaryAntibodies %}
-            {% set secondaryAntibody = entry[0] %}
-            <tr>
-                <th>
-                    <a class="" href="{{ url("app_antibody_view", {"antibodyId": secondaryAntibody.id}) }}">
-                        {{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}
-                    </a>
-                </th>
-                <td>{{ secondaryAntibody.shortName }} - <em>{{ secondaryAntibody.longName }}</em></td>
-                <td>{{ entry.hostName }}</td>
-                <td>{{ secondaryAntibody.detection }}</td>
-                <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
-                <td>{% if secondaryAntibody.rrid %}{{ rrid_resolver(secondaryAntibody.rrid)}}{% else %}-{% endif %}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <table class="mb-5 mt-3 table px-5">
+                <trhead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Targets</th>
+                        <th scope="col">Organism</th>
+                        <th scope="col">Vendor</th>
+                        <th scope="col">RRID</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </trhead>
+                <tbody>
+                {% for entry in primaryAntibodies %}
+                    {% set primaryAntibody = entry[0] %}
+                    <tr>
+                        <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
+                        <td>{{ primaryAntibody.shortName }} - <em>{{ primaryAntibody.longName }}</em></td>
+                        <td>{{ pillify_proteins(primaryAntibody.proteinTarget) }}</td>
+                        <td>{{ entry.hostOrganism }}</td>
+                        <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
+                        <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
+                        <td><a href="{{ url("app_antibody_view", {"antibodyId": primaryAntibody.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
+
+        <div class="col col-sm-12 col-md-12 col-lg-6">
+            <h2>Secondary antibodies</h2>
+
+            <table class="mb-5 mt-3 table">
+                <trhead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Target Organism</th>
+                        <th scope="col">Detection</th>
+                        <th scope="col">Vendor</th>
+                        <th scope="col">RRID</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </trhead>
+                <tbody>
+                {% for entry in secondaryAntibodies %}
+                    {% set secondaryAntibody = entry[0] %}
+                    <tr>
+                        <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
+                        <td>{{ secondaryAntibody.shortName }} - <em>{{ secondaryAntibody.longName }}</em></td>
+                        <td>{{ entry.hostName }}</td>
+                        <td>{{ secondaryAntibody.detection }}</td>
+                        <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
+                        <td>{% if secondaryAntibody.rrid %}{{ rrid_resolver(secondaryAntibody.rrid)}}{% else %}-{% endif %}</td>
+                        <td><a href="{{ url("app_antibody_view", {"antibodyId": secondaryAntibody.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

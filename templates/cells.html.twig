@@ -38,7 +38,7 @@
                     {% endif %}</td>
                 <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
                 <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
-                <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a></td>
+                <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
             </tr>
         {% endfor %}
         </tbody>
