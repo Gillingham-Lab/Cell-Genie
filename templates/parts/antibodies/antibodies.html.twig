@@ -5,7 +5,7 @@
 
 {% block search %}
     <form class="form-inline my-2 my-lg-0" action="{{ url("app_antibodies_search") }}" method="post">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" minlength="3">
         <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
 {% endblock %}
@@ -16,6 +16,43 @@
             <h1>Antibodies</h1>
         </div>
 
+        {% if antibodies|length > 0 %}
+            <div class="col col-12">
+                <h2>Search results</h2>
+
+                <table class="mb-5 mt-3 table px-5">
+                    <trhead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Targets</th>
+                            <th scope="col">Organism</th>
+                            <th scope="col">Vendor</th>
+                            <th scope="col">RRID</th>
+                            <th scope="col">Options</th>
+                        </tr>
+                    </trhead>
+                    <tbody>
+                    {% for entry in antibodies %}
+                        {% set antibody = entry[0] %}
+                        <tr>
+                            <th>{{ antibody.number }}{{ validation_status(antibody) }}</th>
+                            <td>{{ antibody.shortName }} - <em>{{ antibody.longName }}</em></td>
+                            {% if antibody.hostTarget %}
+                                <td>{{ entry.hostTarget }}</td>
+                            {% else %}
+                                <td>{{ pillify_proteins(antibody.proteinTarget) }}</td>
+                            {% endif %}
+                            <td>{{ entry.hostOrganism }}</td>
+                            <td>{{ vendor_url(antibody.vendor, antibody.vendorPn) }}</td>
+                            <td>{% if antibody.rrid %}{{ rrid_resolver(antibody.rrid)}}{% else %}-{% endif %}</td>
+                            <td><a href="{{ url("app_antibody_view", {"antibodyId": antibody.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
         <div class="col col-sm-12 col-md-12 col-lg-6">
             <h2>Primary antibodies</h2>
 
@@ -80,5 +117,6 @@
                 </tbody>
             </table>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

@@ -21,7 +21,7 @@ class AntibodyRepository extends ServiceEntityRepository
         parent::__construct($registry, Antibody::class);
     }
 
-    public function findPrimaryAntibodies()
+    public function findPrimaryAntibodies(): array
     {
         return $this->createQueryBuilder("a")
             ->addSelect("pt")
@@ -37,7 +37,7 @@ class AntibodyRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findSecondaryAntibodies($withCount = false)
+    public function findSecondaryAntibodies($withCount = false): array
     {
         $qb = $this->createQueryBuilder("sa");
 
@@ -50,6 +50,39 @@ class AntibodyRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function findBySearchTerm(string $searchTerm): array
+    {
+        if (!str_starts_with($searchTerm, "%") and !str_starts_with($searchTerm, "^")) {
+            $searchTerm = "%" . $searchTerm;
+        }
+
+        if (!str_ends_with($searchTerm, "%") and !str_starts_with($searchTerm, "$")) {
+            $searchTerm = $searchTerm . "%";
+        }
+
+        return $this->createQueryBuilder("sa")
+            ->distinct(True)
+            ->addSelect("ho.name as hostOrganism")
+            ->addSelect("ht.name as hostTarget")
+            ->leftJoin("sa.hostOrganism", "ho")
+            ->leftJoin("sa.hostTarget", "ht")
+            ->leftJoin("sa.proteinTarget", "pt")
+            ->where("sa.shortName LIKE :val")
+            ->orWhere("sa.longName LIKE :val")
+            ->orWhere("sa.detection LIKE :val")
+            ->orWhere("sa.number LIKE :val")
+            ->orWhere("ht.name LIKE :val")
+            ->orWhere("ho.name LIKE :val")
+            ->orWhere("pt.shortName LIKE :val")
+            ->orWhere("pt.longName LIKE :val")
+            ->orWhere("sa.clonality LIKE :val")
+            ->orWhere("sa.usage LIKE :val")
+            ->orderBy("sa.shortName")
+            ->setParameter("val", $searchTerm)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

@@ -24,6 +24,7 @@ class AntibodyController extends AbstractController
         $secondaryAntibodies = $this->antibodyRepository->findSecondaryAntibodies(true);
 
         return $this->render('parts/antibodies/antibodies.html.twig', [
+            "antibodies" => [],
             "primaryAntibodies" => $primaryAntibodies,
             "secondaryAntibodies" => $secondaryAntibodies,
         ]);
@@ -52,7 +53,25 @@ class AntibodyController extends AbstractController
     #[Route("/antibodies/search", name: "app_antibodies_search")]
     public function search(Request $request): Response
     {
+        $searchTerm = $request->request->get("search", null);
+
+        if (!$searchTerm) {
+            $this->addFlash("error", "Search term was empty.");
+            return $this->redirectToRoute("app_antibodies");
+        } elseif (strlen($searchTerm) < 3) {
+            $this->addFlash("error", "Search term must contain at least 3 characters");
+            return $this->redirectToRoute("app_antibodies");
+        }
+
+        $results =  $this->antibodyRepository->findBySearchTerm($searchTerm);
+
+        if (empty($results)) {
+            $this->addFlash("info", "No results found.");
+            return $this->redirectToRoute("app_antibodies");
+        }
+
         return $this->render('parts/antibodies/antibodies.html.twig', [
+            "antibodies" => $results,
             "primaryAntibodies" => [],
             "secondaryAntibodies" => [],
         ]);
