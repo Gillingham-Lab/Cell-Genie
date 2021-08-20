@@ -49,7 +49,7 @@
                         <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
                             {% for box in boxes %}
                                 {% if aliquote %}
-                                    {% for a in box.cellAliquotes %}
+                                    {% for a in boxAliquotes[box.id] %}
                                         {% if a.id == aliquote.id %}
                                             {% set found = box %}
                                         {% endif %}
