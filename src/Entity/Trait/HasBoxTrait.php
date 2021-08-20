@@ -13,7 +13,7 @@ trait HasBoxTrait
      * @ORM\ManyToOne(targetEntity=Box::class)
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
-    private Box $box;
+    private ?Box $box = null;
 
     public function getBox(): ?Box
     {
