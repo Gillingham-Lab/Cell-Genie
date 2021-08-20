@@ -1,6 +1,10 @@
 {% extends 'homepage.html.twig' %}
 {% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_proteins %}
 
+{% macro format_antibody_name(antibody) %}
+    <span data-toggle="tooltip" data-placement="bottom" title="{{ antibody.longName }}">{{ antibody.shortName }}</span>
+{% endmacro %}
+
 {% block title %}Cell Genie: Antibodies{% endblock %}
 
 {% block search %}
@@ -37,7 +41,7 @@
                         {% set antibody = entry[0] %}
                         <tr>
                             <th>{{ antibody.number }}{{ validation_status(antibody) }}</th>
-                            <td>{{ antibody.shortName }} - <em>{{ antibody.longName }}</em></td>
+                            <td>{{ _self.format_antibody_name(antibody) }}</td>
                             {% if antibody.hostTarget %}
                                 <td>{{ entry.hostTarget }}</td>
                             {% else %}
@@ -73,7 +77,7 @@
                     {% set primaryAntibody = entry[0] %}
                     <tr>
                         <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
-                        <td>{{ primaryAntibody.shortName }} - <em>{{ primaryAntibody.longName }}</em></td>
+                        <td>{{ _self.format_antibody_name(primaryAntibody) }}</td>
                         <td>{{ pillify_proteins(primaryAntibody.proteinTarget) }}</td>
                         <td>{{ entry.hostOrganism }}</td>
                         <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
@@ -106,7 +110,7 @@
                     {% set secondaryAntibody = entry[0] %}
                     <tr>
                         <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
-                        <td>{{ secondaryAntibody.shortName }} - <em>{{ secondaryAntibody.longName }}</em></td>
+                        <td>{{ _self.format_antibody_name(secondaryAntibody) }}</td>
                         <td>{{ entry.hostName }}</td>
                         <td>{{ secondaryAntibody.detection }}</td>
                         <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
