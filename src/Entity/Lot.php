@@ -30,12 +30,14 @@ class Lot
      * @ORM\Column(type="string", length=20)
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 20)]
     private ?string $number = null;
 
     /**
      * @ORM\Column(type="string", length=50)
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 50)]
     private ?string $lotNumber = null;
 
     /**
@@ -61,12 +63,14 @@ class Lot
      * @ORM\Column(type="string", length=10)
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 10)]
     private ?string $amount = null;
 
     /**
      * @ORM\Column(type="string", length=15)
      */
     #[Assert\NotBlank]
+    #[Assert\Length(max: 15)]
     private ?string $purity = null;
 
     /**
