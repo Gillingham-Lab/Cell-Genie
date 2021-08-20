@@ -90,7 +90,7 @@ class Antibody
     private ?string $externalReference = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="hostTarget")
+     * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="primaries")
      */
     private ?AntibodyHost $hostOrganism = null;
 
