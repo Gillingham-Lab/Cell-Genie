@@ -6,8 +6,8 @@
 {% block body_main %}
     {% set columnClasses = "col-md-6 col-lg-4 col-xl-4 px-3 mb-3 border-light border-bottom" %}
 
-    <div class="row">
-        <div class="row col-sm-12">
+    <div class="row px-lg-3">
+        <div class="col col-sm-12">
             {% if antibody.proteinTarget|length > 0 and not antibody.hostTarget %}
                 <h1>Primary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
             {% elseif antibody.hostTarget and antibody.proteinTarget|length == 0 %}
@@ -17,7 +17,7 @@
             {% endif %}
         </div>
 
-        <div class="row col-sm-6">
+        <div class="col col-sm-6">
             <dl class="row">
                 {{ macros.definition_row("ID", antibody.number) }}
                 {{ macros.definition_row_raw("Short name", antibody.shortName ~ macros.validation_status(antibody)) }}
