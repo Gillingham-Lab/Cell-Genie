@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Trait\VendorTrait;
 use App\Repository\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,17 +16,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Chemical
 {
+    use VendorTrait;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private string $longName = "";
+    private ?string $longName = "";
 
     /**
      * @ORM\Column(type="string", length=10)
@@ -37,7 +40,7 @@ class Chemical
         minMessage: "Must be at least {{ min }} character long.",
         maxMessage: "Only up to {{ max }} characters allowed.",
     )]
-    private string $shortName;
+    private ?string $shortName;
 
     /**
      * @ORM\Column(type="text")
@@ -53,18 +56,7 @@ class Chemical
     /**
      * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="chemicals")
      */
-    private $experiments;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Vendor::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
-    private ?Vendor $vendor = null;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $vendorPN = null;
+    private Collection $experiments;
 
     public function __construct()
     {
@@ -153,30 +145,6 @@ class Chemical
         if ($this->experiments->removeElement($experiment)) {
             $experiment->removeChemical($this);
         }
-
-        return $this;
-    }
-
-    public function getVendor(): ?Vendor
-    {
-        return $this->vendor;
-    }
-
-    public function setVendor(?Vendor $vendor): self
-    {
-        $this->vendor = $vendor;
-
-        return $this;
-    }
-
-    public function getVendorPN(): ?string
-    {
-        return $this->vendorPN;
-    }
-
-    public function setVendorPN(?string $vendorPN): self
-    {
-        $this->vendorPN = $vendorPN;
 
         return $this;
     }

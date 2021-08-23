@@ -48,20 +48,11 @@
                             {% for antibody in protein.antibodies %}
                                 <div class="col-sm-6 col-md-4">
                                     <h4>{{ antibody }}</h4>
-                                    {% if antibody.vendor %}
-                                        {% if antibody.vendor.catalogUrl %}
-                                            <p>{{ antibody.longName }}, from
-                                                <a href="{{ antibody.vendor.catalogUrl }}">
-                                                    {{ antibody.vendor }} <span class="fas fa-external-link-alt"></span>
-                                                </a>
-                                                ( {{ antibody.vendorPN ?? "?" }})
-                                            </p>
-                                        {% else %}
-                                            <p><a href="{{ url("app_antibody_view", {"antibodyId": antibody.id}) }}">{{ antibody.longName }}</a>, from {{ macros.vendor_url(antibody.vendor, antibody.vendorPN) }})</p>
+                                    <p><a href="{{ url("app_antibody_view", {"antibodyId": antibody.id}) }}">{{ antibody.longName }}</a>
+                                        {% if antibody.vendor %}
+                                            {{ macros.vendor_url(antibody.vendor, antibody.vendorPN) }}
                                         {% endif %}
-                                    {% else %}
-                                        <p><a href="{{ url("app_antibody_view", {"antibodyId": antibody.id}) }}">{{ antibody.longName }}</a></p>
-                                    {% endif %}
+                                    </p>
 
                                     {# Shows experiment types that have experiments with registered dilutions #}
                                     {% if experimentTypesPerAntibody[antibody.id] %}

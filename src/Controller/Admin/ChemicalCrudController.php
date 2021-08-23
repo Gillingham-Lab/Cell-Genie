@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Chemical;
+use App\Entity\Trait\VendorTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -26,8 +27,7 @@ class ChemicalCrudController extends AbstractCrudController
             TextField::new('longName'),
             TextField::new('smiles'),
             UrlField::new('labjournal'),
-            AssociationField::new("vendor", "Vendor"),
-            TextField::new("vendorId", "Vendor PN")
+            ...VendorTrait::crudFields(),
         ];
     }
 }

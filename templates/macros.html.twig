@@ -81,7 +81,7 @@
             {% set vendor_url = vendor.catalogUrl|replace({"{pn}": ""}) %}
         {% endif %}
 
-        <a class="fa fa-external-link" href="{{ vendor_url }}">{{ vendor }}{% if pn %} ({{ pn }}){% endif %}</a>
+        <a href="{{ vendor_url }}">{{ vendor }}{% if pn %} ({{ pn }}){% endif %} <span class="fa fa-external-link-alt"></span></a>
     {% endif %}
 {% endmacro %}
 
