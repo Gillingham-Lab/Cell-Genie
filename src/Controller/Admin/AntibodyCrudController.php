@@ -6,6 +6,8 @@ namespace App\Controller\Admin;
 use App\Entity\Antibody;
 use App\Form\AntibodyDilutionType;
 use App\Form\LotType;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -78,5 +80,15 @@ class AntibodyCrudController extends AbstractCrudController
                 ->hideOnIndex()
                 ->allowDelete(True),
         ];
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add("proteinTarget")
+            ->add("hostTarget")
+            ->add("validatedInternally")
+            ->add("vendor")
+        ;
     }
 }
