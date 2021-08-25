@@ -132,15 +132,26 @@ class Antibody
     private ?string $usage = "Western blot";
 
     /**
-     * @ORM\ManyToMany(targetEntity=Lot::class, cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity=Lot::class, cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinTable(name="antibody_lots",
      *     joinColumns={@ORM\JoinColumn(name="antibody_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="lot_id", referencedColumnName="id", unique=True)},
      * )
-     * @ORM\OrderBy({"lotNumber" = "ASC"})
+     * @ORM\OrderBy({"lotNumber": "ASC"})
      */
     #[Assert\Valid]
     private Collection $lots;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=File::class, cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinTable(name="antibody_vendor_documentation_files",
+     *     joinColumns={@ORM\JoinColumn(name="antibody_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", unique=True)},
+     * )
+     * @ORM\OrderBy({"title": "ASC"})
+     */
+    #[Assert\Valid]
+    private Collection $vendorDocumentation;
 
     public function __construct()
     {
@@ -149,6 +160,7 @@ class Antibody
         $this->antibodies = new ArrayCollection();
         $this->antibodyDilutions = new ArrayCollection();
         $this->lots = new ArrayCollection();
+        $this->vendorDocumentation = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -454,6 +466,30 @@ class Antibody
     public function removeLot(Lot $lot): self
     {
         $this->lots->removeElement($lot);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|File[]
+     */
+    public function getVendorDocumentation(): Collection
+    {
+        return $this->vendorDocumentation;
+    }
+
+    public function addVendorDocumentation(File $vendorDocumentation): self
+    {
+        if (!$this->vendorDocumentation->contains($vendorDocumentation)) {
+            $this->vendorDocumentation[] = $vendorDocumentation;
+        }
+
+        return $this;
+    }
+
+    public function removeVendorDocumentation(File $vendorDocumentation): self
+    {
+        $this->vendorDocumentation->removeElement($vendorDocumentation);
 
         return $this;
     }

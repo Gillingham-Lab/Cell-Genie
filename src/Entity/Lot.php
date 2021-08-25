@@ -41,13 +41,13 @@ class Lot
     private ?string $lotNumber = null;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     #[Assert\NotBlank]
     private ?DateTimeInterface $boughtOn = null;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     #[Assert\NotBlank]
     private ?DateTimeInterface $openedOn = null;

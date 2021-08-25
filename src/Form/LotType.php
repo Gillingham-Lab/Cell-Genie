@@ -22,22 +22,16 @@ class LotType extends AbstractType
         $builder
             ->add("number", options: [
                 "label" => "Internal label",
-                "required" => true,
             ])
             ->add('lotNumber', options: [
                 "label" => "Lot number",
                 "help" => "Manufactures lot number (for publications)",
-                "required" => true,
             ])
-            ->add("boughtOn", DateType::class, options: [
+            ->add("boughtOn", options: [
                 "label" => "Bought on",
-                "data" => new \DateTime(),
-                "required" => true,
             ])
-            ->add("openedOn", DateType::class, options: [
+            ->add("openedOn", options: [
                 "label" => "Opened on",
-                "data" => new \DateTime(),
-                "required" => true,
             ])
             ->add("boughtBy", options: [
                 "required" => true,

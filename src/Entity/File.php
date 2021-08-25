@@ -6,6 +6,7 @@ namespace App\Entity;
 use App\Repository\FileRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,22 +22,22 @@ class File
      * @ORM\Column(type="ulid", unique=True)
      * @ORM\CustomIdGenerator(class=UlidGenerator::class)
      */
-    private ?Ulid $id;
+    private ?Ulid $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private string $contentType;
+    private string $contentType = "";
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="string", length=255, options={"default": ""})
      */
-    private $content;
+    private string $originalFileName = "";
 
     /**
      * @ORM\Column(type="integer")
      */
-    private int $contentSize;
+    private int $contentSize = 0;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
@@ -49,23 +50,57 @@ class File
      */
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
-    private string $title = "";
+    private ?string $title = null;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
-    private string $description = "";
+    private ?string $description = null;
 
     /**
      * @ORM\OneToOne(targetEntity=FileBlob::class, inversedBy="fileData", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(nullable=false)
      */
-    private FileBlob $fileBlob;
+    private ?FileBlob $fileBlob = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTime $uploadedOn = null;
+
+    public function setFromFile(UploadedFile $uploadedFile)
+    {
+        try {
+            $this->setContentType($uploadedFile->getMimeType());
+        } catch (\LogicException) {
+            $this->setContentType($uploadedFile->getClientMimeType());
+        }
+
+        $this->setContentSize($uploadedFile->getSize());
+        $this->setOriginalFileName($uploadedFile->getClientOriginalName());
+
+        if (!$this->fileBlob) {
+            $this->fileBlob = new FileBlob();
+            $this->fileBlob->setFileData($this);
+        }
+
+        $this->fileBlob->setContent($uploadedFile->getContent());
+        $this->setUploadedOn(new DateTime("now"));
+    }
+
+    public function __toString(): string
+    {
+        $size = round($this->contentSize/(1024*1024), 2);
+        if ($size > 0) {
+            $size = ", {$size} MiB";
+        } else {
+            $size = "";
+        }
+
+        $filename = strlen($this->originalFileName) > 0 ? $this->originalFileName : "unknown";
+
+        return "{$this->title} ({$filename}{$size})";
+    }
 
     public function getId(): ?Ulid
     {
@@ -84,14 +119,14 @@ class File
         return $this;
     }
 
-    public function getContent()
+    public function getOriginalFileName(): string
     {
-        return $this->content;
+        return $this->originalFileName;
     }
 
-    public function setContent($content): self
+    public function setOriginalFileName(string $originalFileName): self
     {
-        $this->content = $content;
+        $this->originalFileName = $originalFileName;
 
         return $this;
     }
@@ -125,7 +160,7 @@ class File
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -137,7 +172,7 @@ class File
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 

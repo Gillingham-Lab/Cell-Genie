@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Antibody;
+use App\Entity\File;
+use App\Entity\User;
 use App\Form\AntibodyDilutionType;
+use App\Form\DocumentationType;
 use App\Form\LotType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -17,9 +20,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Form\FormInterface;
 
 class AntibodyCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private Security $security
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Antibody::class;
@@ -49,6 +60,11 @@ class AntibodyCrudController extends AbstractCrudController
             FormField::addPanel("Vendor"),
             AssociationField::new("vendor")->hideOnIndex(),
             TextField::new("vendorPN", label: "Vendor product number")->hideOnIndex(),
+            CollectionField::new("vendorDocumentation", "Vendor documentation")
+                ->setEntryType(DocumentationType::class)
+                ->setEntryIsComplex(true)
+                ->hideOnIndex()
+                ->allowDelete(True),
 
             FormField::addPanel("Validation"),
             BooleanField::new("validatedInternally")
@@ -90,5 +106,40 @@ class AntibodyCrudController extends AbstractCrudController
             ->add("validatedInternally")
             ->add("vendor")
         ;
+    }
+
+    public function processUploadedFiles(FormInterface $form): void
+    {
+        /** @var FormInterface $child */
+        foreach ($form as $child) {
+            $config = $child->getConfig();
+
+            if (!$config->getType()->getInnerType() instanceof DocumentationType) {
+                if ($config->getCompound()) {
+                    $this->processUploadedFiles($child);
+                }
+
+                continue;
+            }
+
+            /** @var File $entity */
+            $entity = $child->getData();
+
+            /** @var UploadedFile $uploadedFile */
+            $uploadedFile = $child->get("uploadedFile")->getData();
+
+            # Check if a file has actually been uploaded.
+            if ($uploadedFile) {
+                $entity->setFromFile($uploadedFile);
+
+                // Set uploader
+                $uploader = $this->getUser();
+                if ($uploader instanceof User) {
+                    $entity->setUploadedBy($uploader);
+                }
+            }
+        }
+
+        parent::processUploadedFiles($form);
     }
 }
