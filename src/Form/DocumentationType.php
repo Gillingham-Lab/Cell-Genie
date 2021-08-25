@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
 
-class DocumentationType extends AbstractType implements DataMapperInterface
+class DocumentationType extends AbstractType
 {
     public function __construct(
         private Security $security
@@ -61,17 +61,5 @@ class DocumentationType extends AbstractType implements DataMapperInterface
         $resolver->setDefaults([
             'data_class' => File::class,
         ]);
-    }
-
-    public function mapDataToForms($viewData, \Traversable $forms)
-    {
-        /** @var FormInterface $fileForm */
-        $forms = current(iterator_to_array($forms));
-        $forms->setData($viewData);
-    }
-
-    public function mapFormsToData(\Traversable $forms, &$viewData)
-    {
-        // TODO: Implement mapFormsToData() method.
     }
 }
