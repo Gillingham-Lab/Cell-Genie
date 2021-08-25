@@ -120,7 +120,29 @@
 
                 <div class="card-body">
                     <h5 class="card-title">
-                        <span class="fas fa-file-pdf mr-3"></span>
+                        {% if file.contentType == "application/pdf" %}
+                            {% set icon = "fa-file-pdf" %}
+                        {% elseif
+                            file.contentType == "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                            or (file.originalFileName ends with ".pptx")
+                            or  (file.originalFileName ends with ".ppt")
+                        %}
+                            {% set icon = "fa-file-powerpoint" %}
+                        {% elseif
+                            (file.originalFileName ends with ".docx")
+                            or  (file.originalFileName ends with ".doc")
+                        %}
+                            {% set icon = "fa-file-word" %}
+                        {% elseif
+                            (file.originalFileName ends with ".xlsx")
+                            or  (file.originalFileName ends with ".slx")
+                        %}
+                            {% set icon = "fa-file-excel" %}
+                        {% else %}
+                            {% set icon = "fa-file" %}
+                        {% endif %}
+
+                        <span class="fas {{ icon }} mr-1"></span>
                         {{ file.title }}
                         <a class="ml-3" href="{{ url("file_download", {"fileid": file.id}) }}"><span class="fa fa-download"></span></a>
                     </h5>

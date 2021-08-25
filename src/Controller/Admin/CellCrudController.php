@@ -4,25 +4,21 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cell;
-use App\Entity\Trait\VendorTrait;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use App\Entity\Traits\HasAttachmentsTrait;
+use App\Entity\Traits\VendorTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CurrencyConfigurator;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CurrencyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\F;
 
-class CellCrudController extends AbstractCrudController
+class CellCrudController extends ExtendedAbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -49,6 +45,7 @@ class CellCrudController extends AbstractCrudController
                 ->setRequired(true),
             BooleanField::new("isCancer"),
             BooleanField::new("isEngineered"),
+            ... HasAttachmentsTrait::attachmentCrudFields(),
 
             FormField::addPanel("Origins"),
             TextareaField::new("origin")

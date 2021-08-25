@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormInterface;
 
-class AntibodyCrudController extends AbstractCrudController
+class AntibodyCrudController extends ExtendedAbstractCrudController
 {
     public function __construct(
         private Security $security
@@ -107,40 +107,5 @@ class AntibodyCrudController extends AbstractCrudController
             ->add("validatedInternally")
             ->add("vendor")
         ;
-    }
-
-    public function processUploadedFiles(FormInterface $form): void
-    {
-        /** @var FormInterface $child */
-        foreach ($form as $child) {
-            $config = $child->getConfig();
-
-            if (!$config->getType()->getInnerType() instanceof DocumentationType) {
-                if ($config->getCompound()) {
-                    $this->processUploadedFiles($child);
-                }
-
-                continue;
-            }
-
-            /** @var File $entity */
-            $entity = $child->getData();
-
-            /** @var UploadedFile $uploadedFile */
-            $uploadedFile = $child->get("uploadedFile")->getData();
-
-            # Check if a file has actually been uploaded.
-            if ($uploadedFile) {
-                $entity->setFromFile($uploadedFile);
-
-                // Set uploader
-                $uploader = $this->getUser();
-                if ($uploader instanceof User) {
-                    $entity->setUploadedBy($uploader);
-                }
-            }
-        }
-
-        parent::processUploadedFiles($form);
     }
 }

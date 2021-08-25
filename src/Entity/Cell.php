@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Trait\VendorTrait;
+use App\Entity\Traits\HasAttachmentsTrait;
+use App\Entity\Traits\VendorTrait;
 use App\Repository\CellRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Cell
 {
     use VendorTrait;
+    use HasAttachmentsTrait;
 
     /**
      * @ORM\Id

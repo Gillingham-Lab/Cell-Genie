@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Trait\HasBoxTrait;
+use App\Entity\Traits\HasBoxTrait;
 use App\Repository\LotRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

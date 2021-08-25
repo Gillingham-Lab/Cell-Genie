@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity\Trait;
+namespace App\Entity\Traits;
 
 use App\Entity\Box;
 use Doctrine\ORM\Mapping as ORM;

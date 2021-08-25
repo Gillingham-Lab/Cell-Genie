@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Trait\VendorTrait;
+use App\Entity\Traits\VendorTrait;
 use App\Repository\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

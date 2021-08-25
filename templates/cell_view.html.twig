@@ -125,8 +125,8 @@
                         <a class="nav-item nav-link {{ aliquote ? "" : "disabled" }}" id="cell-info-testing" data-toggle="tab" href="#cell-info-testing-content" role="tab" aria-selected="false">
                             Aliquote testing
                         </a>
-                        <a class="nav-item nav-link" id="cell-info-further" data-toggle="tab" href="#cell-info-further-content" role="tab" aria-selected="false">
-                            Further Info
+                        <a class="nav-item nav-link {{ cell.attachments|length > 0 ? "" : "disabled" }}" id="tabbing-tab4" data-toggle="tab" href="#tabbing-tab4-content" role="tab" aria-selected="false">
+                            Attachments
                         </a>
                     </div>
                 </nav>
@@ -279,8 +279,12 @@
                             <em>No aliquote selected</em>
                         {% endif %}
                     </div>
-                    <div class="tab-pane fade" id="cell-info-further-content" role="tabpanel" aria-labelledby="cell-info-further">
-                        Further Info
+
+                    {# TAB 5 - Attachments #}
+                    <div class="tab-pane fade" id="tabbing-tab4-content" role="tabpanel" aria-labelledby="tabbing-tab4">
+                        <div class="row">
+                            {{ macros.list_of_files(cell.attachments) }}
+                        </div>
                     </div>
                 </div>
             </div>
