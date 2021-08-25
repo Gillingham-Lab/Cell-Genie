@@ -56,15 +56,16 @@ class AntibodyCrudController extends AbstractCrudController
                 ->setHelp("Usually, this is either 'monoclonal' or 'polyclonal'."),
             TextField::new("usage", label: "Purpose")
                 ->setHelp("Highlight the purpose for this antibody (WB, IP, IH, ...). Highlight with 'Only' if the antibody is for a specific purpose."),
-
-            FormField::addPanel("Vendor"),
-            AssociationField::new("vendor")->hideOnIndex(),
-            TextField::new("vendorPN", label: "Vendor product number")->hideOnIndex(),
-            CollectionField::new("vendorDocumentation", "Vendor documentation")
+            CollectionField::new("vendorDocumentation", "Attachments")
+                ->setHelp("Add file attachments to provide complete documentation.")
                 ->setEntryType(DocumentationType::class)
                 ->setEntryIsComplex(true)
                 ->hideOnIndex()
                 ->allowDelete(True),
+
+            FormField::addPanel("Vendor"),
+            AssociationField::new("vendor")->hideOnIndex(),
+            TextField::new("vendorPN", label: "Vendor product number")->hideOnIndex(),
 
             FormField::addPanel("Validation"),
             BooleanField::new("validatedInternally")

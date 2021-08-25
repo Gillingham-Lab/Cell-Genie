@@ -112,3 +112,44 @@
         <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": protein.id}) }}'>{{ protein }}</a>
     {% endfor %}
 {% endmacro %}
+
+{% macro list_of_files(files) %}
+    {% for file in files %}
+        <div class="card mb-3 col-12">
+            <div class="row no-gutters p-3">
+
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span class="fas fa-file-pdf mr-3"></span>
+                        {{ file.title }}
+                        <a class="ml-3" href="{{ url("file_download", {"fileid": file.id}) }}"><span class="fa fa-download"></span></a>
+                    </h5>
+                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <p class="card-text"><small class="text-muted">{{ file.originalFileName }} ({{ _self.format_file_size(file.contentSize)|trim }})</small></p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro format_file_size(size, limit = 200) %}
+    {% if size < limit %}
+        {{ size }} B
+    {% else %}
+        {% set size = size/1024 %}
+
+        {% if size < limit %}
+            {{ size|round(1) }} kiB
+        {% else %}
+            {% set size = size/1024 %}
+
+            {% if size < limit %}
+                {{ size|round(1) }} MiB
+            {% else %}
+                {% set size = size/1024 %}
+
+                {{ size|round(1) }} GiB
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
