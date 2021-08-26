@@ -55,12 +55,12 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
                             <span class="icon icon-antibody"></span>
                             Antibodies
                         </a>
 
-                        <div class="dropdown-menu" aria-labelledby="navbar-dropdown-user-link">
+                        <div class="dropdown-menu" aria-labelledby="navbar-dropdown-antibody-link">
                             <a class="dropdown-item" href="{{ url("app_antibodies") }}"><span class="fas fa-fw"></span>All</a>
                             <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw"></span>Primaries</a>
                             <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw"></span>Seondaries</a>

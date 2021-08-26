@@ -35,7 +35,7 @@ class CellController extends AbstractController
             orderBy: ["name" => "ASC"]
         );
 
-        return $this->render('cells.html.twig', [
+        return $this->render('parts/cells/cells.html.twig', [
             "cells" => $cells,
         ]);
     }
@@ -86,7 +86,7 @@ class CellController extends AbstractController
         // Get associated experiment types
         $experimentTypes = $this->experimentTypeRepository->findByCell($cell);
 
-        return $this->render('cell_view.html.twig', [
+        return $this->render('parts/cells/cell.html.twig', [
             "cell" => $cell,
             "boxes" => $boxes,
             "boxAliquotes" => $boxAliquotes,
