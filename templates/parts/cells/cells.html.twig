@@ -4,9 +4,17 @@
 
 {% block body_main %}
     <div class="row px-lg-3">
-        <h1>Cells</h1>
+        <div class="col"><h1>Cells</h1></div>
 
-        <table class="table">
+        <div class="col text-right">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+                {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
+                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+            </div>
+        </div>
+
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th scope="col">Nr</th>

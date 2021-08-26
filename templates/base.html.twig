@@ -62,18 +62,21 @@
 
                         <div class="dropdown-menu" aria-labelledby="navbar-dropdown-antibody-link">
                             <a class="dropdown-item" href="{{ url("app_antibodies") }}"><span class="fas fa-fw"></span>All</a>
-                            <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw"></span>Primaries</a>
-                            <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw"></span>Seondaries</a>
+                            <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw icon icon-antibody-primary"></span>Primaries</a>
+                            <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw icon icon-antibody-secondary"></span>Secondaries</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item"><span class="fas fa-fw fa-plus"></span>New</a>
                         </div>
                     </li>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-user-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                            <span class="fas fa-fw fa-user"></span>
                             User
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="navbar-dropdown-user-link">
-                            <a class="dropdown-item" href="{{ url("admin") }}"><span class="fas fa-fw"></span> Administration</a>
+                            <a class="dropdown-item" href="{{ url("admin") }}"><span class="fas fa-fw fa-tools"></span> Administration</a>
                             <a class="dropdown-item" href="{{ logout_url(key = null) }}"><span class="fas fa-sign-out-alt fa-fw"></span> Logout</a>
                         </div>
                     </li>
