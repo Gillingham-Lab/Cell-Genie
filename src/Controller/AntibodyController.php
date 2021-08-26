@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Antibody;
 use App\Repository\AntibodyRepository;
 use Doctrine\DBAL\Types\ConversionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,10 +20,23 @@ class AntibodyController extends AbstractController
     }
 
     #[Route("/antibodies", name: "app_antibodies")]
-    public function cells(): Response
+    #[Route("/antibodies/{antibodyType}", name: "app_antibodies")]
+    public function cells(?string $antibodyType = null): Response
     {
-        $primaryAntibodies = $this->antibodyRepository->findPrimaryAntibodies();
-        $secondaryAntibodies = $this->antibodyRepository->findSecondaryAntibodies(true);
+        $primaryAntibodies = [];
+        $secondaryAntibodies = [];
+
+        if ($antibodyType !== "primaries" and $antibodyType !== "secondaries" and !empty($antibodyType)) {
+            throw new FileNotFoundException("The requested antibody type does not exist.");
+        }
+
+        if (!$antibodyType or $antibodyType === "primaries") {
+            $primaryAntibodies = $this->antibodyRepository->findPrimaryAntibodies();
+        }
+
+        if (!$antibodyType or $antibodyType === "secondaries") {
+            $secondaryAntibodies = $this->antibodyRepository->findSecondaryAntibodies(true);
+        }
 
         return $this->render('parts/antibodies/antibodies.html.twig', [
             "antibodies" => [],
@@ -31,9 +46,9 @@ class AntibodyController extends AbstractController
     }
 
     #[Route("/antibodies/view/{antibodyId}", name: "app_antibody_view")]
-    public function viewAntibody(string $antibodyId): Response
+    public function viewAntibody(Antibody $antibodyId): Response
     {
-        try {
+        /*try {
             $antibody = $this->antibodyRepository->find($antibodyId);
         } catch (ConversionException) {
             $antibody = null;
@@ -43,14 +58,15 @@ class AntibodyController extends AbstractController
         if (!$antibody) {
             $this->addFlash("error", "Antibody was not found");
             return $this->redirectToRoute("app_antibodies");
-        }
+        }*/
+        $antibody = $antibodyId;
 
         return $this->render("parts/antibodies/antibody.html.twig", [
             "antibody" => $antibody,
         ]);
     }
 
-    #[Route("/antibodies/search", name: "app_antibodies_search")]
+    #[Route("/antibodies/search", name: "app_antibodies_search", priority: 10)]
     public function search(Request $request): Response
     {
         $searchTerm = $request->request->get("search", null);

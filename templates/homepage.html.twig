@@ -6,7 +6,7 @@
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
             {# Navigation pane left #}
-            <div class="col col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2 border-right pt-3">
+            {# <div class="col col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2 border-right pt-3">
                 <h5>Cell cultures</h5>
 
                 <ul class="nav flex-column">
@@ -30,10 +30,11 @@
                         <h6><a class="nav-link" href="{{ url("app_antibodies") }}"><span class="fas fa-fw mr-2"></span>Antibodies</a></h6>
                     </li>
                 </ul>
-            </div>
+            </div> #}
 
             {# main content #}
-            <main class="col col-12 col-sm-12 col-md-9 col-lg-10 col-xl-10 py-md-3 px-lg-3" role="main">
+            {# <main class="col col-12 col-sm-12 col-md-9 col-lg-10 col-xl-10 py-md-3 px-lg-3" role="main"> #}
+            <main class="col p-3" role="main">
                 {% if app.session.flashbag.peekAll|length > 0 %}
                     {% for type, messages in app.session.flashbag.all %}
                         {% if type == "error" %}

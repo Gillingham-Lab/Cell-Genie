@@ -3,16 +3,26 @@
 {% block title %}Cell Genie{% endblock %}
 
 {% block body_main %}
-    {%- if systemMessages > 0 %}
-        {%- for message in systemMessages.messages %}
-            <div class="mt-5 pb-3 border-bottom border-light">
-                <h2>{{ message.title }}</h2>
-                <p>{{ message.date|date("d. F Y H:i") }} by {{ message.author }}</p>
+    <div class="row">
+        <div class="col col-md-6 col-sm-12 p-3">
+            <h1>System changes</h1>
+            {% if systemMessages > 0 %}
+                {% for message in systemMessages.messages %}
+                    <div class="mt-3 pb-3 border-bottom border-light">
+                        <h2>{{ message.title }}</h2>
 
-                <div>
-                    {{ message.body|raw }}
-                </div>
-            </div>
-        {% endfor -%}
-    {% endif -%}
+                        <div>
+                            {{ message.body|raw }}
+                        </div>
+
+                        <p class="mt-3"><small class="text-muted">{{ message.date|date("d. F Y H:i") }} by {{ message.author }}</small></p>
+                    </div>
+                {% endfor -%}
+            {% endif -%}
+        </div>
+
+        <div class="col col-md-6 col-sm-12 p-3">
+            Dah
+        </div>
+    </div>
 {% endblock %}
