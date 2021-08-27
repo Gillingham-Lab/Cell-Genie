@@ -9,76 +9,55 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=CellAliquoteRepository::class)
- */
+#[ORM\Entity(repositoryClass: CellAliquoteRepository::class)]
 class CellAliquote
 {
     use HasBoxTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = 0;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private DateTimeInterface $aliquoted_on;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
-    private ?User $aliquoted_by;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    private ?User $aliquoted_by = null;
 
-    /**
-     * @ORM\Column(type="string", length=30)
-     */
-    private string $vialColor;
+    #[ORM\Column(type: "string", length: 30)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 30)]
+    private ?string $vialColor = "grey";
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private int $vials;
+    #[ORM\Column(type: "integer")]
+    #[Assert\Range(min: 1)]
+    private ?int $vials = 1;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private int $passage;
+    #[ORM\Column(type: "integer")]
+    private ?int $passage = 1;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private int $cellCount;
+    #[ORM\Column(type: "integer")]
+    private ?int $cellCount = 0;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $mycoplasma = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $typing = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $history = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="cellAliquotes")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
-    private $cell;
+    #[ORM\ManyToOne(targetEntity: Cell::class, inversedBy: "cellAliquotes")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    private ?Cell $cell = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Length(max: 250)]
     private $cryoMedium;
 
     public function getId(): ?int

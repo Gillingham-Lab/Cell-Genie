@@ -9,40 +9,28 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=MessageRepository::class)
- */
+#[ORM\Entity(repositoryClass: MessageRepository::class)]
 class Message
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotNull]
     private string $title = "";
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     #[Assert\NotNull]
     private string $body = "";
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     #[Assert\NotNull]
     private ?DateTimeInterface $date = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?User $author = null;
 

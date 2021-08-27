@@ -12,13 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait HasAttachmentsTrait
 {
-    /**
-     * @ORM\ManyToMany(targetEntity=File::class, cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinTable(
-     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", unique=True)},
-     * )
-     * @ORM\OrderBy({"title": "ASC"})
-     */
+    #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\JoinTable]
+    #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true)]
+    #[ORM\OrderBy(["title" => "ASC"])]
     #[Assert\Valid]
     private Collection $attachments;
 

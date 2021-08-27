@@ -8,27 +8,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 
-/**
- * @ORM\Entity(repositoryClass=FileBlobRepository::class)
- */
+#[ORM\Entity(repositoryClass: FileBlobRepository::class)]
 class FileBlob
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="ulid", unique=True)
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id;
 
-    /**
-     * @ORM\Column(type="blob")
-     */
+    #[ORM\Column(type: "blob")]
     private mixed $content;
 
-    /**
-     * @ORM\OneToOne(targetEntity=File::class, mappedBy="fileBlob", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(mappedBy: "fileBlob", targetEntity: File::class, cascade: ["persist", "remove"])]
     private File $fileData;
 
     public function getId(): ?Ulid

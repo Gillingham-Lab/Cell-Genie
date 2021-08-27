@@ -6,32 +6,25 @@ namespace App\Entity;
 use App\Repository\RackRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=RackRepository::class)
- */
+#[ORM\Entity(repositoryClass: RackRepository::class)]
 class Rack
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(min: 5, max: 255)]
+    #[Assert\NotBlank]
+    private ?string $name = "";
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $maxBoxes;
+    #[ORM\Column(type: "integer")]
+    private ?int $maxBoxes = 0;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Box::class, mappedBy="rack")
-     */
+    #[ORM\OneToMany(mappedBy: "rack", targetEntity: Box::class)]
     private Collection $boxes;
 
     public function __toString(): string

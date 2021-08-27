@@ -9,21 +9,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=BoxRepository::class)
- */
+#[ORM\Entity(repositoryClass: BoxRepository::class)]
 class Box
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private int $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(
         min: 3,
         max: 255,
@@ -33,22 +27,16 @@ class Box
     #[Assert\NotBlank]
     private ?string $name;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]
     private ?int $rows = 1;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]
     private ?int $cols = 1;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Rack::class, inversedBy="boxes", fetch="EAGER")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "EAGER", inversedBy: "boxes")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Assert\NotBlank]
     private ?Rack $rack = null;
 

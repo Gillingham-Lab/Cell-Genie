@@ -11,57 +11,44 @@ use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Ulid;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="user_accounts")
- */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: "user_accounts")]
 class User implements UserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="ulid", unique=True)
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
+    #[ORM\Column(type: "string", length: 255, unique: true)]
     private ?string $fullName = null;
 
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
+    #[ORM\Column(type: "string", length: 180, unique: true)]
     private string $email;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: "json")]
     private array $roles = [];
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: "string")]
     private string $password;
 
+    /**
+     * @var string|null temporary field for plain password.
+     */
     private ?string $plainPassword = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $isAdmin;
+    #[ORM\Column(type: "boolean", nullable: true)]
+    private ?bool $isAdmin = false;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $isActive;
+    #[ORM\Column(type: "boolean", nullable: true)]
+    private ?bool $isActive = false;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Experiment::class, mappedBy="owner")
-     */
-    private $experiments;
+    #[ORM\OneToMany(mappedBy: "owner", targetEntity: Experiment::class)]
+    private Collection $experiments;
 
     public function __construct()
     {
@@ -212,7 +199,7 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Experiment[]
+     * @return Collection<int, Experiment>
      */
     public function getExperiments(): Collection
     {

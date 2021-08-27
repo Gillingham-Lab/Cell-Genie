@@ -11,22 +11,16 @@ use JetBrains\PhpStorm\Pure;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=ProteinRepository::class)
- */
+#[ORM\Entity(repositoryClass: ProteinRepository::class)]
 #[UniqueEntity(fields: "shortName")]
 class Protein
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 1,
@@ -36,28 +30,21 @@ class Protein
     )]
     private string $shortName = "";
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
+    #[Assert\Length(max: 250)]
     private string $longName = "";
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Url]
     private ?string $proteinAtlasUri = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="proteinTargets")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "proteinTargets")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private Collection $experiments;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="proteinTarget")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "proteinTarget")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private Collection $antibodies;
 
     public function __construct()
@@ -66,7 +53,6 @@ class Protein
         $this->antibodies = new ArrayCollection();
     }
 
-    #[Pure]
     public function __toString(): string
     {
         return $this->getShortName() ?? "unknown";
@@ -114,7 +100,7 @@ class Protein
     }
 
     /**
-     * @return Collection|Experiment[]
+     * @return Collection<int, Experiment>
      */
     public function getExperiments(): Collection
     {
@@ -141,7 +127,7 @@ class Protein
     }
 
     /**
-     * @return Collection|Antibody[]
+     * @return Collection<int, Antibody>
      */
     public function getAntibodies(): Collection
     {

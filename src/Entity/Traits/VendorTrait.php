@@ -10,16 +10,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 trait VendorTrait
 {
-    /**
-     * @ORM\ManyToOne(targetEntity=Vendor::class, fetch="EAGER")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @ORM\OrderBy({"isPreferred" = "DESC"})
-     */
+    #[ORM\ManyToOne(targetEntity: Vendor::class, fetch: "EAGER")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[ORM\OrderBy(["isPreferred" => "DESC"])]
     private ?Vendor $vendor = null;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $vendorPN = null;
 
     public function getVendor(): ?Vendor

@@ -8,54 +8,36 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=VendorRepository::class)
- */
+#[ORM\Entity(repositoryClass: VendorRepository::class)]
 class Vendor
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(min: 3, max: 250)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private string $catalogUrl = "";
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private bool $hasFreeShipping = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private bool $hasDiscount = false;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default"=false})
-     */
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
     private bool $isPreferred = false;
 
-    public function __construct()
-    {
-    }
-
-    #[Pure]
     public function __toString(): string
     {
         return $this->getName();

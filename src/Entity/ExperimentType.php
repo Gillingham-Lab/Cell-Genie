@@ -7,66 +7,44 @@ use App\Repository\ExperimentTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=ExperimentTypeRepository::class)
- */
+#[ORM\Entity(repositoryClass: ExperimentTypeRepository::class)]
 class ExperimentType
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(min: 5, max: 255)]
     private ?string $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Experiment::class, mappedBy="experimentType", orphanRemoval=true)
-     * @var ?Collection|Experiment[]
-     */
+    #[ORM\OneToMany(mappedBy: "experimentType", targetEntity: Experiment::class, orphanRemoval: true)]
     private ?Collection $experiments;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="children")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: ExperimentType::class, inversedBy: "children")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?self $parent = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ExperimentType::class, mappedBy="parent")
-     * @var ?Collection|self[]
-     */
+    #[ORM\OneToMany(mappedBy: "parent", targetEntity: ExperimentType::class)]
     private ?Collection $children;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=CultureFlask::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: CultureFlask::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?CultureFlask $wellplate = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $lysing = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $seeding = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="experimentType", cascade={"persist"})
-     */
+    #[ORM\OneToMany(mappedBy: "experimentType", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
     private ?Collection $antibodyDilutions;
 
     public function __construct()
@@ -99,7 +77,7 @@ class ExperimentType
     }
 
     /**
-     * @return Collection|Experiment[]
+     * @return Collection<int, Experiment>
      */
     public function getExperiments(): Collection
     {
@@ -141,7 +119,7 @@ class ExperimentType
     }
 
     /**
-     * @return Collection|self[]
+     * @return Collection<int, self>
      */
     public function getChildren(): Collection
     {
@@ -219,7 +197,7 @@ class ExperimentType
     }
 
     /**
-     * @return Collection|AntibodyDilution[]
+     * @return Collection<int, AntibodyDilution>
      */
     public function getAntibodyDilutions(): Collection
     {
