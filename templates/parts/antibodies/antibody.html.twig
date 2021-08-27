@@ -9,11 +9,11 @@
     <div class="row px-lg-3">
         <div class="col col-sm-12">
             {% if antibody.proteinTarget|length > 0 and not antibody.hostTarget %}
-                <h1>Primary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
+                <h1>Primary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard far fa-clipboard small"></a></h1>
             {% elseif antibody.hostTarget and antibody.proteinTarget|length == 0 %}
-                <h1>Secondary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
+                <h1>Secondary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard far fa-clipboard small"></a></h1>
             {% else %}
-                <h1>Antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard fa fa-copy small"></a></h1>
+                <h1>Antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard far fa-clipboard small"></a></h1>
             {% endif %}
         </div>
 
@@ -75,7 +75,7 @@
                             {% for lot in antibody.lots %}
                                 <div class="{{ columnClasses }}">
                                     <h4>
-                                        <a class="fa fa-copy btn-clipboard small" data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"></a>
+                                        <a class="far fa-clipboard btn-clipboard small" data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"></a>
                                         {{ lot }}
                                     </h4>
                                     <div><strong>Lot#:</strong> {{ lot.lotNumber }}</div>
