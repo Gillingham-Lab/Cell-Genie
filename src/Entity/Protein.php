@@ -8,11 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProteinRepository::class)
  */
+#[UniqueEntity(fields: "shortName")]
 class Protein
 {
     /**
@@ -32,31 +34,31 @@ class Protein
         minMessage: "Must be at least {{ min }} character long.",
         maxMessage: "Only up to {{ max }} characters allowed.",
     )]
-    private $shortName;
+    private string $shortName = "";
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[Assert\NotBlank]
-    private $longName;
+    private string $longName = "";
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     #[Assert\Url]
-    private $proteinAtlasUri;
+    private ?string $proteinAtlasUri = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="proteinTargets")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    private $experiments;
+    private Collection $experiments;
 
     /**
      * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="proteinTarget")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    private $antibodies;
+    private Collection $antibodies;
 
     public function __construct()
     {
