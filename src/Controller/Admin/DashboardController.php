@@ -20,6 +20,7 @@ use App\Entity\Rack;
 use App\Entity\Tissue;
 use App\Entity\User;
 use App\Entity\Vendor;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -32,6 +33,12 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         return $this->render('admin_dashboard/dashboard.html.twig');
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addCssFile("icomoon/style.css");
     }
 
     public function configureDashboard(): Dashboard
@@ -58,9 +65,9 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
             MenuItem::linkToCrud("Experiments", 'fas', Experiment::class),
-            MenuItem::linkToCrud("Protein targets", "fas fa-bullseye", Protein::class),
-            MenuItem::linkToCrud("Antibodies", "fas", Antibody::class),
-            MenuItem::linkToCrud("Antibody hosts", "fas", AntibodyHost::class),
+            MenuItem::linkToCrud("Protein targets", "icon icon-protein", Protein::class),
+            MenuItem::linkToCrud("Antibodies", "icon icon-antibody", Antibody::class),
+            MenuItem::linkToCrud("Antibody hosts", "fas fa-horse", AntibodyHost::class),
             MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
 
             MenuItem::section("Inventory"),

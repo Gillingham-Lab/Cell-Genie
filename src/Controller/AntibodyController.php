@@ -21,7 +21,7 @@ class AntibodyController extends AbstractController
 
     #[Route("/antibodies", name: "app_antibodies")]
     #[Route("/antibodies/{antibodyType}", name: "app_antibodies")]
-    public function cells(?string $antibodyType = null): Response
+    public function cells(Request $request, ?string $antibodyType = null): Response
     {
         $primaryAntibodies = [];
         $secondaryAntibodies = [];
@@ -45,21 +45,24 @@ class AntibodyController extends AbstractController
         ]);
     }
 
-    #[Route("/antibodies/view/{antibodyId}", name: "app_antibody_view")]
-    public function viewAntibody(Antibody $antibodyId): Response
+    #[Route("/antibodies/view/id/{antibodyId}", name: "app_antibody_view")]
+    #[Route("/antibodies/view/{antibodyNr}", name: "app_antibody_view_number")]
+    public function viewAntibody(Antibody $antibodyId = null, string $antibodyNr = null): Response
     {
-        /*try {
-            $antibody = $this->antibodyRepository->find($antibodyId);
-        } catch (ConversionException) {
-            $antibody = null;
+        if ($antibodyId === null and $antibodyNr === null) {
+            throw new FileNotFoundException();
         }
 
-        # Return if antibody was not found.
-        if (!$antibody) {
-            $this->addFlash("error", "Antibody was not found");
-            return $this->redirectToRoute("app_antibodies");
-        }*/
-        $antibody = $antibodyId;
+        if ($antibodyNr !== null) {
+            $antibody = $this->antibodyRepository->findOneBy(["number" => $antibodyNr]);
+
+            if (!$antibody) {
+                $this->addFlash("error", "Antibody was not found");
+                return $this->redirectToRoute("app_antibodies");
+            }
+        } else {
+            $antibody = $antibodyId;
+        }
 
         return $this->render("parts/antibodies/antibody.html.twig", [
             "antibody" => $antibody,
