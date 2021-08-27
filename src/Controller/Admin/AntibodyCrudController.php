@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Antibody;
 use App\Entity\File;
+use App\Entity\Traits\HasRRID;
 use App\Entity\User;
 use App\Form\AntibodyDilutionType;
 use App\Form\DocumentationType;
@@ -46,8 +47,7 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
             TextField::new("shortName")
                 ->setHelp("A combination of protein target and antibody source or detection would be helpful, such as MGMT (goat), or Goat (VIS 700)"),
             TextField::new("longName", label: "Long name"),
-            TextField::new("rrid", label: "#RRID")
-                ->setHelp("RRID is a research resource identification and is similar to a doi, except that everything can have a rrid, including antibodies."),
+            ... HasRRID::rridCrudFields(),
             IntegerField::new("storageTemperature", label: "Storage temperature (°C)")
                 ->setHelp("Note down a storage temperature between -200 and 25 °C. Commonly, -20 °C is used."),
             AssociationField::new("hostOrganism", label: "Host Organism")

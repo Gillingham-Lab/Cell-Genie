@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Antibody
 {
     use VendorTrait;
+    use HasRRID;
 
     /**
      * @ORM\Id
@@ -101,11 +103,6 @@ class Antibody
      * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="secondaries")
      */
     private ?AntibodyHost $hostTarget = null;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $rrid = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -385,18 +382,6 @@ class Antibody
     public function setHostTarget(?AntibodyHost $hostTarget): self
     {
         $this->hostTarget = $hostTarget;
-
-        return $this;
-    }
-
-    public function getRrid(): ?string
-    {
-        return $this->rrid;
-    }
-
-    public function setRrid(?string $rrid): self
-    {
-        $this->rrid = $rrid;
 
         return $this;
     }
