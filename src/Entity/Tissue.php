@@ -5,23 +5,22 @@ namespace App\Entity;
 
 use App\Repository\TissueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=TissueRepository::class)
- */
+#[ORM\Entity(repositoryClass: TissueRepository::class)]
+#[UniqueEntity(fields: "name")]
 class Tissue
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 250)]
+    private ?string $name = null;
 
     public function __toString(): string
     {

@@ -12,9 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=AntibodyRepository::class)
- */
+#[ORM\Entity(repositoryClass: AntibodyRepository::class)]
 #[UniqueEntity(fields: "shortName")]
 #[UniqueEntity(fields: "number")]
 class Antibody
@@ -22,96 +20,54 @@ class Antibody
     use VendorTrait;
     use HasRRID;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50)]
     private string $shortName = "";
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 5, max: 255)]
     private string $longName = "";
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Protein::class, inversedBy="antibodies")
-     * @var Collection<int, self)
-     */
+    #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "antibodies")]
     private Collection $proteinTarget;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Antibody::class, inversedBy="antibodies")
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection<int, self)
-     */
-    private Collection $secondaryAntibody;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Antibody::class, mappedBy="secondaryAntibody")
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection<int, self)
-     */
-    private Collection $antibodies;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?String $detection = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="antibody", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(mappedBy: "antibody", targetEntity: AntibodyDilution::class, orphanRemoval: true)]
     private Collection $antibodyDilutions;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true, unique=True)
-     */
+    #[ORM\Column(type: "string", length: 10, unique: true, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Length(min: 1, max: 10)]
     private ?string $number = null;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default"=false})
-     */
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
     private bool $validatedInternally = false;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default"=false})
-     */
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
     private bool $validatedExternally = false;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $externalReference = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="primaries")
-     */
+    #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "primaries")]
     private ?AntibodyHost $hostOrganism = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AntibodyHost::class, inversedBy="secondaries")
-     */
+    #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "hostTarget")]
     private ?AntibodyHost $hostTarget = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $dilution = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true, options={"default": 0})
-     */
+    #[ORM\Column(type: "smallint", nullable: true, options: ["default" => 0])]
     #[Assert\NotBlank]
     #[Assert\Range(
         minMessage: "Storage below -200 °C is not possible.",
@@ -119,45 +75,34 @@ class Antibody
         min: -200,
         max: 25
     )]
-    private int $storageTemperature = -20;
+    private int $storageTemperature = 0;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Length(max: 250)]
     private ?string $clonality = "monoclonal";
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Length(max: 250)]
     private ?string $usage = "Western blot";
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Lot::class, cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinTable(name="antibody_lots",
-     *     joinColumns={@ORM\JoinColumn(name="antibody_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="lot_id", referencedColumnName="id", unique=True)},
-     * )
-     * @ORM\OrderBy({"lotNumber": "ASC"})
-     */
+    #[ORM\ManyToMany(targetEntity: Lot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\JoinTable(name: "antibody_lots")]
+    #[ORM\JoinColumn(name: "antibody_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "lot_id", referencedColumnName: "id", unique: true)]
+    #[ORM\OrderBy(["lotNumber" => "ASC"])]
     #[Assert\Valid]
     private Collection $lots;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=File::class, cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinTable(name="antibody_vendor_documentation_files",
-     *     joinColumns={@ORM\JoinColumn(name="antibody_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", unique=True)},
-     * )
-     * @ORM\OrderBy({"title": "ASC"})
-     */
+    #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\JoinTable(name: "antibody_vendor_documentation_files")]
+    #[ORM\JoinColumn(name: "antibody_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true)]
     #[Assert\Valid]
     private Collection $vendorDocumentation;
 
     public function __construct()
     {
         $this->proteinTarget = new ArrayCollection();
-        $this->secondaryAntibody = new ArrayCollection();
-        $this->antibodies = new ArrayCollection();
         $this->antibodyDilutions = new ArrayCollection();
         $this->lots = new ArrayCollection();
         $this->vendorDocumentation = new ArrayCollection();
@@ -217,57 +162,6 @@ class Antibody
     public function removeProteinTarget(Protein $proteinTarget): self
     {
         $this->proteinTarget->removeElement($proteinTarget);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getSecondaryAntibody(): Collection
-    {
-        return $this->secondaryAntibody;
-    }
-
-    public function addSecondaryAntibody(self $secondaryAntibody): self
-    {
-        if (!$this->secondaryAntibody->contains($secondaryAntibody)) {
-            $this->secondaryAntibody[] = $secondaryAntibody;
-        }
-
-        return $this;
-    }
-
-    public function removeSecondaryAntibody(self $secondaryAntibody): self
-    {
-        $this->secondaryAntibody->removeElement($secondaryAntibody);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getAntibodies(): Collection
-    {
-        return $this->antibodies;
-    }
-
-    public function addAntibody(self $antibody): self
-    {
-        if (!$this->antibodies->contains($antibody)) {
-            $this->antibodies[] = $antibody;
-            $antibody->addSecondaryAntibody($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAntibody(self $antibody): self
-    {
-        if ($this->antibodies->removeElement($antibody)) {
-            $antibody->removeSecondaryAntibody($this);
-        }
 
         return $this;
     }

@@ -11,61 +11,41 @@ use Symfony\Component\Uid\Ulid;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=FileRepository::class)
- */
+#[ORM\Entity(repositoryClass: FileRepository::class)]
 class File
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="ulid", unique=True)
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private string $contentType = "";
 
-    /**
-     * @ORM\Column(type="string", length=255, options={"default": ""})
-     */
+    #[ORM\Column(type: "string", length: 255, options: ["default" => ""])]
     private string $originalFileName = "";
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private int $contentSize = 0;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $uploadedBy = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
     private ?string $title = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=FileBlob::class, inversedBy="fileData", cascade={"persist", "remove"}, fetch="EXTRA_LAZY")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\OneToOne(inversedBy: "fileData", targetEntity: FileBlob::class, cascade: ["persist", "remove"], fetch: "EXTRA_LAZY")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?FileBlob $fileBlob = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTime $uploadedOn = null;
 
     public function setFromFile(UploadedFile $uploadedFile)

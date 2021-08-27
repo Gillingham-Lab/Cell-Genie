@@ -11,82 +11,58 @@ use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=LotRepository::class)
- */
+#[ORM\Entity(repositoryClass: LotRepository::class)]
 class Lot
 {
     use HasBoxTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="ulid", unique=True)
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
+    #[ORM\Column(type: "string", length: 20)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 20)]
     private ?string $number = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: "string", length: 50)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 50)]
     private ?string $lotNumber = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     #[Assert\NotBlank]
     private ?DateTimeInterface $boughtOn = null;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     #[Assert\NotBlank]
     private ?DateTimeInterface $openedOn = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
     private ?User $boughtBy = null;
 
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 10)]
     private ?string $amount = null;
 
-    /**
-     * @ORM\Column(type="string", length=15)
-     */
+    #[ORM\Column(type: "string", length: 15)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 15)]
     private ?string $purity = null;
 
-    /**
-     * @ORM\Column(type="string", length=15, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 15, nullable: true)]
     private ?string $aliquoteSize = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
+    #[ORM\Column(type: "smallint", nullable: true)]
     #[Assert\NotBlank]
     private ?int $numberOfAliquotes = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
     public function __toString()

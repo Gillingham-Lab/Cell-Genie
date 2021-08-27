@@ -11,22 +11,16 @@ use Symfony\Component\Uid\Ulid;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=AntibodyHostRepository::class)
- */
+#[ORM\Entity(repositoryClass: AntibodyHostRepository::class)]
 class AntibodyHost
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\Column(type="ulid", unique=True)
-     * @ORM\CustomIdGenerator(class=UlidGenerator::class)
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 3,
@@ -36,14 +30,10 @@ class AntibodyHost
     )]
     private ?string $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Antibody::class, mappedBy="hostOrganism")
-     */
+    #[ORM\OneToMany(mappedBy: "hostOrganism", targetEntity: Antibody::class)]
     private Collection $primaries;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Antibody::class, mappedBy="hostTarget")
-     */
+    #[ORM\OneToMany(mappedBy: "hostTarget", targetEntity: Antibody::class)]
     private Collection $secondaries;
 
     public function __construct()

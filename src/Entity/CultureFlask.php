@@ -8,28 +8,20 @@ use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=CultureFlaskRepository::class)
- */
+#[ORM\Entity(repositoryClass: CultureFlaskRepository::class)]
 class CultureFlask
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
-    private $name;
+    #[Assert\Length(min: 3, max: 250)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="smallint", options={"default": 1})
-     * Assert\NotBlank
-     */
+    #[ORM\Column(type: "smallint", options: ["default" => 1])]
     #[Assert\NotBlank]
     #[Assert\Range(
         notInRangeMessage: "Value must be between {{ min }} and {{ max }}.",
@@ -38,10 +30,7 @@ class CultureFlask
     )]
     private int $rows = 1;
 
-    /**
-     * @ORM\Column(type="smallint")
-     * Assert\Range(1, 100)
-     */
+    #[ORM\Column(type: "smallint", options: ["default" => 1])]
     #[Assert\NotBlank]
     #[Assert\Range(
         notInRangeMessage: "Value must be between {{ min }} and {{ max }}.",
@@ -50,20 +39,14 @@ class CultureFlask
     )]
     private int $cols = 1;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = "";
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Vendor::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Vendor::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Vendor $vendor = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?string $vendorId = null;
 
     #[Pure]

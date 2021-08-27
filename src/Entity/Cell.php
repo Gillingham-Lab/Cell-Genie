@@ -11,162 +11,111 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=CellRepository::class)
- */
+#[ORM\Entity(repositoryClass: CellRepository::class)]
+#[UniqueEntity(fields: "cellNumber")]
 class Cell
 {
     use VendorTrait;
     use HasAttachmentsTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=True)
-     */
-    private string $name;
+    #[ORM\Column(type: "string", length: 255, unique: True)]
+    #[Assert\Length(max: 250)]
+    private string $name = "";
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private string $age;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(max: 250)]
+    private string $age = "";
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private string $cultureType;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(max: 250)]
+    private string $cultureType = "";
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private bool $isCancer = true;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private bool $isEngineered = false;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cell::class, mappedBy="parent")
-     */
+    #[ORM\OneToMany(mappedBy: "parent", targetEntity: Cell::class)]
     private Collection $children;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cell::class, inversedBy="children", fetch="EAGER")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Cell::class, fetch: "EAGER", inversedBy: "children")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Cell $parent = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Morphology::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Morphology::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Morphology $morphology = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Organism::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Organism::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Organism $organism = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Tissue::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Tissue::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Tissue $tissue = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=CellAliquote::class, mappedBy="cell", orphanRemoval=true, cascade={"persist", "remove"})
-     */
-    private $cellAliquotes;
+    #[ORM\OneToMany(mappedBy: "cell", targetEntity: CellAliquote::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    private Collection $cellAliquotes;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $origin = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTimeInterface $acquiredOn = null;
 
-    /**
-     * @ORM\Column(type="decimal", precision=7, scale=2, nullable=true)
-     */
-    private $price = null;
+    #[ORM\Column(type: "decimal", precision: 7, scale: 2, nullable: true)]
+    private ?int $price = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?User $boughtBy = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $originComment = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $medium = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $freezing = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $thawing = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $cultureConditions = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $splitting = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $trypsin = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="cells")
-     */
+    #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "cells")]
     private ?Collection $experiments;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $lysing = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $seeding = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $countOnConfluence = null;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 10)]
     private ?string $cellNumber = "???";
 

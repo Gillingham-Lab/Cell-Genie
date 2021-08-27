@@ -11,9 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 trait HasRRID
 {
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)]
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $rrid = null;
 
     public static function rridCrudFields(): array

@@ -11,88 +11,57 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=ExperimentRepository::class)
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity(repositoryClass: ExperimentRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Experiment
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private ?string $name = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="experiments")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "experiments")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?User $owner = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ExperimentType::class, inversedBy="experiments", fetch="EAGER")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: ExperimentType::class, fetch: "EAGER", inversedBy: "experiments")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?ExperimentType $experimentType = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=CultureFlask::class)
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: CultureFlask::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?CultureFlask $wellplate = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Protein::class, inversedBy="experiments")
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection|Protein[]
-     */
+    #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "experiments")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private Collection $proteinTargets;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Chemical::class, inversedBy="experiments")
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection|Chemical[]
-     */
+    #[ORM\ManyToMany(targetEntity: Chemical::class, inversedBy: "experiments")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private Collection $chemicals;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Cell::class, inversedBy="experiments")
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @var Collection|Cell[]
-     */
+    #[ORM\ManyToMany(targetEntity: Cell::class, inversedBy: "experiments")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private Collection $cells;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $lysing = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $seeding = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AntibodyDilution::class, mappedBy="experiment", cascade={"persist"})
-     */
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
     private Collection $antibodyDilutions;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTimeInterface $createdAt = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private ?DateTimeInterface $modifiedAt = null;
 
     public function __construct()

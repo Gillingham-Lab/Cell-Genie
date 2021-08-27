@@ -11,28 +11,21 @@ use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=ChemicalRepository::class)
- */
+#[ORM\Entity(repositoryClass: ChemicalRepository::class)]
 class Chemical
 {
     use VendorTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private ?int $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(max: 250)]
     private ?string $longName = "";
 
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 1,
@@ -42,20 +35,14 @@ class Chemical
     )]
     private ?string $shortName;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private string $smiles = "";
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     #[Assert\Url]
     private ?string $labjournal = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Experiment::class, mappedBy="chemicals")
-     */
+    #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "chemicals")]
     private Collection $experiments;
 
     public function __construct()
@@ -63,7 +50,6 @@ class Chemical
         $this->experiments = new ArrayCollection();
     }
 
-    #[Pure]
     public function __toString(): string
     {
         return $this->getShortName() ?? "unknown";
@@ -123,7 +109,7 @@ class Chemical
     }
 
     /**
-     * @return Collection|Experiment[]
+     * @return Collection<int, Experiment>
      */
     public function getExperiments(): Collection
     {
