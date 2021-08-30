@@ -14,7 +14,7 @@
 
         {# Short information #}
         <div class="col col-12 bg-white mb-3 border p-5">
-            <table class="table table-sm table-borderless table-hover">
+            <table class="table table-sm table-borderless table-hover col-lg-4 col-md-12">
                 <tbody>
                     {{ macros.definition_row("ID", protein.id) }}
                     {{ macros.definition_row("Short name", protein.shortName) }}
@@ -85,7 +85,13 @@
 
                                                 {% if antibody.lots|length > 0 %}
                                                     {% for lot in antibody.lots %}
-                                                        <span>{{ antibody.number ~ "." ~ lot.number }} <span class="far fa-clipboard"></span></span>
+                                                        <span>{{ antibody.number ~ "." ~ lot.number }}
+                                                            <a
+                                                                    data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+                                                                    class="far fa-clipboard btn-clipboard "
+                                                                    role="button"
+                                                            ></a>
+                                                        </span>
                                                     {% endfor %}
                                                 {% else %}
                                                     None
@@ -94,6 +100,13 @@
                                         </div>
                                     </div>
                                 {% endfor %}
+                            </div>
+                        </div>
+
+                        {# Experiments #}
+                        <div class="tab-pane fade" id="tab-experiments-content" role="tabpanel" aria-labelledby="tab-experiments">
+                            <div class="row">
+                                Coming soon (R)
                             </div>
                         </div>
                     </div>

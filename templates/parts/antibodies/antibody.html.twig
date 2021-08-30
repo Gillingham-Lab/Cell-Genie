@@ -149,7 +149,23 @@
                         </div>
 
                         <div class="tab-pane fade" id="tab-dilutions-content" role="tabpanel" aria-labelledby="tab-dilutions">
-                            Coming soon (R)
+                            {% if not antibody.antibodyDilutions %}
+                                No antibody dilutions registered yet.
+                            {% else %}
+                                {% for dilution in antibody.antibodyDilutions %}
+                                    {% set experiment = dilution.experiment %}
+                                    {% set experiment_type = dilution.experiment.experimentType %}
+                                    <div class="col-4 mb-3 pb-3">
+                                        <div class="bg-secondary p-2 mb-n1 border-secondary border">
+                                            <h4>{{ experiment.name }} ({{ experiment_type.name }})</h4>
+                                        </div>
+
+                                        <div class="p-2 pt-3 border-secondary border">
+                                            {{ dilution.dilution }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
 
                         <div class="tab-pane fade" id="tab-experiments-content" role="tabpanel" aria-labelledby="tab-experiments">
