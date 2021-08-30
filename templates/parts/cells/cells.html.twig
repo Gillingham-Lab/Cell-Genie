@@ -3,54 +3,60 @@
 {% block title %}Cell Genie: Cells{% endblock %}
 
 {% block body_main %}
-    <div class="row px-lg-3">
-        <div class="col"><h1>Cells</h1></div>
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Cells</h1>
 
-        <div class="col text-right">
-            <div class="btn-group" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
-                {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
                 <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+                    </div>
+                </div>
             </div>
         </div>
 
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th scope="col">Nr</th>
-                <th scope="col">Name</th>
-                <th scope="col">Organism</th>
-                <th scope="col">Tissue</th>
-                <th scope="col">Morphology</th>
-                <th scope="col">Aliquotes (Unique)</th>
-                <th scope="col">Cancer</th>
-                <th scope="col">Engineered</th>
-                <th scope="col">Options</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for cell in cells %}
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <table class="table table-hover">
+                <thead>
                 <tr>
-                    <th>{{ cell.cellNumber }}</th>
-                    <td>{{ cell.name }}</td>
-                    <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
-                    <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
-                    <td>{{ cell.morphology ? cell.morphology.name : "undefined" }}</td>
-                    <td>{% if cell.cellAliquotes|length > 0 %}
-                            {% set aliquoteCount = 0 %}
-                            {% for aliquote in cell.cellAliquotes %}
-                                {% set aliquoteCount = aliquoteCount + aliquote.vials %}
-                            {% endfor %}
-                            {{ aliquoteCount }} ({{ cell.cellAliquotes|length }})
-                        {% else %}
-                            0
-                        {% endif %}</td>
-                    <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
-                    <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
-                    <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
+                    <th scope="col">Nr</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Organism</th>
+                    <th scope="col">Tissue</th>
+                    <th scope="col">Morphology</th>
+                    <th scope="col">Aliquotes (Unique)</th>
+                    <th scope="col">Cancer</th>
+                    <th scope="col">Engineered</th>
+                    <th scope="col">Options</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for cell in cells %}
+                    <tr>
+                        <th>{{ cell.cellNumber }}</th>
+                        <td>{{ cell.name }}</td>
+                        <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
+                        <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
+                        <td>{{ cell.morphology ? cell.morphology.name : "undefined" }}</td>
+                        <td>{% if cell.cellAliquotes|length > 0 %}
+                                {% set aliquoteCount = 0 %}
+                                {% for aliquote in cell.cellAliquotes %}
+                                    {% set aliquoteCount = aliquoteCount + aliquote.vials %}
+                                {% endfor %}
+                                {{ aliquoteCount }} ({{ cell.cellAliquotes|length }})
+                            {% else %}
+                                0
+                            {% endif %}</td>
+                        <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
+                        <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
+                        <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

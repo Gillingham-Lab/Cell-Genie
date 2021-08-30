@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block body_main %}
-    <div class="row px-lg-3">
+    <div class="row p-3">
         {% set antibodyType = app.request.get('antibodyType')%}
         {% set pageTitle = "Antibodies" %}
         {% if antibodyType == "primaries" %}
@@ -28,48 +28,55 @@
             {% set pageTitle = "Secondary antibodies" %}
         {% endif %}
 
-        {% if antibodies|length > 0 %}
-            <div class="col col-12"><h1>{{ pageTitle }}</h1></div>
 
-            <div class="col col-12">
-                {# Display search results #}
-                {{ _self.display_any(antibodies) }}
-            </div>
-        {% else %}
-            <div class="col col-12">
-                <div class="row">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                {% if antibodies|length > 0 %}
                     <div class="col"><h1>{{ pageTitle }}</h1></div>
+                {% else %}
+                    <h1 class="col">{{ pageTitle }}</h1>
 
                     <div class="col text-right">
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
+        </div>
 
+        {% if antibodies|length > 0 %}
+            <div class="col col-12 p-5 bg-white mb-3 border">
+                {# Display search results #}
+                {{ _self.display_any(antibodies) }}
+            </div>
+        {% else %}
             {% if antibodyType == "primaries" %}
                 {# Display *only* primary antibodies #}
-                <div class="col">
+                <div class="col col-12 p-5 bg-white mb-3 border">
                     {{ _self.display_primaries(primaryAntibodies) }}
                 </div>
             {% elseif antibodyType == "secondaries" %}
                 {# Display *only* secondary antibodies #}
-                <div class="col">
+                <div class="col col-12 p-5 bg-white mb-3 border">
                     {{ _self.display_secondaries(secondaryAntibodies) }}
                 </div>
             {% else %}
                 {# Display *both* primary and secondary antibodies. #}
-                <div class="col col-sm-12 col-md-12 col-lg-6">
-                    <h2>Primary antibodies</h2>
+                <div class="col col-6 ml-n3 mr-3">
+                    <div class="p-5 bg-white mb-3 border">
+                        <h2>Primary antibodies</h2>
 
-                    {{ _self.display_primaries(primaryAntibodies) }}
+                        {{ _self.display_primaries(primaryAntibodies) }}
+                    </div>
                 </div>
 
-                <div class="col col-sm-12 col-md-12 col-lg-6">
-                    <h2>Secondary antibodies</h2>
+                <div class="col col-6 ml-3 mr-n3">
+                    <div class="p-5 bg-white mb-3 border">
+                        <h2>Secondary antibodies</h2>
 
-                    {{ _self.display_secondaries(secondaryAntibodies) }}
+                        {{ _self.display_secondaries(secondaryAntibodies) }}
+                    </div>
                 </div>
             {% endif %}
         {% endif %}

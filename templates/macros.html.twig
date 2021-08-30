@@ -1,15 +1,21 @@
 {% macro definition_row(n, d, url = none) %}
-    <dt class="col-sm-4">{{ n }}</dt>
-    {% if url %}
-        <dd class="col-sm-8"><a href="{{ url }}">{{ d }}</a></dd>
-    {% else %}
-        <dd class="col-sm-8">{{ d }}</dd>
-    {% endif %}
+    <tr>
+        <th>{{ n }}</th>
+        {% if url %}
+            <td><a href="{{ url }}">{{ d }}</a></td>
+        {% else %}
+            <td>{{ d }}</td>
+        {% endif %}
+    </tr>
 {% endmacro %}
 
 {% macro definition_row_raw(n, d) %}
-    <dt class="col-sm-4">{{ n }}</dt>
-    <dd class="col-sm-8">{{ d|raw }}</dd>
+    {# <dt class="col-sm-4">{{ n }}</dt>
+    <dd class="col-sm-8">{{ d|raw }}</dd> #}
+    <tr>
+        <th>{{ n }}</th>
+        <td>{{ d|raw }}</td>
+    </tr>
 {% endmacro %}
 
 {% macro make_box(box, aliquotes, currentCell, currentAliquote = null) %}
@@ -146,7 +152,7 @@
                         {{ file.title }}
                         <a class="ml-3" href="{{ url("file_download", {"fileid": file.id}) }}"><span class="fa fa-download"></span></a>
                     </h5>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <p class="card-text">{{ file.description ?? "(no description)" }}</p>
                     <p class="card-text"><small class="text-muted">{{ file.originalFileName }} ({{ _self.format_file_size(file.contentSize)|trim }})</small></p>
                 </div>
             </div>
@@ -174,4 +180,21 @@
             {% endif %}
         {% endif %}
     {% endif %}
+{% endmacro %}
+
+{% macro tab_item(name, id, tabid, active=false, enabled=true) %}
+    <a class="nav-link {{ active?"active":"" }} {{ enabled ? "" : "disabled" }}" id="{{ id }}" data-toggle="pill" href="#{{ tabid }}" role="tab" aria-controls="{{ tabid }}" aria-selected="{{ active?"true":"false" }}">{{ name }}</a>
+{% endmacro %}
+
+{% macro simple_tab_content(name, content, comment=null) %}
+    <div class="col-4 mb-3 pb-3">
+        <h4 class="bg-secondary p-2 mb-n1 border-secondary border">{{ name }}</h4>
+        <div class="p-2 pt-3 border-secondary border">
+            {{ (content ?? "unknown")|raw }}
+
+            {% if comment %}
+                <p class="text-muted mt-3 mb-n1">{{ comment }}</p>
+            {% endif %}
+        </div>
+    </div>
 {% endmacro %}

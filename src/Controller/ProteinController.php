@@ -24,7 +24,7 @@ class ProteinController extends AbstractController
     {
         $proteins = $this->proteinRepository->findBy([], orderBy: ["shortName" => "ASC"]);
 
-        return $this->render("proteins.html.twig", [
+        return $this->render("parts/proteins/proteins.html.twig", [
             "proteins" => $proteins
         ]);
     }
@@ -50,7 +50,7 @@ class ProteinController extends AbstractController
             $antibodyToExperimentType[$antibody->getId()] = $antibodyExperimentTypes;
         }
 
-        return $this->render("protein_view.html.twig", [
+        return $this->render("parts/proteins/protein.html.twig", [
             "protein" => $protein,
             "experimentTypes" => $experimentTypes,
             "experimentTypesPerAntibody" => $antibodyToExperimentType,

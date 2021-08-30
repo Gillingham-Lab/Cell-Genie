@@ -3,260 +3,298 @@
 
 {% block title %}Cell Genie: Cells{% endblock %}
 
+{% macro tab_item(name, id, tabid, active=false, enabled=true) %}
+    <a class="nav-link {{ active?"active":"" }} {{ enabled ? "" : "disabled" }}" id="{{ id }}" data-toggle="pill" href="#{{ tabid }}" role="tab" aria-controls="{{ tabid }}" aria-selected="{{ active?"true":"false" }}">{{ name }}</a>
+{% endmacro %}
+
+{% macro simple_tab_content(name, content, comment=null) %}
+    <div class="col-4 mb-3 pb-3">
+        <h4 class="bg-secondary p-2 mb-n1 border-secondary border">{{ name }}</h4>
+        <div class="p-2 pt-3 border-secondary border">
+            {{ (content ?? "unknown")|raw }}
+
+            {% if comment %}
+                <p class="text-muted mt-3 mb-n1">{{ comment }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
 {% block body_main %}
     {% set columnClasses = "col-md-6 col-lg-4 col-xl-4 px-3 mb-3 border-light border-bottom" %}
 
-    <div class="row px-lg-3">
-        <div class="row col-sm-3">
-            <h1>{{ cell.name }}</h1>
-
-            <dl class="row">
-                {{ macros.definition_row("ID", cell.id) }}
-                {% if cell.parent %}
-                    {{ macros.definition_row("Parent", cell.parent.name, url("app_cell_view", {"cellId": cell.parent.id})) }}
-                {% else %}
-                    {{ macros.definition_row("Parent", "none") }}
-                {% endif %}
-                {% if cell.children|length > 0 %}
-                    <dt class="col-sm-4">Children</dt>
-                    <dd class="col-sm-8">
-                        {% for child in cell.children %}
-                            {% set childUrl = url("app_cell_view", {"cellId": child.id}) %}
-
-                            <a class='badge rounded-pill bg-primary text-light' href='{{ childUrl }}'>{{ child.name }}</a>
-                        {% endfor %}
-                    </dd>
-                {% else %}
-                    {{ macros.definition_row("Children", "none") }}
-                {% endif %}
-                {{ macros.definition_row("Organism", cell.organism ? cell.organism.fullName : "undefined") }}
-                {{ macros.definition_row("Tissue", cell.tissue ? cell.tissue.name : "undefined") }}
-                {{ macros.definition_row("Age", cell.age) }}
-                {{ macros.definition_row("Morphology", cell.morphology ? cell.morphology.name : "undefined") }}
-                {{ macros.definition_row("Culture type", cell.cultureType) }}
-                {{ macros.definition_row("Cancer", cell.isCancer ? "Yes" : "No") }}
-                {{ macros.definition_row("Engineered", cell.isEngineered ? "Yes" : "No") }}
-            </dl>
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1>{{ cell.name }}</h1>
+            </div>
         </div>
 
-        <div class="row col-sm-9 pl-5">
-            <div class="bg-light">
-                {% if boxes|length == 0 %}
-                    <em>No aliquotes registered.</em>
-                {% else %}
-                    {% set found = null %}
-                    <nav>
-                        <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
-                            {% for box in boxes %}
-                                {% if aliquote %}
-                                    {% for a in boxAliquotes[box.id] %}
-                                        {% if a.id == aliquote.id %}
-                                            {% set found = box %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% elseif loop.first %}
-                                    {% set found = box %}
+        <div class="col col-12 mb-3">
+            <div class="row row-cols-2">
+                <div class="col">
+                    <div class="bg-white border p-5 mr-1 ml-n3 h-100">
+                        <table class="table w-100 table-borderless table-sm">
+                            <tbody>
+                                {{ macros.definition_row("ID", cell.id) }}
+
+                                {% if cell.parent %}
+                                    {{ macros.definition_row("Parent", cell.parent.name, url("app_cell_view", {"cellId": cell.parent.id})) }}
+                                {% else %}
+                                    {{ macros.definition_row("Parent", "none") }}
                                 {% endif %}
 
+                                {% if cell.children|length > 0 %}
+                                    <tr>
+                                        <th>Children</th>
+                                        <td>
+                                            {% for child in cell.children %}
+                                                {% set childUrl = url("app_cell_view", {"cellId": child.id}) %}
 
-                                <a class="nav-item nav-link {{ found and found.id == box.id ? "active" : "" }}"
-                                   id="box-tab-{{ loop.index }}"
-                                   data-toggle="tab" href="#box-{{ loop.index }}" role="tab"
-                                   aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
-                                >Box {{ loop.index }}</a>
-                            {% endfor %}
-                        </div>
-                    </nav>
+                                                <a class='badge rounded-pill bg-primary text-light' href='{{ childUrl }}'>{{ child.name }}</a>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    {{ macros.definition_row("Children", "none") }}
+                                {% endif %}
 
-                    <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
-                        {% for box in boxes %}
-                            <div class="tab-pane fade {{ found and found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
-                                <h6>{{ box.fullLocation }}</h6>
-                                {{ macros.make_box(box, boxAliquotes[box.id], cell, aliquote) }}
+                                {{ macros.definition_row("Organism", cell.organism ? cell.organism.fullName : "undefined") }}
+                                {{ macros.definition_row("Tissue", cell.tissue ? cell.tissue.name : "undefined") }}
+                                {{ macros.definition_row("Age", cell.age) }}
+                                {{ macros.definition_row("Morphology", cell.morphology ? cell.morphology.name : "undefined") }}
+                                {{ macros.definition_row("Culture type", cell.cultureType) }}
+                                {{ macros.definition_row("Cancer", cell.isCancer ? "Yes" : "No") }}
+                                {{ macros.definition_row("Engineered", cell.isEngineered ? "Yes" : "No") }}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {# <dl class="row bg-white border p-5 mr-1 h-100">
+
+
+                    </dl> #}
+                </div>
+
+                <div class="col">
+                    <div class="bg-white border p-5 ml-1 mr-n3 h-100">
+                        {% if boxes|length == 0 %}
+                            <em>No aliquotes registered.</em>
+                        {% else %}
+                            <div class="row">
+                                <div class="col">
+                                    {% set found = null %}
+                                    <nav>
+                                        <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
+                                            {% for box in boxes %}
+                                                {% if aliquote %}
+                                                    {% for a in boxAliquotes[box.id] %}
+                                                        {% if a.id == aliquote.id %}
+                                                            {% set found = box %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% elseif loop.first %}
+                                                    {% set found = box %}
+                                                {% endif %}
+
+
+                                                <a class="nav-item nav-link {{ found and found.id == box.id ? "active" : "" }}"
+                                                   id="box-tab-{{ loop.index }}"
+                                                   data-toggle="tab" href="#box-{{ loop.index }}" role="tab"
+                                                   aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
+                                                >Box {{ loop.index }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </nav>
+
+                                    <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
+                                        {% for box in boxes %}
+                                            <div class="tab-pane fade {{ found and found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                                                <h6>{{ box.fullLocation }}</h6>
+                                                {{ macros.make_box(box, boxAliquotes[box.id], cell, aliquote) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="col p-3">
+                                {% if aliquote %}
+                                        <div class="full-width flex-fill p-3">
+                                            <h3>Aliquote details</h3>
+
+                                            <table class="table w-100 table-borderless table-sm">
+                                                <tbody>
+                                                    {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("d. F Y") : "unknown") }}
+                                                    {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
+                                                    {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
+                                                    {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
+                                                    {{ macros.definition_row("Vials left", aliquote.vials) }}
+                                                    {{ macros.definition_row("Cell count", "#{aliquote.cellCount/1000}k") }}
+                                                    {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
+                                                </tbody>
+                                            </table>
+
+                                            <div class="pb-3">
+                                                {% if aliquote.vials > 0 %}
+                                                    <a href="{{ url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id}) }}" class="btn btn-primary">Consume</a>
+                                                {% else %}
+                                                    <em class="alert-warning">No aliquote left.</em>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                {% endif %}
+                                </div>
                             </div>
-                        {% endfor %}
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
-        </div>
-
-        {% if aliquote %}
-        <div class="row col-sm-12 mt-5">
-            <div class="full-width flex-fill">
-                <h3>Aliquote details</h3>
-
-                <div class="pb-3">
-                    {% if aliquote.vials > 0 %}
-                        <a href="{{ url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id}) }}" class="btn btn-primary">Consume</a>
-                    {% else %}
-                        <em class="alert-warning">No aliquote left.</em>
-                    {% endif %}
-                </div>
-
-                <div class="row">
-                <dl class="row col-sm-6">
-                    {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("d. F Y") : "unknown") }}
-                    {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
-                    {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
-                    {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
-                    {{ macros.definition_row("Vials left", aliquote.vials) }}
-                    {{ macros.definition_row("Cell count", "#{aliquote.cellCount/1000}k") }}
-                    {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
-                </dl>
                 </div>
             </div>
         </div>
-        {% endif %}
 
-        <div class="row col-sm-12 mt-5">
-            <div class="full-width flex-fill">
-                <h3>Details</h3>
-                <nav>
-                    <div class="nav nav-tabs nav-fill" id="box-tab-navigation" role="tablist">
-                        <a class="nav-item nav-link active" id="cell-info-origin" data-toggle="tab" href="#cell-info-origin-content" role="tab" aria-selected="true">
-                            Origin
-                        </a>
-                        <a class="nav-item nav-link" id="cell-info-culturing" data-toggle="tab" href="#cell-info-culturing-content" role="tab" aria-selected="false">
-                            Culturing
-                        </a>
-                        <a class="nav-item nav-link" id="cell-info-experiments" data-toggle="tab" href="#cell-info-experiments-content" role="tab" aria-selected="false">
-                            Experiments
-                        </a>
-                        <a class="nav-item nav-link {{ aliquote ? "" : "disabled" }}" id="cell-info-testing" data-toggle="tab" href="#cell-info-testing-content" role="tab" aria-selected="false">
-                            Aliquote testing
-                        </a>
-                        <a class="nav-item nav-link {{ cell.attachments|length > 0 ? "" : "disabled" }}" id="tabbing-tab4" data-toggle="tab" href="#tabbing-tab4-content" role="tab" aria-selected="false">
-                            Attachments
-                        </a>
+        <div class="col col-12 mb-3">
+            <div class="row bg-white p-5 border">
+                <div class="col-3 col-xl-2">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        {{ _self.tab_item("Origin", "cell-info-origin", "cell-info-origin-content", true) }}
+                        {{ _self.tab_item("Culturing", "cell-info-culturing", "cell-info-culturing-content") }}
+                        {{ _self.tab_item("Experiments", "cell-info-experiments", "cell-info-experiments-content") }}
+                        {{ _self.tab_item("Aliquote testing", "cell-info-aliquotes", "cell-info-aliquotes-content", false, aliquote?true:false) }}
+                        {{ _self.tab_item("Attachments", "cell-info-attachments", "cell-info-attachments-content", false, cell.attachments|length > 0?true:false) }}
                     </div>
-                </nav>
+                </div>
 
-                <div class="tab-content border-light border border-top-0 p-5" id="cell-info-content">
-                    <div class="tab-pane fade show active" id="cell-info-origin-content" role="tabpanel" aria-labelledby="cell-info-origin">
-                        <div class="row">
-                            <div class="col-sm-12 col-md-6">
-                                <h4>Origin</h4>
-                                <p>{{ cell.origin ?? "unknown" }}</p>
+                <div class="col-9 col-xl-10">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        {# Cell origin #}
+                        <div class="tab-pane fade show active" id="cell-info-origin-content" role="tabpanel" aria-labelledby="cell-info-origin">
+                            <div class="row">
+                                <div class="col-4">
+                                    <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Origin</h4>
+                                    <div class="p-2 pt-3 border-secondary border">
+                                        {{ (cell.origin ?? "unknown")|raw }}
+                                    </div>
+                                </div>
 
-                                <h4>Acquisition</h4>
-                                <dl class="row">
-                                    {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
-                                    {{ macros.definition_row("Vendor PN", cell.vendorId ?? "unknown") }}
-                                    {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
-                                    {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
-                                    {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. d. Y") : "unknown") }}
-                                </dl>
+                                <div class="col-4">
+                                    <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Acquisition</h4>
+                                    <div class="p-2 pt-3 border-secondary border">
+                                        <table class="table table-sm table-borderless">
+                                            <tbody>
+                                                {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
+                                                {{ macros.definition_row("Vendor PN", cell.vendorId ?? "unknown") }}
+                                                {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
+                                                {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
+                                                {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. F Y") : "unknown") }}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
                                 {% if cell.originComment %}
-                                    <h4>Comment</h4>
-                                    <p>{{ cell.originComment }}</p>
+                                    {{ _self.simple_tab_content("Comment", cell.originComment) }}
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="cell-info-culturing-content" role="tabpanel" aria-labelledby="cell-info-culturing">
-                        <div class="row">
-                            <div class="{{ columnClasses }}">
-                                <h4>Medium</h4>
-                                <div class="mb-5">{{ (cell.medium ?? "unknown")|raw }}</div>
-                            </div>
 
-                            <div class="{{ columnClasses }}">
-                                <h4>Trypsin</h4>
-                                <div class="mb-5">{{ (cell.trypsin ?? "unknown")|raw }}</div>
-                            </div>
-
-                            <div class="{{ columnClasses }}">
-                                <h4>Recommended splitting</h4>
-                                <div class="mb-5">{{ (cell.splitting ?? "unknown")|raw }}</div>
-                            </div>
-
-                            <div class="{{ columnClasses }}">
-                                <h4>Recommended freezing</h4>
-                                <div class="mb-5">{{ (cell.freezing ?? "unknown")|raw }}</div>
-                            </div>
-
-                            <div class="{{ columnClasses }}">
-                                <h4>Recommended thawing</h4>
-                                <div class="mb-5">{{ (cell.thawing ?? "unknown")|raw }}</div>
-                            </div>
-
-                            <div class="{{ columnClasses }}">
-                                <h4>Culture conditions</h4>
-                                <div class="mb-5">{{ (cell.cultureConditions ?? "unknown")|raw }}</div>
+                        {# Cell culturing details #}
+                        <div class="tab-pane fade" id="cell-info-culturing-content" role="tabpanel" aria-labelledby="cell-info-culturing">
+                            <div class="row">
+                                {{ _self.simple_tab_content("Growth medium", cell.medium) }}
+                                {{ _self.simple_tab_content("Trypsin", cell.trypsin) }}
+                                {{ _self.simple_tab_content("Culture conditions", cell.cultureConditions) }}
+                                {{ _self.simple_tab_content("Splitting", cell.splitting) }}
+                                {{ _self.simple_tab_content("Freezing", cell.freezing) }}
+                                {{ _self.simple_tab_content("Thawing", cell.thawing) }}
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
-                        <div class="row">
-                            <div class="{{ columnClasses }}">
-                                <h4>Seeding conditions</h4>
-                                <div class="mb-5">
-                                    {{ (cell.seeding ?? "unknown")|raw }}
-                                </div>
-                                <p>Cell count at confluency: {{ cell.countOnConfluence ?? "unknown" }}</p>
-                            </div>
 
-                            <div class="{{ columnClasses }}">
-                                <h4>Lysis conditions</h4>
-                                <div class="mb-5">
-                                    {{ (cell.lysing ?? "unknown")|raw }}
-                                </div>
-                            </div>
+                        <div class="tab-pane fade" id="cell-info-experiments-content" role="tabpanel" aria-labelledby="cell-info-experiments">
+                            <div class="row">
+                                {{ _self.simple_tab_content("Seeding", cell.seeding, cell.countOnConfluence?("Cell count at confluency: " ~ cell.countOnConfluence|number_format):null) }}
+                                {{ _self.simple_tab_content("Lysis", cell.lysing) }}
 
-                            <div class="{{ columnClasses }}">
-                                <h4>Associated proteins</h4>
-                                <div class="mb-5">
-                                    {% if proteins|length == 0 %}
-                                        none
-                                    {% else %}
-                                        {% for protein in proteins %}
-                                            <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ protein.longName }}"><a>{{ protein.shortName }}</a></span>
-                                        {% endfor %}
-                                    {% endif %}
+                                {# List of proteins #}
+                                <div class="col-4 mb-3">
+                                    <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Associated proteins</h4>
+                                    <div class="p-2 pt-3 border-secondary border">
+                                        {% if proteins|length == 0 %}
+                                            none
+                                        {% else %}
+                                            {% for protein in proteins %}
+                                                <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ protein.longName }}"><a>{{ protein.shortName }}</a></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="{{ columnClasses }}">
-                                <h4>Experiment types</h4>
-                                <div class="mb-5">
-                                    {% if experimentTypes|length == 0 %}
-                                        none
-                                    {% else %}
-                                        {% for experimentType in experimentTypes %}
-                                            <span class="badge rounded-pill bg-primary text-light"><a>{{ experimentType.name }}</a></span>
-                                        {% endfor %}
-                                    {% endif %}
+                                {# List of experiment types #}
+                                <div class="col-4 mb-3">
+                                    <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Experiment types</h4>
+                                    <div class="p-2 pt-3 border-secondary border">
+                                        {% if experimentTypes|length == 0 %}
+                                            none
+                                        {% else %}
+                                            {% for experimentType in experimentTypes %}
+                                                <span class="badge rounded-pill bg-primary text-light"><a>{{ experimentType.name }}</a></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="{{ columnClasses }}">
-                                <h4>Experiments</h4>
-                                <div class="mb-5">
-                                    {% if cell.experiments|length == 0 %}
-                                        none
-                                    {% else %}
-                                        {% for experiment in cell.experiments %}
-                                            <span class="badge rounded-pill bg-primary text-light"><a>{{ experiment.name }}</a></span>
-                                        {% endfor %}
-                                    {% endif %}
+                                {# List of actual experiments! #}
+                                <div class="col-4 mb-3">
+                                    <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Expeirments</h4>
+                                    <div class="p-2 pt-3 border-secondary border">
+                                        {% if cell.experiments|length == 0 %}
+                                            none
+                                        {% else %}
+                                            {% for experiment in cell.experiments %}
+                                                <span class="badge rounded-pill bg-primary text-light"><a>{{ experiment.name }}</a></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="{{ columnClasses }}">
-                                <h4>Associated compounds</h4>
-                                <div class="mb-5">
-                                    {% if chemicals|length == 0 %}
-                                        none
-                                    {% else %}
-                                        {% for chemical in chemicals %}
-                                            <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ chemical.longName }}"><a>{{ chemical.shortName }}</a></span>
-                                        {% endfor %}
-                                    {% endif %}
+                                {# List of chemicals #}
+                                <div class="col-4 mb-3">
+                                    <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Chemicals</h4>
+                                    <div class="p-2 pt-3 border-secondary border">
+                                        {% if chemicals|length == 0 %}
+                                            none
+                                        {% else %}
+                                            {% for chemical in chemicals %}
+                                                <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ chemical.longName }}"><a>{{ chemical.shortName }}</a></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        {# Aliquote information #}
+                        <div class="tab-pane fade" id="cell-info-aliquotes-content" role="tabpanel" aria-labelledby="cell-info-aliquotes">
+                            <div class="row">
+                                {{ _self.simple_tab_content("Mycoplasma", cell.mycoplasma ?? "no data") }}
+                                {{ _self.simple_tab_content("Typing", cell.typing ?? "no data") }}
+                                {{ _self.simple_tab_content("History", cell.history ?? "no data") }}
+                            </div>
+                        </div>
+
+                        {# Attached documents #}
+                        <div class="tab-pane fade" id="cell-info-attachments-content" role="tabpanel" aria-labelledby="cell-info-attachments">
+                            <div class="row">
+                                {{ macros.list_of_files(cell.attachments) }}
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        {# <div class="col col-12 mb-3">
+
+
+
                     <div class="tab-pane fade" id="cell-info-testing-content" role="tabpanel" aria-labelledby="cell-info-testing">
                         {% if aliquote %}
                             <div class="row">
@@ -280,7 +318,7 @@
                         {% endif %}
                     </div>
 
-                    {# TAB 5 - Attachments #}
+                    {# TAB 5 - Attachments # }
                     <div class="tab-pane fade" id="tabbing-tab4-content" role="tabpanel" aria-labelledby="tabbing-tab4">
                         <div class="row">
                             {{ macros.list_of_files(cell.attachments) }}
@@ -288,6 +326,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> #}
     </div>
 {% endblock %}

@@ -4,121 +4,165 @@
 {% block title %}Cell Genie: Antibody{% endblock %}
 
 {% block body_main %}
-    {% set columnClasses = "col-md-6 col-lg-4 col-xl-4 px-3 mb-3 border-light border-bottom" %}
-
-    <div class="row px-lg-3">
-        <div class="col col-sm-12">
-            {% if antibody.proteinTarget|length > 0 and not antibody.hostTarget %}
-                <h1>Primary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard far fa-clipboard small"></a></h1>
-            {% elseif antibody.hostTarget and antibody.proteinTarget|length == 0 %}
-                <h1>Secondary antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard far fa-clipboard small"></a></h1>
-            {% else %}
-                <h1>Antibody: {{ antibody }} <a data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})" class="btn-clipboard far fa-clipboard small"></a></h1>
-            {% endif %}
+    <div class="row p-3">
+        <div class="col col-12 bg-white mb-3 border p-5">
+            <div class="row">
+                {% if antibody.proteinTarget|length > 0 and not antibody.hostTarget %}
+                    <h1>
+                        Primary antibody: {{ antibody }}
+                        <a
+                                data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+                                class="btn-clipboard far fa-clipboard small"
+                                role="button"
+                        ></a>
+                    </h1>
+                {% elseif antibody.hostTarget and antibody.proteinTarget|length == 0 %}
+                    <h1>Secondary antibody: {{ antibody }}
+                        <a
+                                data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+                                class="btn-clipboard far fa-clipboard small"
+                                role="button"
+                        ></a>
+                    </h1>
+                {% else %}
+                    <h1>
+                        Antibody: {{ antibody }}
+                        <a
+                                data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+                                class="btn-clipboard far fa-clipboard small"
+                                role="button"
+                        ></a>
+                    </h1>
+                {% endif %}
+            </div>
         </div>
 
-        <div class="col col-sm-6">
-            <dl class="row">
-                {{ macros.definition_row("ID", antibody.number) }}
-                {{ macros.definition_row_raw("Short name", antibody.shortName ~ macros.validation_status(antibody)) }}
-                {{ macros.definition_row("Long name", antibody.longName) }}
-                {{ macros.definition_row("RRID", macros.rrid_resolver(antibody.rrid)) }}
-                {% if antibody.vendor %}
-                    {{ macros.definition_row_raw("Vendor", macros.vendor_url(antibody.vendor, antibody.vendorPN)) }}
-                {% endif %}
-                {{ macros.definition_row("Host organism", antibody.hostOrganism) }}
-                {{ macros.definition_row("Clonality", antibody.clonality) }}
 
-                {% if antibody.hostTarget %}
-                    {{ macros.definition_row("Host Target", antibody.hostTarget) }}
-                {% endif %}
+        <div class="col col-12 bg-white mb-3 border p-5">
+            <table class="table table-sm table-borderless col-lg-4 col-md-12">
+                <tbody>
+                    {{ macros.definition_row("ID", antibody.number) }}
+                    {{ macros.definition_row_raw("Short name", antibody.shortName ~ macros.validation_status(antibody)) }}
+                    {{ macros.definition_row("Long name", antibody.longName) }}
+                    {{ macros.definition_row("RRID", macros.rrid_resolver(antibody.rrid)) }}
+                    {% if antibody.vendor %}
+                        {{ macros.definition_row_raw("Vendor", macros.vendor_url(antibody.vendor, antibody.vendorPN)) }}
+                    {% endif %}
+                    {{ macros.definition_row("Host organism", antibody.hostOrganism) }}
+                    {{ macros.definition_row("Clonality", antibody.clonality) }}
 
-                {% if antibody.proteinTarget|length > 0 %}
-                    {{ macros.definition_row("Protein targets", macros.pillify_proteins(antibody.proteinTarget)) }}
-                {% endif %}
+                    {% if antibody.hostTarget %}
+                        {{ macros.definition_row("Host Target", antibody.hostTarget) }}
+                    {% endif %}
 
-                {% if antibody.detection %}
-                    {{ macros.definition_row("Detection", antibody.detection) }}
-                {% endif %}
+                    {% if antibody.proteinTarget|length > 0 %}
+                        {{ macros.definition_row("Protein targets", macros.pillify_proteins(antibody.proteinTarget)) }}
+                    {% endif %}
 
-                {{ macros.definition_row("Store at", antibody.storageTemperature ~ " °C") }}
-                {{ macros.definition_row("Usage", antibody.usage ?? "(unknown)") }}
-            </dl>
+                    {% if antibody.detection %}
+                        {{ macros.definition_row("Detection", antibody.detection) }}
+                    {% endif %}
+
+                    {{ macros.definition_row("Store at", antibody.storageTemperature ~ " °C") }}
+                    {{ macros.definition_row("Usage", antibody.usage ?? "(unknown)") }}
+                </tbody>
+            </table>
         </div>
 
-        {# Tabs #}
-    <div class="row col-sm-12 mt-5">
-        <div class="full-width flex-fill">
-            <nav>
-                <div class="nav nav-tabs nav-fill" id="box-tab-navigation" role="tablist">
-                    <a class="nav-item nav-link active" id="tabbing-tab1" data-toggle="tab" href="#tabbing-tab1-content" role="tab" aria-selected="true">
-                        Lots
-                    </a>
-                    <a class="nav-item nav-link" id="tabbing-tab2" data-toggle="tab" href="#tabbing-tab2-content" role="tab" aria-selected="false">
-                        Dilutions
-                    </a>
-                    <a class="nav-item nav-link" id="tabbing-tab3" data-toggle="tab" href="#tabbing-tab3-content" role="tab" aria-selected="false">
-                        Experiments
-                    </a>
-                    <a class="nav-item nav-link {{ antibody.vendorDocumentation|length > 0 ? "" : "disabled" }}" id="tabbing-tab4" data-toggle="tab" href="#tabbing-tab4-content" role="tab" aria-selected="false">
-                        Attachments
-                    </a>
-                </div>
-            </nav>
-
-            <div class="tab-content border-light border border-top-0 p-5" id="tabbing-content">
-                <div class="tab-pane fade show active" id="tabbing-tab1-content" role="tabpanel" aria-labelledby="tabbing-tab1">
-                    <div class="row">
-                        {% if not antibody.lots %}
-                            No lots registered
-                        {% else %}
-                            {% for lot in antibody.lots %}
-                                <div class="{{ columnClasses }}">
-                                    <h4>
-                                        <a class="far fa-clipboard btn-clipboard small" data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"></a>
-                                        {{ lot }}
-                                    </h4>
-                                    <div><strong>Lot#:</strong> {{ lot.lotNumber }}</div>
-                                    <div>Bought on <em>{{ lot.boughtOn|date("d. M Y") }}</em> by <em>{{ lot.boughtBy }}</em></div>
-                                    <div>Opened on <em>{{ lot.openedOn|date("d. M Y") }}</em></div>
-                                    <div><strong>Amount: </strong>{{ lot.amount }} ({{ lot.purity }})</div>
-                                    <div><strong>Storage: </strong>{{ lot.box }}</div>
-
-                                    {% if lot.numberOfAliquotes > 0 %}
-                                        <div><strong>Aliquotes: </strong>{{ lot.numberOfAliquotes }} ({{ lot.aliquoteSize }})</div>
-                                    {% else %}
-                                        <div>No aliquotes</div>
-                                    {% endif %}
-
-                                    {% if lot.comment %}
-                                        <div class="mb-5 mt-3">{{ (lot.comment ?? "")|raw }}</div>
-                                    {% else %}
-                                        <div class="mb-5 mt-3">-</div>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+        {# Tabbed info at the bottom #}
+        <div class="col col-12 mb-3">
+            <div class="row bg-white p-5 border">
+                <div class="col-3 col-xl-2">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        {{ macros.tab_item("Lots", "tab-lots", "tab-lots-content", true) }}
+                        {{ macros.tab_item("Dilutions", "tab-dilutions", "tab-dilutions-content") }}
+                        {{ macros.tab_item("Experiments", "tab-experiments", "tab-experiments-content") }}
+                        {{ macros.tab_item("Attachments", "tab-attachments", "tab-attachments-content", false, antibody.vendorDocumentation|length > 0?true:false) }}
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="tabbing-tab2-content" role="tabpanel" aria-labelledby="tabbing-tab2">
-                    <div class="row">
-                        COntent.
-                    </div>
-                </div>
+                <div class="col-9 col-xl-10">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        {# Antibodies #}
+                        <div class="tab-pane fade show active" id="tab-lots-content" role="tabpanel" aria-labelledby="tab-lots">
+                            <div class="row">
+                                {% if not antibody.lots %}
+                                    No lots registered
+                                {% else %}
+                                    {% for lot in antibody.lots %}
+                                        <div class="col-4 mb-3 pb-3">
+                                            <div class="bg-secondary p-2 mb-n1 border-secondary border">
+                                                <h4 class="float-left">{{ antibody.number ~ "." ~ lot }}</h4>
+                                                <div class="text-right">
+                                                    <a
+                                                            class="far fa-clipboard btn-clipboard small"
+                                                            data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+                                                    ></a>
+                                                </div>
+                                            </div>
 
-                <div class="tab-pane fade" id="tabbing-tab3-content" role="tabpanel" aria-labelledby="tabbing-tab3">
-                    <div class="row">
-                        COntent.
-                    </div>
-                </div>
+                                            <div class="p-2 pt-3 border-secondary border">
+                                                <table class="table table-sm table-borderless">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Lot#</th>
+                                                            <td>{{ lot.lotNumber }}</td>
+                                                        </tr>
 
-                <div class="tab-pane fade" id="tabbing-tab4-content" role="tabpanel" aria-labelledby="tabbing-tab4">
-                    <div class="row">
-                        {{ macros.list_of_files(antibody.vendorDocumentation) }}
+                                                        <tr>
+                                                            <th>Storage</th>
+                                                            <td>{{ lot.box }}</td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <th>Amount</th>
+                                                            <td>{{ lot.amount }} ({{ lot.purity }})</td>
+                                                        </tr>
+
+                                                        {% if lot.numberOfAliquotes > 0 %}
+                                                            <tr>
+                                                                <th>Aliquotes</th>
+                                                                <td>{{ lot.numberOfAliquotes }} ({{ lot.aliquoteSize }})</td>
+                                                            </tr>
+                                                        {% else %}
+                                                            <tr><td colspan="2">Not aliquotes</td></tr>
+                                                        {% endif %}
+                                                    </tbody>
+                                                </table>
+
+                                                {% if lot.comment %}
+                                                    <div class="mb-5 mt-3">{{ (lot.comment ?? "")|raw }}</div>
+                                                {% else %}
+                                                    <div class="mb-5 mt-3">-</div>
+                                                {% endif %}
+
+                                                <p class="text-muted">
+                                                    This antibody was bought by <em>{{ lot.boughtBy }}</em>
+                                                    on <em>{{ lot.boughtOn|date("d. M Y") }}</em>.
+                                                    Opened on <em>{{ lot.openedOn|date("d. M Y") }}</em>.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-dilutions-content" role="tabpanel" aria-labelledby="tab-dilutions">
+                            Coming soon (R)
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-experiments-content" role="tabpanel" aria-labelledby="tab-experiments">
+                            Soon (R)
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-attachments-content" role="tabpanel" aria-labelledby="tab-attachments">
+                            {{ macros.list_of_files(antibody.vendorDocumentation) }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    <!-- end row -->
     </div>
 {% endblock %}

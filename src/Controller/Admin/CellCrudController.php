@@ -48,7 +48,7 @@ class CellCrudController extends ExtendedAbstractCrudController
             ... HasAttachmentsTrait::attachmentCrudFields(),
 
             FormField::addPanel("Origins"),
-            TextareaField::new("origin")
+            TextEditorField::new("origin")
                 ->hideOnIndex(),
             ... VendorTrait::crudFields(),
             DateField::new("acquiredOn")
@@ -58,8 +58,11 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnIndex(),
             AssociationField::new("boughtBy")
                 ->hideOnIndex(),
+            TextEditorField::new("originComment", label: "Comment")
+                ->hideOnIndex()
+                ->setHelp("Add some additional details on how we aquired the cells."),
 
-            FormField::addPanel("Call management conditions"),
+            FormField::addPanel("Cell management conditions"),
             TextEditorField::new("medium", label: "Recommended cell medium")
                 ->hideOnIndex(),
             TextEditorField::new("trypsin", label: "Required trypsin")

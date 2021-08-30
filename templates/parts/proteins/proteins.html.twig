@@ -1,0 +1,53 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Cell Genie: Proteins{% endblock %}
+
+{% macro format_antibody_name(item) %}
+    <span data-toggle="tooltip" data-placement="bottom" title="{{ item.longName }}">{{ item.shortName }}</span>
+{% endmacro %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Proteins</h1>
+
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
+                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col"># Experiments</th>
+                        <th scope="col"># Antibodies</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for protein in proteins %}
+                        <tr>
+                            <th class="align-middle">{{ protein.id }}</th>
+                            <td class="align-middle">{{ _self.format_antibody_name(protein) }}</td>
+                            <td class="align-middle">{{ protein.experiments|length }}</td>
+                            <td class="align-middle">{{ protein.antibodies|length > 0 ? protein.antibodies|length : "none" }}</td>
+                            <td class="align-middle">
+                                <a href="{{ url("app_protein_view", {"proteinId": protein.id}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

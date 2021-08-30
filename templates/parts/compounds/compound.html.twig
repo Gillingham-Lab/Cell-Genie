@@ -1,0 +1,42 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block title %}Cell Genie: Compounds{% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="">
+                    <canvas data-smiles-type="large" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}" class="border-right border-light d-inline align-middle"></canvas>
+                    <span class="align-middle pl-5">{{ chemical.shortName }}</span>
+                </h1>
+            </div>
+        </div>
+
+        {# Short information #}
+        <div class="col col-12 bg-white mb-3 border p-5">
+            <table class="table table-sm table-borderless">
+                <tbody>
+                    {{ macros.definition_row("ID", chemical.id) }}
+                    {{ macros.definition_row("Short name", chemical.shortName) }}
+                    {{ macros.definition_row("Name", chemical.longName) }}
+
+                    {% if chemical.labjournal %}
+                        {{ macros.definition_row("Labjournal", chemical.labjournal, chemical.labjournal) }}
+                    {% else %}
+                        {{ macros.definition_row("Labjournal", "no entry") }}
+                    {% endif %}
+
+                    {% if chemical.vendor %}
+                        {{ macros.definition_row("Vendor", chemical.vendor.name, chemical.vendor.catalogUrl) }}
+                        {{ macros.definition_row("Vendor PN", chemical.vendorPN) }}
+                    {% else %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Tabs! #}
+    </div>
+{% endblock %}

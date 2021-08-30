@@ -34,7 +34,7 @@
 
             {# main content #}
             {# <main class="col col-12 col-sm-12 col-md-9 col-lg-10 col-xl-10 py-md-3 px-lg-3" role="main"> #}
-            <main class="col p-3" role="main">
+            <main class="col p-3 bg-secondary" role="main">
                 {% if app.session.flashbag.peekAll|length > 0 %}
                     {% for type, messages in app.session.flashbag.all %}
                         {% if type == "error" %}

@@ -21,7 +21,7 @@ class CompoundController extends AbstractController
     {
         $chemicals = $this->chemicalRepository->findBy([], orderBy: ["shortName" => "ASC"]);
 
-        return $this->render("compounds.html.twig", [
+        return $this->render("parts/compounds/compounds.html.twig", [
             "chemicals" => $chemicals
         ]);
     }
@@ -36,7 +36,7 @@ class CompoundController extends AbstractController
             return $this->redirect("app_compounds", status: Response::HTTP_NOT_FOUND);
         }
 
-        return $this->render("compound_view.html.twig", [
+        return $this->render("parts/compounds/compound.html.twig", [
             "chemical" => $chemical,
         ]);
     }
