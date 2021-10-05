@@ -29,16 +29,8 @@ class ExperimentTypeCrudController extends AbstractCrudController
             TextField::new('name')
                 ->setRequired(true),
             AssociationField::new("parent")
-                ->setHelp("Setting a parent lets you use experimental detail of the parent."),
-
-            FormField::addPanel("Experimental detail")
-                ->hideOnIndex(),
-            AssociationField::new("wellplate", "Recommended wellplate"),
+                ->setHelp("Setting a parent helps to organise experiments hierarchically."),
             TextEditorField::new("description", "Experimental procedure")
-                ->hideOnIndex(),
-            TextEditorField::new("lysing", "Lysis conditions")
-                ->hideOnIndex(),
-            TextEditorField::new("seeding", "Seeding conditions")
                 ->hideOnIndex(),
         ];
     }

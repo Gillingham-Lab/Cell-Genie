@@ -9,6 +9,8 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentRepository::class)]
@@ -16,9 +18,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Experiment
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private ?Ulid $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
     private ?string $name = null;
@@ -32,6 +35,16 @@ class Experiment
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?ExperimentType $experimentType = null;
+
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalCondition::class, fetch: "EAGER")]
+    #[ORM\OrderBy(["order" =>"ASC"])]
+    #[Assert\Valid]
+    private Collection $conditions;
+
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalMeasurement::class, fetch: "EAGER")]
+    #[ORM\OrderBy(["order" =>"ASC"])]
+    #[Assert\Valid]
+    private Collection $measurements;
 
     #[ORM\ManyToOne(targetEntity: CultureFlask::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -49,12 +62,6 @@ class Experiment
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private Collection $cells;
 
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $lysing = null;
-
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $seeding = null;
-
     #[ORM\OneToMany(mappedBy: "experiment", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
     private Collection $antibodyDilutions;
 
@@ -70,12 +77,12 @@ class Experiment
         $this->chemicals = new ArrayCollection();
         $this->cells = new ArrayCollection();
         $this->antibodyDilutions = new ArrayCollection();
+        $this->conditions = new ArrayCollection();
+        $this->measurements = new ArrayCollection();
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateTimestamps()
     {
         if ($this->getCreatedAt() === null) {
@@ -210,30 +217,6 @@ class Experiment
         return $this;
     }
 
-    public function getLysing(): ?string
-    {
-        return $this->lysing ?? $this->experimentType?->getLysing();
-    }
-
-    public function setLysing(?string $lysing): self
-    {
-        $this->lysing = $lysing;
-
-        return $this;
-    }
-
-    public function getSeeding(): ?string
-    {
-        return $this->seeding ?? $this->experimentType?->getSeeding();
-    }
-
-    public function setSeeding(?string $seeding): self
-    {
-        $this->seeding = $seeding;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, AntibodyDilution>
      */
@@ -258,6 +241,66 @@ class Experiment
             // set the owning side to null (unless already changed)
             if ($antibodyDilution->getExperiment() === $this) {
                 $antibodyDilution->setExperiment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExperimentalCondition>
+     */
+    public function getConditions(): Collection
+    {
+        return $this->conditions;
+    }
+
+    public function addCondition(ExperimentalCondition $condition): self
+    {
+        if (!$this->conditions->contains($condition)) {
+            $this->conditions[] = $condition;
+            $condition->setExperiment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDilution(ExperimentalCondition $condition): self
+    {
+        if ($this->conditions->removeElement($condition)) {
+            // set the owning side to null (unless already changed)
+            if ($condition->getExperiment() === $this) {
+                $condition->setExperiment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExperimentalMeasurement>
+     */
+    public function getMeasurements(): Collection
+    {
+        return $this->measurements;
+    }
+
+    public function addMeasurement(ExperimentalMeasurement $measurement): self
+    {
+        if (!$this->measurements->contains($measurement)) {
+            $this->measurements[] = $measurement;
+            $measurement->setExperiment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeasurement(ExperimentalMeasurement $measurement): self
+    {
+        if ($this->measurements->removeElement($measurement)) {
+            // set the owning side to null (unless already changed)
+            if ($measurement->getExperiment() === $this) {
+                $measurement->setExperiment(null);
             }
         }
 

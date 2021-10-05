@@ -61,7 +61,7 @@ class Antibody
     #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "primaries")]
     private ?AntibodyHost $hostOrganism = null;
 
-    #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "hostTarget")]
+    #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "secondaries")]
     private ?AntibodyHost $hostTarget = null;
 
     #[ORM\Column(type: "text", nullable: true)]
