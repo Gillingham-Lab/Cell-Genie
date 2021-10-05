@@ -5,6 +5,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Experiment;
 use App\Form\AntibodyDilutionType;
+use App\Form\ExperimentalConditionType;
+use App\Form\ExperimentalMeasurementType;
 use App\Form\LotType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -26,22 +28,30 @@ class ExperimentCrudController extends AbstractCrudController
         return [
             FormField::addPanel("General information"),
             IdField::new('id')->hideOnForm(),
-            TextField::new('name'),
-            AssociationField::new('owner'),
-            AssociationField::new("experimentType"),
+            AssociationField::new("experimentType")
+                ->hideOnIndex()
+                ->setHelp("Set a overarching experiment type to organize the experiments."),
+            TextField::new('name')
+                ->setHelp("Name of the experiment"),
+            AssociationField::new('owner')
+                ->setHelp("Who owns this experiment? Only owner can change an experiment outside of the admin dashboard."),
 
-            FormField::addPanel("Experimental relations"),
-            AssociationField::new("cells"),
-            AssociationField::new("proteinTargets"),
-            AssociationField::new("chemicals"),
-            TextEditorField::new("lysing", "Lysis conditions")
-                ->hideOnIndex(),
-            TextEditorField::new("seeding", "Seeding conditions")
-                ->hideOnIndex(),
-
-            CollectionField::new("antibodyDilutions", "Antibody dilutions")
-                ->setEntryType(AntibodyDilutionType::class)
+            FormField::addPanel("Experimental details"),
+            CollectionField::new("conditions", "Conditions")
+                ->setEntryType(ExperimentalConditionType::class)
                 ->setEntryIsComplex(true),
+            CollectionField::new("measurements", "Measurements")
+                ->setEntryType(ExperimentalMeasurementType::class)
+                ->setEntryIsComplex(true),
+
+            //FormField::addPanel("Experimental relations"),
+            //AssociationField::new("cells"),
+            //AssociationField::new("proteinTargets"),
+            //AssociationField::new("chemicals"),
+
+            //CollectionField::new("antibodyDilutions", "Antibody dilutions")
+            //    ->setEntryType(AntibodyDilutionType::class)
+            //    ->setEntryIsComplex(true),
         ];
     }
 }

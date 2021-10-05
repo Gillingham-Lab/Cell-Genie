@@ -30,8 +30,11 @@ class ExperimentTypeCrudController extends AbstractCrudController
                 ->setRequired(true),
             AssociationField::new("parent")
                 ->setHelp("Setting a parent helps to organise experiments hierarchically."),
-            TextEditorField::new("description", "Experimental procedure")
-                ->hideOnIndex(),
+            TextEditorField::new("description", "Description")
+                ->hideOnIndex()
+                ->setHelp("Describe briefly the experiment type. What is it used for?"),
+            AssociationField::new("createdBy")
+                ->setHelp("Creator of the experiment type."),
         ];
     }
 }
