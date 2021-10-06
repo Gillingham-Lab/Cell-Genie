@@ -32,7 +32,7 @@ class ExperimentalCondition extends InputType
     #[ORM\Column(type: "boolean", nullable: false, options: ["default" => false])]
     private bool $general = false;
 
-    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 0])]
+    #[ORM\Column(name: "_order", type: "integer", nullable: false, options: ["default" => 0])]
     private int $order = 0;
 
     #[ORM\Column(type: "string", length: 100, nullable: false)]
@@ -41,6 +41,11 @@ class ExperimentalCondition extends InputType
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
+
+    public function __toString(): string
+    {
+        return $this->title ?? "{no name}";
+    }
 
     public function getId(): ?Ulid
     {

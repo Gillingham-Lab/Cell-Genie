@@ -31,17 +31,17 @@ class Experiment
     #[Assert\NotNull]
     private ?User $owner = null;
 
-    #[ORM\ManyToOne(targetEntity: ExperimentType::class, fetch: "EAGER", inversedBy: "experiments")]
+    #[ORM\ManyToOne(targetEntity: ExperimentType::class, fetch: "LAZY", inversedBy: "experiments")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?ExperimentType $experimentType = null;
 
-    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalCondition::class, fetch: "EAGER")]
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalCondition::class, cascade: ["persist"], fetch: "EAGER")]
     #[ORM\OrderBy(["order" =>"ASC"])]
     #[Assert\Valid]
     private Collection $conditions;
 
-    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalMeasurement::class, fetch: "EAGER")]
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalMeasurement::class, cascade: ["persist"], fetch: "EAGER")]
     #[ORM\OrderBy(["order" =>"ASC"])]
     #[Assert\Valid]
     private Collection $measurements;
@@ -92,7 +92,7 @@ class Experiment
         $this->setModifiedAt(new DateTime("now"));
     }
 
-    public function getId(): ?int
+    public function getId(): ?Ulid
     {
         return $this->id;
     }
@@ -265,7 +265,7 @@ class Experiment
         return $this;
     }
 
-    public function removeDilution(ExperimentalCondition $condition): self
+    public function removeCondition(ExperimentalCondition $condition): self
     {
         if ($this->conditions->removeElement($condition)) {
             // set the owning side to null (unless already changed)

@@ -22,12 +22,19 @@ abstract class InputType
         self::FREE_TYPE
     ];
 
+    const LABEL_TYPES = [
+        "Check" => self::CHECK_TYPE,
+        "Integer" => self::INTEGER_TYPE,
+        "Float" => self::FLOAT_TYPE,
+        "Choice" => self::CHOICE_TYPE,
+        "Free" => self::FREE_TYPE,
+    ];
+
     #[ORM\Column(type: "string", length: 30, nullable: false)]
-    private ?string $type = null;
+    protected ?string $type = null;
 
-    #[ORM\Column(type: "json", nullable: true)]
-    private ?array $config = null;
-
+    #[ORM\Column(type: "text", nullable: false)]
+    protected ?string $config = "";
 
     public function getType(): ?string
     {
@@ -36,21 +43,25 @@ abstract class InputType
 
     public function setType(?string $type): self
     {
-        if (array_search($type, self::TYPES, strict: true) !== false) {
-            throw new InvalidArgumentException("ExperimentalCondition::type must be one of check, integer, float, choice, free");
+        if (array_search($type, self::TYPES, strict: true) === false) {
+            throw new InvalidArgumentException("ExperimentalCondition::type must be one of check, integer, float, choice, free, but '{$type}' was given.");
         }
 
         $this->type = $type;
         return $this;
     }
 
-    public function getConfig(): ?array
+    public function getConfig(): ?string
     {
         return $this->config;
     }
 
-    public function setConfig(array $config): self
+    public function setConfig(?string $config): self
     {
+        if ($config === null) {
+            $config = "";
+        }
+
         $this->config = $config;
 
         return $this;

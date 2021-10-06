@@ -27,7 +27,7 @@ class ExperimentalMeasurement extends InputType
     #[Assert\NotNull]
     private ?Experiment $experiment = null;
 
-    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 0])]
+    #[ORM\Column(name: "_order", type: "integer", nullable: false, options: ["default" => 0])]
     private int $order = 0;
 
     #[ORM\Column(type: "string", length: 100, nullable: false)]
@@ -36,6 +36,14 @@ class ExperimentalMeasurement extends InputType
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
+
+    #[ORM\Column(type: "boolean", nullable: false, options: ["default" => false])]
+    private bool $internalStandard = false;
+
+    public function __toString(): string
+    {
+        return $this->title ?? "{no name}";
+    }
 
     public function getId(): ?Ulid
     {
@@ -85,6 +93,18 @@ class ExperimentalMeasurement extends InputType
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function isInternalStandard(): bool
+    {
+        return $this->internalStandard;
+    }
+
+    public function setInternalStandard(bool $internalStandard = true): self
+    {
+        $this->internalStandard = $internalStandard;
+
         return $this;
     }
 }
