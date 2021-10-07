@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -30,7 +31,7 @@ class ExperimentTypeCrudController extends AbstractCrudController
                 ->setRequired(true),
             AssociationField::new("parent")
                 ->setHelp("Setting a parent helps to organise experiments hierarchically."),
-            TextEditorField::new("description", "Description")
+            TextareaField::new("description", "Description")
                 ->hideOnIndex()
                 ->setHelp("Describe briefly the experiment type. What is it used for?"),
             AssociationField::new("createdBy")

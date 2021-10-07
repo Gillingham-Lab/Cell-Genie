@@ -1,0 +1,98 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Cell Genie: Compounds{% endblock %}
+
+{% macro show_children(type) %}
+    {% if type.children|length > 0 %}
+        {% for child_type in type.children %}
+            {% if type.experiments|length > 0 %}
+                <div class="p-3">
+                    <h3> {{ child_type.name  }}</h3>
+
+                    <p>{{ child_type.description }}</p>
+
+                    {{ _self.show_table(child_type) }}
+                </div>
+            {% endif %}
+
+            {{ _self.show_children(child_type) }}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro show_table(type) %}
+    <table class="table table-sm full table-borderless table-hover">
+        <thead>
+            <tr>
+                <th>Experiment</th>
+                <th># Runs</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for experiment in type.experiments -%}
+                <tr>
+                    <td>{{ experiment.name }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Experiments</h1>
+
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% for type in experiment_types|filter(t => t.parent is null ) %}
+            <div class="bg-white mt-3 border col col-12 p-0">
+                <h2 class="bg-dark text-white p-3 border-bottom border-dark">{{ type.name }}</h2>
+
+                <div class="p-3">
+                    {{ type.description }}
+
+                    {{ _self.show_table(type) }}
+                </div>
+
+                {{ _self.show_children(type) }}
+            </div>
+        {% endfor %}
+            {# <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col" style="width: 200px">Structure</th>
+                    <th scope="col">Short Name</th>
+                    <th scope="col">Labjournal</th>
+                    <th scope="col"># Experiments</th>
+                    <th scope="col">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for chemical in chemicals %}
+                    <tr>
+                        <th class="align-middle">{{ chemical.id }}</th>
+                        <td class="align-middle"><canvas data-smiles-type="small" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}"></canvas></td>
+                        <td class="align-middle">{{ chemical.shortName }}</td>
+                        <td class="align-middle">{% if chemical.labjournal %}<a class="fa-fw fas fa-external-link-alt" href="#{{ chemical.id }}">Lab Journal entry</a>{% else %}No entry{% endif %}</td>
+                        <td class="align-middle">{{ chemical.experiments|length > 0 ? chemical.experiments|length : "none" }}</td>
+                        <td class="align-middle">
+                            <a href="{{ url("app_compound_view", {"compoundId": chemical.id}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table> #}
+    </div>
+{% endblock %}

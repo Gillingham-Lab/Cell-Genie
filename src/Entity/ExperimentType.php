@@ -176,7 +176,7 @@ class ExperimentType
 
     public function getDescription(): ?string
     {
-        return $this->description ?? $this->parent?->getWellplate();
+        return $this->description ?? "(empty)";
     }
 
     public function setDescription(?string $description): self
