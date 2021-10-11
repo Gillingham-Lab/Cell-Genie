@@ -1,11 +1,11 @@
 {% extends 'homepage.html.twig' %}
 
-{% block title %}Cell Genie: Compounds{% endblock %}
+{% block title %}Cell Genie: Experiments{% endblock %}
 
 {% macro show_children(type) %}
     {% if type.children|length > 0 %}
         {% for child_type in type.children %}
-            {% if type.experiments|length > 0 %}
+            {% if child_type.experiments|length > 0 %}
                 <div class="p-3">
                     <h3> {{ child_type.name  }}</h3>
 
@@ -21,24 +21,43 @@
 {% endmacro %}
 
 {% macro show_table(type) %}
-    <table class="table table-sm full table-borderless table-hover">
-        <thead>
-            <tr>
-                <th>Experiment</th>
-                <th># Runs</th>
-                <th>Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for experiment in type.experiments -%}
+    {% if type.experiments|length > 0 %}
+        <table class="table table-sm full table-borderless table-hover">
+            <thead>
                 <tr>
-                    <td>{{ experiment.name }}</td>
-                    <td></td>
-                    <td></td>
+                    <th>
+                        <span class="btn-group mr-3" style="visibility: hidden;">
+                            <a class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
+                            <a class="btn btn-sm btn-primary"><span class="fa fa-plus"></span></a>
+                        </span>
+
+                        Experiment
+                    </th>
+                    <th># Runs</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for experiment in type.experiments -%}
+                    <tr>
+                        <td>
+                            <span class="btn-group mr-3">
+                                <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="List runs"
+                                   href="{{ url("app_experiments_view", {"experiment": experiment.id}) }}"
+                                ><span class="fa fa-eye"></span></a>
+                                <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Create a new run"
+                                   href="{{ url("app_experiments_new_run", {"experiment": experiment.id}) }}"
+                                ><span class="fa fa-plus"></span></a>
+                            </span>
+                            {{ experiment.name }}
+                        </td>
+                        <td>
+                            {{ experiment.experimentalRuns|length }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endmacro %}
 
 {% block body_main %}

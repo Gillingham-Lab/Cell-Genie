@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalConditionRepository::class)]
 #[ORM\UniqueConstraint(columns: ["experiment_id", "title"])]
-#[UniqueEntity(["experiment", "title"])]
+#[UniqueEntity(["title", "experiment"], message: "The same title cannot be used for two conditions.")]
 class ExperimentalCondition extends InputType
 {
     #[ORM\Id]
@@ -33,6 +33,7 @@ class ExperimentalCondition extends InputType
     private bool $general = false;
 
     #[ORM\Column(name: "_order", type: "integer", nullable: false, options: ["default" => 0])]
+    #[Assert\NotNull]
     private int $order = 0;
 
     #[ORM\Column(type: "string", length: 100, nullable: false)]
@@ -81,8 +82,12 @@ class ExperimentalCondition extends InputType
         return $this->order;
     }
 
-    public function setOrder(int $order): self
+    public function setOrder(?int $order = 0): self
     {
+        if ($order === null) {
+            $order = 0;
+        }
+
         $this->order = $order;
 
         return $this;

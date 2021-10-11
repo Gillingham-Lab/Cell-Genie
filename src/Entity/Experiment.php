@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\TimestampTrait;
 use App\Repository\ExperimentRepository;
 use DateTime;
 use DateTimeInterface;
@@ -19,31 +22,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ["name", "experimentType"])]
 class Experiment
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\Column(type: "ulid", unique: true)]
-    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
-    private ?Ulid $id = null;
+    use IdTrait;
+    use TimestampTrait;
+    use OwnerTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     private ?string $name = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "experiments")]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    #[Assert\NotNull]
-    private ?User $owner = null;
 
     #[ORM\ManyToOne(targetEntity: ExperimentType::class, fetch: "LAZY", inversedBy: "experiments")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?ExperimentType $experimentType = null;
 
-    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalCondition::class, cascade: ["persist"], fetch: "EAGER")]
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalCondition::class, cascade: ["persist"], fetch: "LAZY")]
     #[ORM\OrderBy(["order" =>"ASC"])]
     #[Assert\Valid]
     private Collection $conditions;
 
-    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalMeasurement::class, cascade: ["persist"], fetch: "EAGER")]
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalMeasurement::class, cascade: ["persist"], fetch: "LAZY")]
     #[ORM\OrderBy(["order" =>"ASC"])]
     #[Assert\Valid]
     private Collection $measurements;
@@ -67,11 +63,13 @@ class Experiment
     #[ORM\OneToMany(mappedBy: "experiment", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
     private Collection $antibodyDilutions;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTimeInterface $createdAt = null;
+    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 1])]
+    #[Assert\Range(min: 1, max: 32000)]
+    private ?int $numberOfWells = 1;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTimeInterface $modifiedAt = null;
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalRun::class, cascade: ["persist"], fetch: "EXTRA_LAZY")]
+    #[ORM\OrderBy(["createdAt" => "DESC"])]
+    private Collection $experimentalRuns;
 
     public function __construct()
     {
@@ -81,22 +79,7 @@ class Experiment
         $this->antibodyDilutions = new ArrayCollection();
         $this->conditions = new ArrayCollection();
         $this->measurements = new ArrayCollection();
-    }
-
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateTimestamps()
-    {
-        if ($this->getCreatedAt() === null) {
-            $this->setCreatedAt(new DateTime("now"));
-        }
-
-        $this->setModifiedAt(new DateTime("now"));
-    }
-
-    public function getId(): ?Ulid
-    {
-        return $this->id;
+        $this->experimentalRuns = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -107,18 +90,6 @@ class Experiment
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getOwner(): ?User
-    {
-        return $this->owner;
-    }
-
-    public function setOwner(?User $owner): self
-    {
-        $this->owner = $owner;
 
         return $this;
     }
@@ -309,26 +280,44 @@ class Experiment
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
+    /**
+     * @return Collection<int, ExperimentalRun>
+     */
+    public function getExperimentalRuns(): Collection
     {
-        return $this->createdAt;
+        return $this->experimentalRuns;
     }
 
-    public function setCreatedAt(?DateTimeInterface $createdAt): self
+    public function addExperimentalRun(ExperimentalRun $experimentalRun): self
     {
-        $this->createdAt = $createdAt;
+        if (!$this->experimentalRuns->contains($experimentalRun)) {
+            $this->experimentalRuns[] = $experimentalRun;
+            $experimentalRun->setExperiment($this);
+        }
 
         return $this;
     }
 
-    public function getModifiedAt(): ?DateTimeInterface
+    public function removeExperimentalRun(ExperimentalRun $experimentalRun): self
     {
-        return $this->modifiedAt;
+        if ($this->experimentalRuns->removeElement($experimentalRun)) {
+            // set the owning side to null (unless already changed)
+            if ($experimentalRun->getExperiment() === $this) {
+                $experimentalRun->setExperiment(null);
+            }
+        }
+
+        return $this;
     }
 
-    public function setModifiedAt(?DateTimeInterface $modifiedAt): self
+    public function getNumberOfWells(): ?int
     {
-        $this->modifiedAt = $modifiedAt;
+        return $this->numberOfWells;
+    }
+
+    public function setNumberOfWells(int $numberOfWells): self
+    {
+        $this->numberOfWells = $numberOfWells;
 
         return $this;
     }

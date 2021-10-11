@@ -1,0 +1,78 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Cell Genie: Experiment {{ experiment.name }}{% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Experiment: {{ experiment.name }}</h1>
+
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Create a new run"
+                           href="{{ url("app_experiments_new_run", {"experiment": experiment.id}) }}"
+                        ><span class="fa fa-plus"></span></a>
+
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Get raw data"
+                           href="{{ url("api_runs", {"experiment": experiment.id}) }}"
+                        ><span class="fas fa-fw fa-download"></span></a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white mt-3 border col col-12 p-0">
+            <h2 class="bg-dark text-white p-3 border-bottom border-dark">Runs</h2>
+
+            <div class="p-3">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <span class="btn-group mr-3" style="visibility: hidden;">
+                                <a class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
+                                <a class="btn btn-sm btn-primary"><span class="fa fa-pen"></span></a>
+                            </span>
+                            Name
+                        </th>
+                        <th scope="col">Run by</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Last modified</th>
+                        <th scope="col">Measures</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if experiment.experimentalRuns|length == 0 %}
+                        <tr>
+                            <td colspan="5" class="align-middle">No runs recorded</td>
+                        </tr>
+                    {% else %}
+                        {% for run in experiment.experimentalRuns %}
+                            <tr>
+                                <td>
+                                    <span class="btn-group mr-3">
+                                        <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Show run"
+                                           href="{{ url("app_experiments_view_run", {"experimentalRun": run.id}) }}"
+                                        ><span class="fa fa-eye"></span></a>
+                                        <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Edit wells"
+                                           href="{{ url("app_experiments_edit_run_wells", {"experimentalRun": run.id}) }}"
+                                        ><span class="fa fa-pen"></span></a>
+                                    </span>
+                                    {{ run.name }}
+                                </td>
+                                <td>{{ run.owner }}</td>
+                                <td>{{ run.createdAt|date("d. M Y H:i") }}</td>
+                                <td>{{ run.modifiedAt|date("d. M Y H:i") }}</td>
+                                <td>{{ run.wells|length }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

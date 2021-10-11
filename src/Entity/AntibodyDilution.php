@@ -29,7 +29,7 @@ class AntibodyDilution
 
     #[ORM\ManyToOne(targetEntity: Experiment::class, inversedBy: "antibodyDilutions")]
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
-    private $experiment;
+    private Experiment $experiment;
 
     public function getId(): ?Ulid
     {
