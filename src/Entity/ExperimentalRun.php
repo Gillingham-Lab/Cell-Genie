@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunRepository::class)]
@@ -93,6 +94,33 @@ class ExperimentalRun
         $this->data = $data;
 
         return $this;
+    }
+
+    private function getDatum(string $type, string|Ulid $idBase58) {
+        if ($idBase58 instanceof Ulid) {
+            $idBase58 = $idBase58->toBase58();
+        }
+
+        if (!isset($this->data[$type])) {
+            return null;
+        }
+
+        if (isset($this->data[$type][$idBase58])) {
+            return $this->data[$type][$idBase58]["value"];
+        } else {
+            foreach ($this->data[$type] as $datum) {
+                if ($datum["id"] === $idBase58) {
+                    return $datum["value"];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function getConditionDatum(string|Ulid $idBase58): mixed
+    {
+        return $this->getDatum("conditions", $idBase58);
     }
 
     /**

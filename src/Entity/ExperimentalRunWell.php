@@ -7,6 +7,7 @@ use App\Entity\Traits\IdTrait;
 use App\Repository\ExperimentalRunWellRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunWellRepository::class)]
@@ -81,6 +82,38 @@ class ExperimentalRunWell
         $this->wellData = $wellData;
 
         return $this;
+    }
+
+    private function getWellDatum(string $type, string|Ulid $idBase58) {
+        if ($idBase58 instanceof Ulid) {
+            $idBase58 = $idBase58->toBase58();
+        }
+
+        if (!isset($this->wellData[$type])) {
+            return null;
+        }
+
+        if (isset($this->wellData[$type][$idBase58])) {
+            return $this->wellData[$type][$idBase58]["value"];
+        } else {
+            foreach ($this->wellData[$type] as $datum) {
+                if ($datum["id"] === $idBase58) {
+                    return $datum["value"];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function getWellConditionDatum(string|Ulid $idBase58): mixed
+    {
+        return $this->getWellDatum("conditions", $idBase58);
+    }
+
+    public function getWellMeasurementDatum(string|Ulid $idBase58): mixed
+    {
+        return $this->getWellDatum("measurements", $idBase58);
     }
 
     public function isExternalStandard(): bool
