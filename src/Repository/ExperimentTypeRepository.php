@@ -24,6 +24,18 @@ class ExperimentTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, ExperimentType::class);
     }
 
+    public function findAllWithExperiments()
+    {
+        return $this->createQueryBuilder("et")
+            ->addSelect("exps")
+            #->addSelect("COUNT(et.children) AS number_of_childrens")
+            ->leftJoin("et.experiments", "exps", conditionType: Join::ON)
+            #->groupBy("et.id")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findByCell(Cell $cell)
     {
         return $this->createQueryBuilder("et")
