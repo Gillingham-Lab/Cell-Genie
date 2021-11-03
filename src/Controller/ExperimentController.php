@@ -40,7 +40,7 @@ class ExperimentController extends AbstractController
     #[Route('/experiment', name: 'app_experiments')]
     public function index(): Response
     {
-        $experimentTypes = $this->experimentTypeRepository->findAll();
+        $experimentTypes = $this->experimentTypeRepository->findAllWithExperiments();
 
         return $this->render('parts/experiments/experiments.html.twig', [
             'controller_name' => 'ExperimentController',
