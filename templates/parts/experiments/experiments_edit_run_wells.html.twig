@@ -1,0 +1,107 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block title %}Cell Genie: Edit Experimental run: {{ run.name }} ({{ experiment.name }}){% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Edit Experimental run: {{ run.name }} ({{ experiment.name }})</h1>
+
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="tools">
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to experiment"
+                           href="{{ url("app_experiments_view", {"experiment": experiment.id}) }}"
+                        >
+                            <span class="fas fa-fw fa-arrow-up"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white mt-3 border col col-12 p-0">
+            {{ form_start(form) }}
+
+            <div class="bg-dark text-white p-3 border-bottom border-dark">
+                <div class="row">
+                    <h2 class="col">Wells</h2>
+
+                    <div class="col text-right">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Cancel"
+                               href="{{ url("app_experiments_view_run", {"experimentalRun": run.id}) }}"
+                            ><span class="fa fa-arrow-left"></span></a>
+
+                            {{ form_widget(form.save) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5" style="max-height: 40em; overflow-y: scroll">
+                {{ form_errors(form) }}
+
+
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ESTD</th>
+                            <th>Name</th>
+                            {% for condition in experiment.conditions %}
+                                {% if condition.general == false %}
+                                    <th>{{ condition.title }}</th>
+                                {% endif %}
+                            {% endfor %}
+                            {% for measurement in experiment.measurements %}
+                                {% if measurement.internalStandard %}
+                                    <th>{{ measurement.title }} (ISTD)</th>
+                                {% else %}
+                                    <th>{{ measurement.title }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for well in form.wells %}
+                            <tr>
+                                <td>
+                                    {{ form_widget(well["isExternalStandard"]) }}
+                                    {{ form_errors(well["isExternalStandard"]) }}
+                                </td>
+                                <td>
+                                    {{ form_widget(well.wellName) }}
+                                    {{ form_errors(well.wellName) }}
+                                </td>
+                                {% if well.conditions is defined %}
+                                    {% for widget in well.conditions %}
+                                        {% if not widget.isRendered() %}
+                                        <td>
+                                            {{ form_widget(widget) }}
+                                            {{ form_errors(widget) }}
+                                        </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+
+                                {% if well.measurements is defined %}
+                                    {% for widget in well.measurements %}
+                                        {% if not widget.isRendered() %}
+                                            <td>
+                                                {{ form_widget(widget) }}
+                                                {{ form_errors(widget) }}
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

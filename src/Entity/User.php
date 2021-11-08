@@ -47,12 +47,8 @@ class User implements UserInterface
     #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isActive = false;
 
-    #[ORM\OneToMany(mappedBy: "owner", targetEntity: Experiment::class)]
-    private Collection $experiments;
-
     public function __construct()
     {
-        $this->experiments = new ArrayCollection();
     }
 
     public function __toString(): string

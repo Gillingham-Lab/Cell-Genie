@@ -4,22 +4,36 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ExperimentTypeRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class ExperimentType
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private ?Ulid $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(min: 5, max: 255)]
     private ?string $name;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[Assert\NotNull]
+    private ?User $createdBy = null;
+
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: "experimentType", targetEntity: Experiment::class, orphanRemoval: true)]
     private ?Collection $experiments;
@@ -31,27 +45,27 @@ class ExperimentType
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: ExperimentType::class)]
     private ?Collection $children;
 
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $description = null;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?DateTimeInterface $createdAt = null;
 
-    #[ORM\ManyToOne(targetEntity: CultureFlask::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
-    private ?CultureFlask $wellplate = null;
-
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $lysing = null;
-
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $seeding = null;
-
-    #[ORM\OneToMany(mappedBy: "experimentType", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
-    private ?Collection $antibodyDilutions;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?DateTimeInterface $modifiedAt = null;
 
     public function __construct()
     {
         $this->experiments = new ArrayCollection();
         $this->children = new ArrayCollection();
-        $this->antibodyDilutions = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps()
+    {
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt(new DateTime("now"));
+        }
+
+        $this->setModifiedAt(new DateTime("now"));
     }
 
     public function __toString(): string
@@ -59,7 +73,7 @@ class ExperimentType
         return $this->getName() ?? "unknown";
     }
 
-    public function getId(): ?int
+    public function getId(): ?Ulid
     {
         return $this->id;
     }
@@ -72,6 +86,18 @@ class ExperimentType
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }
@@ -150,7 +176,7 @@ class ExperimentType
 
     public function getDescription(): ?string
     {
-        return $this->description ?? $this->parent?->getWellplate();
+        return $this->description ?? "(empty)";
     }
 
     public function setDescription(?string $description): self
@@ -160,68 +186,26 @@ class ExperimentType
         return $this;
     }
 
-    public function getWellplate(): ?CultureFlask
+    public function getCreatedAt(): ?DateTimeInterface
     {
-        return $this->wellplate ?? $this->parent?->getWellplate();
+        return $this->createdAt;
     }
 
-    public function setWellplate(?CultureFlask $wellplate): self
+    public function setCreatedAt(?DateTimeInterface $createdAt): self
     {
-        $this->wellplate = $wellplate;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getLysing(): ?string
+    public function getModifiedAt(): ?DateTimeInterface
     {
-        return $this->lysing ?? $this->parent?->getLysing();
+        return $this->modifiedAt;
     }
 
-    public function setLysing(?string $lysing): self
+    public function setModifiedAt(?DateTimeInterface $modifiedAt): self
     {
-        $this->lysing = $lysing;
-
-        return $this;
-    }
-
-    public function getSeeding(): ?string
-    {
-        return $this->seeding ?? $this->parent?->getSeeding();
-    }
-
-    public function setSeeding(?string $seeding): self
-    {
-        $this->seeding = $seeding;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, AntibodyDilution>
-     */
-    public function getAntibodyDilutions(): Collection
-    {
-        return $this->antibodyDilutions;
-    }
-
-    public function addAntibodyDilution(AntibodyDilution $antibodyDilution): self
-    {
-        if (!$this->antibodyDilutions->contains($antibodyDilution)) {
-            $this->antibodyDilutions[] = $antibodyDilution;
-            $antibodyDilution->setExperimentType($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAntibodyDilution(AntibodyDilution $antibodyDilution): self
-    {
-        if ($this->antibodyDilutions->removeElement($antibodyDilution)) {
-            // set the owning side to null (unless already changed)
-            if ($antibodyDilution->getExperimentType() === $this) {
-                $antibodyDilution->setExperimentType(null);
-            }
-        }
+        $this->modifiedAt = $modifiedAt;
 
         return $this;
     }

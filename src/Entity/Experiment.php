@@ -3,35 +3,46 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\TimestampTrait;
 use App\Repository\ExperimentRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ["name", "experimentType"])]
 class Experiment
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = null;
+    use IdTrait;
+    use TimestampTrait;
+    use OwnerTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "experiments")]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    #[Assert\NotNull]
-    private ?User $owner = null;
-
-    #[ORM\ManyToOne(targetEntity: ExperimentType::class, fetch: "EAGER", inversedBy: "experiments")]
+    #[ORM\ManyToOne(targetEntity: ExperimentType::class, fetch: "LAZY", inversedBy: "experiments")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotNull]
     private ?ExperimentType $experimentType = null;
+
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalCondition::class, cascade: ["persist"], fetch: "LAZY")]
+    #[ORM\OrderBy(["order" =>"ASC"])]
+    #[Assert\Valid]
+    private Collection $conditions;
+
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalMeasurement::class, cascade: ["persist"], fetch: "LAZY")]
+    #[ORM\OrderBy(["order" =>"ASC"])]
+    #[Assert\Valid]
+    private Collection $measurements;
 
     #[ORM\ManyToOne(targetEntity: CultureFlask::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -49,20 +60,16 @@ class Experiment
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private Collection $cells;
 
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $lysing = null;
-
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $seeding = null;
-
     #[ORM\OneToMany(mappedBy: "experiment", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
     private Collection $antibodyDilutions;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTimeInterface $createdAt = null;
+    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 1])]
+    #[Assert\Range(min: 1, max: 32000)]
+    private ?int $numberOfWells = 1;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?DateTimeInterface $modifiedAt = null;
+    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: ExperimentalRun::class, cascade: ["persist"], fetch: "EXTRA_LAZY")]
+    #[ORM\OrderBy(["createdAt" => "DESC"])]
+    private Collection $experimentalRuns;
 
     public function __construct()
     {
@@ -70,24 +77,9 @@ class Experiment
         $this->chemicals = new ArrayCollection();
         $this->cells = new ArrayCollection();
         $this->antibodyDilutions = new ArrayCollection();
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateTimestamps()
-    {
-        if ($this->getCreatedAt() === null) {
-            $this->setCreatedAt(new DateTime("now"));
-        }
-
-        $this->setModifiedAt(new DateTime("now"));
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
+        $this->conditions = new ArrayCollection();
+        $this->measurements = new ArrayCollection();
+        $this->experimentalRuns = new ArrayCollection();
     }
 
     public function getName(): ?string
@@ -98,18 +90,6 @@ class Experiment
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getOwner(): ?User
-    {
-        return $this->owner;
-    }
-
-    public function setOwner(?User $owner): self
-    {
-        $this->owner = $owner;
 
         return $this;
     }
@@ -210,30 +190,6 @@ class Experiment
         return $this;
     }
 
-    public function getLysing(): ?string
-    {
-        return $this->lysing ?? $this->experimentType?->getLysing();
-    }
-
-    public function setLysing(?string $lysing): self
-    {
-        $this->lysing = $lysing;
-
-        return $this;
-    }
-
-    public function getSeeding(): ?string
-    {
-        return $this->seeding ?? $this->experimentType?->getSeeding();
-    }
-
-    public function setSeeding(?string $seeding): self
-    {
-        $this->seeding = $seeding;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, AntibodyDilution>
      */
@@ -264,26 +220,104 @@ class Experiment
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
+    /**
+     * @return Collection<int, ExperimentalCondition>
+     */
+    public function getConditions(): Collection
     {
-        return $this->createdAt;
+        return $this->conditions;
     }
 
-    public function setCreatedAt(?DateTimeInterface $createdAt): self
+    public function addCondition(ExperimentalCondition $condition): self
     {
-        $this->createdAt = $createdAt;
+        if (!$this->conditions->contains($condition)) {
+            $this->conditions[] = $condition;
+            $condition->setExperiment($this);
+        }
 
         return $this;
     }
 
-    public function getModifiedAt(): ?DateTimeInterface
+    public function removeCondition(ExperimentalCondition $condition): self
     {
-        return $this->modifiedAt;
+        if ($this->conditions->removeElement($condition)) {
+            // set the owning side to null (unless already changed)
+            if ($condition->getExperiment() === $this) {
+                $condition->setExperiment(null);
+            }
+        }
+
+        return $this;
     }
 
-    public function setModifiedAt(?DateTimeInterface $modifiedAt): self
+    /**
+     * @return Collection<int, ExperimentalMeasurement>
+     */
+    public function getMeasurements(): Collection
     {
-        $this->modifiedAt = $modifiedAt;
+        return $this->measurements;
+    }
+
+    public function addMeasurement(ExperimentalMeasurement $measurement): self
+    {
+        if (!$this->measurements->contains($measurement)) {
+            $this->measurements[] = $measurement;
+            $measurement->setExperiment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeasurement(ExperimentalMeasurement $measurement): self
+    {
+        if ($this->measurements->removeElement($measurement)) {
+            // set the owning side to null (unless already changed)
+            if ($measurement->getExperiment() === $this) {
+                $measurement->setExperiment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExperimentalRun>
+     */
+    public function getExperimentalRuns(): Collection
+    {
+        return $this->experimentalRuns;
+    }
+
+    public function addExperimentalRun(ExperimentalRun $experimentalRun): self
+    {
+        if (!$this->experimentalRuns->contains($experimentalRun)) {
+            $this->experimentalRuns[] = $experimentalRun;
+            $experimentalRun->setExperiment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExperimentalRun(ExperimentalRun $experimentalRun): self
+    {
+        if ($this->experimentalRuns->removeElement($experimentalRun)) {
+            // set the owning side to null (unless already changed)
+            if ($experimentalRun->getExperiment() === $this) {
+                $experimentalRun->setExperiment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNumberOfWells(): ?int
+    {
+        return $this->numberOfWells;
+    }
+
+    public function setNumberOfWells(int $numberOfWells): self
+    {
+        $this->numberOfWells = $numberOfWells;
 
         return $this;
     }

@@ -34,7 +34,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url("app_experiments") }}">
                             <span class="fas fa-fw fa-flask"></span>
                             Experiments
                         </a>
@@ -110,6 +110,11 @@
                         $(this).children(".dropdown-menu").removeClass("show");
                     });
             });
+
+            let form_accordions = $("div.accordion-item");
+            form_accordions.has(".is-invalid").addClass("border-warning");
+
+            console.log(form_accordions)
         </script>
         <script type="application/javascript">
             new ClipboardJS('.btn-clipboard');

@@ -1,0 +1,141 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block title %}Cell Genie: Experimental run: {{ run.name }} ({{ experiment.name }}){% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Experimental run: {{ run.name }} ({{ experiment.name }})</h1>
+
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="tools">
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to experiment"
+                           href="{{ url("app_experiments_view", {"experiment": experiment.id}) }}"
+                        >
+                            <span class="fas fa-fw fa-arrow-up"></span>
+                        </a>
+
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit run"
+                           href="{{ url("app_experiments_edit_run", {"experiment": experiment.id, "experimentalRun": run.id}) }}"
+                        ><span class="fa fa-pen"></span></a>
+
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Get raw data"
+                           href="{{ url("api_single_run", {"experimentalRun": run.id}) }}"
+                        >
+                            <span class="fas fa-fw fa-download"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white mt-3 border col col-12 p-5">
+            <table class="table table-sm table-borderless">
+                <tbody>
+                    {{ macros.definition_row("Name", run.name) }}
+                    {{ macros.definition_row("Owner", run.owner) }}
+                    {{ macros.definition_row("Created", run.createdAt|date("d. M Y H:i")) }}
+                    {{ macros.definition_row("Last modified", run.modifiedAt|date("d. M Y H:i")) }}
+
+                    {% if run.data.conditions is defined %}
+                        {% for condition in run.data["conditions"] %}
+                            {{ macros.definition_row(condition.title, condition.value) }}
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-white mt-3 border col col-12 p-0">
+            <div class="bg-dark text-white p-3 border-bottom border-dark">
+                <div class="row">
+                    <h2 class="col">Wells</h2>
+
+                    <div class="col text-right">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit wells"
+                               href="{{ url("app_experiments_edit_run_wells", {"experimentalRun": run.id}) }}"
+                            ><span class="fa fa-pen"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% set condition_ids = [] %}
+            {% set measurement_ids = [] %}
+
+            <div class="p-5" style="max-height: 40em; overflow-y: scroll">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ESTD</th>
+                            <th>Name</th>
+                            {% for condition in experiment.conditions %}
+                                {% if condition.general == false %}
+                                    {% set condition_ids = condition_ids|merge([condition.id.toBase58()]) %}
+                                    <th>{{ condition.title }}</th>
+                                {% endif %}
+                            {% endfor %}
+                            {% for measurement in experiment.measurements %}
+                                {% set measurement_ids = measurement_ids|merge([measurement.id.toBase58()]) %}
+                                {% if measurement.internalStandard %}
+                                    <th>{{ measurement.title }} (ISTD)</th>
+                                {% else %}
+                                    <th>{{ measurement.title }}</th>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for well in run.wells %}
+                        <tr>
+                            <td>
+                                {{ well.wellNumber }}
+                            </td>
+                            <td>
+                                {% if well.isExternalStandard %}
+                                    X
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ well.wellName }}
+                            </td>
+
+                            {% if well.wellData.conditions is defined %}
+                                {% for condition_id in condition_ids %}
+                                    {% for condition in well.wellData.conditions|filter(c => condition_id == c.id) %}
+                                        <td>{{ condition.value }}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {% for condition_id in condition_ids %}
+                                        <td></td>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if well.wellData.measurements is defined %}
+                                {% for measurement_id in measurement_ids %}
+                                    {% for measurement in well.wellData.measurements|filter(m => measurement_id == m.id) %}
+                                        <td>{{ measurement.value }}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {% for measurement_id in measurement_ids %}
+                                    <td></td>
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -11,10 +11,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class ExperimentTypeCrudController extends AbstractCrudController
+class ExperimentTypeCrudController extends ExtendedAbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -29,17 +30,12 @@ class ExperimentTypeCrudController extends AbstractCrudController
             TextField::new('name')
                 ->setRequired(true),
             AssociationField::new("parent")
-                ->setHelp("Setting a parent lets you use experimental detail of the parent."),
-
-            FormField::addPanel("Experimental detail")
-                ->hideOnIndex(),
-            AssociationField::new("wellplate", "Recommended wellplate"),
-            TextEditorField::new("description", "Experimental procedure")
-                ->hideOnIndex(),
-            TextEditorField::new("lysing", "Lysis conditions")
-                ->hideOnIndex(),
-            TextEditorField::new("seeding", "Seeding conditions")
-                ->hideOnIndex(),
+                ->setHelp("Setting a parent helps to organise experiments hierarchically."),
+            TextareaField::new("description", "Description")
+                ->hideOnIndex()
+                ->setHelp("Describe briefly the experiment type. What is it used for?"),
+            AssociationField::new("createdBy")
+                ->setHelp("Creator of the experiment type."),
         ];
     }
 }
