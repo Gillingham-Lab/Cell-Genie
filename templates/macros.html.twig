@@ -198,3 +198,19 @@
         </div>
     </div>
 {% endmacro %}
+
+{% macro detail_link(entity, route, idVariable) %}
+    {% set route_params = {(idVariable): entity.id} %}
+    <a
+            href="{{ url(route, route_params) }}"
+            data-toggle="tooltip" data-placement="bottom" title="{{ entity.longName }}"
+    >{{ entity.shortName }}</a>
+{% endmacro %}
+
+{% macro chemlink(chem) %}
+    {{ _self.detail_link(chem, "app_compound_view", "compoundId") }}
+{% endmacro %}
+
+{% macro proteinlink(protein) %}
+    {{ _self.detail_link(protein, "app_protein_view", "proteinId") }}
+{% endmacro %}

@@ -104,6 +104,7 @@ class ExperimentalRunWellFormEntity extends AbstractExperimentalFormEntity
                 "id" => $id,
                 "title" => $condition->getTitle(),
                 "value" => $this->condition_data[$id],
+                "type" => $condition->getType(),
             ];
 
             $data["conditions"][] = $datum;
@@ -118,6 +119,7 @@ class ExperimentalRunWellFormEntity extends AbstractExperimentalFormEntity
                 "id" => $id,
                 "title" => $measurement->getTitle(),
                 "value" => $this->measurement_data[$id],
+                "type" => $measurement->getType(),
             ];
 
             $data["measurements"][] = $datum;
