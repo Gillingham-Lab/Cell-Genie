@@ -12,7 +12,9 @@ use App\Entity\User;
 use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
 use App\Form\ExperimentalRunWellType;
+use App\Repository\ChemicalRepository;
 use App\Repository\ExperimentTypeRepository;
+use App\Repository\ProteinRepository;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,13 +36,15 @@ class ExperimentController extends AbstractController
 {
     public function __construct(
         private ExperimentTypeRepository $experimentTypeRepository,
+        private ChemicalRepository $chemicalRepository,
+        private ProteinRepository $proteinRepository,
     ) {
     }
 
     #[Route('/experiment', name: 'app_experiments')]
     public function index(): Response
     {
-        $experimentTypes = $this->experimentTypeRepository->findAll();
+        $experimentTypes = $this->experimentTypeRepository->findAllWithExperiments();
 
         return $this->render('parts/experiments/experiments.html.twig', [
             'controller_name' => 'ExperimentController',
@@ -66,6 +70,8 @@ class ExperimentController extends AbstractController
         return $this->render("parts/experiments/experiments_view_run.html.twig", [
             "controller_name" => "ExperimentController",
             "run" => $experimentalRun,
+            "chemicals" => $this->chemicalRepository,
+            "proteins" => $this->proteinRepository,
             "experiment" => $experimentalRun->getExperiment(),
         ]);
     }

@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        {% for type in experiment_types|filter(t => t.parent is null ) %}
+        {% for type in (experiment_types|filter(t => t.parent is null )) %}
             <div class="bg-white mt-3 border col col-12 p-0">
                 <h2 class="bg-dark text-white p-3 border-bottom border-dark">{{ type.name }}</h2>
 
