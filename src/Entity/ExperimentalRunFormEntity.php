@@ -91,6 +91,7 @@ class ExperimentalRunFormEntity extends AbstractExperimentalFormEntity
                 "id" => $id,
                 "title" => $condition->getTitle(),
                 "value" => $this->condition_data[$id],
+                "type" => $condition->getType(),
             ];
 
             $data["conditions"][] = $datum;
@@ -110,9 +111,9 @@ class ExperimentalRunFormEntity extends AbstractExperimentalFormEntity
                     $choices = array_map("trim", $choices);
 
                     if (array_search($this->condition_data[$id], $choices) === false) {
-                        $choices_text = implode(",", $choices);
+                        $choices_text = implode(", ", $choices);
 
-                        $context->buildViolation("Condition must be one of $choices_text, but {$this->condition_data[$id]} given.")
+                        $context->buildViolation("Condition must be one of $choices_text; but {$this->condition_data[$id]} given.")
                             ->atPath("condition_{$id}")
                             ->addViolation()
                         ;

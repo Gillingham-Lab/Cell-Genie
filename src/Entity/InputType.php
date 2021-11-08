@@ -13,21 +13,27 @@ abstract class InputType
     const FLOAT_TYPE = "float";
     const CHOICE_TYPE = "choice";
     const FREE_TYPE = "free";
+    const CHEMICAL_TYPE = "chemical";
+    const PROTEIN_TYPE = "protein";
 
     const TYPES = [
+        self::FREE_TYPE,
         self::CHECK_TYPE,
         self::INTEGER_TYPE,
         self::FLOAT_TYPE,
         self::CHOICE_TYPE,
-        self::FREE_TYPE
+        self::CHEMICAL_TYPE,
+        self::PROTEIN_TYPE,
     ];
 
     const LABEL_TYPES = [
+        "Free" => self::FREE_TYPE,
         "Check" => self::CHECK_TYPE,
         "Integer" => self::INTEGER_TYPE,
         "Float" => self::FLOAT_TYPE,
         "Choice" => self::CHOICE_TYPE,
-        "Free" => self::FREE_TYPE,
+        "Chemical" => self::CHEMICAL_TYPE,
+        "Protein" => self::PROTEIN_TYPE,
     ];
 
     #[ORM\Column(type: "string", length: 30, nullable: false)]
@@ -44,7 +50,8 @@ abstract class InputType
     public function setType(?string $type): self
     {
         if (array_search($type, self::TYPES, strict: true) === false) {
-            throw new InvalidArgumentException("ExperimentalCondition::type must be one of check, integer, float, choice, free, but '{$type}' was given.");
+            $labels = implode(", ", self::TYPES);
+            throw new InvalidArgumentException("ExperimentalCondition::type must be one of {$labels}; but '{$type}' was given.");
         }
 
         $this->type = $type;
