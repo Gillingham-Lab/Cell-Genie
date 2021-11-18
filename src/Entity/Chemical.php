@@ -42,6 +42,12 @@ class Chemical
     #[Assert\Url]
     private ?string $labjournal = null;
 
+    #[ORM\Column(type: "float", nullable: false, options: ["default" => 0.0])]
+    private float $molecularMass = 0.0;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $casNumber = null;
+
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "chemicals")]
     private Collection $experiments;
 
