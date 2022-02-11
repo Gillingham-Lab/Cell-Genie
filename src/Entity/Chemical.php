@@ -3,37 +3,24 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\NameTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChemicalRepository::class)]
 class Chemical
 {
+    use NameTrait;
     use VendorTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
-
-    #[ORM\Column(type: "string", length: 255)]
-    #[Assert\Length(max: 250)]
-    private ?string $longName = "";
-
-    #[ORM\Column(type: "string", length: 10)]
-    #[Assert\NotBlank]
-    #[Assert\Length(
-        min: 1,
-        max: 10,
-        minMessage: "Must be at least {{ min }} character long.",
-        maxMessage: "Only up to {{ max }} characters allowed.",
-    )]
-    private ?string $shortName;
 
     #[ORM\Column(type: "text")]
     private string $smiles = "";

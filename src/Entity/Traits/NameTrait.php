@@ -13,8 +13,6 @@ trait NameTrait
     #[Assert\Length(
         min: 1,
         max: 20,
-        minMessage: "Must be at least {{ min }} character long.",
-        maxMessage: "Only up to {{ max }} characters allowed.",
     )]
     private ?string $shortName;
 

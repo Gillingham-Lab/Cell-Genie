@@ -14,11 +14,11 @@ class RecipeIngredient
 
     #[ORM\ManyToOne(targetEntity: Recipe::class, inversedBy: "ingredients")]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotBlank]
     private ?Recipe $recipe = null;
 
     #[ORM\ManyToOne(targetEntity: Chemical::class)]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OrderBy(["name" => "ASC"])]
     #[Assert\NotBlank]
     private ?Chemical $chemical = null;
 
@@ -32,6 +32,11 @@ class RecipeIngredient
     public function __construct()
     {
         $this->generateId();
+    }
+
+    public function __toString(): string
+    {
+        return $this->chemical?->getShortName() ?? "Unknown";
     }
 
     public function getRecipe(): ?Recipe

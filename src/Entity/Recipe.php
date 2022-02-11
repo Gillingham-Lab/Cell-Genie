@@ -23,6 +23,10 @@ class Recipe
     #[Assert\Range(min: 0)]
     private float $concentrationFactor = 1.0;
 
+    #[ORM\Column(type: "string", length: 100, nullable: true)]
+    #[Assert\Length(min: 1, max: 100)]
+    private ?string $category = null;
+
     #[ORM\OneToMany(mappedBy: "recipe", targetEntity: RecipeIngredient::class, cascade: ["persist", "remove"])]
     #[Assert\Valid]
     private Collection $ingredients;
@@ -42,6 +46,18 @@ class Recipe
         } else {
             return sprintf("%s (%.2fX)", $name, $this->getConcentrationFactor());
         }
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?string $category): self
+    {
+        $this->category = $category;
+
+        return $this;
     }
 
     public function getConcentrationFactor(): float
@@ -67,6 +83,7 @@ class Recipe
     public function addIngredient(RecipeIngredient $ingredient): self
     {
         if (!$this->ingredients->contains($ingredient)) {
+            $ingredient->setRecipe($this);
             $this->ingredients[] = $ingredient;
         }
 

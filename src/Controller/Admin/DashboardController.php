@@ -17,6 +17,7 @@ use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Protein;
 use App\Entity\Rack;
+use App\Entity\Recipe;
 use App\Entity\Tissue;
 use App\Entity\User;
 use App\Entity\Vendor;
@@ -69,6 +70,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Antibodies", "icon icon-antibody", Antibody::class),
             MenuItem::linkToCrud("Antibody hosts", "fas fa-horse", AntibodyHost::class),
             MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
+            MenuItem::linkToCrud("Recipes", "fas fa-list-alt", Recipe::class),
 
             MenuItem::section("Inventory"),
             MenuItem::linkToCrud("Racks", 'fas fa-boxes', Rack::class),
