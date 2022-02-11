@@ -15,6 +15,11 @@ trait IdTrait
     #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id = null;
 
+    private function generateId(): void
+    {
+        $this->id = new Ulid();
+    }
+
     public function getId(): ?Ulid
     {
         return $this->id;

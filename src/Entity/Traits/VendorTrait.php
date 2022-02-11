@@ -6,6 +6,7 @@ namespace App\Entity\Traits;
 use App\Entity\Vendor;
 use Doctrine\ORM\Mapping as ORM;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 trait VendorTrait
@@ -45,6 +46,7 @@ trait VendorTrait
     public static function crudFields(): array
     {
         return [
+            FormField::addPanel("Vendor"),
             AssociationField::new("vendor", "Vendor")
                 ->hideOnIndex(),
             TextField::new("vendorPN", "Vendor PN")

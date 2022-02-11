@@ -43,7 +43,13 @@ class Chemical
     private ?string $labjournal = null;
 
     #[ORM\Column(type: "float", nullable: false, options: ["default" => 0.0])]
+    #[Assert\Range(min: 0)]
+    #[Assert\NotNull]
     private float $molecularMass = 0.0;
+
+    #[ORM\Column(type: "float", nullable: true)]
+    #[Assert\Range(min: 0)]
+    private ?float $density = null;
 
     #[ORM\Column(type: "string", nullable: true)]
     private ?string $casNumber = null;
@@ -137,6 +143,42 @@ class Chemical
         if ($this->experiments->removeElement($experiment)) {
             $experiment->removeChemical($this);
         }
+
+        return $this;
+    }
+
+    public function getMolecularMass(): float
+    {
+        return $this->molecularMass;
+    }
+
+    public function setMolecularMass(float $molecularMass): self
+    {
+        $this->molecularMass = $molecularMass;
+
+        return $this;
+    }
+
+    public function getDensity(): ?float
+    {
+        return $this->density;
+    }
+
+    public function setDensity(?float $density): self
+    {
+        $this->density = $density;
+
+        return $this;
+    }
+
+    public function getCasNumber(): ?string
+    {
+        return $this->casNumber;
+    }
+
+    public function setCasNumber(?string $casNumber): self
+    {
+        $this->casNumber = $casNumber;
 
         return $this;
     }
