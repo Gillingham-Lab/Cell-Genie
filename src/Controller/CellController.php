@@ -6,7 +6,7 @@ namespace App\Controller;
 use App\Repository\BoxRepository;
 use App\Repository\CellAliquoteRepository;
 use App\Repository\CellRepository;
-use App\Repository\RecipeRepository;
+use App\Repository\ChemicalRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
 use Doctrine\DBAL\Types\ConversionException;
@@ -20,7 +20,7 @@ class CellController extends AbstractController
         private CellRepository           $cellRepository,
         private BoxRepository            $boxRepository,
         private CellAliquoteRepository   $cellAliquoteRepository,
-        private RecipeRepository         $chemicalRepository,
+        private ChemicalRepository       $chemicalRepository,
         private ProteinRepository        $proteinRepository,
         private ExperimentTypeRepository $experimentTypeRepository
     ) {
