@@ -124,6 +124,7 @@ class Cell
         $this->cellAliquotes = new ArrayCollection();
         $this->children = new ArrayCollection();
         $this->experiments = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
     }
 
     public function __toString()
