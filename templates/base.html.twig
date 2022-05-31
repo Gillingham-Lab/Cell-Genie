@@ -49,6 +49,13 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url("app_recipes") }}">
+                            <span class="fas fa-fw fa-list-alt"></span>
+                            Recipes
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url("app_proteins") }}">
                             <span class="fa-fw icon icon-protein"></span>
                             Proteins
@@ -169,5 +176,7 @@
                 })
             })
         </script>
+
+        {% block script_bottom %}{% endblock %}
     </body>
 </html>

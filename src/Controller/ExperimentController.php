@@ -36,8 +36,8 @@ class ExperimentController extends AbstractController
 {
     public function __construct(
         private ExperimentTypeRepository $experimentTypeRepository,
-        private ChemicalRepository $chemicalRepository,
-        private ProteinRepository $proteinRepository,
+        private ChemicalRepository         $chemicalRepository,
+        private ProteinRepository        $proteinRepository,
     ) {
     }
 

@@ -22,7 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ExperimentalRunType extends AbstractType
 {
     public function __construct(
-        private ChemicalRepository $chemicalRepository,
+        private ChemicalRepository  $chemicalRepository,
         private ProteinRepository $proteinRepository,
     ) {
     }

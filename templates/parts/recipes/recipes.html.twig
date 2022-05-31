@@ -1,0 +1,61 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Cell Genie: Compounds{% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="col">Recipes</h1>
+
+                <div class="col text-right">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
+                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col col-12 p-5 bg-white mb-3 border">
+
+            <div class="p-3">
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <span class="btn-group mr-3" style="visibility: hidden;">
+                                <a class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
+                            </span>
+
+                            Short Name
+                        </th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Concentration Factor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for recipe in recipes %}
+                        <tr>
+                            <td class="align-middle">
+                                <span class="btn-group mr-3">
+                                    <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Show recipe"
+                                       href="{{ url("app_recipe_view", {"recipeId": recipe.id}) }}"
+                                    ><span class="fa fa-eye"></span></a>
+                                </span>
+                                <span data-toggle="tooltip" data-placement="bottom" title="{{ recipe.longName }}">{{ recipe.shortName }}</span>
+                            </td>
+                            <td class="align-middle">{{ recipe.category }}</td>
+                            <td class="align-middle">{{ recipe.concentrationFactor }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

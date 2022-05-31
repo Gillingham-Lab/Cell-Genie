@@ -1,0 +1,126 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block title %}Cell Genie: Compounds{% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <h1 class="">
+                    <span class="align-middle pl-5">{{ recipe.shortName }}</span>
+                </h1>
+            </div>
+        </div>
+
+        {# Short information #}
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="form-group">
+                <label><span>Volume (mL)</span><input id='_genie_recipe_totalVolume' value="1000" type="number" class="form-control"></label>
+                <button id='_genie_recipe_totalVolume_submit' class="btn btn-primary" onsubmit="">Recalculate</button>
+            </div>
+
+            <div class="p-3">
+                <table class="table table-hover _genie_recipe">
+                    <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Concentration</th>
+                        <th>Mass</th>
+                        <th>Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for ingredient in recipe.ingredients %}
+                        {% set unit = "g" %}
+                        {% set dilution_factor = 1 %} {# 0.001 because display shows "Liter" #}
+
+                        {% if ingredient.concentrationUnit ends with "M" %}
+                            {# molarities #}
+                            {% if ingredient.chemical.molecularMass > 0 %}
+                                {% set dilution_factor = dilution_factor * ingredient.chemical.molecularMass %}
+                            {% else %}
+                                {% set unit = "mol" %}
+                            {% endif %}
+                        {% elseif ingredient.concentrationUnit ends with "g/mL" %}
+                            {# g/mL #}
+                            {% set dilution_factor = dilution_factor*1000 %}
+                        {% else %}
+                            {# g/L #}
+                        {% endif %}
+
+                        {% if ingredient.concentrationUnit starts with "m" %}
+                            {% set dilution_factor = dilution_factor * 1e-3 %}
+                        {% elseif ingredient.concentrationUnit starts with "μ" %}
+                            {% set dilution_factor = dilution_factor * 1e-6 %}
+                        {% elseif ingredient.concentrationUnit starts with "n" %}
+                            {% set dilution_factor = dilution_factor * 1e-9 %}
+                        {% elseif ingredient.concentrationUnit starts with "p" %}
+                            {% set dilution_factor = dilution_factor * 1e-12 %}
+                        {% elseif ingredient.concentrationUnit starts with "f" %}
+                            {% set dilution_factor = dilution_factor * 1e-15 %}
+                        {% else %}
+                        {% endif %}
+
+                        <tr class="_genie_recipe_ingredient">
+                            <td>{{ ingredient.chemical.shortName }} ({{ ingredient.chemical.molecularMass }} g/mol)</td>
+                            <td>{{ ingredient.concentration }}&nbsp;{{ ingredient.concentrationUnit }}</td>
+                            <td>
+                                <input class="_genie_recipe_ingredient_dilution_factor" type="hidden" style="display: none" value="{{ dilution_factor }}" />
+                                <input class="_genie_recipe_ingredient_dilution_concentration" type="hidden" style="display: none" value="{{ ingredient.concentration/1000 }}" />
+                                <span class="_genie_recipe_ingredient_amount">{{ ingredient.concentration*dilution_factor }}</span> {{ unit }}
+                            </td>
+                            <td>
+                                {% if ingredient.chemical.density and unit != "mol" %}
+                                    <input class="_genie_recipe_ingredient_density" type="hidden" style="display: none" value="{{ ingredient.chemical.density }}" />
+                                    <span class="_genie_recipe_ingredient_amount_volume">{{ ingredient.concentration*dilution_factor/ingredient.chemical.density }}</span> mL
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# Tabs! #}
+    </div>
+{% endblock %}
+
+{% block script_bottom %}
+    <script type="application/javascript">
+        function format_unit(number, unit) {
+            let prefixes = ["m", "μ", "n", "p", "f"];
+            let prefix_index = prefixes.findIndex(unit.substr(0, 1));
+            unit = unit.substr(1);
+
+            if (number < 0.1) {
+
+            }
+
+            return [];
+        }
+
+        $("#_genie_recipe_totalVolume_submit").click(function () {
+            $("._genie_recipe ._genie_recipe_ingredient").each(function (index) {
+                let dilution_factor = $(this).find("._genie_recipe_ingredient_dilution_factor").first()[0].value;
+                let concentration = $(this).find("._genie_recipe_ingredient_dilution_concentration").first()[0].value;
+                let new_concentration = parseFloat($("#_genie_recipe_totalVolume")[0].value) * dilution_factor * concentration;
+
+                let density_field = $(this).find("._genie_recipe_ingredient_density");
+                let density = 1.0
+
+                if (density_field.length > 0) {
+                    density = $(this).find("._genie_recipe_ingredient_density").first()[0].value;
+                }
+
+                console.log("Adjust concentration to " + new_concentration + " (Concentration: "+ concentration +"; Dilution factor: " + new_concentration + ")");
+
+                $(this).find("._genie_recipe_ingredient_amount").first().text(new_concentration.toFixed(3));
+                $(this).find("._genie_recipe_ingredient_amount_volume").first().text((new_concentration/density).toFixed(3));
+            })
+        });
+    </script>
+{% endblock %}

@@ -6,7 +6,7 @@ namespace App\Controller;
 use App\Repository\BoxRepository;
 use App\Repository\CellAliquoteRepository;
 use App\Repository\CellRepository;
-use App\Repository\ChemicalRepository;
+use App\Repository\RecipeRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
 use Doctrine\DBAL\Types\ConversionException;
@@ -17,11 +17,11 @@ use Symfony\Component\HttpFoundation\Response;
 class CellController extends AbstractController
 {
     public function __construct(
-        private CellRepository $cellRepository,
-        private BoxRepository $boxRepository,
-        private CellAliquoteRepository $cellAliquoteRepository,
-        private ChemicalRepository $chemicalRepository,
-        private ProteinRepository $proteinRepository,
+        private CellRepository           $cellRepository,
+        private BoxRepository            $boxRepository,
+        private CellAliquoteRepository   $cellAliquoteRepository,
+        private RecipeRepository         $chemicalRepository,
+        private ProteinRepository        $proteinRepository,
         private ExperimentTypeRepository $experimentTypeRepository
     ) {
 

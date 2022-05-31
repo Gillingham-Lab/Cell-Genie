@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ExperimentalRunWellType extends AbstractType
 {
     public function __construct(
-        private ChemicalRepository $chemicalRepository,
+        private ChemicalRepository  $chemicalRepository,
         private ProteinRepository $proteinRepository,
     ) {
     }

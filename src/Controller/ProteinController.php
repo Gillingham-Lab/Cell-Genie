@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Repository\ChemicalRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

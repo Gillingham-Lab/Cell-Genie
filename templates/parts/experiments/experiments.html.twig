@@ -87,31 +87,5 @@
                 {{ _self.show_children(type) }}
             </div>
         {% endfor %}
-            {# <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col" style="width: 200px">Structure</th>
-                    <th scope="col">Short Name</th>
-                    <th scope="col">Labjournal</th>
-                    <th scope="col"># Experiments</th>
-                    <th scope="col">Options</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for chemical in chemicals %}
-                    <tr>
-                        <th class="align-middle">{{ chemical.id }}</th>
-                        <td class="align-middle"><canvas data-smiles-type="small" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}"></canvas></td>
-                        <td class="align-middle">{{ chemical.shortName }}</td>
-                        <td class="align-middle">{% if chemical.labjournal %}<a class="fa-fw fas fa-external-link-alt" href="#{{ chemical.id }}">Lab Journal entry</a>{% else %}No entry{% endif %}</td>
-                        <td class="align-middle">{{ chemical.experiments|length > 0 ? chemical.experiments|length : "none" }}</td>
-                        <td class="align-middle">
-                            <a href="{{ url("app_compound_view", {"compoundId": chemical.id}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table> #}
     </div>
 {% endblock %}
