@@ -182,7 +182,7 @@
                                             <tbody>
                                                 {% if cell.vendor and cell.vendorPn %}
                                                     {{ macros.definition_row_raw("Vendor", macros.vendor_url(cell.vendor, cell.vendorPn)) }}
-                                                {% elif cell.vendor and not cell.vendorPn %}
+                                                {% elseif cell.vendor and not cell.vendorPn %}
                                                     {{ macros.definition_row("Vendor", cell.vendor) }}
                                                 {% else %}
                                                     {{ macros.definition_row("Vendor", "unknown") }}
