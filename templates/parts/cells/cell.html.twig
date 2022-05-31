@@ -180,7 +180,13 @@
                                     <div class="p-2 pt-3 border-secondary border">
                                         <table class="table table-sm table-borderless">
                                             <tbody>
-                                                {{ macros.definition_row("Vendor", cell.vendor ?? "unknown") }}
+                                                {% if cell.vendor and cell.vendorPn %}
+                                                    {{ macros.definition_row_raw("Vendor", macros.vendor_url(cell.vendor, cell.vendorPn)) }}
+                                                {% elif cell.vendor and not cell.vendorPn %}
+                                                    {{ macros.definition_row("Vendor", cell.vendor) }}
+                                                {% else %}
+                                                    {{ macros.definition_row("Vendor", "unknown") }}
+                                                {% endif %}
                                                 {{ macros.definition_row("Vendor PN", cell.vendorPn ?? "unknown") }}
                                                 {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
                                                 {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
