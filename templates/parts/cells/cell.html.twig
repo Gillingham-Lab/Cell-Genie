@@ -273,11 +273,13 @@
 
                         {# Aliquote information #}
                         <div class="tab-pane fade" id="cell-info-aliquotes-content" role="tabpanel" aria-labelledby="cell-info-aliquotes">
-                            <div class="row">
-                                {{ _self.simple_tab_content("Mycoplasma", cell.mycoplasma ?? "no data") }}
-                                {{ _self.simple_tab_content("Typing", cell.typing ?? "no data") }}
-                                {{ _self.simple_tab_content("History", cell.history ?? "no data") }}
-                            </div>
+                            {% if aliquote %}
+                                <div class="row">
+                                    {{ _self.simple_tab_content("Mycoplasma", aliquote.mycoplasma ?? "no data") }}
+                                    {{ _self.simple_tab_content("Typing", aliquote.typing ?? "no data") }}
+                                    {{ _self.simple_tab_content("History", aliquote.history ?? "no data") }}
+                                </div>
+                            {% endif %}
                         </div>
 
                         {# Attached documents #}
