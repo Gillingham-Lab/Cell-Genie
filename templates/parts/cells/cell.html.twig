@@ -187,7 +187,6 @@
                                                 {% else %}
                                                     {{ macros.definition_row("Vendor", "unknown") }}
                                                 {% endif %}
-                                                {{ macros.definition_row("Vendor PN", cell.vendorPn ?? "unknown") }}
                                                 {{ macros.definition_row("Price", cell.price ? "#{cell.price} CHF" : "???") }}
                                                 {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName ? "unknown") }}
                                                 {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. F Y") : "unknown") }}
