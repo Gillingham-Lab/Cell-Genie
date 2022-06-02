@@ -17,6 +17,7 @@ class RecipeIngredientType extends AbstractType
         $units = ["M", "mM", "μM", "nM", "pM", "fM",
             "g/L", "mg/L", "μg/L",
             "g/mL", "mg/mL", "μg/mL",
+            #"L/L", "mL/L", "μL/L", "mL/mL", "μL/mL", "%", "‰", "ppm", "ppb", "ppt",
         ];
 
         $builder

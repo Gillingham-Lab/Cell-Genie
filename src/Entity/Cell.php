@@ -166,7 +166,7 @@ class Cell
         return $this->age;
     }
 
-    public function setAge(string $age): self
+    public function setAge(?string $age): self
     {
         $this->age = $age;
         return $this;
@@ -177,7 +177,7 @@ class Cell
         return $this->sex ?? "";
     }
 
-    public function setSex(string $sex): self
+    public function setSex(?string $sex): self
     {
         $this->sex = $sex;
         return $this;
@@ -188,7 +188,7 @@ class Cell
         return $this->ethnicity ?? "";
     }
 
-    public function setEthnicity(string $ethnicity): self
+    public function setEthnicity(?string $ethnicity): self
     {
         $this->ethnicity = $ethnicity;
         return $this;
@@ -199,7 +199,7 @@ class Cell
         return $this->disease ?? "";
     }
 
-    public function setDisease(string $disease): self
+    public function setDisease(?string $disease): self
     {
         $this->disease = $disease;
         return $this;
