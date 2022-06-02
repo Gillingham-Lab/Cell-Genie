@@ -28,6 +28,12 @@ class Recipe
     #[Assert\Length(min: 1, max: 100)]
     private ?string $category = null;
 
+    #[ORM\Column(name: "pH", type: "float", nullable: true)]
+    private ?float $pH = null;
+
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $comment = null;
+
     #[ORM\OneToMany(mappedBy: "recipe", targetEntity: RecipeIngredient::class, cascade: ["persist", "remove"])]
     #[Assert\Valid]
     private Collection $ingredients;
@@ -70,6 +76,28 @@ class Recipe
     {
         $this->concentrationFactor = $factor;
 
+        return $this;
+    }
+
+    public function getPH(): ?float
+    {
+        return $this->pH;
+    }
+
+    public function setPH(?float $pH): self
+    {
+        $this->pH = $pH;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
         return $this;
     }
 

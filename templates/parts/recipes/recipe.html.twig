@@ -15,12 +15,26 @@
 
         {# Short information #}
         <div class="col col-12 p-5 bg-white mb-3 border">
+            {% if recipe.pH %}
+                <div class="mb-5">
+                    Required pH: <strong>{{ recipe.pH }}</strong>
+                </div>
+            {% endif %}
+
+            {% if recipe.comment %}
+                <div class="pb-5 mb-5 border-bottom">
+                    <h4>Comment</h4>
+                    {{ recipe.comment|raw }}
+                </div>
+            {% endif %}
+
             <div class="form-group">
                 <label><span>Volume (mL)</span><input id='_genie_recipe_totalVolume' value="1000" type="number" class="form-control"></label>
                 <button id='_genie_recipe_totalVolume_submit' class="btn btn-primary" onsubmit="">Recalculate</button>
             </div>
 
             <div class="p-3">
+
                 <table class="table table-hover _genie_recipe">
                     <thead>
                     <tr>

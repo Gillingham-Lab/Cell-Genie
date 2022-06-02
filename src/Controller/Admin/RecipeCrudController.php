@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class RecipeCrudController extends AbstractCrudController
@@ -29,6 +30,10 @@ class RecipeCrudController extends AbstractCrudController
 
             FormField::addPanel("Recipe"),
             NumberField::new("concentrationFactor"),
+            NumberField::new("pH")
+                ->setLabel("pH"),
+            TextEditorField::new("comment")
+                ->hideOnIndex(),
             CollectionField::new("ingredients", "Ingredients")
                 ->setEntryType(RecipeIngredientType::class)
                 ->setEntryIsComplex(true),

@@ -33,6 +33,7 @@
                             Short Name
                         </th>
                         <th scope="col">Category</th>
+                        <th scope="col">pH</th>
                         <th scope="col">Concentration Factor</th>
                     </tr>
                     </thead>
@@ -49,6 +50,7 @@
                                 <span data-toggle="tooltip" data-placement="bottom" title="{{ recipe.longName }}">{{ recipe.shortName }}</span>
                             </td>
                             <td class="align-middle">{{ recipe.category }}</td>
+                            <td class="align-middle">{{ recipe.pH ?: "-" }}</td>
                             <td class="align-middle">{{ recipe.concentrationFactor }}</td>
                         </tr>
                     {% endfor %}
