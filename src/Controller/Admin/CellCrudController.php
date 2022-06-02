@@ -33,7 +33,10 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnForm(),
             TextField::new('cellNumber'),
             TextField::new('name'),
-            TextField::new('age'),
+            TextField::new('age')->setRequired(false),
+            TextField::new('sex')->setRequired(false),
+            TextField::new('ethnicity')->setRequired(false),
+            TextField::new('disease')->setRequired(false),
             AssociationField::new("parent"),
             AssociationField::new("morphology")
                 ->setRequired(true),

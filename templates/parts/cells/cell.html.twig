@@ -62,6 +62,9 @@
                                 {{ macros.definition_row("Organism", cell.organism ? cell.organism.fullName : "undefined") }}
                                 {{ macros.definition_row("Tissue", cell.tissue ? cell.tissue.name : "undefined") }}
                                 {{ macros.definition_row("Age", cell.age) }}
+                                {{ macros.definition_row("Sex", cell.sex ?: "-") }}
+                                {{ macros.definition_row("Ethnicity", cell.ethnicity ?: "-") }}
+                                {{ macros.definition_row("Disease", cell.disease ?: "-") }}
                                 {{ macros.definition_row("Morphology", cell.morphology ? cell.morphology.name : "undefined") }}
                                 {{ macros.definition_row("Culture type", cell.cultureType) }}
                                 {{ macros.definition_row("Cancer", cell.isCancer ? "Yes" : "No") }}

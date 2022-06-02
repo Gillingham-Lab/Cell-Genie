@@ -35,6 +35,18 @@ class Cell
     #[Assert\Length(max: 250)]
     private string $age = "";
 
+    #[ORM\Column(type: "string", length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $sex;
+
+    #[ORM\Column(type: "string", length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $ethnicity;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $disease;
+
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
     private string $cultureType = "";
@@ -157,7 +169,39 @@ class Cell
     public function setAge(string $age): self
     {
         $this->age = $age;
+        return $this;
+    }
 
+    public function getSex(): string
+    {
+        return $this->sex ?? "";
+    }
+
+    public function setSex(string $sex): self
+    {
+        $this->sex = $sex;
+        return $this;
+    }
+
+    public function getEthnicity(): string
+    {
+        return $this->ethnicity ?? "";
+    }
+
+    public function setEthnicity(string $ethnicity): self
+    {
+        $this->ethnicity = $ethnicity;
+        return $this;
+    }
+
+    public function getDisease(): string
+    {
+        return $this->disease ?? "";
+    }
+
+    public function setDisease(string $disease): self
+    {
+        $this->disease = $disease;
         return $this;
     }
 
