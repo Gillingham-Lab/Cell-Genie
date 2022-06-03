@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\HasAttachmentsTrait;
+use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\CellRepository;
 use DateTimeInterface;
@@ -21,6 +22,7 @@ class Cell
 {
     use VendorTrait;
     use HasAttachmentsTrait;
+    use HasRRID;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -30,6 +32,9 @@ class Cell
     #[ORM\Column(type: "string", length: 255, unique: True)]
     #[Assert\Length(max: 250)]
     private string $name = "";
+
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    private ?string $cellosaurusId = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
@@ -158,6 +163,17 @@ class Cell
     {
         $this->name = $name;
 
+        return $this;
+    }
+
+    public function getCellosaurusId(): ?string
+    {
+        return $this->cellosaurusId;
+    }
+
+    public function setCellosaurusId(?string $cellosaurusId): self
+    {
+        $this->cellosaurusId = $cellosaurusId;
         return $this;
     }
 

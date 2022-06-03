@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Cell;
 use App\Entity\Traits\HasAttachmentsTrait;
+use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -33,6 +34,10 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnForm(),
             TextField::new('cellNumber'),
             TextField::new('name'),
+            ... HasRRID::rridCrudFields(),
+            TextField::new('cellosaurusId')
+                ->setLabel("Cellosaurus ID")
+                ->setRequired(false),
             TextField::new('age')->setRequired(false),
             TextField::new('sex')->setRequired(false),
             TextField::new('ethnicity')->setRequired(false),

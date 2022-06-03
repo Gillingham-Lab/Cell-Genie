@@ -20,13 +20,29 @@
     </div>
 {% endmacro %}
 
+{% macro cellosauros_url(cell) %}
+    {% if cell.cellosaurusId %}
+        {% set database = "https://web.expasy.org/cellosaurus/" ~ cell.cellosaurusId %}
+        <a href="{{ database }}">{{ cell.name }} ({{ cell.cellosaurusId }}) <span class="fa fa-external-link-alt"></span></a>
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
 {% block body_main %}
     {% set columnClasses = "col-md-6 col-lg-4 col-xl-4 px-3 mb-3 border-light border-bottom" %}
 
     <div class="row p-3">
         <div class="col col-12 p-5 bg-white mb-3 border">
             <div class="row">
-                <h1>{{ cell.name }}</h1>
+                <h1>
+                    {{ cell.name }}
+                    <a
+                            data-clipboard-text="{{ cell.name }} ({{ cell.rrid ? "RRID:" ~ cell.rrid : "" }})"
+                            class="btn-clipboard far fa-clipboard small"
+                            role="button"
+                    ></a>
+                </h1>
             </div>
         </div>
 
@@ -37,6 +53,8 @@
                         <table class="table w-100 table-borderless table-sm">
                             <tbody>
                                 {{ macros.definition_row("ID", cell.id) }}
+                                {{ macros.definition_row("RRID", macros.rrid_resolver(cell.rrid)) }}
+                                {{ macros.definition_row_raw("Cellosaurus", _self.cellosauros_url(cell)) }}
 
                                 {% if cell.parent %}
                                     {{ macros.definition_row("Parent", cell.parent.name, url("app_cell_view", {"cellId": cell.parent.id})) }}

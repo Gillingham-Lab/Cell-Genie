@@ -1,4 +1,5 @@
 {% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
 
 {% block title %}Cell Genie: Cells{% endblock %}
 
@@ -30,6 +31,7 @@
                     <th scope="col">Aliquotes (Unique)</th>
                     <th scope="col">Cancer</th>
                     <th scope="col">Engineered</th>
+                    <th scope="col">RRID</th>
                     <th scope="col">Options</th>
                 </tr>
                 </thead>
@@ -52,7 +54,20 @@
                             {% endif %}</td>
                         <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
                         <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
-                        <td><a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a></td>
+                        <td>{{ cell.rrid ? macros.rrid_resolver(cell.rrid) : "-" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                {% if cell.rrid %}
+                                <a
+                                        class="btn btn-info btn-clipboard"
+                                        data-clipboard-text="{{ cell.name }} ({{ cell.rrid ? "RRID:" ~ cell.rrid : "" }})"
+                                >
+                                    <span class="far fa-clipboard"></span>
+                                </a>
+                                {% endif %}
+                                <a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
