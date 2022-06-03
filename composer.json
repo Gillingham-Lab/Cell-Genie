@@ -72,7 +72,9 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "phpunit/phpunit": "^9.5",
         "symfony/maker-bundle": "^1.30",
+        "symfony/phpunit-bridge": "^6.1",
         "symfony/stopwatch": "^5.2",
         "symfony/twig-bundle": "^5.2",
         "symfony/web-profiler-bundle": "^5.2"
