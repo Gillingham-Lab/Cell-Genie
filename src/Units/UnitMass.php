@@ -6,6 +6,7 @@ namespace App\Units;
 class UnitMass extends UnitBase
 {
     const GRAM = "g";
+
     const MILLIGRAM = "mg";
     const MICROGRAM = "μg";
     const NANOGRAM = "ng";
@@ -14,6 +15,7 @@ class UnitMass extends UnitBase
     const ATTOGRAM = "ag";
     const ZEPTOGRAM = "zg";
     const YOCTOGRAM = "yg";
+
     const KILOGRAM = "kg";
     const MEGAGRAM = "Mg";
     const GIGAGRAM = "Gg";
