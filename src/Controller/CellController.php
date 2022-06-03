@@ -32,7 +32,7 @@ class CellController extends AbstractController
     {
         $cells = $this->cellRepository->findBy(
             [],
-            orderBy: ["name" => "ASC"]
+            orderBy: ["cellNumber" => "ASC"]
         );
 
         return $this->render('parts/cells/cells.html.twig', [
