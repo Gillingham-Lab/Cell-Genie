@@ -38,7 +38,7 @@
                 <tbody>
                 {% for cell in cells %}
                     <tr>
-                        <th>{{ cell.cellNumber }}</th>
+                        <td><strong>{{ cell.cellNumber }}</strong></td>
                         <td>{{ cell.name }}</td>
                         <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
                         <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
