@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Unit;
 
-class UnitMass extends UnitBase
+use App\Pole\BaseUnit;
+
+class Mass extends BaseUnit
 {
     const GRAM = "g";
 

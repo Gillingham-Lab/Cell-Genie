@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Unit;
 
-class UnitVolume extends UnitBase
+use App\Pole\BaseUnit;
+
+class Volume extends BaseUnit
 {
     const LITER = "L";
     const MILLILITER = "mL";

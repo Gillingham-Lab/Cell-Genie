@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole;
 
-abstract class UnitBase implements UnitInterface
+use App\Pole\Exception\UnitNotSupportedException;
+
+abstract class BaseUnit implements UnitInterface
 {
     protected array $unitStringFactors = [];
     protected array $interconversionFactors = [];
@@ -30,7 +32,7 @@ abstract class UnitBase implements UnitInterface
 
         if ($unitString !== null) {
             if (!$t->supports($unitString)) {
-                throw new \InvalidArgumentException(get_class($t) . " does not support the unit {$unitString}");
+                throw new UnitNotSupportedException(get_class($t) . " does not support the unit {$unitString}");
             }
 
             $baseValue = $t->convertToBaseValue($value, $unitString);

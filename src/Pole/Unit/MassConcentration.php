@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Unit;
 
-class UnitMassConcentration extends UnitBase
+use App\Pole\BaseUnit;
+
+class MassConcentration extends BaseUnit
 {
     const KILOGRAMPERLITER = "kg/L";
     const GRAMPERLITER = "g/L";

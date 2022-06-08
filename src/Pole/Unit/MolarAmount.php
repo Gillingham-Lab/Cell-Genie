@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Unit;
 
-class UnitMolarAmount extends UnitBase
+use App\Pole\BaseUnit;
+
+class MolarAmount extends BaseUnit
 {
     const MOL = "mol";
     const MILLIMOL = "mmol";
@@ -34,6 +36,6 @@ class UnitMolarAmount extends UnitBase
     ];
 
     protected array $interconversionFactors = [
-        UnitAmount::class => 6.02214076e23, // Avogadros number
+        Amount::class => 6.02214076e23, // Avogadros number
     ];
 }

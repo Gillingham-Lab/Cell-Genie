@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Unit;
 
-class UnitMolarMass extends UnitBase
+use App\Pole\BaseUnit;
+
+class MolarMass extends BaseUnit
 {
     const GRAMPERMOLE = "g/mol";
     const KILOGRAMPERMOLE = "kg/mol";

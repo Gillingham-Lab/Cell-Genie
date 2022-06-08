@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Exception;
 
 class OperationNotSupported extends UnitException
 {

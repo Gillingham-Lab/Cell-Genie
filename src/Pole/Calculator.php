@@ -1,18 +1,32 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole;
+
+use App\Pole\Exception\CalculationNotSupported;
+use App\Pole\Exception\OperationNotSupported;
+use App\Pole\Exception\UnitInterconversionNotSupportedException;
+use App\Pole\Unit\Amount;
+use App\Pole\Unit\MassConcentration;
+use App\Pole\Unit\Mass;
+use App\Pole\Unit\MolarAmount;
+use App\Pole\Unit\MolarConcentration;
+use App\Pole\Unit\Volume;
 
 class Calculator
 {
     protected array $divisions = [
-        UnitMass::class . "/" . UnitVolume::class => UnitMassConcentration::class,
-        UnitMass::class . "/" . UnitMassConcentration::class => UnitVolume::class,
+        Mass::class . "/" . Volume::class => MassConcentration::class,
+        Mass::class . "/" . MassConcentration::class => Volume::class,
+        MolarAmount::class . "/" . Volume::class => MolarConcentration::class,
+        MolarAmount::class . "/" . MolarConcentration::class => Volume::class,
     ];
 
     protected array $multiplications = [
-        UnitMassConcentration::class . "*" . UnitVolume::class => UnitMass::class,
-        UnitVolume::class . "*" . UnitMassConcentration::class => UnitMass::class,
+        MassConcentration::class . "*" . Volume::class => Mass::class,
+        Volume::class . "*" . MassConcentration::class => Mass::class,
+        MolarConcentration::class . "*" . Volume::class => MolarAmount::class,
+        Volume::class . "*" . MolarConcentration::class => MolarAmount::class,
     ];
 
     protected function tryToMakeQuantitiesCompatible(Quantity $quantity1, Quantity $quantity2): Quantity
@@ -52,7 +66,7 @@ class Calculator
     /**
      * Adds the value of quantity2 to the value of quantity1.
      *
-     * Units must be the same or at least compatible. If units are not the same, the calculator tries to convert
+     * Unit must be the same or at least compatible. If units are not the same, the calculator tries to convert
      *  quantity2 into the unit of quantity1.
      * @param Quantity $quantity1
      * @param Quantity $quantity2
@@ -68,7 +82,7 @@ class Calculator
     /**
      * Substracts the value of quantity2 from the value of quantity1.
      *
-     * Units must be the same or at least compatible. If units are not the same, the calculator tries to convert
+     * Unit must be the same or at least compatible. If units are not the same, the calculator tries to convert
      *  quantity2 into the unit of quantity1.
      * @param Quantity $quantity1
      * @param Quantity $quantity2
@@ -95,7 +109,7 @@ class Calculator
             // $quantity2 is a Quantity and not just a float, we need to compare the units and then
             //  decide what to do.
 
-            if ($quantity2->getUnit() == UnitAmount::getInstance()) {
+            if ($quantity2->getUnit() == Amount::getInstance()) {
                 // If the second quantity is unitless, keep the unit of quantity 1
                 $newUnit = $quantity1->getUnit();
 
@@ -107,10 +121,10 @@ class Calculator
                     // Look up if we have a operation result for the unit pair.
                     $newUnit = $this->tryToFindOperationUnitResult("/", $quantity1, $quantity2);
                 } catch (OperationNotSupported $e) {
-                    // If not, we can try to interconvert the units, as this always results in a unitless result (UnitAmount).
+                    // If not, we can try to interconvert the units, as this always results in a unitless result (AmountUnit).
                     try {
                         $quantity2 = $this->tryToMakeQuantitiesCompatible($quantity1, $quantity2);
-                        $newUnit = UnitAmount::getInstance();
+                        $newUnit = Amount::getInstance();
                     } catch (UnitInterconversionNotSupportedException) {
                         // If this fails, we re-raise the OperationNotSupported
                         throw $e;
@@ -144,10 +158,10 @@ class Calculator
             // $quantity2 is a Quantity and not just a float, we need to compare the units and then
             //  decide what to do.
 
-            if ($quantity2->getUnit() == UnitAmount::getInstance()) {
+            if ($quantity2->getUnit() == Amount::getInstance()) {
                 // If the second quantity is unitless, keep the unit of quantity 1
                 $newUnit = $quantity1->getUnit();
-            } elseif ($quantity1->getUnit() == UnitAmount::getInstance()) {
+            } elseif ($quantity1->getUnit() == Amount::getInstance()) {
                 // The same is true if quantity 1 is unitless, but we keep the unit of quantity 2
                 $newUnit = $quantity2->getUnit();
             } else {

@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Units;
+namespace App\Pole\Unit;
 
-class UnitAmount extends UnitBase
+use App\Pole\BaseUnit;
+
+class Amount extends BaseUnit
 {
     const NONE = null;
     const PERCENT = "%";
@@ -22,4 +24,4 @@ class UnitAmount extends UnitBase
     ];
 }
 
-#$a = new Quantity(5.422, UnitAmount("μmol"))
+#$a = new Quantity(5.422, AmountUnit("μmol"))
