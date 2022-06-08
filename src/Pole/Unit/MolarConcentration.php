@@ -17,6 +17,8 @@ class MolarConcentration extends CompositeUnit
     const ZEPTOMOLAR = "zM";
     const YOCTOMOLAR = "yM";
 
+    protected string $base_unit_symbol = self::MOLAR;
+
     protected array $factorial_units = [MolarAmount::class];
     protected array $reciprocal_units = [Volume::class];
 

@@ -32,6 +32,8 @@ class Mass extends BaseUnit
     const MEGATON = " Mt";
     const GIGATON = " Gt";
 
+    protected string $base_unit_symbol = self::GRAM;
+
     protected array $unitStringFactors = [
         self::YOTTAGRAM => 1e+24,
         self::ZETTAGRAM => 1e+21,

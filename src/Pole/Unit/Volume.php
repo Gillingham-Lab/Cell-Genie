@@ -17,6 +17,8 @@ class Volume extends BaseUnit
     const ZEPTOLITER = "zL";
     const YOCTOLITER = "yL";
 
+    protected string $base_unit_symbol = self::LITER;
+
     protected array $unitStringFactors = [
         self::LITER => 1,
         self::MILLILITER => 1e-3,

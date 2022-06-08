@@ -15,6 +15,8 @@ class MolarMass extends BaseUnit
     const KILODALTON = "kDa";
     const MEGADALTON = "MDa";
 
+    protected string $base_unit_symbol = self::GRAMPERMOLE;
+
     protected array $unitStringFactors = [
         self::MEGAGRAMPERMOLE => 1e+6,
         self::KILOGRAMPERMOLE => 1e+3,

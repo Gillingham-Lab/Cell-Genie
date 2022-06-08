@@ -14,6 +14,8 @@ class Amount extends BaseUnit
     const PARTSPERBILLION = "ppb";
     const PARTSPERTRILLION = "ppt";
 
+    protected string $base_unit_symbol = "";
+
     protected array $unitStringFactors = [
         self::NONE => 1,
         self::PERCENT => 0.01,

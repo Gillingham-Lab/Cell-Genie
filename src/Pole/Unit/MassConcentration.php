@@ -21,6 +21,8 @@ class MassConcentration extends BaseUnit
     const MICROGRAMPERMICROLITER = "μg/μL";
     const NANOGRAMPERMICROLITER = "ng/μL";
 
+    protected string $base_unit_symbol = self::GRAMPERLITER;
+
     protected array $unitStringFactors = [
         self::KILOGRAMPERLITER => 1e+3,
         self::GRAMPERLITER => 1,

@@ -20,6 +20,8 @@ class MolarAmount extends BaseUnit
     const MEGAMOL = "Mmol";
     const GIGAMOL = "Gmol";
 
+    protected string $base_unit_symbol = self::MOL;
+
     protected array $unitStringFactors = [
         self::GIGAMOL => 1e+9,
         self::MEGAMOL => 1e+6,

@@ -6,6 +6,7 @@ namespace App\Pole;
 interface UnitInterface
 {
     public static function create(float $value, ?string $unitString = null): Quantity;
+    public function getBaseUnitSymbol(): string;
     public function supports(string $unitString): bool;
     public function supportsInterconversionFrom(UnitInterface $sourceUnit): bool;
     public function supportsInterconversionTo(UnitInterface $targetUnit): bool;

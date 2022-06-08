@@ -24,6 +24,11 @@ class Quantity
         return $this->unit;
     }
 
+    public function isUnit(string $unitClass)
+    {
+        return $this->unit::class === $unitClass;
+    }
+
     public function getValueAs(?string $unitString): float
     {
         if (!$this->unit->supports($unitString)) {

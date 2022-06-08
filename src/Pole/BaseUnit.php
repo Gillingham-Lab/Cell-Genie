@@ -7,6 +7,7 @@ use App\Pole\Exception\UnitNotSupportedException;
 
 abstract class BaseUnit implements UnitInterface
 {
+    protected string $base_unit_symbol = "";
     protected array $unitStringFactors = [];
     protected array $interconversionFactors = [];
 
@@ -41,6 +42,11 @@ abstract class BaseUnit implements UnitInterface
         }
 
         return new Quantity($baseValue, $t);
+    }
+
+    public function getBaseUnitSymbol(): string
+    {
+        return $this->base_unit_symbol;
     }
 
     public function supports(string $unitString): bool

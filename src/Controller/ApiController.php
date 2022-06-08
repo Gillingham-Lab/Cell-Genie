@@ -9,12 +9,15 @@ use App\Entity\ExperimentalMeasurement;
 use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\Recipe;
+use App\Entity\RecipeIngredient;
 use App\Genie\DataSet;
 use App\Pole\Calculator;
 use App\Pole\Quantity;
 use App\Pole\Unit\Amount;
 use App\Pole\Unit\MassConcentration;
+use App\Pole\Unit\MolarAmount;
 use App\Pole\Unit\MolarConcentration;
+use App\Pole\Unit\MolarMass;
 use App\Pole\Unit\Volume;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -83,10 +86,14 @@ class ApiController extends AbstractController
 
         $volumeQuantity = Volume::create($volumeDesired, "mL");
 
+        $adjustedConcentrationFactor = $concentrationFactor / $recipe->getConcentrationFactor();
+
         # Add ingredients
         $ingredients = [];
 
+        /** @var RecipeIngredient $ingredient */
         foreach ($recipe->getIngredients() as $ingredient) {
+            $chemical = $ingredient->getChemical();
             $concentration = $ingredient->getConcentration();
             $concentrationUnit = $ingredient->getConcentrationUnit();
 
@@ -101,14 +108,38 @@ class ApiController extends AbstractController
             }
 
             $calculator = new Calculator();
+
+            // Calculate quantity for the desired volume
             $amountQuantityForVolume = $calculator->multiply($concentrationQuantity, $volumeQuantity);
+            // Adjust quantity for the desired concentration factor
+            $amountQuantityForVolume = $calculator->multiply($amountQuantityForVolume, $adjustedConcentrationFactor);
+
+            // If a molar mass is given and the calculated amount is a molar amount, we convert the value to mass instead.
+            if ($amountQuantityForVolume->isUnit(MolarAmount::class) and $chemical->getMolecularMass() > 1) {
+                $molarMass = MolarMass::create($chemical->getMolecularMass(), "g/mol");
+                $amountQuantityForVolume = $calculator->multiply($amountQuantityForVolume, $molarMass);
+
+                // If we have a mass and the chemical has a density, we also want to convert mass to volume
+                // (technically, a mass concentration is a density)
+                if ($chemical->getDensity() > 0) {
+                    $densityQuantity = MassConcentration::create($chemical->getDensity(), "g/mL");
+                    $chemicalVolumeQuantity = $calculator->divide($amountQuantityForVolume, $densityQuantity);
+                } else {
+                    $densityQuantity = null;
+                    $chemicalVolumeQuantity = null;
+                }
+            }
 
             $ingredients[] = [
-                "shortName" => $ingredient->getChemical()->getShortName(),
-                "longName" => $ingredient->getChemical()->getLongName(),
+                "id" => $ingredient->getId(),
+                "shortName" => $chemical->getShortName(),
+                "longName" => $chemical->getLongName(),
                 "concentration" => $concentration,
                 "concentrationUnit" => $concentrationUnit,
                 "quantity" => $amountQuantityForVolume->getValue(),
+                "quantity_unit" => $amountQuantityForVolume->getUnit()->getBaseUnitSymbol(),
+                "volume" => $chemicalVolumeQuantity?->getValue(),
+                "volume_unit" => $chemicalVolumeQuantity?->getUnit()->getBaseUnitSymbol(),
             ];
         }
 

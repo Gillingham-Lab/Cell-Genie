@@ -11,6 +11,7 @@ use App\Pole\Unit\MassConcentration;
 use App\Pole\Unit\Mass;
 use App\Pole\Unit\MolarAmount;
 use App\Pole\Unit\MolarConcentration;
+use App\Pole\Unit\MolarMass;
 use App\Pole\Unit\Volume;
 
 class Calculator
@@ -20,13 +21,19 @@ class Calculator
         Mass::class . "/" . MassConcentration::class => Volume::class,
         MolarAmount::class . "/" . Volume::class => MolarConcentration::class,
         MolarAmount::class . "/" . MolarConcentration::class => Volume::class,
+        Mass::class . "/" . MolarAmount::class => MolarMass::class,
+        MolarAmount::class . "/" . MolarMass::class => MolarAmount::class,
     ];
 
     protected array $multiplications = [
         MassConcentration::class . "*" . Volume::class => Mass::class,
         Volume::class . "*" . MassConcentration::class => Mass::class,
+
         MolarConcentration::class . "*" . Volume::class => MolarAmount::class,
         Volume::class . "*" . MolarConcentration::class => MolarAmount::class,
+
+        MolarAmount::class . "*" . MolarMass::class => Mass::class,
+        MolarMass::class . "*" . MolarAmount::class => Mass::class,
     ];
 
     protected function tryToMakeQuantitiesCompatible(Quantity $quantity1, Quantity $quantity2): Quantity
