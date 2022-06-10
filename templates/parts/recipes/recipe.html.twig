@@ -83,10 +83,10 @@
 
                     console.log(ingredient)
 
-                    mass_column[0].innerHTML = ingredient.quantity + " " + ingredient.quantity_unit;
+                    mass_column[0].innerHTML = ingredient.quantity_formatted;
 
                     if (ingredient.volume) {
-                        volume_column[0].innerHTML = ingredient.volume + " " + ingredient.volume_unit;
+                        volume_column[0].innerHTML = ingredient.volume_formatted;
                     } else {
                         volume_column[0].innerHTML = "-";
                     }

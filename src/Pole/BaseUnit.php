@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Pole;
 
+use App\Pole\Exception\UnitInterconversionNotSupportedException;
 use App\Pole\Exception\UnitNotSupportedException;
 
 abstract class BaseUnit implements UnitInterface
@@ -72,6 +73,41 @@ abstract class BaseUnit implements UnitInterface
     public function convertValueTo(float $value, ?string $unitString): float
     {
         return $value / $this->unitStringFactors[$unitString];
+    }
+
+    public function convertValueToClosestUnit(float $value): array
+    {
+        $magnitude = (int)floor(log10($value) + 0.3010299958);
+
+        if ($magnitude >= 0) {
+            $magnitude1K = intdiv($magnitude, 3);
+        } else {
+            $magnitude1K = intdiv($magnitude, 3) - 1;
+        }
+
+        $magnitude1KToUnit = [];
+        foreach ($this->unitStringFactors as $unitString => $unitFactor) {
+            $unitFactorMagnitude1K = intdiv((int)floor(log10($unitFactor)), 3);
+
+            if (!isset($magnitude1KToUnit[$unitFactorMagnitude1K])) {
+                $magnitude1KToUnit[$unitFactorMagnitude1K] = $unitString;
+            }
+        }
+
+        ksort($magnitude1KToUnit);
+        $unitMagnitudes = array_keys($magnitude1KToUnit);
+        $smallestUnitMagnitude = $unitMagnitudes[0];
+        $largestUnitMagnitude = $unitMagnitudes[count($unitMagnitudes) - 1];
+
+        if ($magnitude1K < $smallestUnitMagnitude) {
+            $targetUnit = $magnitude1KToUnit[$smallestUnitMagnitude];
+        } elseif ($magnitude1K > $largestUnitMagnitude) {
+            $targetUnit = $magnitude1KToUnit[$largestUnitMagnitude];
+        } else {
+            $targetUnit = $magnitude1KToUnit[$magnitude1K];
+        }
+
+        return [$this->convertValueTo($value, $targetUnit), $targetUnit];
     }
 
     public function interconvertFrom(Quantity $quantity): Quantity

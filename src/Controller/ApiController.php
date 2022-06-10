@@ -138,8 +138,10 @@ class ApiController extends AbstractController
                 "concentrationUnit" => $concentrationUnit,
                 "quantity" => $amountQuantityForVolume->getValue(),
                 "quantity_unit" => $amountQuantityForVolume->getUnit()->getBaseUnitSymbol(),
+                "quantity_formatted" => $amountQuantityForVolume->format(4, Quantity::FORMAT_ADJUST_UNIT),
                 "volume" => $chemicalVolumeQuantity?->getValue(),
                 "volume_unit" => $chemicalVolumeQuantity?->getUnit()->getBaseUnitSymbol(),
+                "volume_formatted" => $chemicalVolumeQuantity?->format(4, Quantity::FORMAT_ADJUST_UNIT),
             ];
         }
 

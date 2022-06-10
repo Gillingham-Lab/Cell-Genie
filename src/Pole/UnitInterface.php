@@ -12,6 +12,14 @@ interface UnitInterface
     public function supportsInterconversionTo(UnitInterface $targetUnit): bool;
 
     public function convertToBaseValue(float $value, ?string $unitString): float;
+
+    /**
+     * Converts
+     * @param float $value
+     * @return array[float, string]
+     */
+    public function convertValueToClosestUnit(float $value): array;
+
     public function interconvertFrom(Quantity $quantity): Quantity;
     public function interconvertTo(float $value, UnitInterface $targetUnit);
 }
