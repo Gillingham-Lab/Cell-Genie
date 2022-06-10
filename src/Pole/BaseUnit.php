@@ -90,8 +90,6 @@ abstract class BaseUnit implements UnitInterface
             }
         }
 
-        var_dump($value, $magnitude, $magnitude1K, $magnitude1KToUnit);
-
         ksort($magnitude1KToUnit);
         $unitMagnitudes = array_keys($magnitude1KToUnit);
         $smallestUnitMagnitude = $unitMagnitudes[0];
