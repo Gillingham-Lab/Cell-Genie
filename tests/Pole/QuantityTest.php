@@ -130,5 +130,10 @@ class QuantityTest extends TestCase
 
         $quantity = $this->getQuantity(1, "%", Amount::class);
         $this->assertSame("10.00 ‰", $quantity->format(4, Quantity::FORMAT_ADJUST_UNIT));
+
+        $quantity = $this->getQuantity(3085, "μmol");
+        $this->assertSame("3.085 mmol", $quantity->format(4, Quantity::FORMAT_ADJUST_UNIT));
+        $this->assertSame("3.09 mmol", $quantity->format(3, Quantity::FORMAT_ADJUST_UNIT));
+        $this->assertSame("3.1 mmol", $quantity->format(2, Quantity::FORMAT_ADJUST_UNIT));
     }
 }

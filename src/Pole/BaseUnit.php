@@ -79,11 +79,7 @@ abstract class BaseUnit implements UnitInterface
     {
         $magnitude = (int)floor(log10($value) + 0.3010299958);
 
-        if ($magnitude >= 0) {
-            $magnitude1K = intdiv($magnitude, 3);
-        } else {
-            $magnitude1K = intdiv($magnitude, 3) - 1;
-        }
+        $magnitude1K = (int)floor($magnitude/3);
 
         $magnitude1KToUnit = [];
         foreach ($this->unitStringFactors as $unitString => $unitFactor) {
@@ -93,6 +89,8 @@ abstract class BaseUnit implements UnitInterface
                 $magnitude1KToUnit[$unitFactorMagnitude1K] = $unitString;
             }
         }
+
+        var_dump($value, $magnitude, $magnitude1K, $magnitude1KToUnit);
 
         ksort($magnitude1KToUnit);
         $unitMagnitudes = array_keys($magnitude1KToUnit);
