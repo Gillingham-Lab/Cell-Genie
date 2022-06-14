@@ -31,6 +31,7 @@ class Cell
 
     #[ORM\Column(type: "string", length: 255, unique: True)]
     #[Assert\Length(max: 250)]
+    #[Assert\NotBlank]
     private string $name = "";
 
     #[ORM\Column(type: "string", length: 20, nullable: true)]
@@ -38,7 +39,7 @@ class Cell
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
-    private string $age = "";
+    private ?string $age = "";
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
