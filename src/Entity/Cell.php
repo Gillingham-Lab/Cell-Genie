@@ -11,6 +11,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Ulid;
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellRepository::class)]
 #[UniqueEntity(fields: "cellNumber")]
+#[Gedmo\Loggable]
 class Cell
 {
     use VendorTrait;
@@ -32,35 +34,44 @@ class Cell
     #[ORM\Column(type: "string", length: 255, unique: True)]
     #[Assert\Length(max: 250)]
     #[Assert\NotBlank]
+    #[Gedmo\Versioned]
     private string $name = "";
 
     #[ORM\Column(type: "string", length: 20, nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $cellosaurusId = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
+    #[Gedmo\Versioned]
     private ?string $age = "";
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
+    #[Gedmo\Versioned]
     private ?string $sex;
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
+    #[Gedmo\Versioned]
     private ?string $ethnicity;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[Gedmo\Versioned]
     private ?string $disease;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
+    #[Gedmo\Versioned]
     private string $cultureType = "";
 
     #[ORM\Column(type: "boolean")]
+    #[Gedmo\Versioned]
     private bool $isCancer = true;
 
     #[ORM\Column(type: "boolean")]
+    #[Gedmo\Versioned]
     private bool $isEngineered = false;
 
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Cell::class)]
@@ -68,73 +79,92 @@ class Cell
 
     #[ORM\ManyToOne(targetEntity: Cell::class, fetch: "EAGER", inversedBy: "children")]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?Cell $parent = null;
 
     #[ORM\ManyToOne(targetEntity: Morphology::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?Morphology $morphology = null;
 
     #[ORM\ManyToOne(targetEntity: Organism::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?Organism $organism = null;
 
     #[ORM\ManyToOne(targetEntity: Tissue::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?Tissue $tissue = null;
 
     #[ORM\OneToMany(mappedBy: "cell", targetEntity: CellAliquote::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $cellAliquotes;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $origin = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Gedmo\Versioned]
     private ?DateTimeInterface $acquiredOn = null;
 
     #[ORM\Column(type: "decimal", precision: 7, scale: 2, nullable: true)]
+    #[Gedmo\Versioned]
     private ?int $price = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?User $boughtBy = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $originComment = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $medium = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $freezing = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $thawing = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $cultureConditions = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $splitting = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[Gedmo\Versioned]
     private ?string $trypsin = null;
 
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "cells")]
     private ?Collection $experiments;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $lysing = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $seeding = null;
 
     #[ORM\Column(type: "integer", nullable: true)]
+    #[Gedmo\Versioned]
     private ?int $countOnConfluence = null;
 
     #[ORM\Column(type: "string", length: 10, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 10)]
+    #[Gedmo\Versioned]
     private ?string $cellNumber = "???";
 
     public function __construct()

@@ -15,6 +15,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
         "easycorp/easyadmin-bundle": "^4.0",
+        "gedmo/doctrine-extensions": "^3.7",
         "sensio/framework-extra-bundle": "^6.0",
         "symfony/console": "*",
         "symfony/dotenv": "*",
