@@ -29,14 +29,14 @@ class CellAliquoteCrudController extends AbstractCrudController
             FormField::addPanel("Aliquote information"),
             IdField::new('id')
                 ->hideOnForm(),
-            AssociationField::new("cell"),
-            DateField::new('aliquoted_on'),
-            AssociationField::new('aliquoted_by'),
+            AssociationField::new("cell")->autocomplete(),
+            DateField::new('aliquoted_on')->setFormat("yyyy-MM-dd"),
+            AssociationField::new('aliquoted_by')->autocomplete(),
             TextField::new("cryoMedium"),
             ... HasBoxTrait::crudField(),
             #AssociationField::new("box"),
             TextField::new("vialColor"),
-            IntegerField::new("passage"),
+            IntegerField::new("passage")->setRequired(false),
             IntegerField::new("cellCount"),
             IntegerField::new("vials"),
 

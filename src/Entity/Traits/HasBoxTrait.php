@@ -28,7 +28,7 @@ trait HasBoxTrait
     public static function crudField(): array
     {
         return [
-            AssociationField::new("box")
+            AssociationField::new("box")->autocomplete(),
         ];
     }
 }

@@ -37,8 +37,8 @@ class CellAliquote
     #[Assert\Range(min: 1)]
     private ?int $vials = 1;
 
-    #[ORM\Column(type: "integer")]
-    private ?int $passage = 1;
+    #[ORM\Column(type: "integer", nullable: true)]
+    private ?int $passage = null;
 
     #[ORM\Column(type: "integer")]
     private ?int $cellCount = 0;
