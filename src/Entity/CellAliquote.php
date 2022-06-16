@@ -9,9 +9,11 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellAliquoteRepository::class)]
+#[Gedmo\Loggable]
 class CellAliquote
 {
     use HasBoxTrait;
@@ -21,43 +23,72 @@ class CellAliquote
     #[ORM\Column(type: "integer")]
     private ?int $id = 0;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTimeInterface $aliquoted_on;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    #[Gedmo\Versioned]
+    private ?DateTimeInterface $aliquoted_on;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?User $aliquoted_by = null;
 
     #[ORM\Column(type: "string", length: 30)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 30)]
+    #[Gedmo\Versioned]
     private ?string $vialColor = "grey";
 
     #[ORM\Column(type: "integer")]
     #[Assert\Range(min: 1)]
+    #[Gedmo\Versioned]
     private ?int $vials = 1;
 
     #[ORM\Column(type: "integer", nullable: true)]
+    #[Gedmo\Versioned]
     private ?int $passage = null;
 
+    #[ORM\Column(type: "string", nullable: true)]
+    #[Gedmo\Versioned]
+    private ?string $passageDetail = null;
+
     #[ORM\Column(type: "integer")]
+    #[Gedmo\Versioned]
     private ?int $cellCount = 0;
 
+    #[ORM\Column(type: "datetime", nullable: true)]
+    #[Gedmo\Versioned]
+    private ?DateTimeInterface $mycoplasmaTestedOn = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
+    private ?User $mycoplasmaTestedBy = null;
+
+    #[ORM\Column(type: "string", nullable: false, options: ["default" => "unknown"])]
+    #[Gedmo\Versioned]
+    private ?string $mycoplasmaResult = "unknown";
+
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $mycoplasma = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $typing = null;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $history = null;
 
     #[ORM\ManyToOne(targetEntity: Cell::class, inversedBy: "cellAliquotes")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[Gedmo\Versioned]
+    #[Assert\NotBlank]
     private ?Cell $cell = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 250)]
+    #[Gedmo\Versioned]
     private $cryoMedium;
 
     public function getId(): ?int
@@ -70,7 +101,7 @@ class CellAliquote
         return $this->aliquoted_on;
     }
 
-    public function setAliquotedOn(DateTimeInterface $aliquoted_on): self
+    public function setAliquotedOn(?DateTimeInterface $aliquoted_on): self
     {
         $this->aliquoted_on = $aliquoted_on;
 
@@ -194,6 +225,50 @@ class CellAliquote
     {
         $this->cryoMedium = $cryoMedium;
 
+        return $this;
+    }
+
+    public function getPassageDetail(): ?string
+    {
+        return $this->passageDetail;
+    }
+
+    public function setPassageDetail(?string $passageDetail): self
+    {
+        $this->passageDetail = $passageDetail;
+        return $this;
+    }
+
+    public function getMycoplasmaTestedOn(): ?DateTimeInterface
+    {
+        return $this->mycoplasmaTestedOn;
+    }
+
+    public function setMycoplasmaTestedOn(?DateTimeInterface $mycoplasmaTestedOn): self
+    {
+        $this->mycoplasmaTestedOn = $mycoplasmaTestedOn;
+        return $this;
+    }
+
+    public function getMycoplasmaTestedBy(): ?User
+    {
+        return $this->mycoplasmaTestedBy;
+    }
+
+    public function setMycoplasmaTestedBy(?User $mycoplasmaTestedBy): self
+    {
+        $this->mycoplasmaTestedBy = $mycoplasmaTestedBy;
+        return $this;
+    }
+
+    public function getMycoplasmaResult(): ?string
+    {
+        return $this->mycoplasmaResult;
+    }
+
+    public function setMycoplasmaResult(?string $mycoplasmaResult): self
+    {
+        $this->mycoplasmaResult = $mycoplasmaResult;
         return $this;
     }
 }

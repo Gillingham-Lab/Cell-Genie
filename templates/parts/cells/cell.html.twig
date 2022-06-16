@@ -147,10 +147,11 @@
                                                 <tbody>
                                                     {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("d. F Y") : "unknown") }}
                                                     {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
+                                                    {{ macros.definition_row("Mycoplasma", aliquote.mycoplasmaResult) }}
                                                     {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
                                                     {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
                                                     {{ macros.definition_row("Vials left", aliquote.vials) }}
-                                                    {{ macros.definition_row("Cell count", "#{aliquote.cellCount/1000}k") }}
+                                                    {{ macros.definition_row("Cell count", "#{aliquote.cellCount} k/mL") }}
                                                     {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
                                                 </tbody>
                                             </table>
@@ -303,12 +304,27 @@
                         {# Cell engineering details #}
                         <div class="tab-pane fade" id="cell-info-engineering-content" role="tabpanel" aria-labelledby="cell-info-engineering">
                             <div class="row">
-                                {{ _self.simple_tab_content("Growth medium", cell.medium) }}
-                                {{ _self.simple_tab_content("Trypsin", cell.trypsin) }}
-                                {{ _self.simple_tab_content("Culture conditions", cell.cultureConditions) }}
-                                {{ _self.simple_tab_content("Splitting", cell.splitting) }}
-                                {{ _self.simple_tab_content("Freezing", cell.freezing) }}
-                                {{ _self.simple_tab_content("Thawing", cell.thawing) }}
+                                {% if cell.isEngineered %}
+                                    <div>
+                                        <h4>Engineering</h4>
+
+                                        <p>Cells have been engineered by {{ cell.engineer ? cell.engineer.fullName : "whoever" }}.</p>
+
+                                        {% if cell.engineeringPlasmid %}
+                                            <p><em>Plasmid information:</em> {{ cell.engineeringPlasmid}}.</p>
+                                        {% endif %}
+
+                                        {% if cell.engineeringDescription %}
+                                            <div>
+                                                {{ cell.engineeringDescription }}
+                                            </div>
+                                        {% else %}
+                                            <div class="text-muted">
+                                                no further details have been given.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -316,7 +332,31 @@
                         <div class="tab-pane fade" id="cell-info-aliquotes-content" role="tabpanel" aria-labelledby="cell-info-aliquotes">
                             {% if aliquote %}
                                 <div class="row">
-                                    {{ _self.simple_tab_content("Mycoplasma", aliquote.mycoplasma ?? "no data") }}
+                                    <div class="col-4 mb-3 pb-3">
+                                        <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Mycoplasma</h4>
+                                        <div class="p-2 pt-3 border-secondary border">
+                                            {% if aliquote.mycoplasmaResult == "unknown" %}
+                                                This aliquote has not yet been tested for macoplasma
+                                            {% else %}
+                                                {% set strongColor = "black" %}
+                                                {% if aliquote.mycoplasmaResult == "positive" %}
+                                                    {% set strongColor = "red" %}
+                                                {% elseif aliquote.mycoplasmaResult == "negative" %}
+                                                    {% set strongColor = "green" %}
+                                                {% endif %}
+                                                <p class="mb-n1">
+                                                    The aliquote was tested <strong style="color: {{ strongColor  }}">{{ aliquote.mycoplasmaResult }}</strong> by {{ aliquote.mycoplasmaTestedBy? aliquote.mycoplasmaTestedBy.fullName : "whoever" }}, {{ aliquote.mycoplasmaTestedOn ? (aliquote.mycoplasmaTestedOn|date("d. M. Y")) : "whenever" }}.
+                                                </p>
+
+                                                {% if aliquote.mycoplasma %}
+                                                    <div class="mt-3">
+                                                        {{ aliquote.mycoplasma|raw }}
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
                                     {{ _self.simple_tab_content("Typing", aliquote.typing ?? "no data") }}
                                     {{ _self.simple_tab_content("History", aliquote.history ?? "no data") }}
                                 </div>

@@ -76,12 +76,12 @@ class Cell
 
     #[ORM\Column(type: "text", nullable: true)]
     #[Gedmo\Versioned]
-    private string $engineeringDescription;
+    private ?string $engineeringDescription = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 200)]
     #[Gedmo\Versioned]
-    private ?string $engineeringPlasmid;
+    private ?string $engineeringPlasmid = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]

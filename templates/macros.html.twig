@@ -33,7 +33,7 @@
             {% set s = 200/box.cols %}
         {% endif %}
 
-    {% set r = s/2 %}
+    {% set r = s/2-2 %}
 
     {% for i in range(0, box.rows) %}
         {% for j in range(0, box.cols) %}
@@ -41,10 +41,11 @@
 
             {% if n<contents|length %}
                 {% if currentAliquote %}
+
                     {% if currentAliquote.id == contents[n].id %}
                         <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="black" fill="skyblue" stroke-width="1px" />
                     {% else %}
-                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
+                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="grey" fill="none" stroke-width="1px" />
                     {% endif %}
                 {% else %}
                     <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
@@ -54,9 +55,13 @@
                     <a
                         href="{{ url("app_cell_aliquote_view", {"cellId": contents[n].cell.id, "aliquoteId": contents[n].id}) }}"
                         data-toggle="tooltip" data-placement="bottom"
-                        title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}"
+                        title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}<br>Mycoplasma: <span style='color: red;'>{{ contents[n].mycoplasmaResult }}</span>"
                     >
-                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" fill="{{ contents[n].vialColor }}" stroke="black" stroke-width="1px"></circle>
+                        {% if contents[n].mycoplasmaResult == "positive" %}
+                            <circle cx="{{ j*s+r+2 }}" cy="{{ i*s+r+2 }}" r="{{ r }}" fill="white" stroke="{{ contents[n].vialColor }}" stroke-width="2px"></circle>
+                        {% else %}
+                            <circle cx="{{ j*s+r+2 }}" cy="{{ i*s+r+2 }}" r="{{ r }}" fill="{{ contents[n].vialColor }}" stroke="black" stroke-width="2px"></circle>
+                        {% endif %}
                     </a>
                 {% else %}
                     <a
