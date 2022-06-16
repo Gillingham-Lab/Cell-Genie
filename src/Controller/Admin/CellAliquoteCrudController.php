@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\CellAliquote;
 use App\Entity\Traits\HasBoxTrait;
+use App\Repository\VocabularyRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -19,6 +20,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CellAliquoteCrudController extends AbstractCrudController
 {
+    use VocabularyTrait;
+
+    public function __construct(
+        private VocabularyRepository $vocabularyRepository,
+    ) {
+
+    }
+
     public static function getEntityFqcn(): string
     {
         return CellAliquote::class;
@@ -41,7 +50,7 @@ class CellAliquoteCrudController extends AbstractCrudController
                 ->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.cellNumber", "ASC")),
             DateField::new('aliquoted_on')->setFormat("yyyy-MM-dd")->setRequired(false),
             AssociationField::new('aliquoted_by')->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.fullName", "ASC")),
-            TextField::new("cryoMedium")
+            $this->textFieldOrChoices("cryoMedium")
                 ->hideOnIndex(),
 
             ... HasBoxTrait::crudField(),

@@ -21,6 +21,7 @@ use App\Entity\Recipe;
 use App\Entity\Tissue;
 use App\Entity\User;
 use App\Entity\Vendor;
+use App\Entity\Vocabulary;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -78,8 +79,9 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Vendors", "fas fa-store-alt", Vendor::class),
             MenuItem::linkToCrud("Culture flasks", 'fas', CultureFlask::class),
 
-            MenuItem::section("Users"),
+            MenuItem::section("Administration"),
             MenuItem::linkToCrud("Messages", 'fas fa-envelope', Message::class),
+            MenuItem::linkToCrud("Vocabulary", 'fas fa-list', Vocabulary::class),
             MenuItem::linkToCrud("Users", 'fas fa-user', User::class)->setPermission("ROLE_ADMIN"),
 
             #MenuItem::linkToExitImpersonation('Stop impersonation', 'fa fa-exit'),

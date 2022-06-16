@@ -7,7 +7,7 @@ use App\Entity\Cell;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
-use App\Repository\CellRepository;
+use App\Repository\VocabularyRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -16,13 +16,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\F;
 
 class CellCrudController extends ExtendedAbstractCrudController
 {
+    use VocabularyTrait;
+
+    public function __construct(
+        private VocabularyRepository $vocabularyRepository,
+    ) {
+
+    }
+
     public static function getEntityFqcn(): string
     {
         return Cell::class;
@@ -30,6 +37,7 @@ class CellCrudController extends ExtendedAbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+
         return [
             FormField::addTab("Cell properties"),
             IdField::new('id')
@@ -42,8 +50,9 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->setRequired(false)
                 ->hideOnIndex(),
             TextField::new('age')->setRequired(false),
-            TextField::new('sex')->setRequired(false),
-            TextField::new('ethnicity')->setRequired(false)->hideOnIndex(),
+            $this->textFieldOrChoices("sex")->setRequired(false),
+            $this->textFieldOrChoices("ethnicity")->setRequired(false)->hideOnIndex()
+                ->setHelp("According to cellosaurus genome origin"),
             TextField::new('disease')->setRequired(false),
             AssociationField::new("morphology")
                 ->setRequired(true)
@@ -52,7 +61,7 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->setRequired(true),
             AssociationField::new("tissue")
                 ->setRequired(false),
-            TextField::new("cultureType")
+            $this->textFieldOrChoices("cultureType")
                 ->setRequired(true),
             BooleanField::new("isCancer"),
 

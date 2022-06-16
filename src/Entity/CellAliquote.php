@@ -89,7 +89,7 @@ class CellAliquote
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 250)]
     #[Gedmo\Versioned]
-    private $cryoMedium;
+    private ?string $cryoMedium = null;
 
     public function getId(): ?int
     {
