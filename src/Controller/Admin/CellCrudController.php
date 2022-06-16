@@ -7,6 +7,8 @@ use App\Entity\Cell;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
+use App\Repository\CellRepository;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -29,7 +31,7 @@ class CellCrudController extends ExtendedAbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            FormField::addPanel("Cell properties"),
+            FormField::addTab("Cell properties"),
             IdField::new('id')
                 ->hideOnForm(),
             TextField::new('cellNumber'),
@@ -37,25 +39,24 @@ class CellCrudController extends ExtendedAbstractCrudController
             ... HasRRID::rridCrudFields(),
             TextField::new('cellosaurusId')
                 ->setLabel("Cellosaurus ID")
-                ->setRequired(false),
+                ->setRequired(false)
+                ->hideOnIndex(),
             TextField::new('age')->setRequired(false),
             TextField::new('sex')->setRequired(false),
-            TextField::new('ethnicity')->setRequired(false),
+            TextField::new('ethnicity')->setRequired(false)->hideOnIndex(),
             TextField::new('disease')->setRequired(false),
-            AssociationField::new("parent"),
             AssociationField::new("morphology")
-                ->setRequired(true),
+                ->setRequired(true)
+                ->hideOnIndex(),
             AssociationField::new("organism")
                 ->setRequired(true),
             AssociationField::new("tissue")
-                ->setRequired(true),
+                ->setRequired(false),
             TextField::new("cultureType")
                 ->setRequired(true),
             BooleanField::new("isCancer"),
-            BooleanField::new("isEngineered"),
-            ... HasAttachmentsTrait::attachmentCrudFields(),
 
-            FormField::addPanel("Origins"),
+            FormField::addTab("Origins"),
             TextEditorField::new("origin")
                 ->hideOnIndex(),
             ... VendorTrait::crudFields(),
@@ -68,9 +69,24 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnIndex(),
             TextEditorField::new("originComment", label: "Comment")
                 ->hideOnIndex()
-                ->setHelp("Add some additional details on how we aquired the cells."),
+                ->setHelp("Add some additional details on how we acquired the cells."),
 
-            FormField::addPanel("Cell management conditions"),
+            FormField::addTab("Engineering"),
+            BooleanField::new("isEngineered"),
+            AssociationField::new("engineer")->hideOnIndex(),
+            AssociationField::new("parent")
+                ->hideOnIndex()
+                ->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.cellNumber", "ASC")),
+            TextEditorField::new("engineeringDescription")
+                ->setHelp("Details on what was modified compared to the parent cell. Please reference lab journal or publications for more details, too.")
+                ->hideOnIndex(),
+            TextField::new("engineeringPlasmid")
+                ->setRequired(false)
+                ->hideOnIndex()
+                ->setLabel("Plasmid reference")
+                ->setHelp("A reference to the plasmid or a short description thereof"),
+
+            FormField::addTab("Cell management conditions"),
             TextEditorField::new("medium", label: "Recommended cell medium")
                 ->hideOnIndex(),
             TextEditorField::new("trypsin", label: "Required trypsin")
@@ -84,7 +100,7 @@ class CellCrudController extends ExtendedAbstractCrudController
             TextEditorField::new("cultureConditions", label: "Growth conditions for incubator")
                 ->hideOnIndex(),
 
-            FormField::addPanel("Basic experimental conditions"),
+            FormField::addTab("Basic experimental conditions"),
             TextEditorField::new("seeding", label: "Detailed hints on cell seeding (cell amount, medium volume, time until confluency, wellplate)")
                 ->setHelp("A good seeding recommendation is for a 12-well plate.")
                 ->hideOnIndex(),
@@ -93,6 +109,9 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnIndex(),
             TextEditorField::new("lysing", label: "Recommended cell lysis")
                 ->hideOnIndex(),
+
+            FormField::addTab("Attachments"),
+            ... HasAttachmentsTrait::attachmentCrudFields(),
         ];
     }
 }

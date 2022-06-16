@@ -5,6 +5,7 @@ namespace App\Entity\Traits;
 
 use App\Entity\Vendor;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -48,7 +49,7 @@ trait VendorTrait
         return [
             FormField::addPanel("Vendor"),
             AssociationField::new("vendor", "Vendor")
-                ->hideOnIndex(),
+                ->hideOnIndex()->autocomplete()->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.isPreferred", "DESC")->orderBy("entity.name", "ASC")),
             TextField::new("vendorPN", "Vendor PN")
                 ->hideOnIndex()
                 ->setHelp("Product number of the vendor."),

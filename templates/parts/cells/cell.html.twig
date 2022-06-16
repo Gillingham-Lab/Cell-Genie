@@ -179,6 +179,9 @@
                         {{ _self.tab_item("Origin", "cell-info-origin", "cell-info-origin-content", true) }}
                         {{ _self.tab_item("Culturing", "cell-info-culturing", "cell-info-culturing-content") }}
                         {{ _self.tab_item("Experiments", "cell-info-experiments", "cell-info-experiments-content") }}
+                        {% if cell.isEngineered %}
+                            {{ _self.tab_item("Engineering", "cell-info-engineering", "cell-info-engineering-content") }}
+                        {% endif %}
                         {{ _self.tab_item("Aliquote testing", "cell-info-aliquotes", "cell-info-aliquotes-content", false, aliquote?true:false) }}
                         {{ _self.tab_item("Attachments", "cell-info-attachments", "cell-info-attachments-content", false, cell.attachments|length > 0?true:false) }}
                     </div>
@@ -294,6 +297,18 @@
                                         {% endif %}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        {# Cell engineering details #}
+                        <div class="tab-pane fade" id="cell-info-engineering-content" role="tabpanel" aria-labelledby="cell-info-engineering">
+                            <div class="row">
+                                {{ _self.simple_tab_content("Growth medium", cell.medium) }}
+                                {{ _self.simple_tab_content("Trypsin", cell.trypsin) }}
+                                {{ _self.simple_tab_content("Culture conditions", cell.cultureConditions) }}
+                                {{ _self.simple_tab_content("Splitting", cell.splitting) }}
+                                {{ _self.simple_tab_content("Freezing", cell.freezing) }}
+                                {{ _self.simple_tab_content("Thawing", cell.thawing) }}
                             </div>
                         </div>
 

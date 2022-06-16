@@ -74,6 +74,20 @@ class Cell
     #[Gedmo\Versioned]
     private bool $isEngineered = false;
 
+    #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
+    private string $engineeringDescription;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Length(max: 200)]
+    #[Gedmo\Versioned]
+    private ?string $engineeringPlasmid;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
+    private ?User $engineer;
+
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Cell::class)]
     private Collection $children;
 
@@ -285,6 +299,17 @@ class Cell
     {
         $this->isEngineered = $isEngineered;
 
+        return $this;
+    }
+
+    public function getEngineeringDescription(): ?string
+    {
+        return $this->engineeringDescription;
+    }
+
+    public function setEngineeringDescription(?string $description): self
+    {
+        $this->engineeringDescription = $description;
         return $this;
     }
 
@@ -600,6 +625,29 @@ class Cell
     {
         $this->cellNumber = $cellNumber;
 
+        return $this;
+    }
+
+    public function getEngineeringPlasmid(): ?string
+    {
+        return $this->engineeringPlasmid;
+    }
+
+    public function setEngineeringPlasmid(?string $engineeringPlasmid): self
+    {
+        $this->engineeringPlasmid = $engineeringPlasmid;
+
+        return $this;
+    }
+
+    public function getEngineer(): ?User
+    {
+        return $this->engineer;
+    }
+
+    public function setEngineer(?User $engineer): self
+    {
+        $this->engineer = $engineer;
         return $this;
     }
 }
