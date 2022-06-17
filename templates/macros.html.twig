@@ -26,41 +26,52 @@
         {% endfor %}
     {% endfor %}
 
-    <svg width="200" height="200">
-        {% if box.cols < box.rows %}
+    <svg id="svg-image-box-{{ box.id }}" width="200" height="200" viewBox="-1 -1 201 201">
+        {%- if box.cols < box.rows -%}
             {% set s = 200/box.rows %}
-        {% else %}
+        {%- else -%}
             {% set s = 200/box.cols %}
-        {% endif %}
+        {%- endif -%}
 
-    {% set r = s/2-2 %}
+    {% set r = s/2*0.75 %}
 
+    {# First, draw boxes #}
     {% for i in range(0, box.rows) %}
         {% for j in range(0, box.cols) %}
             {% set n = i*box.cols + j %}
 
             {% if n<contents|length %}
-                {% if currentAliquote %}
+                {%- if currentAliquote -%}
+                    {%- if currentAliquote.id == contents[n].id -%}
+        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}" x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="black" fill="skyblue" stroke-width="1px" />
+                    {%- else -%}
+        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}" x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
+                    {%- endif -%}
+                {%- else -%}
+        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}"  x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
+                {%- endif -%}
+            {%- else -%}
+        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}"  x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
+            {%- endif -%}
+        {% endfor %}
+    {% endfor %}
 
-                    {% if currentAliquote.id == contents[n].id %}
-                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="black" fill="skyblue" stroke-width="1px" />
-                    {% else %}
-                        <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="grey" fill="none" stroke-width="1px" />
-                    {% endif %}
-                {% else %}
-                    <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
-                {% endif %}
+    {# Secondly, draw above the boxes #}
+    {% for i in range(0, box.rows) %}
+        {% for j in range(0, box.cols) %}
+            {% set n = i*box.cols + j %}
 
-                {% if currentCell.id == contents[n].cell.id %}
+            {% if n<contents|length %}
+                {%- if currentCell.id == contents[n].cell.id -%}
                     <a
                         href="{{ url("app_cell_aliquote_view", {"cellId": contents[n].cell.id, "aliquoteId": contents[n].id}) }}"
                         data-toggle="tooltip" data-placement="bottom"
                         title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}<br>Mycoplasma: <span style='color: red;'>{{ contents[n].mycoplasmaResult }}</span>"
                     >
                         {% if contents[n].mycoplasmaResult == "positive" %}
-                            <circle cx="{{ j*s+r+2 }}" cy="{{ i*s+r+2 }}" r="{{ r }}" fill="white" stroke="{{ contents[n].vialColor }}" stroke-width="2px"></circle>
+                            <circle cx="{{ j*s+r/0.75 }}" cy="{{ i*s+r/0.75 }}" r="{{ r }}" fill="white" stroke="{{ contents[n].vialColor }}" stroke-width="2px"></circle>
                         {% else %}
-                            <circle cx="{{ j*s+r+2 }}" cy="{{ i*s+r+2 }}" r="{{ r }}" fill="{{ contents[n].vialColor }}" stroke="black" stroke-width="2px"></circle>
+                            <circle cx="{{ j*s+r/0.75 }}" cy="{{ i*s+r/0.75 }}" r="{{ r }}" fill="{{ contents[n].vialColor }}" stroke="black" stroke-width="2px"></circle>
                         {% endif %}
                     </a>
                 {% else %}
@@ -72,8 +83,40 @@
                         <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" fill="gray" stroke="black" stroke-width="1px"></circle>
                     </a>
                 {% endif %}
+
+                {# Border for grouping aliquotes #}
+
+                {# If top line, we can just draw the stroke #}
+                {% if n < box.rows %}
+                    <polyline points="{{ j*s }},{{ i*s }} {{ j*s+s }},{{ i*s }}" stroke="black" stroke-width="1px"></polyline>
+                {% endif %}
+
+                {# If first, we need to draw the stroke to the left, too #}
+                {% if n == 0 %}
+                    <polyline points="{{ j*s }},{{ i*s }} {{ j*s }},{{ i*s+s }}" stroke="black" stroke-width="1px"></polyline>
+                {% endif %}
+
+                {# For everything else, we draw the stroke to the bottom #}
+                {% if n+box.cols in contents|keys and contents[n].id != contents[n+box.cols].id %}
+                    <!-- Aliquote below is different -->
+                    <polyline points="{{ j*s }},{{ i*s+s }} {{ j*s+s }},{{ i*s+s }}" stroke="black" stroke-width="1px"></polyline>
+                {% elseif n+box.cols not in contents|keys %}
+                    <!-- Aliquote below is empty -->
+                    <polyline points="{{ j*s }},{{ i*s+s }} {{ j*s+s }},{{ i*s+s }}" stroke="black" stroke-width="1px"></polyline>
+                {% else %}
+                    <!-- Aliquote below is same -->
+                {% endif %}
+
+                {% if n+1 not in contents|keys %}
+                    <!-- Next aliquote is empty -->
+                    <polyline points="{{ j*s+s }},{{ i*s }} {{ j*s+s }},{{ i*s+s }}" stroke="black" fill="black" stroke-width="1px"></polyline>
+                {% elseif contents[n].id != contents[n+1].id %}
+                    <!-- Next aliquote is different aliquote -->
+                    <polyline points="{{ j*s+s }},{{ i*s }} {{ j*s+s }},{{ i*s+s }}" stroke="black" stroke-width="1px"></polyline>
+                {% else %}
+                    <!-- Next aliquote is same aliquote -->
+                {% endif %}
             {% else %}
-                <rect x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="gray" fill="none" stroke-width="1px" />
             {% endif %}
         {% endfor %}
     {% endfor %}
