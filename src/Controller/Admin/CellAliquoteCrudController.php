@@ -62,7 +62,7 @@ class CellAliquoteCrudController extends AbstractCrudController
                 ->setHelp("Describe what the passage number means. Passage after getting it from ATCC, after thawing, after new cell line?"),
             IntegerField::new("cellCount")
                 ->setLabel("Number of cells")
-                ->setHelp("Please give the number of cells in k/mL"),
+                ->setHelp("Please give the number of cells in k"),
             IntegerField::new("vials"),
 
             FormField::addTab("Testing"),
