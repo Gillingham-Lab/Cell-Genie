@@ -70,8 +70,7 @@ class Antibody
     #[ORM\Column(type: "smallint", nullable: true, options: ["default" => 0])]
     #[Assert\NotBlank]
     #[Assert\Range(
-        minMessage: "Storage below -200 °C is not possible.",
-        maxMessage: "Storage above 25 °C does not make sense.",
+        notInRangeMessage: "Storage temperature must between -200 °C and 25 °C.",
         min: -200,
         max: 25
     )]
