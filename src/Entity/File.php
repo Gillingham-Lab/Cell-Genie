@@ -46,6 +46,7 @@ class File
     private ?FileBlob $fileBlob = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTime $uploadedOn = null;
 
     public function setFromFile(UploadedFile $uploadedFile)

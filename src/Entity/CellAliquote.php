@@ -24,6 +24,7 @@ class CellAliquote
     private ?int $id = 0;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     #[Gedmo\Versioned]
     private ?DateTimeInterface $aliquoted_on;
 

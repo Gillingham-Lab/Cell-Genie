@@ -46,9 +46,11 @@ class ExperimentType
     private ?Collection $children;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTimeInterface $modifiedAt = null;
 
     public function __construct()

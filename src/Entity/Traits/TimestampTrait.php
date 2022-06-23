@@ -6,13 +6,16 @@ namespace App\Entity\Traits;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait TimestampTrait
 {
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTimeInterface $modifiedAt = null;
 
     #[ORM\PrePersist]

@@ -41,7 +41,7 @@ class Cell
     #[Gedmo\Versioned]
     private ?string $cellosaurusId = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 250)]
     #[Gedmo\Versioned]
     private ?string $age = "";
@@ -119,6 +119,7 @@ class Cell
     private ?string $origin = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     #[Gedmo\Versioned]
     private ?DateTimeInterface $acquiredOn = null;
 
