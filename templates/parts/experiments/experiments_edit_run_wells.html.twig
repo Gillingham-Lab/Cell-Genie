@@ -22,7 +22,7 @@
         </div>
 
         <div class="bg-white mt-3 border col col-12 p-0">
-            {{ form_start(form) }}
+            {{ form_start(form, {"attr": {"data-table": "true"}}) }}
 
             <div class="bg-dark text-white p-3 border-bottom border-dark">
                 <div class="row">
@@ -34,15 +34,24 @@
                                href="{{ url("app_experiments_view_run", {"experimentalRun": run.id}) }}"
                             ><span class="fa fa-arrow-left"></span></a>
 
+                            <a class="btn btn-secondary data-table-paste" onclick="toggle_datatable_clipboard()" data-toggle="tooltip" data-placement="bottom" title="Paste from Clipboard">
+                                <span class="fa fa-paste"></span>
+                            </a>
+
                             {{ form_widget(form.save) }}
+
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-5" style="min-height: 30em; padding-bottom: 10em;">
-                {{ form_errors(form) }}
+                <div id="data-table-clipboard" style="display: none; visibility: collapse;" class="pb-5">
+                    <p class="pb-3">Paste in here data, for example from Excel. Fields must be tab-separated for now. Press Shift+Enter to submit.</p>
+                    <textarea style="width: 100%"></textarea>
+                </div>
 
+                {{ form_errors(form) }}
 
                 <table class="table table-sm">
                     <thead>
@@ -65,20 +74,23 @@
                     </thead>
                     <tbody>
                         {% for well in form.wells %}
+                            {% set well_row_number = loop.index0 %}
+                            {% set well_col_number = 1 %}
                             <tr>
                                 <td>
-                                    {{ form_widget(well["isExternalStandard"]) }}
+                                    {{ form_widget(well["isExternalStandard"], {"attr": {"data-table-row": well_row_number, "data-table-col": 0}}) }}
                                     {{ form_errors(well["isExternalStandard"]) }}
                                 </td>
                                 <td>
-                                    {{ form_widget(well.wellName) }}
+                                    {{ form_widget(well.wellName,  {"attr": {"data-table-row": well_row_number, "data-table-col": 1}}) }}
                                     {{ form_errors(well.wellName) }}
                                 </td>
                                 {% if well.conditions is defined %}
                                     {% for widget in well.conditions %}
+                                        {% set well_col_number = well_col_number + 1 %}
                                         {% if not widget.isRendered() %}
                                         <td>
-                                            {{ form_widget(widget) }}
+                                            {{ form_widget(widget,  {"attr": {"data-table-row": well_row_number, "data-table-col": well_col_number}}) }}
                                             {{ form_errors(widget) }}
                                         </td>
                                         {% endif %}
@@ -87,9 +99,11 @@
 
                                 {% if well.measurements is defined %}
                                     {% for widget in well.measurements %}
+                                        {% set well_col_number = well_col_number + 1 %}
+
                                         {% if not widget.isRendered() %}
                                             <td>
-                                                {{ form_widget(widget) }}
+                                                {{ form_widget(widget,  {"attr": {"data-table-row": well_row_number, "data-table-col": well_col_number}}) }}
                                                 {{ form_errors(widget) }}
                                             </td>
                                         {% endif %}
@@ -104,4 +118,149 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block script_bottom %}
+    <script type="application/javascript">
+        let clipboard_input = $("#data-table-clipboard");
+        let textarea = clipboard_input.find("textarea").first();
+
+        function toggle_datatable_clipboard() {
+            if (clipboard_input.css("display") === "none") {
+                clipboard_input.css("visibility", "visible");
+                clipboard_input.css("display", "block");
+
+                textarea.focus();
+            } else {
+                clipboard_input.css("visibility", "collapse");
+                clipboard_input.css("display", "none");
+            }
+        }
+
+        textarea[0].addEventListener("keyup", datatable_handle_paste_submission);
+
+        function datatable_handle_paste_submission(e) {
+            const value = textarea[0].value;
+
+            if ((e.key === "Enter" || e.key === 13) && e.shiftKey) {
+                let value_rows = value.split("\n");
+                let value_cols = null;
+
+                let data_table_row = null;
+                let data_table_col = null;
+
+                //console.log(value_rows);
+
+                let r = 0
+                let c = 0;
+
+                for (let v of value_rows) {
+                    // Ignore empty rows (without counting)
+                    if (v.length <= 1) {
+                        continue;
+                    }
+
+                    if (v.startsWith("##")) {
+                        // Skip rows starting with ##, but still count up
+                        c++;
+                        continue;
+                    }
+
+                    value_cols = v.split("\t");
+                    //console.log(value_cols);
+
+                    if (value_cols.length === 1) {
+                        value_cols = v.split(",");
+                    }
+
+                    // Fetch data table row
+                    data_table_row = $("[data-table-row=" + r.toString() + "]");
+
+                    // We only paste colums from right to left (!)
+                    c = data_table_row.length - value_cols.length;
+
+                    for (let vc of value_cols) {
+                        data_table_col = data_table_row[c];
+
+                        if (data_table_col.nodeName.toLowerCase() === "input") {
+                            if (data_table_col.type.toLowerCase() === "checkbox") {
+                                vc = vc.toLowerCase();
+
+                                if (vc === "on" || vc === "yes" || vc === "1") {
+                                    data_table_col.value = "1";
+                                    data_table_col.checked = true;
+                                } else {
+                                    data_table_col.value = "0";
+                                    data_table_col.checked = false;
+                                }
+                            } else {
+                                // Input fields are easy to work with
+                                data_table_col.value = vc;
+                            }
+                        } else if (data_table_col.nodeName.toLowerCase() === "select") {
+                            // For select fields, we first try to search for a fitting option
+                            let found = false;
+
+                            // Search by name first
+                            for (let o in data_table_col.children) {
+                                let option = data_table_col.children[o];
+
+                                if (!(option instanceof HTMLElement)) {
+                                    continue;
+                                }
+
+                                if (option.nodeName.toLowerCase() !== "option") {
+                                    continue;
+                                }
+
+                                if (option.innerHTML === vc) {
+                                    console.log("Found!");
+                                    option.selected = "selected";
+                                    found = true;
+
+                                    // Write it in the dropdown, too
+                                    data_table_col.nextElementSibling.children[0].children[0].children[0].innerHTML = vc;
+                                } else {
+                                    option.selected = null;
+                                }
+                            }
+
+                            if (!found) {
+                                // Search by name first
+                                for (let o in data_table_col.children) {
+                                    let option = data_table_col.children[o];
+
+                                    if (!(option instanceof HTMLElement)) {
+                                        continue;
+                                    }
+
+                                    if (option.nodeName.toLowerCase() !== "option") {
+                                        continue;
+                                    }
+
+                                    if (option.value === vc) {
+                                        option.selected = "selected";
+                                        found = true;
+
+                                        // Write it in the dropdown, too
+                                        data_table_col.nextElementSibling.children[0].children[0].children[0].innerHTML = option.innerHTML;
+                                    } else {
+                                        option.selected = null;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Don't know what to do - just do nothing and ignore column?
+                        }
+
+                        c++;
+                    }
+
+                    r++;
+                }
+
+                e.preventDefault();
+            }
+        }
+    </script>
 {% endblock %}
