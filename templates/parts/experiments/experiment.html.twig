@@ -57,6 +57,13 @@
                                         <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Show run"
                                            href="{{ url("app_experiments_view_run", {"experimentalRun": run.id}) }}"
                                         ><span class="fa fa-eye"></span></a>
+                                        <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Get raw data"
+                                           href="{{ url("api_single_run", {"experimentalRun": run.id}) }}"
+                                        ><span class="fas fa-fw fa-download"></span>
+                                        </a>
+                                        <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Edit run"
+                                           href="{{ url("app_experiments_edit_run", {"experiment": experiment.id, "experimentalRun": run.id}) }}"
+                                        ><span class="fa fa-edit"></span></a>
                                         <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Edit wells"
                                            href="{{ url("app_experiments_edit_run_wells", {"experimentalRun": run.id}) }}"
                                         ><span class="fa fa-pen"></span></a>
