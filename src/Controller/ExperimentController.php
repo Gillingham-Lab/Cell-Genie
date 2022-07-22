@@ -6,6 +6,7 @@ use App\Entity\Experiment;
 use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
+use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
 use App\Entity\InputType;
 use App\Entity\User;
@@ -112,6 +113,80 @@ class ExperimentController extends AbstractController
             "experiment" => $experimentalRun->getExperiment(),
             "form" => $form,
         ]);
+    }
+
+    #[Route("/experiment/run/{experimentalRun}/clone", name: "app_experiments_clone_run", methods: ["GET", "POST"])]
+    public function cloneRun(
+        Request $request,
+        Security $security,
+        EntityManagerInterface $entityManager,
+        ExperimentalRun $experimentalRun,
+    ): Response {
+        try {
+            $user = $security->getUser();
+
+            $clonedExperimentalRun = new ExperimentalRun();
+            $clonedExperimentalRun->setName($experimentalRun->getName() . " (copy)");
+            $clonedExperimentalRun->setData($experimentalRun->getData());
+            $clonedExperimentalRun->setNumberOfWells($experimentalRun->getNumberOfWells());
+            $clonedExperimentalRun->setExperiment($experimentalRun->getExperiment());
+
+            if ($user instanceof User) {
+                $clonedExperimentalRun->setOwner($user);
+            }
+
+            $entityManager->persist($clonedExperimentalRun);
+
+            # Wells
+            foreach($experimentalRun->getWells() as $well) {
+                $newWell = new ExperimentalRunWell();
+                $newWell->setExperimentalRun($clonedExperimentalRun);
+                $newWell->setIsExternalStandard($well->isExternalStandard());
+                $newWell->setWellData($well->getWellData());
+                $newWell->setWellName($well->getWellName());
+                $newWell->setWellNumber($well->getWellNumber());
+
+                $clonedExperimentalRun->addWell($newWell);
+                $entityManager->persist($newWell);
+            }
+
+            $entityManager->flush();
+
+            $newId = $clonedExperimentalRun->getId();
+
+            $this->addFlash("success", "Experimental run successfully cloned");
+
+            return $this->redirectToRoute("app_experiments_view_run", ["experimentalRun" => $newId]);
+        } catch (\Exception $e) {
+            $this->addFlash("error", "Cloning was not possible: {$e->getMessage()}. Contact your administrator.");
+            return $this->redirectToRoute("app_experiments_view_run", ["experimentalRun" => $experimentalRun->getId()]);
+        }
+    }
+
+    #[Route("/experiment/run/{experimentalRun}/drop", name: "app_experiments_drop_run", methods: ["GET", "POST"])]
+    public function dropRun(
+        Request $request,
+        Security $security,
+        EntityManagerInterface $entityManager,
+        ExperimentalRun $experimentalRun,
+    ): Response {
+        try {
+            $experiment = $experimentalRun->getExperiment();
+            $user = $security->getUser();
+
+            if ($user instanceof User and $user !== $experimentalRun->getOwner() and $user->getIsAdmin() === false) {
+                $this->addFlash("error", "You can only remove experiments you own, unless you are an admin.");
+            } else {
+                $entityManager->remove($experimentalRun);
+                $entityManager->flush();
+
+                $this->addFlash("success", "Experimental run successfully removed");
+            }
+        } catch (\Exception $e) {
+            $this->addFlash("error", "Removing was not possible: {$e->getMessage()}. Contact your administrator.");
+        }
+
+        return $this->redirectToRoute("app_experiments_view", ["experiment" => $experiment->getId()]);
     }
 
     #[Route("/experiment/{experiment}/run/new", name: 'app_experiments_new_run', defaults: ["experimentalRun" => ""], methods: ["GET", "POST"])]
