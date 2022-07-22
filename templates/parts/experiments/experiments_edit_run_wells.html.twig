@@ -34,7 +34,7 @@
                                href="{{ url("app_experiments_view_run", {"experimentalRun": run.id}) }}"
                             ><span class="fa fa-arrow-left"></span></a>
 
-                            <a class="btn btn-secondary data-table-paste" onclick="toggle_datatable_clipboard()" data-toggle="tooltip" data-placement="bottom" title="Paste from Clipboard">
+                            <a class="btn btn-secondary data-table-paste" data-toggle="tooltip" data-placement="bottom" title="Paste from Clipboard">
                                 <span class="fa fa-paste"></span>
                             </a>
 
@@ -125,6 +125,7 @@
         let clipboard_input = $("#data-table-clipboard");
         let textarea = clipboard_input.find("textarea").first();
 
+
         function toggle_datatable_clipboard() {
             if (clipboard_input.css("display") === "none") {
                 clipboard_input.css("visibility", "visible");
@@ -136,8 +137,6 @@
                 clipboard_input.css("display", "none");
             }
         }
-
-        textarea[0].addEventListener("keyup", datatable_handle_paste_submission);
 
         function datatable_handle_paste_submission(e) {
             const value = textarea[0].value;
@@ -262,5 +261,9 @@
                 e.preventDefault();
             }
         }
+
+
+        $(".data-table-paste")[0].addEventListener("click", toggle_datatable_clipboard);
+        textarea[0].addEventListener("keydown", datatable_handle_paste_submission);
     </script>
 {% endblock %}
