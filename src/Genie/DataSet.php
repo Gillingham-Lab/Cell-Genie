@@ -225,6 +225,8 @@ class DataSet
                 // Only normalize numerical values - if required.
                 if (is_numeric($value) and $normalise) {
                     $row[] = $value / $internalStandards[$wellId] / $externalStandards[$measurementKey];
+                } elseif (is_bool($value)) {
+                    $row[] = $value ? "yes" : "no";
                 } else {
                     $row[] = $value ?? "NaN";
                 }

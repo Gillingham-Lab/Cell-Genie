@@ -168,6 +168,10 @@ class ExperimentalRunWellType extends AbstractType
                     "data-live-search" => "true"
                 ],
             ];
+        } elseif ($inputType->getType() === InputType::CHECK_TYPE) {
+            $options = [
+                "false_values" => ["no", "off", 0, 0.0, "n", "-", "N", null],
+            ];
         }
 
         if ($inputType instanceof ExperimentalMeasurement) {
