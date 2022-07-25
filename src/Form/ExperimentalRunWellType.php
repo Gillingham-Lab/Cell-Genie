@@ -128,6 +128,9 @@ class ExperimentalRunWellType extends AbstractType
 
             $options = [
                 "choices" => $choices,
+                "choice_label" => function($choice, $key, $value) {
+                    return $value;
+                },
                 "expanded" => false,
                 "multiple" => false,
             ];
