@@ -29,6 +29,7 @@
                         <span class="btn-group mr-3" style="visibility: hidden;">
                             <a class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
                             <a class="btn btn-sm btn-primary"><span class="fa fa-plus"></span></a>
+                            <a class="btn btn-sm btn-primary"><span class="fa fa-download"></span></a>
                         </span>
 
                         Experiment
@@ -47,6 +48,9 @@
                                 <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Create a new run"
                                    href="{{ url("app_experiments_new_run", {"experiment": experiment.id}) }}"
                                 ><span class="fa fa-plus"></span></a>
+                                <a class="btn btn-sm btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Get raw data"
+                                   href="{{ url("api_runs", {"experiment": experiment.id}) }}"
+                                ><span class="fas fa-fw fa-download"></span></a>
                             </span>
                             {{ experiment.name }}
                         </td>
