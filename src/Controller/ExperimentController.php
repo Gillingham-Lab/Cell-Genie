@@ -14,6 +14,7 @@ use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
 use App\Form\ExperimentalRunWellType;
 use App\Repository\ChemicalRepository;
+use App\Repository\ExperimentalRunRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
 use DateTime;
@@ -120,13 +121,26 @@ class ExperimentController extends AbstractController
         Request $request,
         Security $security,
         EntityManagerInterface $entityManager,
+        ExperimentalRunRepository $experimentalRunRepository,
         ExperimentalRun $experimentalRun,
     ): Response {
         try {
             $user = $security->getUser();
 
+            $experimentName = $experimentalRun->getName();
+            $nameParts = explode(" ", $experimentName);
+
+            if (count($nameParts) > 1 and $nameParts[count($nameParts) - 1] === "(copy)") {
+                $copy = array_pop($nameParts);
+            } elseif (count($nameParts) > 2 and $nameParts[count($nameParts) - 2] === "(copy") {
+                $copy = array_pop($nameParts);
+                $copy = array_pop($nameParts);
+            }
+
+            $experimentName = implode(" ", $nameParts);
+
             $clonedExperimentalRun = new ExperimentalRun();
-            $clonedExperimentalRun->setName($experimentalRun->getName() . " (copy)");
+            $clonedExperimentalRun->setName($experimentName . " (copy)");
             $clonedExperimentalRun->setData($experimentalRun->getData());
             $clonedExperimentalRun->setNumberOfWells($experimentalRun->getNumberOfWells());
             $clonedExperimentalRun->setExperiment($experimentalRun->getExperiment());
@@ -150,15 +164,36 @@ class ExperimentController extends AbstractController
                 $entityManager->persist($newWell);
             }
 
-            $entityManager->flush();
+            $i = 2;
+            do {
+                if ($i > 10) {
+                    throw new \Exception("You've already made 10 copies of this experiment with the same name. Please rename then, I will refuse to continue here.");
+                }
+
+                # Try to find entities by name
+                $entity = $experimentalRunRepository->findOneBy([
+                    "experiment" => $clonedExperimentalRun->getExperiment(),
+                    "name" => $clonedExperimentalRun->getName()
+                ]);
+
+                if ($entity !== null) {
+                    $newName = $experimentName . " (copy {$i})";
+                    $clonedExperimentalRun->setName($newName);
+                    $i++;
+                    continue;
+                }
+
+                $entityManager->flush();
+                break;
+            } while (true);
 
             $newId = $clonedExperimentalRun->getId();
-
             $this->addFlash("success", "Experimental run successfully cloned");
 
             return $this->redirectToRoute("app_experiments_view_run", ["experimentalRun" => $newId]);
         } catch (\Exception $e) {
-            $this->addFlash("error", "Cloning was not possible: {$e->getMessage()}. Contact your administrator.");
+            $eClass = get_class($e);
+            $this->addFlash("error", "Cloning was not possible: {$e->getMessage()}. Contact your administrator ({$eClass}).");
             return $this->redirectToRoute("app_experiments_view_run", ["experimentalRun" => $experimentalRun->getId()]);
         }
     }
