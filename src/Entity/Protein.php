@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\NewIdTrait;
 use App\Repository\ProteinRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,10 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: "shortName")]
 class Protein
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = null;
+    use NewIdTrait;
 
     #[ORM\Column(type: "string", length: 10)]
     #[Assert\NotBlank]
@@ -40,11 +38,11 @@ class Protein
     private ?string $proteinAtlasUri = null;
 
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "proteinTargets")]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private Collection $experiments;
 
     #[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "proteinTarget")]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private Collection $antibodies;
 
     public function __construct()
@@ -56,11 +54,6 @@ class Protein
     public function __toString(): string
     {
         return $this->getShortName() ?? "unknown";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getShortName(): ?string

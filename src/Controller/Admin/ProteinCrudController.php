@@ -31,7 +31,7 @@ class ProteinCrudController extends AbstractCrudController
     {
         return [
             FormField::addPanel("General information"),
-            IdField::new('id')->hideOnForm(),
+            IdField::new('ulid')->hideOnForm(),
             TextField::new('shortName', label: "Gene name (like MGMT)"),
             TextField::new('longName', label: "Long name"),
             UrlField::new("proteinAtlasUri", label: "URL to the protein atlas"),

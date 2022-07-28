@@ -248,7 +248,11 @@
 {% endmacro %}
 
 {% macro detail_link(entity, route, idVariable) %}
-    {% set route_params = {(idVariable): entity.id} %}
+    {% if entity.id is defined %}
+        {% set route_params = {(idVariable): entity.id} %}
+    {% else %}
+        {% set route_params = {(idVariable): entity.ulid} %}
+    {% endif %}
     <a
             href="{{ url(route, route_params) }}"
             data-toggle="tooltip" data-placement="bottom" title="{{ entity.longName }}"

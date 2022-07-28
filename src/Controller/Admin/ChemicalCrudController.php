@@ -24,7 +24,7 @@ class ChemicalCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
+            IdField::new('ulid')->hideOnForm(),
             TextField::new('shortName'),
             TextField::new('longName'),
             TextField::new("casNumber"),

@@ -7,10 +7,22 @@
     <div class="row p-3">
         <div class="col col-12 bg-white mb-3 border">
             <div class="row">
-                <h1 class="">
+                <h1 class="col">
                     <canvas data-smiles-type="large" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}" class="border-right border-light d-inline align-middle"></canvas>
                     <span class="align-middle pl-5">{{ chemical.shortName }}</span>
                 </h1>
+
+                <div class="col text-right p-5">
+                    <div class="btn-group" role="group" aria-label="tools">
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to all chemicals"
+                           href="{{ url("app_compounds") }}"
+                        >
+                            <span class="fas fa-fw fa-arrow-up"></span>
+                        </a>
+                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
+                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -18,7 +30,7 @@
         <div class="col col-12 bg-white mb-3 border p-5">
             <table class="table table-sm table-borderless">
                 <tbody>
-                    {{ macros.definition_row("ID", chemical.id) }}
+                    {{ macros.definition_row("ID", chemical.ulid) }}
                     {{ macros.definition_row("Short name", chemical.shortName) }}
                     {{ macros.definition_row("Name", chemical.longName) }}
 

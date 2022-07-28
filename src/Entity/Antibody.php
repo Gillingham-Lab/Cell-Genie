@@ -36,6 +36,7 @@ class Antibody
     private string $longName = "";
 
     #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "antibodies")]
+    #[ORM\InverseJoinColumn(referencedColumnName: "ulid")]
     private Collection $proteinTarget;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]

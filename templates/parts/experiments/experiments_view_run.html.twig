@@ -52,11 +52,19 @@
                     {% if run.data.conditions is defined %}
                         {% for condition in run.data["conditions"] %}
                             {% if condition.type is defined and condition.type == "chemical" %}
-                                {% set chem = chemicals.find(condition.value) %}
-                                {{ macros.definition_row_raw(condition.title, macros.chemlink(chem)) }}
+                                {% if condition.value|length < 10 %}
+                                    {{ macros.definition_row(condition.title, "((chemical#" ~ condition.value ~ "))") }}
+                                {% else %}
+                                    {% set chem = chemicals.find(condition.value) %}
+                                    {{ macros.definition_row_raw(condition.title, macros.chemlink(chem)) }}
+                                {% endif %}
                             {% elseif condition.type is defined and condition.type == "protein" %}
-                                {% set protein = proteins.find(condition.value) %}
-                                {{ macros.definition_row_raw(condition.title, macros.proteinlink(protein)) }}
+                                {% if condition.value|length < 10 %}
+                                    {{ macros.definition_row(condition.title, "((protein#" ~ condition.value ~ "))") }}
+                                {% else %}
+                                    {% set protein = proteins.find(condition.value) %}
+                                    {{ macros.definition_row_raw(condition.title, macros.proteinlink(protein)) }}
+                                {% endif %}
                             {% else %}
                                 {{ macros.definition_row(condition.title, condition.value) }}
                             {% endif %}
@@ -126,18 +134,27 @@
                                 {% for condition_id in condition_ids %}
                                     {% for condition in well.wellData.conditions|filter(c => condition_id == c.id) %}
                                         {% if condition.type is defined and condition.type == "chemical" %}
-                                            {% set chem = chemicals.find(condition.value) %}
-                                            {% if chem %}
-                                                <td>{{ macros.chemlink(chem) }}</a></td>
-                                            {% else %}
+                                            {% if condition.value|length < 10 %}
                                                 <td>((chemical#{{ condition.value }}))</td>
+                                            {% else %}
+                                                {% set chem = chemicals.find(condition.value) %}
+                                                {% if chem %}
+                                                    <td>{{ macros.chemlink(chem) }}</a></td>
+                                                {% else %}
+                                                    <td>((chemical#{{ condition.value }}))</td>
+                                                {% endif %}
                                             {% endif %}
                                         {% elseif condition.type is defined and condition.type == "protein" %}
-                                            {% set protein = proteins.find(condition.value) %}
-                                            {% if protein %}
-                                                <td>{{ macros.proteinlink(protein) }}</a></td>
-                                            {% else %}
+                                            {% if condition.value|length < 10 %}
+                                                {# Important if old data is around. #}
                                                 <td>((protein#{{ condition.value }}))</td>
+                                            {% else %}
+                                                {% set protein = proteins.find(condition.value) %}
+                                                {% if protein %}
+                                                    <td>{{ macros.proteinlink(protein) }}</a></td>
+                                                {% else %}
+                                                    <td>((protein#{{ condition.value }}))</td>
+                                                {% endif %}
                                             {% endif %}
                                         {% elseif condition.type == 'check' %}
                                             {% if condition.value %}

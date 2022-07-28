@@ -17,7 +17,7 @@ class RecipeIngredient
     private ?Recipe $recipe = null;
 
     #[ORM\ManyToOne(targetEntity: Chemical::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: "chemical_ulid", referencedColumnName: "ulid", nullable: false)]
     #[ORM\OrderBy(["name" => "ASC"])]
     #[Assert\NotBlank]
     private ?Chemical $chemical = null;

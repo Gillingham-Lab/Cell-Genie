@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Chemical;
 use App\Repository\ChemicalRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,15 +29,9 @@ class CompoundController extends AbstractController
     }
 
     #[Route("/compounds/view/{compoundId}", name: "app_compound_view")]
-    public function viewCompound($compoundId): Response
+    #[ParamConverter("chemical", options: ["mapping" => ["compoundId" => "ulid"]])]
+    public function viewCompound(Chemical $chemical): Response
     {
-        $chemical = $this->chemicalRepository->find($compoundId);
-
-        if (!$chemical) {
-            $this->addFlash("error", "Chemical {$compoundId} was not found.");
-            return $this->redirect("app_compounds", status: Response::HTTP_NOT_FOUND);
-        }
-
         return $this->render("parts/compounds/compound.html.twig", [
             "chemical" => $chemical,
         ]);

@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Protein;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,15 +30,10 @@ class ProteinController extends AbstractController
         ]);
     }
 
-    #[Route("/protein/view/{proteinId<\d+>}", name: "app_protein_view")]
-    public function viewProtein($proteinId): Response
+    #[Route("/protein/view/{proteinId}", name: "app_protein_view")]
+    #[ParamConverter("protein", options: ["mapping" => ["proteinId"  => "ulid"]])]
+    public function viewProtein(Protein $protein): Response
     {
-        $protein = $this->proteinRepository->find($proteinId);
-
-        if (!$protein) {
-            $this->createNotFoundException();
-        }
-
         # Get all experiment types used for this protein
         $experimentTypes = $this->experimentTypeRepository->findByProtein($protein);
 

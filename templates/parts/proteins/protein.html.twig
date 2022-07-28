@@ -16,7 +16,7 @@
         <div class="col col-12 bg-white mb-3 border p-5">
             <table class="table table-sm table-borderless table-hover col-lg-4 col-md-12">
                 <tbody>
-                    {{ macros.definition_row("ID", protein.id) }}
+                    {{ macros.definition_row("ID", protein.ulid) }}
                     {{ macros.definition_row("Short name", protein.shortName) }}
                     {{ macros.definition_row("Name", protein.longName) }}
                     {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "Unknown", protein.proteinAtlasUri ?? null) }}

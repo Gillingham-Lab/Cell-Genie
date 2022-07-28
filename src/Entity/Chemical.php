@@ -4,23 +4,21 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\NameTrait;
+use App\Entity\Traits\NewIdTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\True_;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChemicalRepository::class)]
 class Chemical
 {
+    use NewIdTrait;
     use NameTrait;
     use VendorTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = null;
 
     #[ORM\Column(type: "text")]
     private string $smiles = "";
@@ -52,11 +50,6 @@ class Chemical
     public function __toString(): string
     {
         return $this->getShortName() ?? "unknown";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getLongName(): ?string

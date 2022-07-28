@@ -49,11 +49,13 @@ class Experiment
     private ?CultureFlask $wellplate = null;
 
     #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "experiments")]
-    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "experiment_id", nullable: true, onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: "protein_ulid", referencedColumnName: "ulid")]
     private Collection $proteinTargets;
 
     #[ORM\ManyToMany(targetEntity: Chemical::class, inversedBy: "experiments")]
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(referencedColumnName: "ulid")]
     private Collection $chemicals;
 
     #[ORM\ManyToMany(targetEntity: Cell::class, inversedBy: "experiments")]

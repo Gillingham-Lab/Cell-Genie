@@ -56,7 +56,7 @@ class ExperimentTypeRepository extends ServiceEntityRepository
             ->leftJoin("et.experiments", "e", conditionType: Join::ON)
             ->leftJoin("e.proteinTargets", "p", conditionType: Join::ON)
             ->andWhere("p = :protein")
-            ->setParameter("protein", $protein)
+            ->setParameter("protein", $protein->getUlid(), type: "ulid")
             ->getQuery()
             ->getResult()
         ;
