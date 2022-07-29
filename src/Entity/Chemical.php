@@ -10,10 +10,11 @@ use App\Repository\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\True_;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChemicalRepository::class)]
+#[Gedmo\Loggable]
 class Chemical
 {
     use NewIdTrait;

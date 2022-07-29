@@ -1,0 +1,51 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[ORM\Entity]
+#[Gedmo\Loggable]
+class EpitopeProtein extends Epitope
+{
+    #[ORM\ManyToMany(targetEntity: Protein::class, cascade: ["persist"])]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(referencedColumnName: "ulid", onDelete: "CASCADE")]
+    private Collection $proteins;
+
+    public function __construct()
+    {
+        $this->proteins = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, Protein>
+     */
+    public function getProteins(): Collection
+    {
+        return $this->proteins;
+    }
+
+    public function addProtein(Protein $protein): self
+    {
+        if (!$this->proteins->contains($protein)) {
+            $this->proteins->add($protein);
+        }
+
+        return $this;
+    }
+
+    public function removeProtein(Protein $protein): self
+    {
+        if ($this->proteins->contains($protein)) {
+            $this->proteins->removeElement($protein);
+        }
+
+        return $this;
+    }
+}

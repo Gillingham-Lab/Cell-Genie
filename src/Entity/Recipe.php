@@ -9,12 +9,14 @@ use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
 #[ORM\UniqueConstraint(fields: ["shortName", "concentrationFactor"])]
 #[UniqueEntity(fields: ["shortName", "concentrationFactor"])]
+#[Gedmo\Loggable]
 class Recipe
 {
     use IdTrait;

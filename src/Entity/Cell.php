@@ -374,7 +374,7 @@ class Cell
     {
         if (!$this->children->contains($child)) {
             $this->children[] = $child;
-            $child->setCell($this);
+            $child->setParent($this);
         }
 
         return $this;
@@ -384,8 +384,8 @@ class Cell
     {
         if ($this->children->removeElement($child)) {
             // set the owning side to null (unless already changed)
-            if ($child->getCell() === $this) {
-                $child->setCell(null);
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
             }
         }
 

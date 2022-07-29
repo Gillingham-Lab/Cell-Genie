@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\IdTrait;
 use App\Repository\AntibodyHostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,11 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AntibodyHostRepository::class)]
 class AntibodyHost
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\Column(type: "ulid", unique: true)]
-    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
-    private ?Ulid $id = null;
+    use IdTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank]
@@ -45,11 +42,6 @@ class AntibodyHost
     public function __toString(): string
     {
         return "{$this->name}";
-    }
-
-    public function getId(): ?Ulid
-    {
-        return $this->id;
     }
 
     public function getName(): ?string
