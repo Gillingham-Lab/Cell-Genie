@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Antibody;
+use App\Entity\EpitopeHost;
+use App\Entity\EpitopeProtein;
+use App\Entity\EpitopeSmallMolecule;
 use App\Repository\AntibodyRepository;
 use Doctrine\DBAL\Types\ConversionException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,16 +30,40 @@ class AntibodyController extends AbstractController
         $primaryAntibodies = [];
         $secondaryAntibodies = [];
 
-        if ($antibodyType !== "primaries" and $antibodyType !== "secondaries" and !empty($antibodyType)) {
+        if (!empty($antibodyType) and !in_array($antibodyType, ["primaries", "secondaries"])) {
             throw new FileNotFoundException("The requested antibody type does not exist.");
         }
 
-        if (!$antibodyType or $antibodyType === "primaries") {
-            $primaryAntibodies = $this->antibodyRepository->findPrimaryAntibodies();
-        }
+        $antibodies = $this->antibodyRepository->findAnyAntibody();
+        $primaryAntibodies = [];
+        $secondaryAntibodies = [];
 
-        if (!$antibodyType or $antibodyType === "secondaries") {
-            $secondaryAntibodies = $this->antibodyRepository->findSecondaryAntibodies(true);
+        /** @var Antibody $antibody */
+        foreach ($antibodies as $row) {
+            $antibody = $row[0];
+
+            $addPrimary = false;
+            $addSecondary = false;
+
+            $epitopes = $antibody->getEpitopeTargets();
+
+            foreach ($epitopes as $epitope) {
+                if ($epitope instanceof EpitopeHost) {
+                    $addSecondary = true;
+                }
+
+                if ($epitope instanceof EpitopeProtein or $epitope instanceof EpitopeSmallMolecule) {
+                    $addPrimary = true;
+                }
+            }
+
+            if ($addPrimary and ($antibodyType === "primaries" or empty($antibodyType))) {
+                $primaryAntibodies[] = $row;
+            }
+
+            if ($addSecondary and ($antibodyType === "secondaries" or empty($antibodyType))) {
+                $secondaryAntibodies[] = $row;
+            }
         }
 
         return $this->render('parts/antibodies/antibodies.html.twig', [
@@ -46,6 +74,7 @@ class AntibodyController extends AbstractController
     }
 
     #[Route("/antibodies/view/id/{antibodyId}", name: "app_antibody_view")]
+    #[ParamConverter("antibodyId", options: ["mapping" => ["antibodyId"  => "ulid"]])]
     #[Route("/antibodies/view/{antibodyNr}", name: "app_antibody_view_number")]
     public function viewAntibody(Antibody $antibodyId = null, string $antibodyNr = null): Response
     {

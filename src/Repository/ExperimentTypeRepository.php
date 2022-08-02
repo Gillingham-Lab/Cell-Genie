@@ -62,20 +62,6 @@ class ExperimentTypeRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByAntibody(Antibody $antibody)
-    {
-        return $this->createQueryBuilder("et")
-            ->distinct()
-            ->leftJoin("et.experiments", "e", conditionType: Join::ON)
-            ->leftJoin("e.antibodyDilutions", "dil", conditionType: Join::ON)
-            ->leftJoin("dil.antibody", "ab", conditionType: Join::ON)
-            ->andWhere("ab = :antibody")
-            ->setParameter("antibody", $antibody)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
     // /**
     //  * @return ExperimentType[] Returns an array of ExperimentType objects
     //  */

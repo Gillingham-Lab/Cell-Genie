@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Antibody;
+use App\Entity\EpitopeHost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,17 +22,40 @@ class AntibodyRepository extends ServiceEntityRepository
         parent::__construct($registry, Antibody::class);
     }
 
-    public function findPrimaryAntibodies(): array
+    public function findAnyAntibody(): array
     {
-        return $this->createQueryBuilder("a")
-            ->addSelect("pt")
-            ->addSelect("ho.name as hostOrganism")
-            ->leftJoin("a.proteinTarget", "pt", conditionType: Join::ON)
+        $qb = $this->createQueryBuilder("a");
+
+        return $qb
+            ->addSelect("ho")
+            ->addSelect("ep")
+            ->addSelect("ho.shortName as hostName")
+            ->leftJoin("a.epitopeTargets", "ep", conditionType: Join::ON)
             ->leftJoin("a.hostOrganism", "ho", conditionType: Join::ON)
-            ->groupBy("a.id")
-            ->addGroupBy("pt.id")
+            ->groupBy("a.ulid")
+            ->addGroupBy("ep.id")
             ->addGroupBy("ho.id")
-            ->having("count(distinct pt.id) > 0")
+            ->having("count(distinct ep.id) > 0")
+            ->orderBy("a.number")
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /*public function findPrimaryAntibodies(): array
+    {
+        $qb = $this->createQueryBuilder("a");
+
+        return $qb
+            ->addSelect("ho.shortName as hostName")
+            ->leftJoin("a.epitopeTargets", "ep", conditionType: Join::ON)
+            ->leftJoin("a.hostOrganism", "ho", conditionType: Join::ON)
+            ->groupBy("a.ulid")
+            ->addGroupBy("ep.id")
+            ->addGroupBy("ho.id")
+            ->where("ep NOT INSTANCE OF ?0")
+            ->having("count(distinct ep.id) > 0")
+            ->setParameters([EpitopeHost::class])
             ->orderBy("a.number")
             ->getQuery()
             ->getResult()
@@ -40,19 +64,24 @@ class AntibodyRepository extends ServiceEntityRepository
 
     public function findSecondaryAntibodies($withCount = false): array
     {
-        $qb = $this->createQueryBuilder("sa");
+        $qb = $this->createQueryBuilder("a");
 
         return $qb
-            ->addSelect("ht.name as hostName")
-            ->leftJoin("sa.hostTarget", "ht", conditionType: Join::ON)
-            ->groupBy("sa.id")
-            ->addGroupBy("ht.id")
-            ->having("count(distinct ht.id) > 0")
-            ->orderBy("sa.number")
+            ->addSelect("ho.shortName as hostName")
+            ->addSelect("ep.shortName as epitopeName")
+            ->leftJoin("a.epitopeTargets", "ep", conditionType: Join::WITH, condition: "ep NOT INSTANCE OF ?0")
+            ->leftJoin("a.hostOrganism", "ho", conditionType: Join::ON)
+            ->groupBy("a.ulid")
+            ->addGroupBy("ep.id")
+            ->addGroupBy("ho.id")
+            #->where("ep INSTANCE OF ?0")
+            #->having("count(distinct ep.id) > 0")
+            ->setParameters([EpitopeHost::class])
+            ->orderBy("a.number")
             ->getQuery()
             ->getResult()
-            ;
-    }
+        ;
+    }*/
 
     public function findBySearchTerm(string $searchTerm): array
     {
@@ -66,19 +95,19 @@ class AntibodyRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder("a")
             ->distinct(True)
-            ->addSelect("ho.name as hostOrganism")
-            ->addSelect("ht.name as hostTarget")
+            ->addSelect("ho.shortName as hostName")
+            ->addSelect("ep.shortName as epitopeName")
             ->leftJoin("a.hostOrganism", "ho")
-            ->leftJoin("a.hostTarget", "ht")
-            ->leftJoin("a.proteinTarget", "pt")
+            ->leftJoin("a.epitopeTargets", "ep")
+            #->leftJoin("a.proteinTarget", "pt")
             ->where("a.shortName LIKE :val")
             ->orWhere("a.longName LIKE :val")
             ->orWhere("a.detection LIKE :val")
             ->orWhere("a.number LIKE :val")
-            ->orWhere("ht.name LIKE :val")
-            ->orWhere("ho.name LIKE :val")
-            ->orWhere("pt.shortName LIKE :val")
-            ->orWhere("pt.longName LIKE :val")
+            ->orWhere("ho.shortName LIKE :val")
+            ->orWhere("ep.shortName LIKE :val")
+            #->orWhere("pt.shortName LIKE :val")
+            #->orWhere("pt.longName LIKE :val")
             ->orWhere("a.clonality LIKE :val")
             ->orWhere("a.usage LIKE :val")
             ->orderBy("a.number")

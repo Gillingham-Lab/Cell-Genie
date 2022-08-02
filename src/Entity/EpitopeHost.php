@@ -13,9 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Gedmo\Loggable]
 class EpitopeHost extends Epitope
 {
-    #[ORM\ManyToMany(targetEntity: AntibodyHost::class, cascade: ["persist"])]
-    #[ORM\JoinColumn(onDelete: "CASCADE")]
-    private Collection $hosts;
+    #[ORM\OneToMany(mappedBy: "hostOrganism", targetEntity: Antibody::class)]
+    private Collection $hostAntibodies;
 
     public function __construct()
     {
@@ -23,26 +22,30 @@ class EpitopeHost extends Epitope
     }
 
     /**
-     * @return Collection<int, AntibodyHost>
+     * @return Collection<int, Antibody>
      */
-    public function getHosts(): Collection
+    public function getHostAntibodies(): Collection
     {
-        return $this->hosts;
+        return $this->hostAntibodies;
     }
 
-    public function addHost(AntibodyHost $protein): self
+    public function addHostAntibody(Antibody $hostTarget): self
     {
-        if (!$this->hosts->contains($protein)) {
-            $this->hosts->add($protein);
+        if (!$this->hostAntibodies->contains($hostTarget)) {
+            $this->hostAntibodies[] = $hostTarget;
+            $hostTarget->setHostOrganism($this);
         }
 
         return $this;
     }
 
-    public function removeHost(AntibodyHost $protein): self
+    public function removeHostAntibody(Antibody $hostTarget): self
     {
-        if ($this->hosts->contains($protein)) {
-            $this->hosts->removeElement($protein);
+        if ($this->hostAntibodies->removeElement($hostTarget)) {
+            // set the owning side to null (unless already changed)
+            if ($hostTarget->getHostOrganism() === $this) {
+                $hostTarget->setHostOrganism(null);
+            }
         }
 
         return $this;

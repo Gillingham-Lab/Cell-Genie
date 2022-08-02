@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Crud\Antibody;
 
-use App\Entity\AntibodyHost;
+use App\Entity\EpitopeHost;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class AntibodyHostCrudController extends AbstractCrudController
+class EpitopeHostCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return AntibodyHost::class;
+        return EpitopeHost::class;
     }
 
     public function configureFields(string $pageName): iterable
@@ -20,7 +20,7 @@ class AntibodyHostCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->hideOnForm(),
-            TextField::new('name', label: "Name of the host organism"),
+            TextField::new('shortName', label: "Short name of the epitope"),
         ];
     }
 }

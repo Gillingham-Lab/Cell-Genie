@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Antibody;
 use App\Entity\Cell;
+use App\Entity\Epitope;
 use App\Entity\Protein;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -32,6 +34,35 @@ class ProteinRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function findWithAntibodies(Epitope $epitope = null, array $orderBy = null)
+    {
+        $qb = $this->createQueryBuilder("p")
+            ->addSelect("ep")
+            ->addSelect("ab")
+            ->leftJoin("p.epitopes", "ep", conditionType: Join::ON)
+            ->leftJoin("ep.antibodies", "ab", conditionType: Join::ON)
+            ->groupBy("p.ulid")
+            ->addGroupBy("ep.id")
+            ->addGroupBy("ab.ulid")
+        ;
+
+        if ($epitope) {
+            $qb = $qb->where("ep.id = :epitope")
+                ->setParameter("epitope", $epitope->getId(), "ulid");
+        }
+
+        if ($orderBy) {
+            foreach ($orderBy as $col => $ord) {
+                $qb = $qb->orderBy($col, $ord);
+            }
+        }
+
+        return $qb
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

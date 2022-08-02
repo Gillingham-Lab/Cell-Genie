@@ -62,9 +62,6 @@ class Experiment
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private Collection $cells;
 
-    #[ORM\OneToMany(mappedBy: "experiment", targetEntity: AntibodyDilution::class, cascade: ["persist"])]
-    private Collection $antibodyDilutions;
-
     #[ORM\Column(type: "integer", nullable: false, options: ["default" => 1])]
     #[Assert\Range(min: 1, max: 32000)]
     private ?int $numberOfWells = 1;
@@ -188,36 +185,6 @@ class Experiment
     public function removeCell(Cell $cell): self
     {
         $this->cells->removeElement($cell);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, AntibodyDilution>
-     */
-    public function getAntibodyDilutions(): Collection
-    {
-        return $this->antibodyDilutions;
-    }
-
-    public function addAntibodyDilution(AntibodyDilution $antibodyDilution): self
-    {
-        if (!$this->antibodyDilutions->contains($antibodyDilution)) {
-            $this->antibodyDilutions[] = $antibodyDilution;
-            $antibodyDilution->setExperiment($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAntibodyDilution(AntibodyDilution $antibodyDilution): self
-    {
-        if ($this->antibodyDilutions->removeElement($antibodyDilution)) {
-            // set the owning side to null (unless already changed)
-            if ($antibodyDilution->getExperiment() === $this) {
-                $antibodyDilution->setExperiment(null);
-            }
-        }
 
         return $this;
     }

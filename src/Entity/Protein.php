@@ -31,21 +31,23 @@ class Protein
 
     #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "children")]
     #[ORM\JoinColumn(name: "protein_parent_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
-    #[ORM\InverseJoinColumn(name: "protein_child_ulid", referencedColumnName: "ulid")]
+    #[ORM\InverseJoinColumn(name: "protein_child_ulid", referencedColumnName: "ulid", onDelete: "SET NULL")]
     private Collection $parents;
 
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "proteinTargets")]
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private Collection $experiments;
 
-    #[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "proteinTarget")]
+    /*#[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "proteinTarget")]
+    #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]*/
+    #[ORM\ManyToMany(targetEntity: EpitopeProtein::class, mappedBy: "proteins")]
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
-    private Collection $antibodies;
+    private Collection $epitopes;
 
     public function __construct()
     {
         $this->experiments = new ArrayCollection();
-        $this->antibodies = new ArrayCollection();
+        $this->epitopes = new ArrayCollection();
         $this->parents = new ArrayCollection();
         $this->children = new ArrayCollection();
     }
@@ -155,27 +157,27 @@ class Protein
     }
 
     /**
-     * @return Collection<int, Antibody>
+     * @return Collection<int, EpitopeProtein>
      */
-    public function getAntibodies(): Collection
+    public function getEpitopes(): Collection
     {
-        return $this->antibodies;
+        return $this->epitopes;
     }
 
-    public function addAntibody(Antibody $antibody): self
+    public function addEpitope(EpitopeProtein $epitope): self
     {
-        if (!$this->antibodies->contains($antibody)) {
-            $this->antibodies[] = $antibody;
-            $antibody->addProteinTarget($this);
+        if (!$this->epitopes->contains($epitope)) {
+            $this->epitopes[] = $epitope;
+            $epitope->addProtein($this);
         }
 
         return $this;
     }
 
-    public function removeAntibody(Antibody $antibody): self
+    public function removeEpitope(EpitopeProtein $epitope): self
     {
-        if ($this->antibodies->removeElement($antibody)) {
-            $antibody->removeProteinTarget($this);
+        if ($this->epitopes->removeElement($epitope)) {
+            $epitope->removeProtein($this);
         }
 
         return $this;

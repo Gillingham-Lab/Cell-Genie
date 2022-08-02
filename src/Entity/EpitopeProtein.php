@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Gedmo\Loggable]
 class EpitopeProtein extends Epitope
 {
-    #[ORM\ManyToMany(targetEntity: Protein::class, cascade: ["persist"])]
+    #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "epitopes", cascade: ["persist"])]
     #[ORM\JoinColumn(onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(referencedColumnName: "ulid", onDelete: "CASCADE")]
     private Collection $proteins;

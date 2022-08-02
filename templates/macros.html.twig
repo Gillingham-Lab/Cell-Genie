@@ -163,7 +163,21 @@
 
 {% macro pillify_proteins(proteins) %}
     {% for protein in proteins %}
-        <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": protein.id}) }}'>{{ protein }}</a>
+        <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": protein.ulid}) }}'>{{ protein }}</a>
+    {% endfor %}
+{% endmacro %}
+
+{% macro pillify_epitopes(epitopes) %}
+    {% for epitope in epitopes %}
+        {% if epitope is epitopeProtein %}
+            <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_proteins_epitope", {"epitope": epitope.id}) }}'>{{ epitope }}</a>
+        {% elseif epitope is epitopeSmallMolecule %}
+            <a class='badge rounded-pill bg-light text-light' href='#'>{{ epitope }}</a>
+        {% elseif epitope is epitopeHost %}
+            <a class='badge rounded-pill bg-dark text-light' href='#'>{{ epitope }}</a>
+        {% else %}
+            <span class='badge rounded-pill bg-white text-light' href='#'>{{ epitope }}</span>
+        {% endif %}
     {% endfor %}
 {% endmacro %}
 

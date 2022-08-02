@@ -10,6 +10,9 @@ use App\Entity\Cell;
 use App\Entity\CellAliquote;
 use App\Entity\Chemical;
 use App\Entity\CultureFlask;
+use App\Entity\EpitopeHost;
+use App\Entity\EpitopeProtein;
+use App\Entity\EpitopeSmallMolecule;
 use App\Entity\Experiment;
 use App\Entity\ExperimentType;
 use App\Entity\Message;
@@ -64,12 +67,17 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Tissue Types", "fas fa-kidneys", Tissue::class),
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),
 
+            MenuItem::section("Antibodies"),
+            MenuItem::linkToCrud("Antibodies", "icon icon-antibody", Antibody::class),
+            MenuItem::linkToCrud("Epitopes: Hosts", "fas fa-horse", EpitopeHost::class),
+            MenuItem::linkToCrud("Epitopes: Proteins", "icon icon-protein", EpitopeProtein::class),
+            MenuItem::linkToCrud("Epitopes: Small Molecules", "fas fa-tablets", EpitopeSmallMolecule::class),
+
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
             MenuItem::linkToCrud("Experiments", 'fas', Experiment::class),
             MenuItem::linkToCrud("Protein targets", "icon icon-protein", Protein::class),
-            MenuItem::linkToCrud("Antibodies", "icon icon-antibody", Antibody::class),
-            MenuItem::linkToCrud("Antibody hosts", "fas fa-horse", AntibodyHost::class),
+            #MenuItem::linkToCrud("Antibody hosts", "fas fa-horse", AntibodyHost::class),
             MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
             MenuItem::linkToCrud("Recipes", "fas fa-list-alt", Recipe::class),
 

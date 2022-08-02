@@ -149,7 +149,12 @@
                         </div>
 
                         <div class="tab-pane fade" id="tab-dilutions-content" role="tabpanel" aria-labelledby="tab-dilutions">
-                            {% if not antibody.antibodyDilutions %}
+                            {% if antibody.dilution %}
+                                {{ antibody.dilution }}
+                            {% else %}
+                                No antibody dilutions registered yet.
+                            {% endif %}
+                            {# {% if not antibody.dilut %}
                                 No antibody dilutions registered yet.
                             {% else %}
                                 {% for dilution in antibody.antibodyDilutions %}
@@ -165,7 +170,7 @@
                                         </div>
                                     </div>
                                 {% endfor %}
-                            {% endif %}
+                            {% endif %} #}
                         </div>
 
                         <div class="tab-pane fade" id="tab-experiments-content" role="tabpanel" aria-labelledby="tab-experiments">

@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\HasRRID;
+use App\Entity\Traits\NewIdTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AntibodyRepository::class)]
@@ -17,12 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: "number")]
 class Antibody
 {
+    use NewIdTrait;
     use VendorTrait;
     use HasRRID;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: "integer", nullable: true)]
     private ?int $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
@@ -35,15 +37,17 @@ class Antibody
     #[Assert\Length(min: 5, max: 255)]
     private string $longName = "";
 
-    #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "antibodies")]
-    #[ORM\InverseJoinColumn(referencedColumnName: "ulid")]
+    /*#[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "antibodies")]
+    #[ORM\InverseJoinColumn(referencedColumnName: "ulid")]*/
     private Collection $proteinTarget;
+
+    #[ORM\ManyToMany(targetEntity: Epitope::class, inversedBy: "antibodies")]
+    #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: "epitope_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    private Collection $epitopeTargets;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?String $detection = null;
-
-    #[ORM\OneToMany(mappedBy: "antibody", targetEntity: AntibodyDilution::class, orphanRemoval: true)]
-    private Collection $antibodyDilutions;
 
     #[ORM\Column(type: "string", length: 10, unique: true, nullable: true)]
     #[Assert\NotBlank]
@@ -59,8 +63,8 @@ class Antibody
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $externalReference = null;
 
-    #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "primaries")]
-    private ?AntibodyHost $hostOrganism = null;
+    #[ORM\ManyToOne(targetEntity: EpitopeHost::class, inversedBy: "hostAntibodies")]
+    private ?EpitopeHost $hostOrganism = null;
 
     #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "secondaries")]
     private ?AntibodyHost $hostTarget = null;
@@ -87,7 +91,7 @@ class Antibody
 
     #[ORM\ManyToMany(targetEntity: Lot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "antibody_lots")]
-    #[ORM\JoinColumn(name: "antibody_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid")]
     #[ORM\InverseJoinColumn(name: "lot_id", referencedColumnName: "id", unique: true)]
     #[ORM\OrderBy(["lotNumber" => "ASC"])]
     #[Assert\Valid]
@@ -95,15 +99,14 @@ class Antibody
 
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "antibody_vendor_documentation_files")]
-    #[ORM\JoinColumn(name: "antibody_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid")]
     #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true)]
     #[Assert\Valid]
     private Collection $vendorDocumentation;
 
     public function __construct()
     {
-        $this->proteinTarget = new ArrayCollection();
-        $this->antibodyDilutions = new ArrayCollection();
+        $this->epitopeTargets = new ArrayCollection();
         $this->lots = new ArrayCollection();
         $this->vendorDocumentation = new ArrayCollection();
     }
@@ -143,27 +146,36 @@ class Antibody
     }
 
     /**
-     * @return Collection<int, Protein>
+     * @return Collection<int, Epitope>
      */
-    public function getProteinTarget(): Collection
+    public function getEpitopeTargets(): Collection
     {
-        return $this->proteinTarget;
+        return $this->epitopeTargets;
     }
 
-    public function addProteinTarget(Protein $proteinTarget): self
+    public function addEpitopeTarget(Epitope $epitope): self
     {
-        if (!$this->proteinTarget->contains($proteinTarget)) {
-            $this->proteinTarget[] = $proteinTarget;
+        if (!$this->epitopeTargets->contains($epitope)) {
+            $this->epitopeTargets[] = $epitope;
         }
 
         return $this;
     }
 
-    public function removeProteinTarget(Protein $proteinTarget): self
+    public function removeEpitopeTarget(Epitope $epitope): self
     {
-        $this->proteinTarget->removeElement($proteinTarget);
+        $this->epitopeTargets->removeElement($epitope);
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Protein>
+     */
+    public function getProteinTarget(): Collection
+    {
+        return new ArrayCollection();
+        #return $this->proteinTarget;
     }
 
     public function getDetection(): ?string
@@ -174,36 +186,6 @@ class Antibody
     public function setDetection(?string $detection): self
     {
         $this->detection = $detection;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, AntibodyDilution>
-     */
-    public function getAntibodyDilutions(): Collection
-    {
-        return $this->antibodyDilutions;
-    }
-
-    public function addAntibodyDilution(AntibodyDilution $antibodyDilution): self
-    {
-        if (!$this->antibodyDilutions->contains($antibodyDilution)) {
-            $this->antibodyDilutions[] = $antibodyDilution;
-            $antibodyDilution->setAntibody($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAntibodyDilution(AntibodyDilution $antibodyDilution): self
-    {
-        if ($this->antibodyDilutions->removeElement($antibodyDilution)) {
-            // set the owning side to null (unless already changed)
-            if ($antibodyDilution->getAntibody() === $this) {
-                $antibodyDilution->setAntibody(null);
-            }
-        }
 
         return $this;
     }
@@ -256,14 +238,15 @@ class Antibody
         return $this;
     }
 
-    public function getHostOrganism(): ?AntibodyHost
+    public function getHostOrganism(): ?EpitopeHost
     {
         return $this->hostOrganism;
     }
 
-    public function setHostOrganism(?AntibodyHost $hostOrganism): self
+    public function setHostOrganism(?EpitopeHost $hostOrganism): self
     {
         $this->hostOrganism = $hostOrganism;
+        $hostOrganism->addHostAntibody($this);
 
         return $this;
     }

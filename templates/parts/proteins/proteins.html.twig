@@ -1,4 +1,5 @@
 {% extends 'homepage.html.twig' %}
+{% from 'macros.html.twig' import pillify_epitopes %}
 
 {% block title %}Cell Genie: Proteins{% endblock %}
 
@@ -28,8 +29,8 @@
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
-                        <th scope="col"># Experiments</th>
-                        <th scope="col"># Antibodies</th>
+                        <th scope="col">Epitopes </th>
+                        <th scope="col">Antibodies </th>
                         <th scope="col">Options</th>
                     </tr>
                 </thead>
@@ -37,8 +38,17 @@
                     {% for protein in proteins %}
                         <tr>
                             <td class="align-middle">{{ _self.format_antibody_name(protein) }}</td>
-                            <td class="align-middle">{{ protein.experiments|length }}</td>
-                            <td class="align-middle">{{ protein.antibodies|length > 0 ? protein.antibodies|length : "none" }}</td>
+                            <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes) }}{% else %}None{% endif %}</td>
+
+                            <td class="align-middle">
+                                {% set antibody_count = 0 %}
+                                {% for epitope in protein.epitopes %}
+                                    {% for antibody in epitope.antibodies %}
+                                        <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}">{{ antibody }}</a>
+                                    {% endfor %}
+                                    {% set antibody_count = antibody_count + epitope.antibodies|length %}
+                                {% endfor %}
+                            </td>
                             <td class="align-middle">
                                 <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                             </td>

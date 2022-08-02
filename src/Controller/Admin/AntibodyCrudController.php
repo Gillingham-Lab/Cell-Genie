@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Form\AntibodyDilutionType;
 use App\Form\DocumentationType;
 use App\Form\LotType;
+use App\Repository\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -27,8 +28,11 @@ use Symfony\Component\Form\FormInterface;
 
 class AntibodyCrudController extends ExtendedAbstractCrudController
 {
+    use VocabularyTrait;
+
     public function __construct(
-        private Security $security
+        private Security $security,
+        private VocabularyRepository $vocabularyRepository,
     ) {
     }
 
@@ -40,8 +44,8 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            FormField::addPanel("General properties"),
-            IdField::new("id")->hideOnForm(),
+            FormField::addTab("General"),
+            IdField::new("ulid")->hideOnForm(),
             TextField::new("number", label: "Number")
                 ->setHelp("A short number used to identify the antibody in our system."),
             TextField::new("shortName")
@@ -50,24 +54,22 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
             ... HasRRID::rridCrudFields(),
             IntegerField::new("storageTemperature", label: "Storage temperature (°C)")
                 ->setHelp("Note down a storage temperature between -200 and 25 °C. Commonly, -20 °C is used."),
+
+            FormField::addPanel("Properties"),
             AssociationField::new("hostOrganism", label: "Host Organism")
                 ->setHelp("Host organism for this antibody. Important to automatically determine secondary antibodies."),
-            TextField::new("clonality", label: "Clonality")
+            AssociationField::new("epitopeTargets", label: "Epitopes")
+                ->setHelp("Set epitopes for this antibody"),
+            $this->textFieldOrChoices("clonality")
                 ->setHelp("Usually, this is either 'monoclonal' or 'polyclonal'."),
             TextField::new("usage", label: "Purpose")
                 ->setHelp("Highlight the purpose for this antibody (WB, IP, IH, ...). Highlight with 'Only' if the antibody is for a specific purpose."),
-            CollectionField::new("vendorDocumentation", "Attachments")
-                ->setHelp("Add file attachments to provide complete documentation.")
-                ->setEntryType(DocumentationType::class)
-                ->setEntryIsComplex(true)
-                ->hideOnIndex()
-                ->allowDelete(True),
 
-            FormField::addPanel("Vendor"),
+            FormField::addTab("Origin"),
             AssociationField::new("vendor")->hideOnIndex(),
             TextField::new("vendorPN", label: "Vendor product number")->hideOnIndex(),
 
-            FormField::addPanel("Validation"),
+            FormField::addTab("Validation"),
             BooleanField::new("validatedInternally")
                 ->setHelp("Set to true if we tested it to be working internally."),
             BooleanField::new("validatedExternally")
@@ -76,23 +78,31 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
                 ->hideOnIndex()
                 ->setHelp("Give a reference (doi preferred) where this antibody has been used before."),
 
-            FormField::addPanel("Experimental"),
+            FormField::addTab("Experimental"),
             TextEditorField::new("dilution", label: "Dilution suggestions")
                 ->setHelp("Oftentimes, vendor propose antibody dilutions for specific applications.")
                 ->hideOnIndex(),
             TextField::new("detection", label: "Way of detection")
                 ->setHelp("Leave empty if there is no reporter.")
                 ->hideOnIndex(),
-            AssociationField::new("proteinTarget", label: "Protein target")
+            /*AssociationField::new("proteinTarget", label: "Protein target")
                 ->setHelp("Leave empty if its a secondary antibody.")
-                ->hideOnIndex(),
+                ->hideOnIndex(),*/
             AssociationField::new("hostTarget", label: "Host Target")
                 ->setHelp("Add which host this antibody targets. Leave empty for primary antibodies.")
                 ->hideOnIndex(),
 
-            FormField::addPanel("Lot entries"),
+            FormField::addTab("Lot entries"),
             CollectionField::new("lots", "Lot entries")
                 ->setEntryType(LotType::class)
+                ->setEntryIsComplex(true)
+                ->hideOnIndex()
+                ->allowDelete(True),
+
+            FormField::addTab("Documentation"),
+            CollectionField::new("vendorDocumentation", "Attachments")
+                ->setHelp("Add file attachments to provide complete documentation.")
+                ->setEntryType(DocumentationType::class)
                 ->setEntryIsComplex(true)
                 ->hideOnIndex()
                 ->allowDelete(True),
@@ -102,7 +112,7 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add("proteinTarget")
+            /*->add("proteinTarget")*/
             ->add("hostTarget")
             ->add("validatedInternally")
             ->add("vendor")

@@ -1,5 +1,5 @@
 {% extends 'homepage.html.twig' %}
-{% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_proteins %}
+{% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_epitopes %}
 
 {% macro format_antibody_name(antibody) %}
     <span data-toggle="tooltip" data-placement="bottom" title="{{ antibody.longName }}">{{ antibody.shortName }}</span>
@@ -95,36 +95,33 @@
         {% if antibody.number %}
             <a href="{{ url("app_antibody_view_number", {"antibodyNr": antibody.number}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
         {% else %}
-            <a href="{{ url("app_antibody_view", {"antibodyId": antibody.id}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
+            <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
         {% endif %}
     </div>
 {% endmacro %}
 
 {% macro display_any(antibodies) %}
     <table class="mb-5 mt-3 table px-5 table-hover">
-        <trhead>
+        <thead>
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Targets</th>
+                <th scope="col">Epitope</th>
                 <th scope="col">Organism</th>
                 <th scope="col">Vendor</th>
                 <th scope="col">RRID</th>
                 <th scope="col">Options</th>
             </tr>
-        </trhead>
+        </thead>
         <tbody>
         {% for entry in antibodies %}
             {% set antibody = entry[0] %}
+            {# {% set antibody = entry %}  #}
             <tr>
                 <th>{{ antibody.number }}{{ validation_status(antibody) }}</th>
                 <td>{{ _self.format_antibody_name(antibody) }}</td>
-                {% if antibody.hostTarget %}
-                    <td>{{ entry.hostTarget }}</td>
-                {% else %}
-                    <td>{{ pillify_proteins(antibody.proteinTarget) }}</td>
-                {% endif %}
-                <td>{{ entry.hostOrganism }}</td>
+                <td>{{ pillify_epitopes(antibody.epitopeTargets) }}</td>
+                <td>{{ entry.hostName }}</td>
                 <td>{{ vendor_url(antibody.vendor, antibody.vendorPn) }}</td>
                 <td>{% if antibody.rrid %}{{ rrid_resolver(antibody.rrid)}}{% else %}-{% endif %}</td>
                 <td>{{ _self.antibody_tools(antibody) }}</td>
@@ -136,25 +133,26 @@
 
 {% macro display_primaries(primaryAntibodies) %}
     <table class="mb-5 mt-3 table px-5 table-hover">
-        <trhead>
+        <thead>
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Targets</th>
-                <th scope="col">Organism</th>
+                <th scope="col">Epitope</th>
+                <th scope="col">Host</th>
                 <th scope="col">Vendor</th>
                 <th scope="col">RRID</th>
                 <th scope="col">Options</th>
             </tr>
-        </trhead>
+        </thead>
         <tbody>
         {% for entry in primaryAntibodies %}
             {% set primaryAntibody = entry[0] %}
+            {# {% set primaryAntibody = entry %}  #}
             <tr>
                 <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
                 <td>{{ _self.format_antibody_name(primaryAntibody) }}</td>
-                <td>{{ pillify_proteins(primaryAntibody.proteinTarget) }}</td>
-                <td>{{ entry.hostOrganism }}</td>
+                <td>{{ pillify_epitopes(primaryAntibody.epitopeTargets) }}</td>
+                <td>{{ entry.hostName }}</td>
                 <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
                 <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
                 <td>{{ _self.antibody_tools(primaryAntibody) }}</td>
@@ -165,24 +163,28 @@
 {% endmacro %}
 
 {% macro display_secondaries(secondaryAntibodies) %}
+    Amount of antries {{ secondaryAntibodies|length }}
     <table class="mb-5 mt-3 table table-hover">
-        <trhead>
+        <thead>
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Target Organism</th>
+                <th scope="col">Epitope</th>
+                <th scope="col">Host Organism</th>
                 <th scope="col">Detection</th>
                 <th scope="col">Vendor</th>
                 <th scope="col">RRID</th>
                 <th scope="col">Options</th>
             </tr>
-        </trhead>
+        </thead>
         <tbody>
         {% for entry in secondaryAntibodies %}
             {% set secondaryAntibody = entry[0] %}
+            {# {% set secondaryAntibody = entry %} #}
             <tr>
                 <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
                 <td>{{ _self.format_antibody_name(secondaryAntibody) }}</td>
+                <td>{{ pillify_epitopes(secondaryAntibody.epitopeTargets) }}</td>
                 <td>{{ entry.hostName }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
                 <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>

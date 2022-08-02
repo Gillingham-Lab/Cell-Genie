@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Epitope;
 use App\Entity\Protein;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
@@ -21,9 +22,10 @@ class ProteinController extends AbstractController
     }
 
     #[Route("/protein", name: "app_proteins")]
-    public function proteins(): Response
+    #[Route("/protein/epitope/{epitope}", name: "app_proteins_epitope")]
+    public function proteins(Epitope $epitope = null): Response
     {
-        $proteins = $this->proteinRepository->findBy([], orderBy: ["shortName" => "ASC"]);
+        $proteins = $this->proteinRepository->findWithAntibodies($epitope, orderBy: ["p.shortName" => "ASC"]);
 
         return $this->render("parts/proteins/proteins.html.twig", [
             "proteins" => $proteins
@@ -34,22 +36,8 @@ class ProteinController extends AbstractController
     #[ParamConverter("protein", options: ["mapping" => ["proteinId"  => "ulid"]])]
     public function viewProtein(Protein $protein): Response
     {
-        # Get all experiment types used for this protein
-        $experimentTypes = $this->experimentTypeRepository->findByProtein($protein);
-
-        # Try to get experiment types for each antibody of the current protein
-        $antibodies = $protein->getAntibodies();
-        $antibodyToExperimentType = [];
-
-        foreach ($antibodies as $antibody) {
-            $antibodyExperimentTypes = $this->experimentTypeRepository->findByAntibody($antibody);
-            $antibodyToExperimentType[$antibody->getId()] = $antibodyExperimentTypes;
-        }
-
         return $this->render("parts/proteins/protein.html.twig", [
             "protein" => $protein,
-            "experimentTypes" => $experimentTypes,
-            "experimentTypesPerAntibody" => $antibodyToExperimentType,
         ]);
     }
 }
