@@ -23,6 +23,11 @@ class EpitopeProtein extends Epitope
         $this->proteins = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return "p:" . ($this->getShortName() ?? "unknown");
+    }
+
     /**
      * @return Collection<int, Protein>
      */

@@ -28,6 +28,9 @@ class Epitope
     #[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "epitopeTargets")]
     private Collection $antibodies;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $description;
+
     /**
      * @return Collection<int, Antibody>
      */
@@ -51,6 +54,18 @@ class Epitope
         if ($this->antibodies->removeElement($antibody)) {
             $antibody->removeEpitopeTarget($this);
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

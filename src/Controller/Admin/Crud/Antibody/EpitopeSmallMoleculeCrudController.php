@@ -7,6 +7,7 @@ use App\Entity\EpitopeSmallMolecule;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class EpitopeSmallMoleculeCrudController extends AbstractCrudController
@@ -22,6 +23,9 @@ class EpitopeSmallMoleculeCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             TextField::new('shortName', label: "Short name of the epitope"),
+            TextareaField::new("description", label: "Description")
+                ->setHelp("Additional information on the epitope, if known.")
+                ->hideOnIndex(),
             AssociationField::new("chemicals", label: "Chemical target")
                 ->setHelp("Register chemicals that have this epitope.")
                 ->hideOnIndex(),

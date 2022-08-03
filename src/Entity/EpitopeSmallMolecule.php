@@ -23,6 +23,11 @@ class EpitopeSmallMolecule extends Epitope
         $this->chemicals = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return "m:" . ($this->getShortName() ?? "unknown");
+    }
+
     /**
      * @return Collection<int, Chemical>
      */

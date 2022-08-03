@@ -43,6 +43,9 @@ class Chemical
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "chemicals")]
     private Collection $experiments;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $iupacName;
+
     public function __construct()
     {
         $this->experiments = new ArrayCollection();
@@ -160,6 +163,18 @@ class Chemical
     public function setCasNumber(?string $casNumber): self
     {
         $this->casNumber = $casNumber;
+
+        return $this;
+    }
+
+    public function getIupacName(): ?string
+    {
+        return $this->iupacName;
+    }
+
+    public function setIupacName(?string $iupacName): self
+    {
+        $this->iupacName = $iupacName;
 
         return $this;
     }

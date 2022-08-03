@@ -8,6 +8,7 @@ use App\Entity\EpitopeProtein;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class EpitopeProteinCrudController extends AbstractCrudController
@@ -23,6 +24,9 @@ class EpitopeProteinCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             TextField::new('shortName', label: "Short name of the epitope"),
+            TextareaField::new("description", label: "Description")
+                ->setHelp("Additional information on the epitope, if known.")
+                ->hideOnIndex(),
             AssociationField::new("proteins", label: "Protein target")
                 ->setHelp("Register proteins that have this epitope.")
                 ->hideOnIndex(),

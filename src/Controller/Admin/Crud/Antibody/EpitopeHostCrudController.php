@@ -6,6 +6,7 @@ namespace App\Controller\Admin\Crud\Antibody;
 use App\Entity\EpitopeHost;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class EpitopeHostCrudController extends AbstractCrudController
@@ -20,7 +21,10 @@ class EpitopeHostCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->hideOnForm(),
-            TextField::new('shortName', label: "Short name of the epitope"),
+            TextField::new('shortName', label: "Short name of the epitope")
+                ->hideOnIndex(),
+            TextareaField::new("description", label: "Description")
+                ->setHelp("Additional information on the epitope, if known."),
         ];
     }
 }

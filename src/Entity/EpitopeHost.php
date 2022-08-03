@@ -21,6 +21,11 @@ class EpitopeHost extends Epitope
         $this->hosts = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return "h:" . ($this->getShortName() ?? "unknown");
+    }
+
     /**
      * @return Collection<int, Antibody>
      */

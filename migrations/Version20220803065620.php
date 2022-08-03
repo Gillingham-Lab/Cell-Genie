@@ -10,7 +10,7 @@ final class Version20220803065620 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Adds isX to ExperimentalCondition and isY to ExperimentalMeasurement.';
     }
 
     public function up(Schema $schema): void
