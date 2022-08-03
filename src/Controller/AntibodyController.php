@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Antibody;
+use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
@@ -25,8 +26,12 @@ class AntibodyController extends AbstractController
 
     #[Route("/antibodies", name: "app_antibodies")]
     #[Route("/antibodies/{antibodyType}", name: "app_antibodies")]
-    public function cells(Request $request, ?string $antibodyType = null): Response
-    {
+    #[Route("/antibodies/epitope/{epitope}", name: "app_antibodies_epitope")]
+    public function cells(
+        Request $request,
+        ?string $antibodyType = null,
+        ?Epitope $epitope = null,
+    ): Response {
         $primaryAntibodies = [];
         $secondaryAntibodies = [];
 
@@ -34,9 +39,15 @@ class AntibodyController extends AbstractController
             throw new FileNotFoundException("The requested antibody type does not exist.");
         }
 
-        $antibodies = $this->antibodyRepository->findAnyAntibody();
+        $antibodies = $this->antibodyRepository->findAnyAntibody($epitope);
         $primaryAntibodies = [];
         $secondaryAntibodies = [];
+
+        if ($epitope !== null) {
+            return $this->render('parts/antibodies/antibodies.html.twig', [
+                "antibodies" => $antibodies,
+            ]);
+        }
 
         /** @var Antibody $antibody */
         foreach ($antibodies as $row) {

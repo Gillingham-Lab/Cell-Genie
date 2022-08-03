@@ -43,6 +43,7 @@ class ProteinRepository extends ServiceEntityRepository
             ->addSelect("ab")
             ->leftJoin("p.epitopes", "ep", conditionType: Join::ON)
             ->leftJoin("ep.antibodies", "ab", conditionType: Join::ON)
+            ->orderBy("ab.number", "ASC")
             ->groupBy("p.ulid")
             ->addGroupBy("ep.id")
             ->addGroupBy("ab.ulid")
@@ -55,7 +56,7 @@ class ProteinRepository extends ServiceEntityRepository
 
         if ($orderBy) {
             foreach ($orderBy as $col => $ord) {
-                $qb = $qb->orderBy($col, $ord);
+                $qb = $qb->addOrderBy($col, $ord);
             }
         }
 

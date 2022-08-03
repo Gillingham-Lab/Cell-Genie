@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        {% if antibodies|length > 0 %}
+        {% if antibodies|length > 0 or (primaryAntibodies is not defined and secondaryAntibodies is not defined) %}
             <div class="col col-12 p-5 bg-white mb-3 border">
                 {# Display search results #}
                 {{ _self.display_any(antibodies) }}
@@ -84,33 +84,42 @@
 {% endblock %}
 
 {% macro antibody_tools(antibody) %}
-    <div class="btn-group btn-group-sm">
-        <a
-                class="btn btn-info btn-clipboard"
-                data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
-        >
-            <span class="far fa-clipboard"></span>
-        </a>
+    {% if antibody is not same as(false) %}
+        <div class="btn-group btn-group-sm mr-3">
+            <a
+                    class="btn btn-info btn-clipboard"
+                    data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+            >
+                <span class="far fa-clipboard"></span>
+            </a>
 
-        {% if antibody.number %}
-            <a href="{{ url("app_antibody_view_number", {"antibodyNr": antibody.number}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
-        {% else %}
-            <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
-        {% endif %}
-    </div>
+            {% if antibody.number %}
+                <a href="{{ url("app_antibody_view_number", {"antibodyNr": antibody.number}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
+            {% else %}
+                <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="btn-group btn-group-sm mr-3" style="visibility: hidden">
+            <span class="btn btn-info btn-clipboard" ><span class="far fa-clipboard"></span></span>
+            <span class="btn btn-info"><span class="far fa-eye"></span></span>
+        </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro display_any(antibodies) %}
     <table class="mb-5 mt-3 table px-5 table-hover">
         <thead>
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col">
+                    {{ _self.antibody_tools(false) }}
+                    ID
+                </th>
                 <th scope="col">Name</th>
                 <th scope="col">Epitope</th>
                 <th scope="col">Organism</th>
                 <th scope="col">Vendor</th>
                 <th scope="col">RRID</th>
-                <th scope="col">Options</th>
             </tr>
         </thead>
         <tbody>
@@ -118,14 +127,18 @@
             {% set antibody = entry[0] %}
             {# {% set antibody = entry %}  #}
             <tr>
-                <th>{{ antibody.number }}{{ validation_status(antibody) }}</th>
+                <th>
+                    {{ _self.antibody_tools(antibody) }}
+                    {{ antibody.number }}{{ validation_status(antibody) }}
+                </th>
                 <td>{{ _self.format_antibody_name(antibody) }}</td>
                 <td>{{ pillify_epitopes(antibody.epitopeTargets) }}</td>
-                <td>{{ entry.hostName }}</td>
+                <td>{{ pillify_epitopes([antibody.hostOrganism]) }}</td>
                 <td>{{ vendor_url(antibody.vendor, antibody.vendorPn) }}</td>
                 <td>{% if antibody.rrid %}{{ rrid_resolver(antibody.rrid)}}{% else %}-{% endif %}</td>
-                <td>{{ _self.antibody_tools(antibody) }}</td>
             </tr>
+        {% else %}
+            <tr><td colspan="7" class="align-content-center align-middle">No antibodies found</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -135,13 +148,15 @@
     <table class="mb-5 mt-3 table px-5 table-hover">
         <thead>
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col">
+                    {{ _self.antibody_tools(false) }}
+                    ID
+                </th>
                 <th scope="col">Name</th>
                 <th scope="col">Epitope</th>
                 <th scope="col">Host</th>
                 <th scope="col">Vendor</th>
                 <th scope="col">RRID</th>
-                <th scope="col">Options</th>
             </tr>
         </thead>
         <tbody>
@@ -149,13 +164,15 @@
             {% set primaryAntibody = entry[0] %}
             {# {% set primaryAntibody = entry %}  #}
             <tr>
-                <th>{{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}</th>
+                <th>
+                    {{ _self.antibody_tools(primaryAntibody) }}
+                    {{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}
+                </th>
                 <td>{{ _self.format_antibody_name(primaryAntibody) }}</td>
                 <td>{{ pillify_epitopes(primaryAntibody.epitopeTargets) }}</td>
-                <td>{{ entry.hostName }}</td>
+                <td>{{ pillify_epitopes([primaryAntibody.hostOrganism]) }}</td>
                 <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
                 <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
-                <td>{{ _self.antibody_tools(primaryAntibody) }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -163,18 +180,19 @@
 {% endmacro %}
 
 {% macro display_secondaries(secondaryAntibodies) %}
-    Amount of antries {{ secondaryAntibodies|length }}
     <table class="mb-5 mt-3 table table-hover">
         <thead>
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col">
+                    {{ _self.antibody_tools(false) }}
+                    ID
+                </th>
                 <th scope="col">Name</th>
                 <th scope="col">Epitope</th>
                 <th scope="col">Host Organism</th>
                 <th scope="col">Detection</th>
                 <th scope="col">Vendor</th>
                 <th scope="col">RRID</th>
-                <th scope="col">Options</th>
             </tr>
         </thead>
         <tbody>
@@ -182,14 +200,16 @@
             {% set secondaryAntibody = entry[0] %}
             {# {% set secondaryAntibody = entry %} #}
             <tr>
-                <th>{{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}</th>
+                <th>
+                    {{ _self.antibody_tools(secondaryAntibody) }}
+                    {{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}
+                </th>
                 <td>{{ _self.format_antibody_name(secondaryAntibody) }}</td>
                 <td>{{ pillify_epitopes(secondaryAntibody.epitopeTargets) }}</td>
-                <td>{{ entry.hostName }}</td>
+                <td>{{ pillify_epitopes([secondaryAntibody.hostOrganism]) }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
                 <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
                 <td>{% if secondaryAntibody.rrid %}{{ rrid_resolver(secondaryAntibody.rrid)}}{% else %}-{% endif %}</td>
-                <td>{{ _self.antibody_tools(secondaryAntibody) }}</td>
             </tr>
         {% endfor %}
         </tbody>

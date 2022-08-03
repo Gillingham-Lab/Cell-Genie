@@ -167,15 +167,19 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro pillify_epitopes(epitopes) %}
+{% macro pillify_epitopes(epitopes, link_to_antobodies = false) %}
     {% for epitope in epitopes %}
         {% if epitope is epitopeProtein %}
-            <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_proteins_epitope", {"epitope": epitope.id}) }}'>{{ epitope }}</a>
+            {% if link_to_antobodies %}
+                <a class='badge rounded-pill bg-dark text-light' href='{{ url("app_antibodies_epitope", {"epitope": epitope.id}) }}'>{{ epitope }}</a>
+            {% else %}
+                <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_proteins_epitope", {"epitope": epitope.id}) }}'>{{ epitope }}</a>
+            {% endif %}
         {% elseif epitope is epitopeSmallMolecule %}
-            <a class='badge rounded-pill bg-light text-light' href='#'>{{ epitope }}</a>
+            <a class='badge rounded-pill bg-info text-light' href='#'>{{ epitope }}</a>
         {% elseif epitope is epitopeHost %}
-            <a class='badge rounded-pill bg-dark text-light' href='#'>{{ epitope }}</a>
-        {% else %}
+            <a class='badge rounded-pill bg-warning text-light' href='{{ url("app_antibodies_epitope", {"epitope": epitope.id}) }}'>{{ epitope }}</a>
+        {% elseif epitope is not null %}
             <span class='badge rounded-pill bg-white text-light' href='#'>{{ epitope }}</span>
         {% endif %}
     {% endfor %}

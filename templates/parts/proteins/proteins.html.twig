@@ -28,29 +28,44 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col">
+                            <div class="btn-group mr-3" style="visibility: hidden;">
+                                <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
+                            </div>
+                            Name
+                        </th>
                         <th scope="col">Epitopes </th>
+                        <th scope="col">Descendants</th>
                         <th scope="col">Antibodies </th>
-                        <th scope="col">Options</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for protein in proteins %}
                         <tr>
-                            <td class="align-middle">{{ _self.format_antibody_name(protein) }}</td>
-                            <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes) }}{% else %}None{% endif %}</td>
+                            <td class="align-middle">
+                                <div class="btn-group mr-3">
+                                    <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
+                                </div>
+
+                                {{ _self.format_antibody_name(protein) }}
+                            </td>
+                            <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
+
+                            <td class="align-middle">
+                                {% if protein.children|length > 0 %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
 
                             <td class="align-middle">
                                 {% set antibody_count = 0 %}
                                 {% for epitope in protein.epitopes %}
                                     {% for antibody in epitope.antibodies %}
-                                        <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}">{{ antibody }}</a>
+                                        <a class="pr-3" href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}">{{ antibody }}</a>
                                     {% endfor %}
                                     {% set antibody_count = antibody_count + epitope.antibodies|length %}
                                 {% endfor %}
-                            </td>
-                            <td class="align-middle">
-                                <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Antibody;
+use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -22,11 +23,9 @@ class AntibodyRepository extends ServiceEntityRepository
         parent::__construct($registry, Antibody::class);
     }
 
-    public function findAnyAntibody(): array
+    public function findAnyAntibody(?Epitope $epitope = null): array
     {
-        $qb = $this->createQueryBuilder("a");
-
-        return $qb
+        $qb = $this->createQueryBuilder("a")
             ->addSelect("ho")
             ->addSelect("ep")
             ->addSelect("ho.shortName as hostName")
@@ -36,8 +35,14 @@ class AntibodyRepository extends ServiceEntityRepository
             ->addGroupBy("ep.id")
             ->addGroupBy("ho.id")
             ->having("count(distinct ep.id) > 0")
-            ->orderBy("a.number")
-            ->getQuery()
+            ->orderBy("a.number");
+
+        if ($epitope !== null) {
+            $qb = $qb->andWhere("ep.id = :epitope")
+                ->setParameter("epitope", $epitope->getId(), "ulid");
+        }
+
+        return $qb->getQuery()
             ->getResult()
             ;
     }
