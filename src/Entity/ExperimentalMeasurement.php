@@ -41,6 +41,9 @@ class ExperimentalMeasurement extends InputType
     #[ORM\Column(type: "boolean", nullable: false, options: ["default" => false])]
     private bool $internalStandard = false;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $isY;
+
     public function __toString(): string
     {
         return $this->title ?? "{no name}";
@@ -109,6 +112,18 @@ class ExperimentalMeasurement extends InputType
     public function setInternalStandard(bool $internalStandard = true): self
     {
         $this->internalStandard = $internalStandard;
+
+        return $this;
+    }
+
+    public function isIsY(): ?bool
+    {
+        return $this->isY;
+    }
+
+    public function setIsY(?bool $isY): self
+    {
+        $this->isY = $isY;
 
         return $this;
     }

@@ -13,6 +13,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 
 #[ORM\Entity(repositoryClass: ProteinRepository::class)]
 #[UniqueEntity(fields: "shortName")]
@@ -43,6 +44,17 @@ class Protein
     #[ORM\ManyToMany(targetEntity: EpitopeProtein::class, mappedBy: "proteins")]
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private Collection $epitopes;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private $proteinType;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $fastaSequence;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private $mutation;
 
     public function __construct()
     {
@@ -87,9 +99,9 @@ class Protein
         return $this;
     }
 
-    public function removeParent(Cell $parent): self
+    public function removeParent(Protein $parent): self
     {
-        if ($this->parents->removeElement($parent)) {
+        if ($this->parents->removeElement($parent) and $parent !== $this) {
             // set the owning side to null (unless already changed)
             if ($parent->getChildren()->contains($this)) {
                 $parent->getChildren()->removeElement($this);
@@ -107,9 +119,14 @@ class Protein
         return $this->children;
     }
 
+    public function addChildren(Protein $child): self
+    {
+        return $this->addChild($child);
+    }
+
     public function addChild(Protein $child): self
     {
-        if (!$this->children->contains($child)) {
+        if (!$this->children->contains($child) and $child !== $this) {
             $this->children[] = $child;
             $child->addParent($this);
         }
@@ -117,13 +134,15 @@ class Protein
         return $this;
     }
 
-    public function removeChild(Cell $child): self
+    public function removeChildren(Protein $child): self
+    {
+        return $this->removeChild($child);
+    }
+
+    public function removeChild(Protein $child): self
     {
         if ($this->children->removeElement($child)) {
-            // set the owning side to null (unless already changed)
-            if ($child->getParent() === $this) {
-                $child->setParent(null);
-            }
+            $child->removeParent($this);
         }
 
         return $this;
@@ -179,6 +198,42 @@ class Protein
         if ($this->epitopes->removeElement($epitope)) {
             $epitope->removeProtein($this);
         }
+
+        return $this;
+    }
+
+    public function getProteinType(): ?string
+    {
+        return $this->proteinType;
+    }
+
+    public function setProteinType(?string $proteinType): self
+    {
+        $this->proteinType = $proteinType;
+
+        return $this;
+    }
+
+    public function getFastaSequence(): ?string
+    {
+        return $this->fastaSequence;
+    }
+
+    public function setFastaSequence(?string $fastaSequence): self
+    {
+        $this->fastaSequence = $fastaSequence;
+
+        return $this;
+    }
+
+    public function getMutation(): ?string
+    {
+        return $this->mutation;
+    }
+
+    public function setMutation(?string $mutation): self
+    {
+        $this->mutation = $mutation;
 
         return $this;
     }

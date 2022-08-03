@@ -43,6 +43,9 @@ class ExperimentalCondition extends InputType
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $isX;
+
     public function __toString(): string
     {
         return $this->title ?? "{no name}";
@@ -112,6 +115,18 @@ class ExperimentalCondition extends InputType
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function isIsX(): ?bool
+    {
+        return $this->isX;
+    }
+
+    public function setIsX(?bool $isX): self
+    {
+        $this->isX = $isX;
+
         return $this;
     }
 }

@@ -1,5 +1,5 @@
 {% extends 'homepage.html.twig' %}
-{% from 'macros.html.twig' import pillify_epitopes %}
+{% from 'macros.html.twig' import pillify_epitopes, pillify_proteins %}
 
 {% block title %}Cell Genie: Proteins{% endblock %}
 
@@ -34,8 +34,8 @@
                             </div>
                             Name
                         </th>
-                        <th scope="col">Epitopes </th>
                         <th scope="col">Descendants</th>
+                        <th scope="col">Epitopes </th>
                         <th scope="col">Antibodies </th>
                     </tr>
                 </thead>
@@ -49,14 +49,16 @@
 
                                 {{ _self.format_antibody_name(protein) }}
                             </td>
-                            <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
 
                             <td class="align-middle">
                                 {% if protein.children|length > 0 %}
+                                    {{ pillify_proteins(protein.children) }}
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
+
+                            <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
 
                             <td class="align-middle">
                                 {% set antibody_count = 0 %}

@@ -12,7 +12,7 @@ use Twig\TwigTest;
 
 class EpitopeTests extends AbstractExtension
 {
-    function getTests()
+    function getTests(): array
     {
         return [
             new TwigTest("epitope", fn(?object $epitope) => $epitope instanceof Epitope),

@@ -11,6 +11,8 @@ use App\Form\AntibodyDilutionType;
 use App\Form\DocumentationType;
 use App\Form\LotType;
 use App\Repository\VocabularyRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -40,6 +42,13 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
     {
         return Antibody::class;
     }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->setPermission(Action::DELETE, "ROLE_ADMIN");
+    }
+
 
     public function configureFields(string $pageName): iterable
     {

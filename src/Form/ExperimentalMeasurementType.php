@@ -25,6 +25,9 @@ class ExperimentalMeasurementType extends AbstractType
                 "choices" => InputType::LABEL_TYPES,
             ])
             ->add("config", options: ["help" => "Type configuration. For choice fields, this is a comma-separated list of all possible choices."])
+            ->add("isY", options: [
+                "help" => "Mark if this column is going to be used as Y for the preview plot",
+            ])
         ;
     }
 

@@ -41,12 +41,15 @@ class ProteinRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder("p")
             ->addSelect("ep")
             ->addSelect("ab")
+            ->addSelect("pc")
             ->leftJoin("p.epitopes", "ep", conditionType: Join::ON)
             ->leftJoin("ep.antibodies", "ab", conditionType: Join::ON)
+            ->leftJoin("p.children", "pc", conditionType: Join::ON)
             ->orderBy("ab.number", "ASC")
             ->groupBy("p.ulid")
             ->addGroupBy("ep.id")
             ->addGroupBy("ab.ulid")
+            ->addGroupBy("pc.ulid")
         ;
 
         if ($epitope) {

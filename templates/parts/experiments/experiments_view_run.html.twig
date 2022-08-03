@@ -202,5 +202,148 @@
                 </table>
             </div>
         </div>
+
+        <div class="bg-white mt-3 border col col-12 p-0 mb-5">
+            <div class="bg-dark text-white p-3 border-bottom border-dark">
+                <div class="row">
+                    <h2 class="col">Data Preview</h2>
+                </div>
+            </div>
+
+            {% set x_id = null %}
+            {% set y_ids = [] %}
+
+            {# Save the ID of the last 'isX' column. #}
+            {% for condition in experiment.conditions %}
+                {% if condition.isX == true %}
+                    {% set x_id = condition.id %}
+                {% endif %}
+            {% endfor %}
+
+            {# Save a collection of all IDs marked as 'isY' #}
+            {% for measurement in experiment.measurements %}
+                {% if measurement.isY == true %}
+                    {% set y_ids = y_ids|merge([measurement.id]) %}
+                {% endif %}
+            {% endfor %}
+
+            {% if x_id == null or y_ids|length == 0 %}
+                <div>Preview not possible, as the experiment does not define any conditions as X or any measurement as Y.</div>
+            {% else %}
+                <div id="preview_plot"></div>
+            {% endif %}
+            </div>
+        </div>
     </div>
+{% endblock %}
+
+{% block script_bottom %}
+    {% set x_id = null %}
+    {% set y_ids = [] %}
+
+    {# Save the ID of the last 'isX' column. #}
+    {% for condition in experiment.conditions %}
+        {% if condition.isX == true %}
+            {% set x_id = condition.id %}
+        {% endif %}
+    {% endfor %}
+
+    {# Save a collection of all IDs marked as 'isY' #}
+    {% for measurement in experiment.measurements %}
+        {% if measurement.isY == true %}
+            {% set y_ids = y_ids|merge([measurement.id]) %}
+        {% endif %}
+    {% endfor %}
+
+    <script type="application/javascript">
+        // set the dimensions and margins of the graph
+        const margin = {top: 30, right: 30, bottom: 30, left: 60},
+            width = $("#preview_plot").width() - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        const svg = d3.select("#preview_plot")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        const data_x = [
+            // add each data point
+            // ID should be {{ x_id }}
+            {% for well in run.wells -%}
+                {%- if well.wellData.conditions is defined -%}
+                    {%- for condition in well.wellData.conditions|filter(c => x_id == c.id or x_id.toBase58 == c.id) -%}
+                        {{ condition.value }}, {{ "" }}
+                    {%- endfor -%}
+                {%- endif -%}
+            {% endfor %}
+
+        ]; // define x data
+
+        const data_y = [
+            // for each y add data points
+            {% for y_id in y_ids -%}
+                [
+                {% for well in run.wells -%}
+                    {%- if well.wellData.measurements is defined -%}
+                        {%- for measurement in well.wellData.measurements|filter(c => y_id == c.id or y_id.toBase58 == c.id) -%}
+                            {{ measurement.value }}, {{ "" }}
+                        {%- endfor -%}
+                    {%- endif -%}
+                {% endfor -%}
+                ], {{ "" }}
+            {% endfor %}
+        ];
+
+        // Add X axis
+        let x;
+        if (d3.max(data_x)/d3.min(data_x) > 100) {
+            // 2 magnitudes cried for logarithmic scale
+            x = d3.scaleLog()
+                .base(10)
+                .domain([d3.min(data_x), d3.max(data_x)])
+                .range([ 0, width ]);
+        } else {
+            // If not, then we use normal scale
+            x = d3.scaleLinear()
+                .domain([d3.min(data_x), d3.max(data_x)])
+                .range([ 0, width ]);
+        }
+
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        // Add Y axis
+        const y = d3.scaleLinear()
+            .domain([d3.min(data_y[0]), d3.max(data_y[0])])
+            .range([ height, 0]);
+
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        data = function(x, y) {
+            let data = [];
+
+            for (let i = 0; i < x.length; i++) {
+                data.push({"x": x[i], "y": y[i]});
+            }
+
+            return data;
+        }
+
+        // Add dots
+        svg.append('g')
+            .selectAll("dot")
+            .data(data(data_x, data_y[0]))
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return x(d.x); } )
+            .attr("cy", function (d) { return y(d.y); } )
+            .attr("r", 5)
+            .style("fill", "#000000");
+    </script>
 {% endblock %}
