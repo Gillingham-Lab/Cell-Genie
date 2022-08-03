@@ -97,9 +97,9 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
             /*AssociationField::new("proteinTarget", label: "Protein target")
                 ->setHelp("Leave empty if its a secondary antibody.")
                 ->hideOnIndex(),*/
-            AssociationField::new("hostTarget", label: "Host Target")
+            /*AssociationField::new("hostTarget", label: "Host Target")
                 ->setHelp("Add which host this antibody targets. Leave empty for primary antibodies.")
-                ->hideOnIndex(),
+                ->hideOnIndex(),*/
 
             FormField::addTab("Lot entries"),
             CollectionField::new("lots", "Lot entries")
@@ -121,8 +121,7 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            /*->add("proteinTarget")*/
-            ->add("hostTarget")
+
             ->add("validatedInternally")
             ->add("vendor")
         ;

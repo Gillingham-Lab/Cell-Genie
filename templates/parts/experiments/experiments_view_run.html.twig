@@ -228,9 +228,9 @@
             {% endfor %}
 
             {% if x_id == null or y_ids|length == 0 %}
-                <div>Preview not possible, as the experiment does not define any conditions as X or any measurement as Y.</div>
+                <div class="p-5">Preview not possible, as the experiment does not define any conditions as X or any measurement as Y.</div>
             {% else %}
-                <div id="preview_plot"></div>
+                <div class="m-5" id="preview_plot"></div>
             {% endif %}
             </div>
         </div>
@@ -255,6 +255,7 @@
         {% endif %}
     {% endfor %}
 
+    {% if x_id != null and y_ids|length > 0 %}
     <script type="application/javascript">
         // set the dimensions and margins of the graph
         const margin = {top: 30, right: 30, bottom: 30, left: 60},
@@ -346,4 +347,5 @@
             .attr("r", 5)
             .style("fill", "#000000");
     </script>
+    {% endif %}
 {% endblock %}
