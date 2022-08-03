@@ -90,7 +90,7 @@ class AntibodyController extends AbstractController
     public function viewAntibody(Antibody $antibodyId = null, string $antibodyNr = null): Response
     {
         if ($antibodyId === null and $antibodyNr === null) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("Antibody not found.");
         }
 
         if ($antibodyNr !== null) {

@@ -37,10 +37,6 @@ class Antibody
     #[Assert\Length(min: 5, max: 255)]
     private string $longName = "";
 
-    /*#[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "antibodies")]
-    #[ORM\InverseJoinColumn(referencedColumnName: "ulid")]*/
-    private Collection $proteinTarget;
-
     #[ORM\ManyToMany(targetEntity: Epitope::class, inversedBy: "antibodies")]
     #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(name: "epitope_id", referencedColumnName: "id", onDelete: "CASCADE")]
@@ -65,9 +61,6 @@ class Antibody
 
     #[ORM\ManyToOne(targetEntity: EpitopeHost::class, inversedBy: "hostAntibodies")]
     private ?EpitopeHost $hostOrganism = null;
-
-    #[ORM\ManyToOne(targetEntity: AntibodyHost::class, inversedBy: "secondaries")]
-    private ?AntibodyHost $hostTarget = null;
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $dilution = null;
@@ -169,15 +162,6 @@ class Antibody
         return $this;
     }
 
-    /**
-     * @return Collection<int, Protein>
-     */
-    public function getProteinTarget(): Collection
-    {
-        return new ArrayCollection();
-        #return $this->proteinTarget;
-    }
-
     public function getDetection(): ?string
     {
         return $this->detection;
@@ -247,18 +231,6 @@ class Antibody
     {
         $this->hostOrganism = $hostOrganism;
         $hostOrganism->addHostAntibody($this);
-
-        return $this;
-    }
-
-    public function getHostTarget(): ?AntibodyHost
-    {
-        return $this->hostTarget;
-    }
-
-    public function setHostTarget(?AntibodyHost $hostTarget): self
-    {
-        $this->hostTarget = $hostTarget;
 
         return $this;
     }

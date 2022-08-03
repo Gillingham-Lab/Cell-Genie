@@ -14,4 +14,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AntibodyHostRepository::class)]
 class AntibodyHost
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: "ulid", unique: true)]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private ?Ulid $id = null;
+
+    public function getId(): ?Ulid
+    {
+        return $this->id;
+    }
 }

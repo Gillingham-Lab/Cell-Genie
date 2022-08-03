@@ -7,7 +7,7 @@
     <div class="row p-3">
         <div class="col col-12 bg-white mb-3 border p-5">
             <div class="row">
-                {% if antibody.proteinTarget|length > 0 and not antibody.hostTarget %}
+                {% if antibody.epitopeTargets|filter(e => e is not epitopeHost)|length > 0 %}
                     <h1>
                         Primary antibody: {{ antibody }}
                         <a
@@ -16,7 +16,7 @@
                                 role="button"
                         ></a>
                     </h1>
-                {% elseif antibody.hostTarget and antibody.proteinTarget|length == 0 %}
+                {% elseif antibody.epitopeTargets|filter(e => e is epitopeHost)|length > 0 %}
                     <h1>Secondary antibody: {{ antibody }}
                         <a
                                 data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
@@ -51,12 +51,8 @@
                     {{ macros.definition_row("Host organism", antibody.hostOrganism) }}
                     {{ macros.definition_row("Clonality", antibody.clonality) }}
 
-                    {% if antibody.hostTarget %}
-                        {{ macros.definition_row("Host Target", antibody.hostTarget) }}
-                    {% endif %}
-
-                    {% if antibody.proteinTarget|length > 0 %}
-                        {{ macros.definition_row("Protein targets", macros.pillify_proteins(antibody.proteinTarget)) }}
+                    {% if antibody.epitopeTargets|length > 0 %}
+                        {{ macros.definition_row("Epitope targets", macros.pillify_epitopes(antibody.epitopeTargets)) }}
                     {% endif %}
 
                     {% if antibody.detection %}

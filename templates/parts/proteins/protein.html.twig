@@ -19,12 +19,40 @@
                     {{ macros.definition_row("ID", protein.ulid) }}
                     {{ macros.definition_row("Short name", protein.shortName) }}
                     {{ macros.definition_row("Name", protein.longName) }}
-                    {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "Unknown", protein.proteinAtlasUri ?? null) }}
+                    {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
+                    {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
                     {# Experiment types #}
+
+                    <tr>
+                        <th>Ancestors</th>
+                        <td>
+                            {% if protein.parents|length > 0 %}
+                                {{ macros.pillify_proteins(protein.parents) }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Descendants</th>
+                        <td>
+                            {% if protein.children|length > 0 %}
+                                {{ macros.pillify_proteins(protein.children) }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                    </tr>
+
                     <tr>
                         <th>Epitopes</th>
                         <td>
-                            {{ macros.pillify_epitopes(protein.epitopes) }}
+                            {% if protein.epitopes|length > 0 %}
+                                {{ macros.pillify_epitopes(protein.epitopes) }}
+                            {% else %}
+                                None
+                            {% endif %}
                         </td>
                     </tr>
                 </tbody>
@@ -51,7 +79,7 @@
                                         <div class="col-4 mb-3 pb-3">
                                             <div class="bg-secondary p-2 mb-n1 border-secondary border">
                                                 <h4 class="float-left">{{ antibody }} <span class="badge rounded-pill bg-primary text-light">{{ epitope }}</span></h4>
-                                                <a href="{{ url("app_antibody_view", {"antibodyId": antibody.id}) }}" class="text-right"><span class="far fa-eye"></span></a>
+                                                <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}" class="text-right"><span class="far fa-eye"></span></a>
                                             </div>
 
                                             <div class="p-2 pt-3 border-secondary border">

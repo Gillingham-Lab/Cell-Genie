@@ -139,7 +139,7 @@ class ExperimentalRunWellType extends AbstractType
 
             $choices = [];
             foreach ($chemicals as $chemical) {
-                $choices[$chemical->getShortName()] = $chemical->getId();
+                $choices[$chemical->getShortName()] = $chemical->getUlid()->toBase58();
             }
 
             $options = [
@@ -156,7 +156,7 @@ class ExperimentalRunWellType extends AbstractType
 
             $choices = [];
             foreach ($proteins as $protein) {
-                $choices[$protein->getShortName()] = $protein->getId();
+                $choices[$protein->getShortName()] = $protein->getUlid()->toBase58();
             }
 
             $options = [
