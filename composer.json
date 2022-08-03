@@ -2,7 +2,7 @@
     "name": "gillingham-lab/cell-genie",
     "type": "project",
     "license": "GPL-3.0-or-later",
-    "description": "A php web tool to manage cells and their genealogy.",
+    "description": "A php-based web tool for small chemical biology labs.",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {

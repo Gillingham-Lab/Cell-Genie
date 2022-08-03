@@ -49,7 +49,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Cell Genie')
+            ->setTitle('Gin')
             ->renderContentMaximized()
         ;
     }
@@ -68,10 +68,10 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),
 
             MenuItem::section("Antibodies"),
-            MenuItem::linkToCrud("Antibodies", "icon icon-antibody", Antibody::class),
-            MenuItem::linkToCrud("Epitopes: Hosts", "fas fa-horse", EpitopeHost::class),
-            MenuItem::linkToCrud("Epitopes: Proteins", "icon icon-protein", EpitopeProtein::class),
-            MenuItem::linkToCrud("Epitopes: Small Molecules", "fas fa-tablets", EpitopeSmallMolecule::class),
+            MenuItem::linkToCrud("Antibodies", "icon icon-antibody fw-icon", Antibody::class),
+            MenuItem::linkToCrud("Epitopes: Hosts", "fas fa-horse fw-icon", EpitopeHost::class),
+            MenuItem::linkToCrud("Epitopes: Proteins", "icon icon-protein fw-icon", EpitopeProtein::class),
+            MenuItem::linkToCrud("Epitopes: Small Molecules", "fas fa-tablets fw-icon", EpitopeSmallMolecule::class),
 
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
