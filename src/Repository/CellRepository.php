@@ -5,6 +5,7 @@ namespace App\Repository;
 
 use App\Entity\Cell;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +19,36 @@ class CellRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Cell::class);
+    }
+
+    public function getCellsWithAliquotes(?array $orderBy = null)
+    {
+        $qb = $this->createQueryBuilder("c");
+
+        $qb = $qb
+            ->select("c")
+            ->addSelect("ca")
+            ->addSelect("m")
+            ->addSelect("o")
+            ->addSelect("t")
+            ->leftJoin("c.cellAliquotes", "ca", conditionType: Join::ON)
+            ->leftJoin("c.morphology", "m", conditionType: Join::ON)
+            ->leftJoin("c.organism", "o", conditionType: Join::ON)
+            ->leftJoin("c.tissue", "t", conditionType: Join::ON)
+            ->groupBy("c.id")
+            ->addGroupBy("ca.id")
+            ->addGroupBy("m.id")
+            ->addGroupBy("o.id")
+            ->addGroupBy("t.id")
+        ;
+
+        if ($orderBy) {
+            foreach ($orderBy as $col => $order) {
+                $qb->addOrderBy("c.".$col, $order);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     // /**

@@ -176,7 +176,7 @@ class Cell
     #[Gedmo\Versioned]
     private ?int $countOnConfluence = null;
 
-    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    #[ORM\Column(type: "string", length: 10, unique: True, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 10)]
     #[Gedmo\Versioned]
@@ -188,6 +188,7 @@ class Cell
         $this->children = new ArrayCollection();
         $this->experiments = new ArrayCollection();
         $this->attachments = new ArrayCollection();
+        $this->associatedProteins = new ArrayCollection();
     }
 
     public function __toString()

@@ -1,0 +1,7 @@
+{% macro url_cell(cell) %}
+    {% if cell.cellNumber %}
+        {{ url("app_cell_view_number", {"cellNumber": cell.cellNumber}) }}
+    {% else %}
+        {{ url("app_cell_view", {"cellId": cell.id}) }}
+    {% endif %}
+{% endmacro %}

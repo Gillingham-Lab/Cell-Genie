@@ -1,5 +1,30 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
+
+{% macro cell_tools(cell=null) %}
+    {% if cell == null %}
+        <div class="btn-group btn-group-sm mr-3" style="visibility: hidden">
+            <span class="btn btn-primary btn-sm"><span class="far fa-clipboard"></span></span>
+            <span class="btn btn-primary btn-sm"><span class="fa fa-eye"></span></span>
+        </div>
+    {% else %}
+        <div class="btn-group btn-group-sm mr-3">
+            {% if cell.rrid %}
+                <a
+                        class="btn btn-primary btn-sm btn-clipboard"
+                        data-clipboard-text="{{ cell.name }} ({{ cell.rrid ? "RRID:" ~ cell.rrid : "" }})"
+                >
+                    <span class="far fa-clipboard"></span>
+                </a>
+            {% else %}
+                <span class="btn btn-outline-secondary btn-sm disabled"><span class="far fa-clipboard"></span></span>
+            {% endif %}
+            <a href="{{ cell_macros.url_cell(cell) }}" class="btn btn-primary btn-sm"><span class="fa fa-eye"></span></a>
+        </div>
+    {% endif %}
+{% endmacro %}
+
 
 {% block title %}Cell Genie: Cells{% endblock %}
 
@@ -23,7 +48,12 @@
             <table class="table table-hover fancyTable">
                 <thead>
                 <tr>
-                    <th scope="col">Nr</th>
+                    <th>
+                        {{ _self.cell_tools() }}
+                    </th>
+                    <th scope="col">
+                        Nr
+                    </th>
                     <th scope="col">Name</th>
                     <th scope="col">Organism</th>
                     <th scope="col">Tissue</th>
@@ -32,13 +62,17 @@
                     <th scope="col">Cancer</th>
                     <th scope="col">Engineered</th>
                     <th scope="col">RRID</th>
-                    <th scope="col">Options</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for cell in cells %}
                     <tr>
-                        <td><strong>{{ cell.cellNumber }}</strong></td>
+                        <td>
+                            {{ _self.cell_tools(cell) }}
+                        </td>
+                        <td>
+                            <strong>{{ cell.cellNumber }}</strong>
+                        </td>
                         <td>{{ cell.name }}</td>
                         <td>{{ cell.organism ? cell.organism.name : "undefined" }}</td>
                         <td>{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
@@ -55,19 +89,6 @@
                         <td>{{ cell.isCancer ? "Yes" : "No" }}</td>
                         <td>{{ cell.isEngineered ? "Yes" : "No" }}</td>
                         <td>{{ cell.rrid ? macros.rrid_resolver(cell.rrid) : "-" }}</td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                {% if cell.rrid %}
-                                <a
-                                        class="btn btn-info btn-clipboard"
-                                        data-clipboard-text="{{ cell.name }} ({{ cell.rrid ? "RRID:" ~ cell.rrid : "" }})"
-                                >
-                                    <span class="far fa-clipboard"></span>
-                                </a>
-                                {% endif %}
-                                <a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="btn btn-info btn-sm"><span class="fa fa-eye"></span></a>
-                            </div>
-                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

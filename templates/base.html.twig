@@ -128,10 +128,11 @@
 
             $(document).ready(function() {
                 $(".fancyTable").fancyTable({
-                    sortColumn:0,
+                    sortColumn: 1,
                     pagination: true,
                     perPage: 30,
-                    globalSearch: true
+                    globalSearch: true,
+                    globalSearchExcludeColumns: [0],
                 });
             });
         </script>

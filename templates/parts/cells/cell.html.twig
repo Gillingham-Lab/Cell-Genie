@@ -1,5 +1,6 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
 
 {% block title %}Cell Genie: Cells{% endblock %}
 
@@ -36,7 +37,7 @@
         <div class="col col-12 p-5 bg-white mb-3 border">
             <div class="row">
                 <h1>
-                    {{ cell.name }}
+                    {{ cell.cellNumber }} - {{ cell.name }}
                     <a
                             data-clipboard-text="{{ cell.name }} ({{ cell.rrid ? "RRID:" ~ cell.rrid : "" }})"
                             class="btn-clipboard far fa-clipboard small"
@@ -57,7 +58,7 @@
                                 {{ macros.definition_row_raw("Cellosaurus", _self.cellosauros_url(cell)) }}
 
                                 {% if cell.parent %}
-                                    {{ macros.definition_row("Parent", cell.parent.name, url("app_cell_view", {"cellId": cell.parent.id})) }}
+                                    {{ macros.definition_row("Parent", cell.parent.name, cell_macros.url_cell(cell.parent)) }}
                                 {% else %}
                                     {{ macros.definition_row("Parent", "none") }}
                                 {% endif %}
@@ -67,7 +68,7 @@
                                         <th>Children</th>
                                         <td>
                                             {% for child in cell.children %}
-                                                {% set childUrl = url("app_cell_view", {"cellId": child.id}) %}
+                                                {% set childUrl = cell_macros.url_cell(child) %}
 
                                                 <a class='badge rounded-pill bg-primary text-light' href='{{ childUrl }}'>{{ child.name }}</a>
                                             {% endfor %}

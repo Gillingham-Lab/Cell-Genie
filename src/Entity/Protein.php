@@ -62,6 +62,7 @@ class Protein
         $this->epitopes = new ArrayCollection();
         $this->parents = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->expressingCells = new ArrayCollection();
     }
 
     public function __toString(): string

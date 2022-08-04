@@ -12,6 +12,7 @@ use App\Repository\ProteinRepository;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,8 +34,7 @@ class CellController extends AbstractController
     #[Route("/cells", name: "app_cells")]
     public function cells(): Response
     {
-        $cells = $this->cellRepository->findBy(
-            [],
+        $cells = $this->cellRepository->getCellsWithAliquotes(
             orderBy: ["cellNumber" => "ASC"]
         );
 
@@ -44,13 +44,28 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/view/{cellId}", name: "app_cell_view")]
+    #[Route("/cells/view/no/{cellNumber}", name: "app_cell_view_number")]
     #[Route("/cells/view/{cellId}/{aliquoteId}", name: "app_cell_aliquote_view")]
-    public function cell_overview(string $cellId, string $aliquoteId = null): Response
-    {
-        try {
-            $cell = $this->cellRepository->find($cellId);
-        } catch (ConversionException) {
-            $cell = null;
+    #[Route("/cells/view/no/{cellNumber}/{aliquoteId}", name: "app_cell_aliquote_view_number")]
+    public function cell_overview(
+        string $cellId = null,
+        string $aliquoteId = null,
+        string $cellNumber = null,
+    ): Response {
+        if ($cellId === null AND $cellNumber === null) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($cellId) {
+            try {
+                $cell = $this->cellRepository->find($cellId);
+            } catch (ConversionException) {
+                $cell = null;
+            }
+        }
+
+        if ($cellNumber) {
+            $cell = $this->cellRepository->findOneBy(["cellNumber" => $cellNumber]);
         }
 
         if (!$cell) {
