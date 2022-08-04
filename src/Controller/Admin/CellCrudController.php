@@ -7,10 +7,12 @@ use App\Entity\Cell;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
+use App\Form\CellularProteinType;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -49,11 +51,19 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->setLabel("Cellosaurus ID")
                 ->setRequired(false)
                 ->hideOnIndex(),
-            TextField::new('age')->setRequired(false),
-            $this->textFieldOrChoices("sex")->setRequired(false),
-            $this->textFieldOrChoices("ethnicity")->setRequired(false)->hideOnIndex()
+            TextField::new('age')
+                ->hideOnIndex()
+                ->setRequired(false),
+            $this->textFieldOrChoices("sex")
+                ->hideOnIndex()
+                ->setRequired(false),
+            $this->textFieldOrChoices("ethnicity")
+                ->setRequired(false)
+                ->hideOnIndex()
                 ->setHelp("According to cellosaurus genome origin"),
-            TextField::new('disease')->setRequired(false),
+            TextField::new('disease')
+                ->hideOnIndex()
+                ->setRequired(false),
             AssociationField::new("morphology")
                 ->setRequired(true)
                 ->hideOnIndex(),
@@ -118,6 +128,12 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnIndex(),
             TextEditorField::new("lysing", label: "Recommended cell lysis")
                 ->hideOnIndex(),
+
+            FormField::addTab("Expression"),
+            CollectionField::new("cellProteins", "Cellular Proteins")
+                ->hideOnIndex()
+                ->setEntryType(CellularProteinType::class)
+                ->setEntryIsComplex(true),
 
             FormField::addTab("Attachments"),
             ... HasAttachmentsTrait::attachmentCrudFields(),

@@ -248,17 +248,34 @@
                                 <div class="col-4 mb-3">
                                     <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Associated proteins</h4>
                                     <div class="p-2 pt-3 border-secondary border">
-                                        {% if proteins|length == 0 %}
+                                        {% if cell.cellProteins|length == 0 %}
                                             none
                                         {% else %}
-                                            {% for protein in proteins %}
-                                                <span class="badge rounded-pill bg-primary text-light" data-toggle="tooltip" title="{{ protein.longName }}"><a>{{ protein.shortName }}</a></span>
+                                            {% for cellProtein in cell.cellProteins %}
+                                                <div class="border border-1 border-dark">
+                                                    <h5 class="bg-secondary p-1">{{ cellProtein.associatedProtein }} <a href="{{ url("app_protein_view", {"proteinId": cellProtein.associatedProtein.ulid}) }}"><span class="fa fa-eye fa-sm"></span></a></h5>
+
+                                                    <div class="p-1">
+                                                        <p>
+                                                            {{ cellProtein.description }}
+                                                        </p>
+
+                                                        {% if cellProtein.detection %}
+                                                            <dl>
+                                                                {% for detection in cellProtein.detection %}
+                                                                    <dt class="{{ detection.isDetectable ? "text-success" : "text-danger"}}">{{ detection.method }}</dt>
+                                                                    <dd>{{ detection.comment }}</dd>
+                                                                {% endfor %}
+                                                            </dl>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
                                 </div>
 
-                                {# List of experiment types #}
+                                {# List of experiment types # }
                                 <div class="col-4 mb-3">
                                     <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Experiment types</h4>
                                     <div class="p-2 pt-3 border-secondary border">
@@ -272,7 +289,7 @@
                                     </div>
                                 </div>
 
-                                {# List of actual experiments! #}
+                                {# List of actual experiments! # }
                                 <div class="col-4 mb-3">
                                     <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Expeirments</h4>
                                     <div class="p-2 pt-3 border-secondary border">
@@ -286,7 +303,7 @@
                                     </div>
                                 </div>
 
-                                {# List of chemicals #}
+                                {# List of chemicals # }
                                 <div class="col-4 mb-3">
                                     <h4 class="bg-secondary p-2 mb-n1 border-secondary border">Chemicals</h4>
                                     <div class="p-2 pt-3 border-secondary border">
@@ -298,7 +315,7 @@
                                             {% endfor %}
                                         {% endif %}
                                     </div>
-                                </div>
+                                </div>#}
                             </div>
                         </div>
 

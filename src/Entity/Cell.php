@@ -182,6 +182,9 @@ class Cell
     #[Gedmo\Versioned]
     private ?string $cellNumber = "???";
 
+    #[ORM\OneToMany(mappedBy: 'cellLine', targetEntity: CellProtein::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    private $cellProteins;
+
     public function __construct()
     {
         $this->cellAliquotes = new ArrayCollection();
@@ -189,6 +192,7 @@ class Cell
         $this->experiments = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->associatedProteins = new ArrayCollection();
+        $this->cellProteins = new ArrayCollection();
     }
 
     public function __toString()
@@ -650,6 +654,36 @@ class Cell
     public function setEngineer(?User $engineer): self
     {
         $this->engineer = $engineer;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CellProtein>
+     */
+    public function getCellProteins(): Collection
+    {
+        return $this->cellProteins;
+    }
+
+    public function addCellProtein(CellProtein $cellProtein): self
+    {
+        if (!$this->cellProteins->contains($cellProtein)) {
+            $this->cellProteins[] = $cellProtein;
+            $cellProtein->setCellLine($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCellProtein(CellProtein $cellProtein): self
+    {
+        if ($this->cellProteins->removeElement($cellProtein)) {
+            // set the owning side to null (unless already changed)
+            if ($cellProtein->getCellLine() === $this) {
+                $cellProtein->setCellLine(null);
+            }
+        }
+
         return $this;
     }
 }
