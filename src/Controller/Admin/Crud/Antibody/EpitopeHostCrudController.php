@@ -21,8 +21,7 @@ class EpitopeHostCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->hideOnForm(),
-            TextField::new('shortName', label: "Short name of the epitope")
-                ->hideOnIndex(),
+            TextField::new('shortName', label: "Short name of the epitope"),
             TextareaField::new("description", label: "Description")
                 ->setHelp("Additional information on the epitope, if known."),
         ];
