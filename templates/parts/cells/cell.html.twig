@@ -252,7 +252,7 @@
                                             none
                                         {% else %}
                                             {% for cellProtein in cell.cellProteins %}
-                                                <div class="border border-1 border-dark">
+                                                <div class="border border-1 border-dark mb-1">
                                                     <h5 class="bg-secondary p-1">{{ cellProtein.associatedProtein }} <a href="{{ url("app_protein_view", {"proteinId": cellProtein.associatedProtein.ulid}) }}"><span class="fa fa-eye fa-sm"></span></a></h5>
 
                                                     <div class="p-1">
