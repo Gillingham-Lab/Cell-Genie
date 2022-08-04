@@ -52,6 +52,7 @@ class ProteinCrudController extends AbstractCrudController
                 ->setHelp("Specify the type of the protein (wildtype, point mutant, isoform ...). Additional context is given by the parent."),
 
             TextareaField::new('fastaSequence', label: "Sequence")
+                ->hideOnIndex()
                 ->setHelp("The one letter amino acid code, sequence only (no fasta header)"),
             TextField::new('mutation', label: "Point mutations")
                 ->setHelp("In the form of G12C, for example. Make sure the sequence is correct."),
