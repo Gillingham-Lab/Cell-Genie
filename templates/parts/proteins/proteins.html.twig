@@ -49,7 +49,7 @@
                                     <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
                                 </div>
                             </td>
-                            <td class="align-middle">
+                            <td class="align-middle" data-sortvalue="{{ protein.shortName }}">
                                 {{ _self.format_antibody_name(protein) }}
                             </td>
 
