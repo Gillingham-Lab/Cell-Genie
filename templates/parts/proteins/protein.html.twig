@@ -13,50 +13,62 @@
         </div>
 
         {# Short information #}
-        <div class="col col-12 bg-white mb-3 border p-5">
-            <table class="table table-sm table-borderless table-hover col-lg-4 col-md-12">
-                <tbody>
-                    {{ macros.definition_row("ID", protein.ulid) }}
-                    {{ macros.definition_row("Short name", protein.shortName) }}
-                    {{ macros.definition_row("Name", protein.longName) }}
-                    {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
-                    {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
-                    {# Experiment types #}
+        <div class="col col-6 mb-3 p-0 pr-2">
+            <div class="bg-white p-5 border h-100">
+                <table class="table table-sm table-borderless table-hover">
+                    <tbody>
+                        {{ macros.definition_row("ID", protein.ulid) }}
+                        {{ macros.definition_row("Short name", protein.shortName) }}
+                        {{ macros.definition_row("Name", protein.longName) }}
+                        {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
+                        {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
+                        {# Experiment types #}
 
-                    <tr>
-                        <th>Ancestors</th>
-                        <td>
-                            {% if protein.parents|length > 0 %}
-                                {{ macros.pillify_proteins(protein.parents) }}
-                            {% else %}
-                                None
-                            {% endif %}
-                        </td>
-                    </tr>
+                        <tr>
+                            <th>Ancestors</th>
+                            <td>
+                                {% if protein.parents|length > 0 %}
+                                    {{ macros.pillify_proteins(protein.parents) }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                        </tr>
 
-                    <tr>
-                        <th>Descendants</th>
-                        <td>
-                            {% if protein.children|length > 0 %}
-                                {{ macros.pillify_proteins(protein.children) }}
-                            {% else %}
-                                None
-                            {% endif %}
-                        </td>
-                    </tr>
+                        <tr>
+                            <th>Descendants</th>
+                            <td>
+                                {% if protein.children|length > 0 %}
+                                    {{ macros.pillify_proteins(protein.children) }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                        </tr>
 
-                    <tr>
-                        <th>Epitopes</th>
-                        <td>
-                            {% if protein.epitopes|length > 0 %}
-                                {{ macros.pillify_epitopes(protein.epitopes) }}
-                            {% else %}
-                                None
-                            {% endif %}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        <tr>
+                            <th>Epitopes</th>
+                            <td>
+                                {% if protein.epitopes|length > 0 %}
+                                    {{ macros.pillify_epitopes(protein.epitopes) }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col col-6 mb-3 p-0 pr-2">
+            <div class="bg-white p-5 border h-100">
+                {% if protein.fastaSequence %}
+                <div id="sequenceViewer"></div>
+                {% else %}
+                    No sequence given.
+                {% endif %}
+            </div>
         </div>
 
         {# Tabbed info at the bottom #}
@@ -122,4 +134,28 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block script_bottom %}
+    <script src="https://cdn.jsdelivr.net/gh/calipho-sib/sequence-viewer@master/dist/sequence-viewer.min.js"></script>
+    <script type="application/javascript">
+        {% if protein.fastaSequence %}
+        let seq = new Sequence('{{ protein.fastaSequence }}');
+
+        seq.render('#sequenceViewer', {
+            'showLineNumbers': true,
+            'wrapAminoAcids': true,
+            'charsPerLine': 100,
+            'toolbar': true,
+            'search': true,
+            'header' : {
+                display:true,
+                searchInTitle :true,
+                unit: "Char",
+                showCpl: false,
+                badgeWithUnit : false
+            }
+        });
+        {% endif %}
+    </script>
 {% endblock %}
