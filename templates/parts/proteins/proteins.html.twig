@@ -25,13 +25,15 @@
 
 
         <div class="col col-12 p-5 bg-white mb-3 border">
-            <table class="table table-hover">
+            <table class="table table-hover fancyTable">
                 <thead>
                     <tr>
-                        <th scope="col">
+                        <th scope="col" style="width: 2em;">
                             <div class="btn-group mr-3" style="visibility: hidden;">
                                 <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
                             </div>
+                        </th>
+                        <th scope="col">
                             Name
                         </th>
                         <th scope="col">Descendants</th>
@@ -46,7 +48,8 @@
                                 <div class="btn-group mr-3">
                                     <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
                                 </div>
-
+                            </td>
+                            <td class="align-middle">
                                 {{ _self.format_antibody_name(protein) }}
                             </td>
 
@@ -60,15 +63,27 @@
 
                             <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
 
-                            <td class="align-middle">
                                 {% set antibody_count = 0 %}
                                 {% for epitope in protein.epitopes %}
                                     {% for antibody in epitope.antibodies %}
+                                        {% if antibody_count == 0 %}
+
+                            <td class="align-middle" data-sortvalue="{{ antibody }}">
+                                        {% endif %}
+
                                         <a class="pr-3" href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}">{{ antibody }}</a>
+                                        {% set antibody_count = antibody_count + 1%}
                                     {% endfor %}
                                     {% set antibody_count = antibody_count + epitope.antibodies|length %}
                                 {% endfor %}
+
+                            {% if antibody_count == 0 %}
+                            <td class="align-middle" data-sortvalue="">
+                                None
                             </td>
+                            {% else %}
+                                {{ "</td>" }}
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>

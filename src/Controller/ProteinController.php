@@ -16,7 +16,6 @@ class ProteinController extends AbstractController
 {
     public function __construct(
         private ProteinRepository $proteinRepository,
-        private ExperimentTypeRepository $experimentTypeRepository,
     ) {
 
     }
