@@ -78,6 +78,7 @@
                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                         {{ macros.tab_item("Antibodies", "tab-antibodies", "tab-antibodies-content", true) }}
                         {{ macros.tab_item("Experiments", "tab-experiments", "tab-experiments-content") }}
+                        {{ macros.tab_item("Cells", "tab-cells", "tab-cells-content", false, associatedCells ? true : false) }}
                     </div>
                 </div>
 
@@ -127,6 +128,37 @@
                         <div class="tab-pane fade" id="tab-experiments-content" role="tabpanel" aria-labelledby="tab-experiments">
                             <div class="row">
                                 Coming soon (R)
+                            </div>
+                        </div>
+
+                        {# Cells #}
+                        <div class="tab-pane fade" id="tab-cells-content" role="tabpanel" aria-labelledby="tab-cells">
+                            <div class="row">
+                                {% for cell in associatedCells %}
+                                    <div class="col-4 mb-3 pb-3">
+                                        <div class="bg-secondary p-2 mb-n1 border-secondary border">
+                                            <h4 class="float-left">{{ cell }}</h4>
+                                            <a href="{{ url("app_cell_view", {"antibodyId": cell.id}) }}" class="text-right"><span class="far fa-eye"></span></a>
+                                        </div>
+
+                                        <div class="p-2 pt-3 border-secondary border">
+                                            {% for associatedProtein in cell.cellProteins|filter(p => protein == p.associatedProtein) %}
+                                                <p>
+                                                    {{ associatedProtein.description }}
+                                                </p>
+
+                                                {% if associatedProtein.detection %}
+                                                    <dl>
+                                                        {% for detection in associatedProtein.detection %}
+                                                            <dt class="{{ detection.isDetectable ? "text-success" : "text-danger"}}">{{ detection.method }}</dt>
+                                                            <dd>{{ detection.comment }}</dd>
+                                                        {% endfor %}
+                                                    </dl>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

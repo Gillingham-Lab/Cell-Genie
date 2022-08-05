@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Cell;
+use App\Entity\Protein;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,6 +48,24 @@ class CellRepository extends ServiceEntityRepository
                 $qb->addOrderBy("c.".$col, $order);
             }
         }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function fetchByProtein(Protein $protein)
+    {
+        $qb = $this->createQueryBuilder("c");
+
+        $qb = $qb
+            ->select("c")
+            ->addSelect("cp")
+            ->leftJoin("c.cellProteins", "cp", conditionType: Join::ON)
+            ->groupBy("c.id")
+            ->addGroupBy("cp.id")
+            ->orderBy("c.cellNumber")
+            ->where("cp.associatedProtein = :protein")
+            ->setParameter("protein", $protein->getUlid(), "ulid")
+        ;
 
         return $qb->getQuery()->getResult();
     }

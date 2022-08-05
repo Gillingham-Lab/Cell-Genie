@@ -47,14 +47,14 @@ class Protein
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    private $proteinType;
+    private ?string $proteinType = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $fastaSequence;
+    private ?string $fastaSequence = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    private $mutation;
+    private ?string $mutation = null;
 
     public function __construct()
     {
@@ -62,7 +62,6 @@ class Protein
         $this->epitopes = new ArrayCollection();
         $this->parents = new ArrayCollection();
         $this->children = new ArrayCollection();
-        $this->expressingCells = new ArrayCollection();
     }
 
     public function __toString(): string

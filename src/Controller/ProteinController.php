@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Epitope;
 use App\Entity\Protein;
+use App\Repository\CellRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -16,6 +17,7 @@ class ProteinController extends AbstractController
 {
     public function __construct(
         private ProteinRepository $proteinRepository,
+        private CellRepository $cellRepository,
     ) {
 
     }
@@ -35,8 +37,11 @@ class ProteinController extends AbstractController
     #[ParamConverter("protein", options: ["mapping" => ["proteinId"  => "ulid"]])]
     public function viewProtein(Protein $protein): Response
     {
+        $associatedCells = $this->cellRepository->fetchByProtein($protein);
+
         return $this->render("parts/proteins/protein.html.twig", [
             "protein" => $protein,
+            "associatedCells" => $associatedCells,
         ]);
     }
 }
