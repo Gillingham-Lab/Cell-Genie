@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Cell;
 
-use App\Entity\Cell;
+use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\Protein;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;

@@ -3,30 +3,32 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Repository\BoxRepository;
-use App\Repository\CellAliquoteRepository;
-use App\Repository\CellRepository;
+use App\Repository\Cell\CellAliquotRepository;
+use App\Repository\Cell\CellCultureRepository;
+use App\Repository\Cell\CellRepository;
 use App\Repository\ChemicalRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CellController extends AbstractController
 {
     public function __construct(
-        private CellRepository           $cellRepository,
-        private BoxRepository            $boxRepository,
-        private CellAliquoteRepository   $cellAliquoteRepository,
-        private ChemicalRepository       $chemicalRepository,
-        private ProteinRepository        $proteinRepository,
+        private CellRepository $cellRepository,
+        private BoxRepository $boxRepository,
+        private CellAliquotRepository $cellAliquoteRepository,
+        private ChemicalRepository $chemicalRepository,
+        private ProteinRepository $proteinRepository,
         private ExperimentTypeRepository $experimentTypeRepository,
-        private EntityManagerInterface   $entityManager,
+        private EntityManagerInterface $entityManager,
+        private CellCultureRepository $cellCultureRepository,
     ) {
 
     }
@@ -138,5 +140,48 @@ class CellController extends AbstractController
             "cellId" => $aliquote->getCell()->getId(),
             "aliquoteId" => $aliquoteId
         ]);
+    }
+
+    #[Route("/cells/cultures", name: "app_cell_cultures")]
+    public function cellCultures(): Response
+    {
+        $startDate = new \DateTime("today - 3 weeks");
+        $endDate = new \DateTime("today + 1 weeks");
+        $currentCultures = $this->cellCultureRepository->findAllBetween($startDate, $endDate);
+
+        $cultures = [];
+        /** @var CellCulture $culture */
+        foreach ($currentCultures as $culture) {
+            if (isset($cultures[$culture->getId()->toBase58()])) {
+                continue;
+            }
+
+            if ($culture->getParentCellCulture() !== null) {
+                continue;
+            }
+
+            $cultures[$culture->getId()->toBase58()] = $culture;
+
+            $this->extractCultures($cultures, $culture);
+        }
+
+        return $this->render("parts/cells/cell_cultures.html.twig", [
+            "cultures" => array_values($cultures),
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+        ]);
+    }
+
+    private function extractCultures(array &$cultures, CellCulture $culture)
+    {
+        foreach ($culture->getSubCellCultures() as $subCulture) {
+            if (isset($cultures[$subCulture->getId()->toBase58()])) {
+                continue;
+            }
+
+            $cultures[$subCulture->getId()->toBase58()] = $subCulture;
+
+            $this->extractCultures($cultures, $subCulture);
+        }
     }
 }

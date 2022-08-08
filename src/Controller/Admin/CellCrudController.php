@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Cell;
+use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
@@ -14,13 +14,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\F;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\F;
 
 class CellCrudController extends ExtendedAbstractCrudController
 {

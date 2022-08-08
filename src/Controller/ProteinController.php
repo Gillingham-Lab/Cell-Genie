@@ -5,8 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Epitope;
 use App\Entity\Protein;
-use App\Repository\CellRepository;
-use App\Repository\ExperimentTypeRepository;
+use App\Repository\Cell\CellRepository;
 use App\Repository\ProteinRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

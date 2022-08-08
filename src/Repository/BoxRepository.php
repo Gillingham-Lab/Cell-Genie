@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Box;
-use App\Entity\Cell;
-use App\Entity\CellAliquote;
+use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,7 +37,7 @@ class BoxRepository extends ServiceEntityRepository
         return $this->createQueryBuilder("b")
             ->distinct(true)
             ->select("b")
-            ->leftJoin(CellAliquote::class, "ca", conditionType: Join::WITH, condition: "ca.box = b")
+            ->leftJoin(CellAliquot::class, "ca", conditionType: Join::WITH, condition: "ca.box = b")
             ->where("ca.cell = :val")
             ->andWhere("ca.vials > 0")
             ->setParameter("val", $cell)

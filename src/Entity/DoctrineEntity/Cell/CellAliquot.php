@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\Traits\HasBoxTrait;
-use App\Repository\CellAliquoteRepository;
+use App\Entity\User;
+use App\Repository\Cell\CellAliquotRepository;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CellAliquoteRepository::class)]
+#[ORM\Entity(repositoryClass: CellAliquotRepository::class)]
+#[ORM\Table("cell_aliquote")]
 #[Gedmo\Loggable]
-class CellAliquote
+class CellAliquot
 {
     use HasBoxTrait;
 
@@ -91,6 +91,11 @@ class CellAliquote
     #[Assert\Length(max: 250)]
     #[Gedmo\Versioned]
     private ?string $cryoMedium = null;
+
+    public function __toString(): string
+    {
+        return $this->cell . " | p" . $this->passage . " (id {$this->id})";
+    }
 
     public function getId(): ?int
     {

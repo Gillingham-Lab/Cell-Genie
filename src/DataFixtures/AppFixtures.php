@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Box;
-use App\Entity\Cell;
-use App\Entity\CellAliquote;
+use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Rack;
@@ -85,7 +85,7 @@ class AppFixtures extends Fixture
         ;
         $manager->persist($secondBox);
 
-        $hekAliquote = (new CellAliquote())
+        $hekAliquote = (new CellAliquot())
             ->setCell($cell)
             ->setBox($box)
             ->setAliquotedOn(new \DateTime("now"))
@@ -96,7 +96,7 @@ class AppFixtures extends Fixture
         ;
         $manager->persist($hekAliquote);
 
-        $oldHekAliquote = (new CellAliquote())
+        $oldHekAliquote = (new CellAliquot())
             ->setCell($cell)
             ->setBox($secondBox)
             ->setAliquotedOn(new \DateTime("2020-03-25 13:00:00"))
@@ -107,7 +107,7 @@ class AppFixtures extends Fixture
         ;
         $manager->persist($oldHekAliquote);
 
-        $helaAliquote = (new CellAliquote())
+        $helaAliquote = (new CellAliquot())
             ->setCell($cell3)
             ->setBox($box)
             ->setAliquotedOn(new \DateTime("now"))

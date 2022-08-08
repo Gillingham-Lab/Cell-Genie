@@ -1,31 +1,30 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Cell;
 
 use App\Entity\Box;
-use App\Entity\CellAliquote;
+use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Validator\Constraints\Collection;
 
 /**
- * @method CellAliquote|null find($id, $lockMode = null, $lockVersion = null)
- * @method CellAliquote|null findOneBy(array $criteria, array $orderBy = null)
- * @method CellAliquote[]    findAll()
- * @method CellAliquote[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CellAliquot|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CellAliquot|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CellAliquot[]    findAll()
+ * @method CellAliquot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CellAliquoteRepository extends ServiceEntityRepository
+class CellAliquotRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CellAliquote::class);
+        parent::__construct($registry, CellAliquot::class);
     }
 
     /**
      * @param Box[] $boxes
-     * @return CellAliquote[]|null
+     * @return CellAliquot[]|null
      */
     public function findAllFromBoxes(array $boxes)
     {

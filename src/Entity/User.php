@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -48,8 +49,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isActive = false;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CellCulture::class)]
+    private $cellCultures;
+
     public function __construct()
     {
+        $this->cellCultures = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -227,6 +232,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($experiment->getOwner() === $this) {
                 $experiment->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CellCulture>
+     */
+    public function getCellCultures(): Collection
+    {
+        return $this->cellCultures;
+    }
+
+    public function addCellCulture(CellCulture $cellCulture): self
+    {
+        if (!$this->cellCultures->contains($cellCulture)) {
+            $this->cellCultures[] = $cellCulture;
+            $cellCulture->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCellCulture(CellCulture $cellCulture): self
+    {
+        if ($this->cellCultures->removeElement($cellCulture)) {
+            // set the owning side to null (unless already changed)
+            if ($cellCulture->getOwner() === $this) {
+                $cellCulture->setOwner(null);
             }
         }
 

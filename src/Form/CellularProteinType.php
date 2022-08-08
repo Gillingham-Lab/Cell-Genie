@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\CellProtein;
-use App\Entity\ExperimentalCondition;
+use App\Entity\DoctrineEntity\Cell\CellProtein;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;

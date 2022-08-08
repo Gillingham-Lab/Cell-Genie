@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Antibody;
-use App\Entity\AntibodyHost;
 use App\Entity\Box;
-use App\Entity\Cell;
-use App\Entity\CellAliquote;
 use App\Entity\Chemical;
 use App\Entity\CultureFlask;
+use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Cell\CellCulture;
+use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
+use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
+use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
@@ -62,7 +65,15 @@ class DashboardController extends AbstractDashboardController
 
             MenuItem::section("Cells"),
             MenuItem::linkToCrud("Cells", 'fas fa-disease', Cell::class),
-            MenuItem::linkToCrud("Aliquotes", 'fas fa-vials', CellAliquote::class),
+            MenuItem::linkToCrud("Aliquotes", 'fas fa-vials', CellAliquot::class),
+            MenuItem::linkToCrud("Cell Cultures", "fas", CellCulture::class),
+            MenuItem::subMenu("Cell Culture Events", "far fa-calendar-alt")
+                ->setSubItems([
+                    MenuItem::linkToCrud("Tests", "fas fa-hospital-symbol", CellCultureTestEvent::class),
+                    MenuItem::linkToCrud("Splitting", "fas fa-fill-drip", CellCultureSplittingEvent::class),
+                    MenuItem::linkToCrud("Others", "fas", CellCultureOtherEvent::class),
+                ]),
+
             MenuItem::linkToCrud("Organisms", "fa", Organism::class),
             MenuItem::linkToCrud("Tissue Types", "fas fa-kidneys", Tissue::class),
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),

@@ -1,20 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Cell;
 
+use App\Entity\Experiment;
+use App\Entity\Morphology;
+use App\Entity\Organism;
+use App\Entity\Tissue;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
-use App\Repository\CellRepository;
+use App\Entity\User;
+use App\Repository\Cell\CellRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellRepository::class)]
@@ -111,7 +114,7 @@ class Cell
     #[Gedmo\Versioned]
     private ?Tissue $tissue = null;
 
-    #[ORM\OneToMany(mappedBy: "cell", targetEntity: CellAliquote::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: "cell", targetEntity: CellAliquot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $cellAliquotes;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
@@ -398,14 +401,14 @@ class Cell
     }
 
     /**
-     * @return Collection<int, CellAliquote>
+     * @return Collection<int, CellAliquot>
      */
     public function getCellAliquotes(): Collection
     {
         return $this->cellAliquotes;
     }
 
-    public function addCellAliquote(CellAliquote $cellAliquote): self
+    public function addCellAliquote(CellAliquot $cellAliquote): self
     {
         if (!$this->cellAliquotes->contains($cellAliquote)) {
             $this->cellAliquotes[] = $cellAliquote;
@@ -415,7 +418,7 @@ class Cell
         return $this;
     }
 
-    public function removeCellAliquote(CellAliquote $cellAliquote): self
+    public function removeCellAliquote(CellAliquot $cellAliquote): self
     {
         if ($this->cellAliquotes->removeElement($cellAliquote)) {
             // set the owning side to null (unless already changed)

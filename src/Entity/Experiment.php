@@ -3,18 +3,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\OwnerTrait;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\ExperimentRepository;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentRepository::class)]

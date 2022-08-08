@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Cell;
 
-use App\Entity\CellProtein;
+use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CellProtein>
+ * @extends ServiceEntityRepository<CellCultureEvent>
  *
- * @method CellProtein|null find($id, $lockMode = null, $lockVersion = null)
- * @method CellProtein|null findOneBy(array $criteria, array $orderBy = null)
- * @method CellProtein[]    findAll()
- * @method CellProtein[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CellCultureEvent|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CellCultureEvent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CellCultureEvent[]    findAll()
+ * @method CellCultureEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CellProteinRepository extends ServiceEntityRepository
+class CellCultureEventRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CellProtein::class);
+        parent::__construct($registry, CellCultureEvent::class);
     }
 
-    public function add(CellProtein $entity, bool $flush = false): void
+    public function add(CellCultureEvent $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CellProteinRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CellProtein $entity, bool $flush = false): void
+    public function remove(CellCultureEvent $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CellProteinRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CellProtein[] Returns an array of CellProtein objects
+//     * @return CellCultureEvent[] Returns an array of CellCultureEvent objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CellProteinRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CellProtein
+//    public function findOneBySomeField($value): ?CellCultureEvent
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
