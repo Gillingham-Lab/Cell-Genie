@@ -7,6 +7,8 @@ use App\Entity\Traits\HasBoxTrait;
 use App\Entity\User;
 use App\Repository\Cell\CellAliquotRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -91,6 +93,18 @@ class CellAliquot
     #[Assert\Length(max: 250)]
     #[Gedmo\Versioned]
     private ?string $cryoMedium = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'childAliquots')]
+    #[ORM\JoinColumn(onDelete: "SET NULL")]
+    private ?self $parentAliquot = null;
+
+    #[ORM\OneToMany(mappedBy: 'parentAliquot', targetEntity: self::class)]
+    private Collection $childAliquots;
+
+    public function __construct()
+    {
+        $this->childAliquots = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -275,6 +289,48 @@ class CellAliquot
     public function setMycoplasmaResult(?string $mycoplasmaResult): self
     {
         $this->mycoplasmaResult = $mycoplasmaResult;
+        return $this;
+    }
+
+    public function getParentAliquot(): ?self
+    {
+        return $this->parentAliquot;
+    }
+
+    public function setParentAliquot(?self $parentAliquot): self
+    {
+        $this->parentAliquot = $parentAliquot;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getChildAliquots(): Collection
+    {
+        return $this->childAliquots;
+    }
+
+    public function addChildAliquot(self $childAliquot): self
+    {
+        if (!$this->childAliquots->contains($childAliquot)) {
+            $this->childAliquots[] = $childAliquot;
+            $childAliquot->setParentAliquot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChildAliquot(self $childAliquot): self
+    {
+        if ($this->childAliquots->removeElement($childAliquot)) {
+            // set the owning side to null (unless already changed)
+            if ($childAliquot->getParentAliquot() === $this) {
+                $childAliquot->setParentAliquot(null);
+            }
+        }
+
         return $this;
     }
 }

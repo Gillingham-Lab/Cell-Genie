@@ -22,6 +22,9 @@ class CellCultureCrudController extends AbstractCrudController
         return [
             IdField::new("id")
                 ->onlyOnIndex(),
+            TextField::new("number")
+                ->setLabel("Number")
+                ->setHelp("Give the cell culture a number to easily identify and cross-reference it with the lab journal, eg FLC001 (First name, last name, Cell)"),
             AssociationField::new("owner")
                 ->setLabel("Scientist")
                 ->setHelp("Set the scientist who is responsible for thawing this cell line."),

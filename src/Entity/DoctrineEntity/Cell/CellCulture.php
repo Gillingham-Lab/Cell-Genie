@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\NumberTrait;
 use App\Entity\User;
 use App\Repository\Cell\CellCultureRepository;
 use DateTime;
@@ -16,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 class CellCulture
 {
     use IdTrait;
+    use NumberTrait;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'cellCultures')]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -51,9 +53,9 @@ class CellCulture
     public function __toString(): string
     {
         if ($this->trashedOn) {
-            return "Culture: " . ($this->getName()) . " ({$this->unfrozenOn->format('d. m. Y')}*, {$this->trashedOn->format('d. m. Y')}†)";
+            return ($this->getName()) . " ({$this->unfrozenOn->format('d. m. Y')}*, {$this->trashedOn->format('d. m. Y')}†)";
         } else {
-            return "Culture: " . ($this->getName()) . " ({$this->unfrozenOn->format('d. m. Y')}*)";
+            return ($this->getName()) . " ({$this->unfrozenOn->format('d. m. Y')}*)";
         }
     }
 
@@ -67,12 +69,12 @@ class CellCulture
     public function getName(): string
     {
         if ($this->aliquot) {
-            return (string)$this->aliquot;
+            return "{$this->getNumber()} {$this->aliquot}";
         } else {
             if ($this->parentCellCulture) {
-                return $this->parentCellCulture->getName();
+                return "{$this->getNumber()} {$this->parentCellCulture->getName()}";
             } else {
-                return "Unknown";
+                return $this->getNumber();
             }
         }
     }
