@@ -27,10 +27,24 @@
                 <div id="cellCultureChart" style="position: relative;">
                     {% for culture in cultures %}
                         <div id="culture-buttons-{{ culture.id.toBase58 }}" class="btn-group btn-group-sm mr-3" style="position: absolute; left: 0px; top: {{ 60 + loop.index0*50 - 15}}px">
-                            <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Add new event"><span class="fas fa-tag"></span></a>
-                            <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"><span class="fas fa-hospital-symbol"></span></a>
-                            <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"><span class="fas fa-fill-drip"></span></a>
-                            <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"><span class="fas fa-trash-alt"></span></a>
+                            <a class="btn btn-primary btn-sm {{ culture.trashedOn ? "disabled" : "" }}"
+                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "other"}) }}"
+                               data-toggle="tooltip" data-placement="bottom" title="Add new event"
+                            ><span class="fas fa-tag"></span></a>
+                            <a class="btn btn-primary btn-sm {{ culture.trashedOn ? "disabled" : "" }}"
+                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "test"}) }}"
+                               data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"
+                            ><span class="fas fa-hospital-symbol"></span></a>
+                            <a class="btn btn-primary btn-sm {{ culture.trashedOn ? "disabled" : "" }}"
+                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "split"}) }}"
+                               data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"
+                            ><span class="fas fa-fill-drip"></span></a>
+
+                            {% if culture.trashedOn %}
+                                <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_restore", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Restore cell culture"><span class="fas fa-trash-restore"></span></a>
+                            {% else %}
+                                <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_trash", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"><span class="fas fa-trash-alt"></span></a>
+                            {% endif %}
                             <!--<a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create aliquots"><span class="fas fa-snowflake"></span></a>-->
                         </div>
                     {% endfor %}
@@ -52,26 +66,36 @@
         "_cultureNumber": {{ culture_number }},
         "owner" : "{{ culture.owner  }}",
         "mycoplasmaStatus": "{{ culture.mycoplasmaStatus }}",
+        "isAbandoned": {{ culture.isAbandoned ? "true" : "false" }},
+        "incubator": "{{ culture.incubator ?? unknown }}",
         "events": [
-            {% for event in culture.events %}
-                {
-                    "owner": "{{event.owner}}",
-                    "date": dateParse("{{ event.date|date("Y-m-d") }}"),
-                    "description": "{{ event.description }}",
+            {% set event_dates = {} %}
 
-                    {% if event is cellCultureTestEvent %}
-                        "eventType": "test",
-                        "testResult": "{{ event.result }}",
-                        "testType": "{{ event.testType }}",
-                        "supernatantAmount": "{{ event.supernatantAmount }}",
-                    {% elseif event is cellCultureSplittingEvent %}
-                        "eventType": "split",
-                        "splitting": "{{ event.splitting }}",
-                        "newFlask": "{{ event.newFlask }}",
-                        "currentPassage": {{ culture.getCurrentPassage(event.date) }},
-                    {% else %}
-                        "eventType": "other",
-                    {% endif %}
+            {% for event in culture.events %}
+                {% if event.date|date("Y-m-d") in event_dates %}
+                    {% set event_dates = event_dates|merge({(event.date|date("Y-m-d")): event_dates[event.date|date("Y-m-d")]}) %}
+                {% else %}
+                    {% set event_dates = event_dates|merge({(event.date|date("Y-m-d")): 0}) %}
+                {% endif %}
+                {
+                "owner": "{{event.owner}}",
+                "date": dateParse("{{ event.date|date("Y-m-d") }}"),
+                "description": "{{ event.description }}",
+                "jitter": {{ event_dates[event.date|date("Y-m-d")] }},
+
+                {% if event is cellCultureTestEvent %}
+                    "eventType": "test",
+                    "testResult": "{{ event.result }}",
+                    "testType": "{{ event.testType }}",
+                    "supernatantAmount": "{{ event.supernatantAmount }}",
+                {% elseif event is cellCultureSplittingEvent %}
+                    "eventType": "split",
+                    "splitting": "{{ event.splitting }}",
+                    "newFlask": "{{ event.newFlask }}",
+                    "currentPassage": {{ culture.getCurrentPassage(event.date) }},
+                {% else %}
+                    "eventType": "other",
+                {% endif %}
                 },
             {% endfor %}
         ],
@@ -83,7 +107,7 @@
         // set the dimensions and margins of the graph
         const heightPerEntry = 50;
 
-        const margin = {top: 60, right: 60, bottom: 30, left: 260},
+        const margin = {top: 60, right: 100, bottom: 30, left: 260},
             width = $("#cellCultureChart").width() - margin.left - margin.right,
             height = heightPerEntry*{{ cultures|length }};
 
@@ -118,8 +142,7 @@
             .range([0, width]);
 
         const xAxis = d3.axisBottom(timeAxis)
-            .tickFormat(dateFormatAxis)
-            .ticks(timeDelta);
+            .tickFormat(dateFormatAxis);
 
         // Add axis
         svg.append("g")
@@ -128,6 +151,49 @@
             .call(xAxis)
         ;
 
+        const defs = svg
+            .append("defs");
+
+        // Warning signal if mycoplasma status is positive
+        defs
+            .append("g")
+            .attr("id", "mycoplasma-status-positive")
+            .append("circle")
+            .attr("r", 12.5)
+            .attr("stroke-width", 2)
+            .attr("stroke", "red")
+            .attr("fill", "white");
+
+        // OK sign if mycoplasma status is negative
+        defs
+            .append("g")
+            .attr("id", "mycoplasma-status-negative")
+            .append("circle")
+            .attr("r", 12.5)
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("fill", "#6ed36e");
+
+        // Warning sign if mycoplasma status is unclear
+        defs
+            .append("g")
+            .attr("id", "mycoplasma-status-unclear")
+            .append("path")
+            .attr("d", "M-12.5 10.825 L12.5 10.825 L0 -10.825 Z")
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("fill", "#ffff66");
+
+        // Abandoned sign
+        defs
+            .append("g")
+            .attr("id", "culture-is-abandoned")
+            .append("path")
+            .attr("d", "M-12.5 -10.825 L12.5 -10.825 L0 10.825 Z")
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("fill", "orange");
+
         // For each cell line, create a group and save it as "rows"
         const rows = svg.append('g')
             .selectAll("dot")
@@ -135,6 +201,19 @@
             .enter()
             .append("g")
             .attr("transform", function (d) { return "translate(0, " + 50 * d._cultureNumber + ")"});
+
+        rows
+            .filter(function (d) { return !d.endDate })
+            .append("use")
+            .attr("xref:href", function (d) { return "#mycoplasma-status-" + d.mycoplasmaStatus })
+            .attr("x", timeAxis(endDate) + 30)
+            .attr("y", 0)
+
+        rows.filter(function (d) { return d.isAbandoned })
+            .append("use")
+            .attr("xref:href", "#culture-is-abandoned")
+            .attr("x", timeAxis(endDate) + 80)
+            .attr("y", 0)
 
         /*const rowBoxes = rows.append("rect")
             .attr("x", -margin.left)
@@ -147,7 +226,7 @@
         // Text box showing the cell line name
         const textbox = rows.append("text")
             .attr("x", -20)
-            .attr("y", 10)
+            .attr("y", -10)
             .attr("font-size", 11)
             .attr("text-anchor", "end")
             .attr("text-height", 14)
@@ -155,13 +234,18 @@
         textbox.append("tspan")
             .text(function (d) { return d.cultureName })
             .attr("x", -10)
-            .attr("dy", "-1.0em")
+            .attr("dy", 0)
         ;
 
         textbox.append("tspan")
             .text(function (d) { return d.owner })
             .attr("x", -10)
-            .attr("dy", "1.0em");
+            .attr("dy", 12);
+
+        textbox.append("tspan")
+            .text(function (d) { return d.incubator })
+            .attr("x", -10)
+            .attr("dy", 12);
 
         /*rowBoxes.on("mouseover", function(e) {
             let data = d3.select(this).data()[0];
@@ -187,7 +271,7 @@
         // Connecting line
         rows.append("polyline")
             .attr("points", function (d) { return (
-                String(timeAxis(d.startDate)) + ",0 " +
+                String(timeAxis(d.startDate < startDate ? startDate : d.startDate)) + ",0 " +
                 String(timeAxis(d.endDate ? d.endDate : endDate) + ",0 ")
             );
             })
@@ -205,13 +289,16 @@
             .style("stroke-width", 0.5);
 
         // Start point
-        rows.append("circle")
+        rows
+            .filter(function(d) { return d.startDate >= startDate})
+            .append("circle")
             .attr("cx", function (d) { return timeAxis(d.startDate); } )
             .attr("cy", 0 )
             .attr("r", 5)
             .style("fill", "#000000");
 
-        rows.append("text")
+        rows
+            .filter(function(d) { return d.startDate >= startDate}).append("text")
             .text(function (d) { return d.startPassage; })
             .attr("x", function (d) { return timeAxis(d.startDate); } )
             .attr("y", -8)
@@ -253,7 +340,7 @@
         const testEvents = event_group.filter(function (d) { return d.eventType === "test" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", 0 )
+            .attr("cy", function (d) { return d.jitter*-10})
             .attr("r", 5)
             .style("fill", function (d) { return d.testResult === "positive" ? "#FF0000" : (d.testResult === "negative" ? "#00FF00" : "#FFFF00")})
             .style("stroke", "black")
@@ -339,9 +426,34 @@
             .attr("cx", function (d) { return timeAxis(d.date); } )
             .attr("cy", 0 )
             .attr("r", 5)
-            .style("fill", "#FFFFFF")
+            .style("fill", "#999999")
             .style("stroke", "black")
             .style("stroke-width", 1)
         ;
+
+        otherEvents.on("mouseover", function (e) {
+            let content = "";
+            let output = $("#cellCultureChartEventInfo")[0];
+            let matrix = this.getCTM();
+
+            let position = $("#cellCultureChart svg")[0].createSVGPoint();
+            position.x = this.cx.animVal.value + 60;
+            position.y = this.cy.animVal.value + heightPerEntry + 10;
+            position = position.matrixTransform(matrix);
+
+            let data = d3.select(this).data()[0];
+
+            content += "<b>" + dateFormat(data.date) + "</b><br />";
+            content += data.description + "<br />";
+            content += "<b>Scientist:</b> " + data.owner + "<br />";
+
+            output.innerHTML = content;
+            output.style.top = position.y + "px";
+            output.style.left = position.x + "px";
+            output.style.display = "block";
+        }).on("mouseout", function (e) {
+            let output = $("#cellCultureChartEventInfo")[0];
+            output.style.display = "none";
+        });
     </script>
 {% endblock %}

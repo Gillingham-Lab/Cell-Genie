@@ -11,9 +11,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CellCultureSplittingEvent extends CellCultureEvent
 {
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $splitting = null;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $newFlask = null;
 
     public function getSplitting(): ?string

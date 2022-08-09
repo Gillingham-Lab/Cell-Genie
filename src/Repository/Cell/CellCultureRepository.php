@@ -24,12 +24,25 @@ class CellCultureRepository extends ServiceEntityRepository
 
     public function findAllBetween(\DateTimeInterface $start, \DateTimeInterface $end)
     {
+        // Joins on events not possible due to https://github.com/doctrine/orm/pull/9743
         $qb = $this->createQueryBuilder("cc");
 
         $qb = $qb
             ->select("cc")
+            ->addSelect("ca")
+            ->addSelect("c")
+            ->addSelect("co")
+            #->addSelect("ce")
             ->addSelect("CASE WHEN cc.aliquot IS NULL THEN 1 ELSE 0 END AS HIDDEN priority")
+            ->leftJoin("cc.aliquot", "ca", conditionType: Join::ON)
+            ->leftJoin("ca.cell", "c", conditionType: Join::ON)
+            ->leftJoin("cc.owner", "co", conditionType: Join::ON)
+            #->leftJoin("cc.events", "ce", conditionType: Join::ON)
             ->addGroupBy("cc.id")
+            ->addGroupBy("ca.id")
+            ->addGroupBy("c.id")
+            ->addGroupBy("co.id")
+            #->addGroupBy("ce.id")
             ->orderBy("priority", "DESC")
             ->where("cc.unfrozenOn >= :start and cc.unfrozenOn <= :end")
             ->orWhere("cc.trashedOn >= :start and cc.trashedOn <= :end")

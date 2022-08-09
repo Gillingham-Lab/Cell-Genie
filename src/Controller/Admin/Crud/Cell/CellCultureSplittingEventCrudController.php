@@ -35,7 +35,7 @@ class CellCultureSplittingEventCrudController extends AbstractCrudController
                 ->setLabel("Scientist")
                 ->setHelp("Set the scientist responsible for this event."),
             DateField::new("date")
-                ->setFormat("Y-m-d"),
+                ->setFormat("Y M d"),
             TextareaField::new("description")
                 ->hideOnIndex(),
 

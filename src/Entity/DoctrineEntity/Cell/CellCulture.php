@@ -51,9 +51,9 @@ class CellCulture
     public function __toString(): string
     {
         if ($this->trashedOn) {
-            return "Culture: " . ($this->aliquot ?? $this->parentCellCulture ?? "unknown") . " ({$this->unfrozenOn->format('d. m. Y')}*, {$this->trashedOn->format('d. m. Y')}†)";
+            return "Culture: " . ($this->getName()) . " ({$this->unfrozenOn->format('d. m. Y')}*, {$this->trashedOn->format('d. m. Y')}†)";
         } else {
-            return "Culture: " . ($this->aliquot ?? $this->parentCellCulture ?? "unknown") . " ({$this->unfrozenOn->format('d. m. Y')}*)";
+            return "Culture: " . ($this->getName()) . " ({$this->unfrozenOn->format('d. m. Y')}*)";
         }
     }
 
@@ -112,6 +112,26 @@ class CellCulture
         }
 
         return $currentPassage;
+    }
+
+    public function isAbandoned(): bool
+    {
+        # Trashed cells cannot be abandoned
+        if ($this->getTrashedOn()) {
+            return false;
+        }
+
+        /** @var DateTimeInterface $lastChange */
+        $currentDate = new DateTime();
+        $lastChange = $this->getUnfrozenOn();
+
+        foreach ($this->getEvents() as $event) {
+            if ($event->getDate() > $lastChange) {
+                $lastChange = $event->getDate();
+            }
+        }
+
+        return ($lastChange->diff($currentDate))->days >= 7;
     }
 
     public function getOwner(): ?User

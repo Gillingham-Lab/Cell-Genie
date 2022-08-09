@@ -7,6 +7,7 @@ use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\UnversionedShortNameTrait;
 use App\Entity\User;
 use App\Repository\Cell\CellCultureEventRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,6 +34,11 @@ class CellCultureEvent
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
+
+    public function __construct()
+    {
+        $this->date = new DateTime("now");
+    }
 
     public function getOwner(): ?User
     {

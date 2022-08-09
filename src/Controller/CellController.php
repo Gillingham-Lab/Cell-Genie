@@ -4,6 +4,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
+use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
+use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
+use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
+use App\Entity\User;
+use App\Form\CellCultureEventTestType;
+use App\Form\CellCultureOtherType;
+use App\Form\CellCultureSplittingType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellCultureRepository;
@@ -11,16 +18,21 @@ use App\Repository\Cell\CellRepository;
 use App\Repository\ChemicalRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\ProteinRepository;
+use DateTime;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class CellController extends AbstractController
 {
     public function __construct(
+        private Security $security,
         private CellRepository $cellRepository,
         private BoxRepository $boxRepository,
         private CellAliquotRepository $cellAliquoteRepository,
@@ -145,8 +157,8 @@ class CellController extends AbstractController
     #[Route("/cells/cultures", name: "app_cell_cultures")]
     public function cellCultures(): Response
     {
-        $startDate = new \DateTime("today - 3 weeks");
-        $endDate = new \DateTime("today + 1 weeks");
+        $startDate = new DateTime("today - 3 weeks");
+        $endDate = new DateTime("today + 1 weeks");
         $currentCultures = $this->cellCultureRepository->findAllBetween($startDate, $endDate);
 
         $cultures = [];
@@ -169,6 +181,106 @@ class CellController extends AbstractController
             "cultures" => array_values($cultures),
             "startDate" => $startDate,
             "endDate" => $endDate,
+        ]);
+    }
+
+    #[Route("/cells/cultures/trash/{cellCulture}", name: "app_cell_culture_trash")]
+    public function trashCellCulture(CellCulture $cellCulture): Response
+    {
+        try {
+            $cellCulture->setTrashedOn(new DateTime("today"));
+
+            $this->entityManager->flush();
+            $this->addFlash("success", "Cell culture was successfully marked as trashed.");
+        } catch (Exception $exception) {
+            $this->addFlash("error", "Cell culture was not able to be trashed. Reason: {$exception->getMessage()}");
+        }
+
+        return $this->redirectToRoute("app_cell_cultures");
+    }
+
+    #[Route("/cells/cultures/restore/{cellCulture}", name: "app_cell_culture_restore")]
+    public function restoreCellCulture(CellCulture $cellCulture): Response
+    {
+        try {
+            $cellCulture->setTrashedOn(null);
+
+            $this->entityManager->flush();
+            $this->addFlash("success", "Cell culture was successfully marked as restored.");
+        } catch (Exception $exception) {
+            $this->addFlash("error", "Cell culture was not able to be restored. Reason: {$exception->getMessage()}");
+        }
+
+        return $this->redirectToRoute("app_cell_cultures");
+    }
+
+    #[Route("/cells/cultures/create/{cellCulture}/{eventType}", name: "app_cell_culture_create_event", requirements: ["eventType" => "test|split|other"])]
+    public function addCellCultureEvent(Request $request, CellCulture $cellCulture, string $eventType): Response
+    {
+        if ($cellCulture->getTrashedOn()) {
+            $this->addFlash("error", "Cannot add events for trashed cell cultures.");
+            return $this->redirectToRoute("app_cell_cultures");
+        }
+
+        $formType = match($eventType) {
+            "test" => CellCultureEventTestType::class,
+            "split" => CellCultureSplittingType::class,
+            "other" => CellCultureOtherType::class,
+        };
+
+        $entityType = match($eventType) {
+            "test" => CellCultureTestEvent::class,
+            "split" => CellCultureSplittingEvent::class,
+            "other" => CellCultureOtherType::class,
+        };
+
+        /** @var CellCultureEvent $formEntity */
+        $formEntity = new $entityType();
+
+        $currentUser = $this->security->getUser();
+
+        if ($currentUser instanceof User) {
+            $formEntity->setOwner($currentUser);
+        }
+
+        $formEntity->setCellCulture($cellCulture);
+
+        $form = $this->createForm($formType, $formEntity, [
+            "save_button" => true,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            if ($eventType === "split") {
+                # Create new cell cultures if requested.
+                if ($form["newCultures"]->getData() > 0) {
+                    $numberOfNewCultures = min(10, $form["newCultures"]->getData());
+
+                    for ($i = 0; $i < $numberOfNewCultures; $i++) {
+                        $newCulture = new CellCulture();
+                        $newCulture->setUnfrozenOn($formEntity->getDate());
+                        $newCulture->setParentCellCulture($cellCulture);
+                        $newCulture->setOwner($currentUser);
+                        $newCulture->setFlask($formEntity->getNewFlask());
+                        $newCulture->setIncubator($cellCulture->getIncubator());
+
+                        $this->entityManager->persist($newCulture);
+                    }
+                }
+            }
+
+            $this->entityManager->persist($formEntity);
+            $this->entityManager->flush();
+
+            $this->addFlash("info", "Event has been created.");
+
+            return $this->redirectToRoute("app_cell_cultures");
+        }
+
+        return $this->renderForm("parts/cells/cell_cultures_new_event.html.twig", [
+            "culture" => $cellCulture,
+            "form" => $form,
         ]);
     }
 
