@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
@@ -26,6 +27,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -134,27 +136,42 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/consume/{aliquoteId}", name: "app_cell_consume_aliquote")]
-    public function consumeAliquote($aliquoteId): Response
+    #[ParamConverter("aliquot", options: ["mapping" => ["aliquoteId"  => "id"]])]
+    // #ToDo: Change this so that a form to create the cell culture is shown instead of silently adding a culture.
+    public function consumeAliquot(CellAliquot $aliquot): Response
     {
-        $aliquote = $this->cellAliquoteRepository->find($aliquoteId);
-
-        if (!$aliquote) {
-            $this->addFlash("error", "Aliquote does not exist.");
-            return $this->redirectToRoute("app_cells");
-        }
-
-        if ($aliquote->getVials() <= 0) {
+        if ($aliquot->getVials() <= 0) {
             $this->addFlash("error", "There are no aliquote left to consume.");
         } else {
-            $aliquote->setVials($aliquote->getVials() - 1);
+            // Reduce aliquot numbers by 1
+            $aliquot->setVials($aliquot->getVials() - 1);
+
+            // Create a new cell culture based on that aliquot
+            $cellCulture = new CellCulture();
+
+            // Set user from security (= current user)
+            $user = $this->security->getUser();
+            if ($user instanceof User) {
+                $cellCulture->setOwner($user);
+            }
+
+            $cellCulture->setAliquot($aliquot);
+            $cellCulture->setUnfrozenOn(new DateTime("today"));
+            $cellCulture->setIncubator("unknown");
+            $cellCulture->setFlask("T-25");
+
+            // Persist object
+            $this->entityManager->persist($cellCulture);
+
+            // Flush changes
             $this->entityManager->flush();
 
-            $this->addFlash("success", "Aliquote was consumed.");
+            $this->addFlash("success", "Aliquote was consumed and a new cell culture has been created. Check out the current cell cultures!");
         }
 
         return $this->redirectToRoute("app_cell_aliquote_view", [
-            "cellId" => $aliquote->getCell()->getId(),
-            "aliquoteId" => $aliquoteId
+            "cellId" => $aliquot->getCell()->getId(),
+            "aliquoteId" => $aliquot->getId(),
         ]);
     }
 
