@@ -69,10 +69,12 @@ class CellCulture
     public function getName(): string
     {
         if ($this->aliquot) {
-            return "{$this->getNumber()} {$this->aliquot}";
+            return "{$this->getNumber()} ({$this->aliquot->getCell()})";
         } else {
             if ($this->parentCellCulture) {
-                return "{$this->getNumber()} {$this->parentCellCulture->getName()}";
+                $parentNumber = strlen($this->parentCellCulture->getNumber());
+                $parentName = substr($this->parentCellCulture->getName(), $parentNumber+2, -1);
+                return "{$this->getNumber()} ({$parentName})";
             } else {
                 return $this->getNumber();
             }

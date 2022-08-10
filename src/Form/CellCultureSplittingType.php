@@ -46,13 +46,16 @@ class CellCultureSplittingType extends AbstractType
                 "label" => "Splitting (required)",
                 "help" => "Small detail on how you split the cells (eg, 'reseeded with 5% of cells', 'seeded with 100K cells'). Also mention atypical medium not mentioned in the cell's description.",
             ])
-            ->add("newCultures", IntegerType::class, [
+        ;
+
+        if ($options["show_splits"]) {
+            $builder->add("newCultures", IntegerType::class, [
                 "label" => "Number of new cultures",
                 "help" => "Set to any number above 0 to create that many new cultures. Use with care. Any number above 10 will be ignored (use well-plates for that).",
                 "mapped" => false,
                 "data" => 0,
-            ])
-        ;
+            ]);
+        }
 
         $this->addTextOrChoiceType($builder, "newFlask", "cellCultureFlasks", [
             "label" => "Flask type",
@@ -67,9 +70,11 @@ class CellCultureSplittingType extends AbstractType
     {
         $resolver->setDefaults([
             "data_class" => CellCultureSplittingEvent::class,
+            "show_splits" => false,
             "save_button" => false,
         ]);
 
+        $resolver->setAllowedTypes("show_splits", "bool");
         $resolver->setAllowedTypes("save_button", "bool");
     }
 }

@@ -1,0 +1,413 @@
+{% macro culture_json(culture, culture_number) %}
+    {
+    "id": "{{ culture.id.toBase58 }}",
+    "startDate": dateParse("{{ culture.unfrozenOn|date("Y-m-d") }}"),
+    "startPassage": {{ culture.getCurrentPassage(culture.unfrozenOn) }},
+    "endDate": {% if culture.trashedOn %} dateParse("{{ culture.trashedOn|date("Y-m-d") }}") {% else %} null {% endif %},
+    "endPassage": {{ culture.getCurrentPassage(culture.trashedOn) }},
+    "cultureName": "{{ culture.name }}",
+    "_cultureNumber": {{ culture_number }},
+    "owner" : "{{ culture.owner  }}",
+    "mycoplasmaStatus": "{{ culture.mycoplasmaStatus }}",
+    "isAbandoned": {{ culture.isAbandoned ? "true" : "false" }},
+    "incubator": "{{ culture.incubator ?? unknown }}",
+    "events": [
+    {% set event_dates = {} %}
+
+    {% for event in culture.events %}
+        {% if event_dates[event.date|date("Y-m-d")] is defined %}
+            {% set event_dates = event_dates|merge({(event.date|date("Y-m-d")): event_dates[event.date|date("Y-m-d")]+1}) %}
+            // merge, it exists
+        {% else %}
+            {% set event_dates = event_dates|merge({(event.date|date("Y-m-d")): 0}) %}
+            // create, it does not exist
+        {% endif %}
+        {
+        "owner": "{{event.owner}}",
+        "date": dateParse("{{ event.date|date("Y-m-d") }}"),
+        "shortName": "{{ event.shortName }}",
+        "description": "{{ event.description }}",
+        "jitter": {{ event_dates[event.date|date("Y-m-d")] }},
+
+        {% if event is cellCultureTestEvent %}
+            "eventType": "test",
+            "testResult": "{{ event.result }}",
+            "testType": "{{ event.testType }}",
+            "supernatantAmount": "{{ event.supernatantAmount }}",
+        {% elseif event is cellCultureSplittingEvent %}
+            "eventType": "split",
+            "splitting": "{{ event.splitting }}",
+            "newFlask": "{{ event.newFlask }}",
+            "currentPassage": {{ culture.getCurrentPassage(event.date) }},
+        {% else %}
+            "eventType": "other",
+        {% endif %}
+        },
+    {% endfor %}
+    ],
+    },
+{% endmacro %}
+
+{% macro culture_timeline(cultures, startDate, endDate, leftMargin=320) %}
+    <script type="application/javascript">
+        // set the dimensions and margins of the graph
+        const heightPerEntry = 50;
+
+        const margin = {top: 60, right: 100, bottom: 30, left: {{ leftMargin }}},
+            width = $("#cellCultureChart").width() - margin.left - margin.right,
+            height = heightPerEntry*{{ cultures|length }};
+
+        // append the svg object to the body of the page
+        const svg = d3.select("#cellCultureChart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        const dateFormat = d3.timeFormat("%Y-%m-%d");
+        const dateFormatAxis = d3.timeFormat("%d %b");
+        const dateParse = d3.timeParse("%Y-%m-%d");
+
+        const cultures = [
+            {% set culture_number = 0 %}
+            {% for culture in cultures %}
+            {{ _self.culture_json(culture, culture_number) }}
+            {% set culture_number = culture_number + 1 %}
+            {% endfor %}
+        ];
+
+        const startDate = dateParse("{{ startDate|date("Y-m-d") }}");
+        const endDate = dateParse("{{ endDate|date("Y-m-d") }}");
+        const pseudoEndDate = dateParse("2023-08-15");
+        const timeDelta = ((endDate - startDate) / 1000 / 60 / 60 / 24) + 1
+
+        const timeAxis = d3.scaleTime()
+            .domain([startDate, endDate])
+            .range([0, width]);
+
+        const xAxis = d3.axisBottom(timeAxis)
+            .tickFormat(dateFormatAxis);
+
+        // Add axis
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+        ;
+
+        const defs = svg
+            .append("defs");
+
+        // Warning signal if mycoplasma status is positive
+        defs
+            .append("g")
+            .attr("id", "mycoplasma-status-positive")
+            .append("circle")
+            .attr("r", 12.5)
+            .attr("stroke-width", 2)
+            .attr("stroke", "red")
+            .attr("fill", "white")
+        ;
+
+        // OK sign if mycoplasma status is negative
+        defs
+            .append("g")
+            .attr("id", "mycoplasma-status-negative")
+            .append("circle")
+            .attr("r", 12.5)
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("fill", "#6ed36e")
+        ;
+
+        // Warning sign if mycoplasma status is unclear
+        defs
+            .append("g")
+            .attr("id", "mycoplasma-status-unclear")
+            .append("path")
+            .attr("d", "M-12.5 10.825 L12.5 10.825 L0 -10.825 Z")
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("fill", "#ffff66")
+        ;
+
+        // Abandoned sign
+        defs
+            .append("g")
+            .attr("id", "culture-is-abandoned")
+            .append("path")
+            .attr("d", "M-12.5 -10.825 L12.5 -10.825 L0 10.825 Z")
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("fill", "orange")
+        ;
+
+        // For each cell line, create a group and save it as "rows"
+        const rows = svg.append('g')
+            .selectAll("dot")
+            .data(cultures)
+            .enter()
+            .append("g")
+            .attr("transform", function (d) { return "translate(0, " + 50 * d._cultureNumber + ")"})
+        ;
+
+        rows
+            .filter(function (d) { return !d.endDate })
+            .append("use")
+            .attr("xref:href", function (d) { return "#mycoplasma-status-" + d.mycoplasmaStatus })
+            .attr("x", timeAxis(endDate) + 30)
+            .attr("y", 0)
+
+        rows.filter(function (d) { return d.isAbandoned })
+            .append("use")
+            .attr("xref:href", "#culture-is-abandoned")
+            .attr("x", timeAxis(endDate) + 80)
+            .attr("y", 0)
+
+        /*const rowBoxes = rows.append("rect")
+            .attr("x", -margin.left)
+            .attr("y", 0 - heightPerEntry/2)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", heightPerEntry)
+            .attr("fill", "white")
+        ;*/
+
+        // Text box showing the cell line name
+        const textbox = rows.append("text")
+            .attr("x", -20)
+            .attr("y", -10)
+            .attr("font-size", 11)
+            .attr("text-anchor", "end")
+            .attr("text-height", 14)
+        ;
+        textbox.append("tspan")
+            .text(function (d) { return d.cultureName })
+            .attr("x", -10)
+            .attr("dy", 0)
+        ;
+
+        textbox.append("tspan")
+            .text(function (d) { return d.owner })
+            .attr("x", -10)
+            .attr("dy", 12);
+
+        textbox.append("tspan")
+            .text(function (d) { return d.incubator })
+            .attr("x", -10)
+            .attr("dy", 12);
+
+        /*rowBoxes.on("mouseover", function(e) {
+            let data = d3.select(this).data()[0];
+            let matrix = this.getCTM();
+            let tools = $("#culture-buttons-" + data.id)[0]
+
+            let position = $("#cellCultureChart svg")[0].createSVGPoint();
+            position.x = this.x.animVal.value + 60;
+            position.y = this.y.animVal.value + heightPerEntry + 10;
+            position = position.matrixTransform(matrix);
+
+            tools.style.top = position.y + "px";
+            tools.style.left = position.x + "px";
+            tools.style.display = "block";
+
+            this.appendChild(tools);
+        }).on("mouseout", function (e) {
+            let data = d3.select(this).data()[0];
+            let tools = $("#culture-buttons-" + data.id)[0]
+            tools.style.display = "none";
+        });*/
+
+        // Connecting line
+        rows.append("polyline")
+            .attr("points", function (d) { return (
+                String(timeAxis(d.startDate < startDate ? startDate : d.startDate)) + ",0 " +
+                String(timeAxis(d.endDate ? d.endDate : endDate) + ",0 ")
+            );
+            })
+            .attr("stroke", "black")
+            .style("stroke-width", 3);
+
+        // Grid lines
+        rows.append("polyline")
+            .attr("points", function (d) { return (
+                timeAxis(startDate) + ",-" + heightPerEntry/2 + " " +
+                timeAxis(endDate) + ",-" + heightPerEntry/2 + " "
+            );
+            })
+            .attr("stroke", "black")
+            .style("stroke-width", 0.5);
+
+        // Start point
+        rows
+            .filter(function(d) { return d.startDate >= startDate})
+            .append("circle")
+            .attr("cx", function (d) { return timeAxis(d.startDate); } )
+            .attr("cy", 0 )
+            .attr("r", 5)
+            .style("fill", "#000000");
+
+        rows
+            .filter(function(d) { return d.startDate >= startDate}).append("text")
+            .text(function (d) { return d.startPassage; })
+            .attr("x", function (d) { return timeAxis(d.startDate); } )
+            .attr("y", -8)
+            .attr("font-size", 11)
+            .attr("text-anchor", "middle")
+            .attr("text-height", 14)
+        ;
+
+        // End point
+        rows
+            .filter(function (d) { return !!d.endDate; })
+            .append("circle")
+            .attr("cx", function (d) { return timeAxis(d.endDate); } )
+            .attr("cy", 0 )
+            .attr("r", 5)
+            .style("fill", "#000000")
+        ;
+
+        rows
+            .filter(function (d) { return !!d.endDate; })
+            .append("text")
+            .text(function (d) { return d.endPassage; })
+            .attr("x", function (d) { return timeAxis(d.endDate);})
+            .attr("y", -8)
+            .attr("font-size", 11)
+            .attr("text-anchor", "middle")
+            .attr("text-height", 14)
+        ;
+
+        // Events
+        const event_group = rows
+            .append("g")
+            .selectAll("g")
+            .data(function (d) {return d.events})
+            .enter()
+            .append("g")
+        ;
+
+        const testEvents = event_group.filter(function (d) { return d.eventType === "test" })
+            .append("circle")
+            .attr("cx", function (d) { return timeAxis(d.date); } )
+            .attr("cy", function (d) { return d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10); })
+            .attr("r", 5)
+            .style("fill", function (d) { return d.testResult === "positive" ? "#FF0000" : (d.testResult === "negative" ? "#00FF00" : "#FFFF00")})
+            .style("stroke", "black")
+            .style("stroke-width", 1)
+        ;
+
+        testEvents.on("mouseover", function (e) {
+            let content = "";
+            let output = $("#cellCultureChartEventInfo")[0];
+            let matrix = this.getCTM();
+
+            let position = $("#cellCultureChart svg")[0].createSVGPoint();
+            position.x = this.cx.animVal.value + 60;
+            position.y = 0 + heightPerEntry + 50;
+            position = position.matrixTransform(matrix);
+
+            let data = d3.select(this).data()[0];
+
+            content += "<b>" + dateFormat(data.date) + "</b><br />"
+            content += data.shortName + "<br />";
+            content += data.description + "<br />";
+            content += "<b>Scientist:</b> " + data.owner + "<br />";
+            content += "<b>Test type:</b> " + data.testType + "<br />";
+            content += "<b>Test result:</b> " + data.testResult + "<br />";
+
+            output.innerHTML = content;
+            output.style.top = position.y + "px";
+            output.style.left = position.x + "px";
+            output.style.display = "block";
+        }).on("mouseout", function (e) {
+            let output = $("#cellCultureChartEventInfo")[0];
+            output.style.display = "none";
+        });
+
+        const splitEvents = event_group.filter(function (d) { return d.eventType === "split" })
+            .append("circle")
+            .attr("cx", function (d) { return timeAxis(d.date); } )
+            .attr("cy", function (d) { return d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10); })
+            .attr("r", 5)
+            .style("fill", "#FFFFFF")
+            .style("stroke", "black")
+            .style("stroke-width", 1)
+        ;
+
+        event_group.filter(function (d) { return d.eventType === "split" })
+            .append("text")
+            .text(function (d) { return d.currentPassage; })
+            .attr("x", function (d) { return timeAxis(d.date);})
+            .attr("y", -8)
+            .attr("font-size", 11)
+            .attr("text-anchor", "middle")
+            .attr("text-height", 14)
+        ;
+
+        splitEvents.on("mouseover", function (e) {
+            let content = "";
+            let output = $("#cellCultureChartEventInfo")[0];
+            let matrix = this.getCTM();
+
+            let position = $("#cellCultureChart svg")[0].createSVGPoint();
+            position.x = this.cx.animVal.value + 60;
+            position.y = 0 + heightPerEntry + 50;
+            position = position.matrixTransform(matrix);
+
+            let data = d3.select(this).data()[0];
+
+            content += "<b>" + dateFormat(data.date) + "</b><br />";
+            content += data.shortName + "<br />";
+            content += data.description + "<br />";
+            content += "<b>Scientist:</b> " + data.owner + "<br />";
+            content += "<b>Splitting:</b> " + data.splitting + "<br />";
+            content += "<b>New Flask:</b> " + data.newFlask + "<br />";
+
+            output.innerHTML = content;
+            output.style.top = position.y + "px";
+            output.style.left = position.x + "px";
+            output.style.display = "block";
+        }).on("mouseout", function (e) {
+            let output = $("#cellCultureChartEventInfo")[0];
+            output.style.display = "none";
+        });
+
+        const otherEvents = event_group.filter(function (d) { return d.eventType === "other" })
+            .append("circle")
+            .attr("cx", function (d) { return timeAxis(d.date); } )
+            .attr("cy", function (d) { return d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10); })
+            .attr("r", 5)
+            .style("fill", "#999999")
+            .style("stroke", "black")
+            .style("stroke-width", 1)
+        ;
+
+        otherEvents.on("mouseover", function (e) {
+            let content = "";
+            let output = $("#cellCultureChartEventInfo")[0];
+            let matrix = this.getCTM();
+
+            let position = $("#cellCultureChart svg")[0].createSVGPoint();
+            position.x = this.cx.animVal.value + 60;
+            position.y = 0 + heightPerEntry + 50;
+            position = position.matrixTransform(matrix);
+
+            let data = d3.select(this).data()[0];
+
+            content += "<b>" + dateFormat(data.date) + "</b><br />";
+            content += data.shortName + "<br />";
+            content += data.description + "<br />";
+            content += "<b>Scientist:</b> " + data.owner + "<br />";
+
+            output.innerHTML = content;
+            output.style.top = position.y + "px";
+            output.style.left = position.x + "px";
+            output.style.display = "block";
+        }).on("mouseout", function (e) {
+            let output = $("#cellCultureChartEventInfo")[0];
+            output.style.display = "none";
+        });
+    </script>
+{% endmacro %}

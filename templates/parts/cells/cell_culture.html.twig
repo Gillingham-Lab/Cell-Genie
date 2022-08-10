@@ -1,0 +1,148 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'parts/cells/cell_culture_macros.html.twig' as cell_culture_macros %}
+
+{% block title %}Gin: Cell Culture{% endblock %}
+
+{% block body_main %}
+    <div class="row p-3">
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div class="row">
+                <div class="float-left">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a
+                                class="btn btn-secondary"
+                                href="{{ url("app_cell_cultures") }}"
+                                data-toggle="tooltip" data-placement="bottom" title="Back"
+                        ><span class="fas fa-fw fa-arrow-up"></span></a>
+
+                        <a
+                                class="btn btn-primary"
+                                href="{{ url("app_cell_culture_edit", {"cellCulture": culture.id, "redirect": "cellCulture"}) }}"
+                                data-toggle="tooltip" data-placement="bottom" title="Edit"
+                        ><span class="fas fa-fw fa-edit"></span></a>
+
+                        <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                           href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "other", "redirect": "cellCulture"}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Add new event"
+                        ><span class="fas fa-tag"></span></a>
+
+                        <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                           href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "test", "redirect": "cellCulture"}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"
+                        ><span class="fas fa-hospital-symbol"></span></a>
+
+                        <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                           href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "split", "redirect": "cellCulture"}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"
+                        ><span class="fas fa-fill-drip"></span></a>
+                        {% if culture.trashedOn %}
+                            <a
+                                    class="btn btn-warning"
+                                    href="{{ url("app_cell_culture_restore", {"cellCulture": culture.id, "redirect": "cellCulture"}) }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Restore cell culture"
+                            ><span class="fas fa-trash-restore"></span></a>
+                        {% else %}
+                            <a
+                                    class="btn btn-warning"
+                                    href="{{ url("app_cell_culture_trash", {"cellCulture": culture.id, "redirect": "cellCulture"}) }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"
+                            ><span class="fas fa-trash-alt"></span></a>
+                        {% endif %}
+                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
+                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+                    </div>
+                </div>
+
+                <h1 class="col">Cell Culture: {{ culture.name }}</h1>
+            </div>
+        </div>
+
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <div id="cellCultureChart" style="position: relative;"></div>
+            <div id="cellCultureChartEventInfo" style="color: black; background: whitesmoke; font-size: 10px; width: 150px; position: absolute; display: none; padding: 3px 6px; margin-left: -80px;"></div>
+        </div>
+
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <table class="table table-sm table-borderless table-hover">
+                <tbody>
+                    {{ macros.definition_row("ID", culture.id) }}
+                    {{ macros.definition_row("No", culture.number) }}
+                    {{ macros.definition_row("Scientist", culture.owner) }}
+                    {{ macros.definition_row("Created on", culture.unfrozenOn|date("d. F Y")) }}
+                    {{ macros.definition_row("Trashed on", (culture.trashedOn ? culture.trashedOn|date("d. F Y") : "-")) }}
+
+                    {% if culture.aliquot %}
+                        {{ macros.definition_row("Aliquot", culture.aliquot, url("app_cell_aliquote_view_number", {"cellNumber": culture.aliquot.cell.cellNumber, "aliquoteId": culture.aliquot.id}) ) }}
+                    {% else %}
+                        {{ macros.definition_row("Ancestor culture", culture.parentCellCulture.name, url("app_cell_culture_view", {"cellCulture": culture.parentCellCulture.id})) }}
+                    {% endif %}
+
+                    <tr>
+                        <th>Descendents</th>
+                        <td>
+                            {% if culture.subCellCultures|length > 0 %}
+                                {% for subculture in culture.subCellCultures %}
+                                    <a href="{{ url("app_cell_culture_view", {"cellCulture": subculture.id}) }}">{{ subculture.name }}</a>{% if culture != loop.last %},{% endif %}
+                                {% endfor %}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col col-12 p-5 bg-white mb-3 border">
+            <table class="table table-sm table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 80px">
+                            <div class="btn-group btn-group-sm" role="group" style="visibility: hidden;">
+                                <span
+                                        class="btn btn-primary"
+                                ><span class="fas fa-fw fa-edit"></span></span>
+
+                                <span
+                                        class="btn btn-warning"
+                                ><span class="fas fa-fw fa-trash-alt"></span></span>
+                            </div>
+                        </th>
+                        <th>Date</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in culture.events %}
+                        <tr>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a
+                                            class="btn btn-primary"
+                                            href="{{ url("app_cell_culture_edit_event", {"cellCulture": culture.id, "cellCultureEvent": event.id, "redirect": "cellCulture"}) }}"
+                                            data-toggle="tooltip" data-placement="bottom" title="Edit event"
+                                    ><span class="fas fa-fw fa-edit"></span></a>
+
+                                    <a
+                                            class="btn btn-warning"
+                                            href="{{ url("app_cell_culture_trash_event", {"cellCulture": culture.id, "cellCultureEvent": event.id, "redirect": "cellCulture"}) }}"
+                                            data-toggle="tooltip" data-placement="bottom" title="Trash event"
+                                    ><span class="fas fa-fw fa-trash-alt"></span></a>
+                                </div>
+                            </td>
+                            <td>{{ event.date|date("d. F Y") }}</td>
+                            <td>{{ event.shortName }}</td>
+                            <td>{{ event is cellCultureTestEvent ? "Mycoplasma test" : event is cellCultureSplittingEvent ? "Splitting" : "Other" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_bottom %}
+    {{ cell_culture_macros.culture_timeline([culture], startDate, endDate, 120) }}
+{% endblock %}

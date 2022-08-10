@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
-use App\Entity\Experiment;
-use App\Entity\ExperimentalRunWellFormEntity;
 use App\Form\Traits\VocabularyTrait;
 use App\Repository\VocabularyRepository;
 use Symfony\Component\Form\AbstractType;

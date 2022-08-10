@@ -1,14 +1,14 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
-{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
+{% import 'parts/cells/cell_culture_macros.html.twig' as cell_culture_macros %}
 
-{% block title %}Gin: New cell culture event{% endblock %}
+{% block title %}Gin: Cell Culture{% endblock %}
 
 {% block body_main %}
     <div class="row p-3">
         <div class="col col-12 p-5 bg-white mb-3 border">
             <div class="row">
-                <h1 class="col">{{ culture.name }}: New event</h1>
+                <h1 class="col">Cell Culture: {{ culture.name }}</h1>
             </div>
         </div>
 

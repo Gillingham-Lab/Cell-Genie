@@ -37,7 +37,7 @@ class CellCultureEvent
 
     public function __construct()
     {
-        $this->date = new DateTime("now");
+        $this->date = new DateTime("today");
     }
 
     public function getOwner(): ?User
