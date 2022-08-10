@@ -98,9 +98,9 @@ class CellCulture
     public function getCurrentPassage(?DateTimeInterface $dateTime = null): int
     {
         if ($this->aliquot) {
-            $currentPassage = $this->aliquot->getPassage();
+            $currentPassage = $this->aliquot->getPassage() ?? 0;
         } else {
-            $currentPassage = $this->parentCellCulture->getCurrentPassage($this->unfrozenOn);
+            $currentPassage = $this->parentCellCulture->getCurrentPassage($this->unfrozenOn) ?? 0;
         }
 
         foreach ($this->events as $event) {
