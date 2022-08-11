@@ -108,7 +108,7 @@ class ExperimentalRunType extends AbstractType
 
             $choices = [];
             foreach ($chemicals as $chemical) {
-                $choices[$chemical->getShortName()] = $chemical->getUlid();
+                $choices[$chemical->getShortName()] = $chemical->getUlid()->toBase58();
             }
 
             $options = [
@@ -125,7 +125,7 @@ class ExperimentalRunType extends AbstractType
 
             $choices = [];
             foreach ($proteins as $protein) {
-                $choices[$protein->getShortName()] = $protein->getUlid();
+                $choices[$protein->getShortName()] = $protein->getUlid()->toBase58();
             }
 
             $options = [
