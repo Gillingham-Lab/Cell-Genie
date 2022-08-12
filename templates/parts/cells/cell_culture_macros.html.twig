@@ -1,4 +1,4 @@
-{% macro culture_json(culture, culture_number) %}
+{% macro culture_json(culture, culture_number, startDate, endDate) %}
     {
     "id": "{{ culture.id.toBase58 }}",
     "startDate": dateParse("{{ culture.unfrozenOn|date("Y-m-d") }}"),
@@ -14,7 +14,7 @@
     "events": [
     {% set event_dates = {} %}
 
-    {% for event in culture.events|filter(e => e.date >= startDate and e.date <= endDate ) %}
+    {% for event in culture.events|filter(e => ((e.date >= startDate) and (e.date <= endDate)) ) %}
         {% if event_dates[event.date|date("Y-m-d")] is defined %}
             {% set event_dates = event_dates|merge({(event.date|date("Y-m-d")): event_dates[event.date|date("Y-m-d")]+1}) %}
             // merge, it exists
@@ -73,7 +73,7 @@
         const cultures = [
             {% set culture_number = 0 %}
             {% for culture in cultures %}
-            {{ _self.culture_json(culture, culture_number) }}
+            {{ _self.culture_json(culture, culture_number, startDate, endDate) }}
             {% set culture_number = culture_number + 1 %}
             {% endfor %}
         ];
