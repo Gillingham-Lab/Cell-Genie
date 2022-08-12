@@ -253,8 +253,8 @@ class CellController extends AbstractController
         return $this->redirectToRoute("app_cell_cultures");
     }
 
-    #[Route("/cells/cultures/create/{cellCulture}/{eventType}", name: "app_cell_culture_create_event", requirements: ["eventType" => "test|split|other"])]
-    #[Route("/cells/cultures/edit/{cellCulture}/{cellCultureEvent}", name: "app_cell_culture_edit_event")]
+    #[Route("/cells/cultures/create/{cellCulture}/event/{eventType}", name: "app_cell_culture_create_event", requirements: ["eventType" => "test|split|other"])]
+    #[Route("/cells/cultures/edit/{cellCulture}/event/{cellCultureEvent}", name: "app_cell_culture_edit_event")]
     public function addCellCultureEvent(
         Request $request,
         CellCulture $cellCulture,
