@@ -25,3 +25,4 @@ composer.phar
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+/DatabaseStructure.svg
