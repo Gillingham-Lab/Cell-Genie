@@ -13,7 +13,7 @@
         "composer/package-versions-deprecated": "1.11.99.1",
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0",
-        "doctrine/orm": "^2.8",
+        "doctrine/orm": "dev-DDC-2917-2.23 as 2.13.1",
         "easycorp/easyadmin-bundle": "^4.0",
         "gedmo/doctrine-extensions": "^3.7",
         "sensio/framework-extra-bundle": "^6.0",
@@ -27,6 +27,12 @@
         "symfony/validator": "*",
         "symfony/yaml": "*"
     },
+    "repositories": [
+        {
+            "type": "github",
+            "url": "https://github.com/Gillingham-Lab/doctrine-orm-fork"
+        }
+    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": {
