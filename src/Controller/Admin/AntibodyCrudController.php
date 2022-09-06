@@ -3,19 +3,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Antibody;
-use App\Entity\File;
+use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Traits\HasRRID;
-use App\Entity\User;
-use App\Form\AntibodyDilutionType;
 use App\Form\DocumentationType;
 use App\Form\LotType;
 use App\Repository\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -24,9 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Form\FormInterface;
 
 class AntibodyCrudController extends ExtendedAbstractCrudController
 {

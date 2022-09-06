@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: PlateRepository::class)]
-#[Gedmo\Loggable]
+##[ORM\Entity(repositoryClass: PlateRepository::class)]
+##[Gedmo\Loggable]
 class Plate
 {
     use IdTrait;

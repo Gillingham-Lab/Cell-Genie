@@ -3,16 +3,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Chemical;
+use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\Traits\VendorTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use SebastianBergmann\CodeCoverage\Report\Text;
 
 class ChemicalCrudController extends AbstractCrudController
 {

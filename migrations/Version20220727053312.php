@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Repository\ChemicalRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Uid\Ulid;
 
 
 final class Version20220727053312 extends AbstractMigration

@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait ShortNameTrait
 {
-    #[ORM\Column(type: "string", length: 20)]
+    #[ORM\Column(type: "string", length: 50, unique: True)]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 1,
-        max: 20,
+        max: 50,
     )]
     #[Gedmo\Versioned]
     private ?string $shortName;

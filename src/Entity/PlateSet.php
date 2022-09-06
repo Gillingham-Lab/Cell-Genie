@@ -10,8 +10,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
-#[ORM\Entity(repositoryClass: PlateSetRepository::class)]
-#[Gedmo\Loggable]
+##[ORM\Entity(repositoryClass: PlateSetRepository::class)]
+##[Gedmo\Loggable]
 class PlateSet
 {
     use IdTrait;

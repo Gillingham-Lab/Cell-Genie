@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Substance;
 
-use App\Entity\Antibody;
+use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
-use App\Entity\EpitopeHost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use function App\Repository\str_ends_with;
+use function App\Repository\str_starts_with;
 
 /**
  * @method Antibody|null find($id, $lockMode = null, $lockVersion = null)

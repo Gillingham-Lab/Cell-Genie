@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Chemical;
+use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\RecipeIngredient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;

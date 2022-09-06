@@ -6,7 +6,7 @@ use App\Entity\Traits\IdTrait;
 use App\Repository\PlateWellRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PlateWellRepository::class)]
+##[ORM\Entity(repositoryClass: PlateWellRepository::class)]
 class PlateWell
 {
     use IdTrait;

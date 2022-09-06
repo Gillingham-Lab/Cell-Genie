@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Substance;
 
-use App\Entity\Traits\NameTrait;
-use App\Entity\Traits\NewIdTrait;
+use App\Entity\Experiment;
 use App\Entity\Traits\VendorTrait;
-use App\Repository\ChemicalRepository;
+use App\Repository\Substance\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,10 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChemicalRepository::class)]
 #[Gedmo\Loggable]
-class Chemical
+class Chemical extends Substance
 {
-    use NewIdTrait;
-    use NameTrait;
     use VendorTrait;
 
     #[ORM\Column(type: "text")]
@@ -54,30 +51,6 @@ class Chemical
     public function __toString(): string
     {
         return $this->getShortName() ?? "unknown";
-    }
-
-    public function getLongName(): ?string
-    {
-        return $this->longName;
-    }
-
-    public function setLongName(string $longName): self
-    {
-        $this->longName = $longName;
-
-        return $this;
-    }
-
-    public function getShortName(): ?string
-    {
-        return $this->shortName;
-    }
-
-    public function setShortName(string $shortName): self
-    {
-        $this->shortName = $shortName;
-
-        return $this;
     }
 
     public function getSmiles(): ?string

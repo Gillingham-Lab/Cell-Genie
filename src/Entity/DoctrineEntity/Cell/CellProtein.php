@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Cell;
 
-use App\Entity\Protein;
+use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Traits\IdTrait;
 use App\Repository\Cell\CellProteinRepository;
 use Doctrine\Common\Collections\Collection;

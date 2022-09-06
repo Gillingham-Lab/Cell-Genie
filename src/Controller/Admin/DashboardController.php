@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Antibody;
 use App\Entity\Box;
-use App\Entity\Chemical;
 use App\Entity\CultureFlask;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
@@ -13,6 +11,9 @@ use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
+use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
@@ -21,7 +22,6 @@ use App\Entity\ExperimentType;
 use App\Entity\Message;
 use App\Entity\Morphology;
 use App\Entity\Organism;
-use App\Entity\Protein;
 use App\Entity\Rack;
 use App\Entity\Recipe;
 use App\Entity\Tissue;

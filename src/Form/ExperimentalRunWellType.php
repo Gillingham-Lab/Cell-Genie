@@ -3,19 +3,16 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Chemical;
 use App\Entity\Experiment;
 use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalMeasurement;
 use App\Entity\ExperimentalRunWellFormEntity;
 use App\Entity\InputType;
-use App\Repository\ChemicalRepository;
-use App\Repository\ProteinRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Repository\Substance\ChemicalRepository;
+use App\Repository\Substance\ProteinRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;

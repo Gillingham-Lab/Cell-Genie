@@ -1,28 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Substance;
 
-use App\Entity\Traits\NewIdTrait;
-use App\Entity\Traits\NameTrait;
-use App\Repository\ProteinRepository;
+use App\Entity\EpitopeProtein;
+use App\Entity\Experiment;
+use App\Repository\Substance\ProteinRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 
 #[ORM\Entity(repositoryClass: ProteinRepository::class)]
 #[UniqueEntity(fields: "shortName")]
 #[Gedmo\Loggable]
-class Protein
+class Protein extends Substance
 {
-    use NewIdTrait;
-    use NameTrait;
-
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Url]
     private ?string $proteinAtlasUri = null;

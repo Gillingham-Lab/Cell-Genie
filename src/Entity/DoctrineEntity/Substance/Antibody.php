@@ -1,41 +1,33 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Substance;
 
+use App\Entity\Epitope;
+use App\Entity\EpitopeHost;
+use App\Entity\File;
+use App\Entity\Lot;
 use App\Entity\Traits\HasRRID;
-use App\Entity\Traits\NewIdTrait;
 use App\Entity\Traits\VendorTrait;
-use App\Repository\AntibodyRepository;
+use App\Repository\Substance\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AntibodyRepository::class)]
 #[UniqueEntity(fields: "shortName")]
 #[UniqueEntity(fields: "number")]
-class Antibody
+#[Gedmo\Loggable]
+class Antibody extends Substance
 {
-    use NewIdTrait;
-    use VendorTrait;
     use HasRRID;
+    use VendorTrait;
 
     #[ORM\Column(type: "integer", nullable: true)]
     private ?int $id = null;
-
-    #[ORM\Column(type: "string", length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 50)]
-    private string $shortName = "";
-
-    #[ORM\Column(type: "string", length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 5, max: 255)]
-    private string $longName = "";
 
     #[ORM\ManyToMany(targetEntity: Epitope::class, inversedBy: "antibodies")]
     #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid", onDelete: "CASCADE")]
@@ -112,30 +104,6 @@ class Antibody
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getShortName(): ?string
-    {
-        return $this->shortName;
-    }
-
-    public function setShortName(string $shortName): self
-    {
-        $this->shortName = $shortName;
-
-        return $this;
-    }
-
-    public function getLongName(): ?string
-    {
-        return $this->longName;
-    }
-
-    public function setLongName(string $longName): self
-    {
-        $this->longName = $longName;
-
-        return $this;
     }
 
     /**

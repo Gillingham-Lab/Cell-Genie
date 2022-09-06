@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\OwnerTrait;
 use App\Entity\Traits\TimestampTrait;

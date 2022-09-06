@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Antibody;
+use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
-use App\Repository\AntibodyRepository;
-use Doctrine\DBAL\Types\ConversionException;
+use App\Repository\Substance\AntibodyRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;

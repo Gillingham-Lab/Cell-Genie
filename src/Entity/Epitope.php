@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\ShortNameTrait;
 use App\Repository\EpitopeRepository;
@@ -10,7 +11,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EpitopeRepository::class)]
 #[ORM\InheritanceType("JOINED")]

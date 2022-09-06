@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
-use App\Entity\Protein;
 use App\Repository\Cell\CellRepository;
-use App\Repository\ProteinRepository;
+use App\Repository\Substance\ProteinRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
