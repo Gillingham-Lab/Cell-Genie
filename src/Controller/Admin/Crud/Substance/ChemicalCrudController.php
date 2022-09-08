@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Crud\Substance;
 
+use App\Controller\Admin\Crud\LotCrudController;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\Traits\VendorTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -40,6 +42,12 @@ class ChemicalCrudController extends AbstractCrudController
             NumberField::new("density")
                 ->setHelp("Mostly used for buffer recipes to calculate a volume. Only meaningful for liquids.")
                 ->hideOnIndex(),
+
+            FormField::addTab("Lot entries"),
+            CollectionField::new("lots", "Lot entries")
+                ->useEntryCrudForm(LotCrudController::class)
+                ->hideOnIndex()
+                ->allowDelete(True),
 
             FormField::addTab("Vendor"),
             ...VendorTrait::crudFields(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Traits\HasBoxTrait;
+use App\Entity\Traits\VendorTrait;
 use App\Repository\LotRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Lot
 {
     use HasBoxTrait;
+    use VendorTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
@@ -46,12 +48,10 @@ class Lot
     private ?User $boughtBy = null;
 
     #[ORM\Column(type: "string", length: 10)]
-    #[Assert\NotBlank]
     #[Assert\Length(max: 10)]
     private ?string $amount = null;
 
     #[ORM\Column(type: "string", length: 15)]
-    #[Assert\NotBlank]
     #[Assert\Length(max: 15)]
     private ?string $purity = null;
 
@@ -60,7 +60,7 @@ class Lot
 
     #[ORM\Column(type: "smallint", nullable: true)]
     #[Assert\NotBlank]
-    private ?int $numberOfAliquotes = null;
+    private ?int $numberOfAliquotes = 1;
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;

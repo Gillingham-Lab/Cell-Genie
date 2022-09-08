@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Experiment;
+use App\Entity\Traits\LabJournalTrait;
+use App\Entity\Traits\MolecularMassTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\Substance\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,18 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Chemical extends Substance
 {
     use VendorTrait;
+    use LabJournalTrait;
+    use MolecularMassTrait;
 
     #[ORM\Column(type: "text")]
     private string $smiles = "";
-
-    #[ORM\Column(type: "text", nullable: true)]
-    #[Assert\Url]
-    private ?string $labjournal = null;
-
-    #[ORM\Column(type: "float", nullable: false, options: ["default" => 0.0])]
-    #[Assert\Range(min: 0)]
-    #[Assert\NotNull]
-    private float $molecularMass = 0.0;
 
     #[ORM\Column(type: "float", nullable: true)]
     #[Assert\Range(min: 0)]
@@ -65,18 +60,6 @@ class Chemical extends Substance
         return $this;
     }
 
-    public function getLabjournal(): ?string
-    {
-        return $this->labjournal;
-    }
-
-    public function setLabjournal(?string $labjournal): self
-    {
-        $this->labjournal = $labjournal;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Experiment>
      */
@@ -100,18 +83,6 @@ class Chemical extends Substance
         if ($this->experiments->removeElement($experiment)) {
             $experiment->removeChemical($this);
         }
-
-        return $this;
-    }
-
-    public function getMolecularMass(): float
-    {
-        return $this->molecularMass;
-    }
-
-    public function setMolecularMass(float $molecularMass): self
-    {
-        $this->molecularMass = $molecularMass;
 
         return $this;
     }

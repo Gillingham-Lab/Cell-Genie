@@ -1,8 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Crud\Substance;
 
+use App\Controller\Admin\Crud\LotCrudController;
+use App\Controller\Admin\ExtendedAbstractCrudController;
+use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Traits\HasRRID;
 use App\Form\DocumentationType;
@@ -96,8 +99,7 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
 
             FormField::addTab("Lot entries"),
             CollectionField::new("lots", "Lot entries")
-                ->setEntryType(LotType::class)
-                ->setEntryIsComplex(true)
+                ->useEntryCrudForm(LotCrudController::class)
                 ->hideOnIndex()
                 ->allowDelete(True),
 

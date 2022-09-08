@@ -38,18 +38,36 @@ class LotType extends AbstractType
                 "data" => $this->security->getUser(),
             ])
             ->add("box")
-            ->add("amount")
-            ->add("purity")
+            ->add("amount", options: [
+                "label" => "Amount",
+                "help" => "Write down the amount with a unit",
+            ])
+            ->add("purity", options: [
+                "label" => "Concentration",
+                "help" => "Write down the concentration with a unit",
+            ])
             ->add("aliquoteSize")
             ->add("numberOfAliquotes")
             ->add("comment")
         ;
+
+        if ($options["hideVendor"] !== true) {
+            $builder
+                ->add("vendor")
+                ->add("vendorPN", options: [
+                    "label" => "Product number",
+                ])
+            ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Lot::class,
+            "data_class" => Lot::class,
+            "hideVendor" => false,
         ]);
+
+        $resolver->setAllowedTypes("hideVendor", "bool");
     }
 }

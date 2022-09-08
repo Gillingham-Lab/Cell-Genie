@@ -1,14 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Crud\Substance;
 
+use App\Controller\Admin\Crud\LotCrudController;
+use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Repository\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -65,6 +68,12 @@ class ProteinCrudController extends AbstractCrudController
             FormField::addTab("Experimental details"),
             AssociationField::new("epitopes", label: "Epitopes of this protein.")
                 ->setFormTypeOption("by_reference", false),
+
+            FormField::addTab("Lot entries"),
+            CollectionField::new("lots", "Lot entries")
+                ->useEntryCrudForm(LotCrudController::class)
+                ->hideOnIndex()
+                ->allowDelete(True),
         ];
     }
 }

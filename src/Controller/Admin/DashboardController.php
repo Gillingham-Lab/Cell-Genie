@@ -13,6 +13,7 @@ use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
@@ -78,18 +79,22 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Tissue Types", "fas fa-kidneys", Tissue::class),
             MenuItem::linkToCrud("Morphologies", "fa", Morphology::class),
 
-            MenuItem::section("Antibodies"),
+            MenuItem::section("Substances"),
             MenuItem::linkToCrud("Antibodies", "icon icon-antibody fw-icon", Antibody::class),
-            MenuItem::linkToCrud("Epitopes: Hosts", "fas fa-horse fw-icon", EpitopeHost::class),
-            MenuItem::linkToCrud("Epitopes: Proteins", "icon icon-protein fw-icon", EpitopeProtein::class),
-            MenuItem::linkToCrud("Epitopes: Small Molecules", "fas fa-tablets fw-icon", EpitopeSmallMolecule::class),
+            MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
+            MenuItem::subMenu("Epitopes", "fas fas-horse fw-icon")
+                ->setSubItems([
+                    MenuItem::linkToCrud("Hosts", "fas fa-horse fw-icon", EpitopeHost::class),
+                    MenuItem::linkToCrud("Proteins", "icon icon-protein fw-icon", EpitopeProtein::class),
+                    MenuItem::linkToCrud("Small Molecules", "fas fa-tablets fw-icon", EpitopeSmallMolecule::class),
+                ]),
+            MenuItem::linkToCrud("Oligos", "icon icon-oligomer", Oligo::class),
+            MenuItem::linkToCrud("Proteins", "icon icon-protein", Protein::class),
 
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
             MenuItem::linkToCrud("Experiments", 'fas', Experiment::class),
-            MenuItem::linkToCrud("Proteins", "icon icon-protein", Protein::class),
             #MenuItem::linkToCrud("Antibody hosts", "fas fa-horse", AntibodyHost::class),
-            MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
             MenuItem::linkToCrud("Recipes", "fas fa-list-alt", Recipe::class),
 
             MenuItem::section("Inventory"),

@@ -74,14 +74,6 @@ class Antibody extends Substance
     #[Assert\Length(max: 250)]
     private ?string $usage = "Western blot";
 
-    #[ORM\ManyToMany(targetEntity: Lot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
-    #[ORM\JoinTable(name: "antibody_lots")]
-    #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid")]
-    #[ORM\InverseJoinColumn(name: "lot_id", referencedColumnName: "id", unique: true)]
-    #[ORM\OrderBy(["lotNumber" => "ASC"])]
-    #[Assert\Valid]
-    private Collection $lots;
-
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "antibody_vendor_documentation_files")]
     #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid")]
@@ -247,30 +239,6 @@ class Antibody extends Substance
     public function setUsage(?string $usage): self
     {
         $this->usage = $usage;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Lot>
-     */
-    public function getLots(): Collection
-    {
-        return $this->lots;
-    }
-
-    public function addLot(Lot $lot): self
-    {
-        if (!$this->lots->contains($lot)) {
-            $this->lots[] = $lot;
-        }
-
-        return $this;
-    }
-
-    public function removeLot(Lot $lot): self
-    {
-        $this->lots->removeElement($lot);
 
         return $this;
     }
