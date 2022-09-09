@@ -1,69 +1,89 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Compounds{% endblock %}
+{% block title %}Gin :: Recipe :: {{ recipe.shortName }}{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="">
-                    <span class="align-middle pl-5">{{ recipe.shortName }}</span>
-                </h1>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(recipe.shortName) }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": url("app_recipes"),
+                    "tooltipText": "Back to all recipes",
+                },
+            ]) }}
+
+        <div class="row">
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {% if recipe.pH %}
+                            <div class="card-body border-bottom">
+                                Required pH: <strong>{{ recipe.pH }}</strong>
+                            </div>
+                        {% endif %}
+
+                        {% if recipe.comment %}
+                            <div class="card-body border-bottom">
+                                <h4>Comment</h4>
+                                {{ recipe.comment|raw }}
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body border-bottom">
+                            <div class="form-group">
+                                <div class="row row-cols-2 row-cols-md-3">
+                                    <div class="col">
+                                        <label for="_genie_recipe_totalVolume" class="form-label">Volume (mL)</label>
+                                        <input id="_genie_recipe_totalVolume" type="number" value="1000" class="form-control">
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="_genie_recipe_targetConcentrationFactor" class="form-label">Concentration factor</label>
+                                        <input id="_genie_recipe_targetConcentrationFactor" type="number" value="{{ recipe.concentrationFactor }}" class="form-control">
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="_genie_recipe_totalVolume_submit" class="form-label">&nbsp;</label>
+                                        <button id='_genie_recipe_totalVolume_submit' class="btn btn-primary form-control" onsubmit="">Recalculate</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <table class="table table-hover _genie_recipe">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Ingredient</th>
+                                        <th class="d-none d-lg-table-cell" scope="col">Concentration</th>
+                                        <th scope="col">Mass</th>
+                                        <th scope="col">Volume</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for ingredient in recipe.ingredients %}
+                                    <tr id="ingredient_{{ ingredient.id }}" class="_genie_recipe_ingredient">
+                                        <td><strong>{{ ingredient.chemical.shortName }}</strong><span class="d-none d-lg-inline">({{ ingredient.chemical.molecularMass }} g/mol)</span></td>
+                                        <td class="d-none d-lg-table-cell">{{ ingredient.concentration }}&nbsp;{{ ingredient.concentrationUnit }}</td>
+                                        <td>
+                                            <span class="_genie_recipe_ingredient_amount"></span>
+                                        </td>
+                                        <td>
+                                            <span class="_genie_recipe_ingredient_amount_volume"></span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        {# Short information #}
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            {% if recipe.pH %}
-                <div class="mb-5">
-                    Required pH: <strong>{{ recipe.pH }}</strong>
-                </div>
-            {% endif %}
-
-            {% if recipe.comment %}
-                <div class="pb-5 mb-5 border-bottom">
-                    <h4>Comment</h4>
-                    {{ recipe.comment|raw }}
-                </div>
-            {% endif %}
-
-            <div class="form-group">
-                <label><span>Volume (mL)</span><input id='_genie_recipe_totalVolume' value="1000" type="number" class="form-control"></label>
-                <label><span>Concentration Factor (X)</span><input id='_genie_recipe_targetConcentrationFactor' value="{{ recipe.concentrationFactor }}" type="number" class="form-control"></label>
-                <button id='_genie_recipe_totalVolume_submit' class="btn btn-primary" onsubmit="">Recalculate</button>
-            </div>
-
-            <div class="p-3">
-
-                <table class="table table-hover _genie_recipe">
-                    <thead>
-                    <tr>
-                        <th>Ingredient</th>
-                        <th>Concentration</th>
-                        <th>Mass</th>
-                        <th>Volume</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for ingredient in recipe.ingredients %}
-                        <tr id="ingredient_{{ ingredient.id }}" class="_genie_recipe_ingredient">
-                            <td>{{ ingredient.chemical.shortName }} ({{ ingredient.chemical.molecularMass }} g/mol)</td>
-                            <td>{{ ingredient.concentration }}&nbsp;{{ ingredient.concentrationUnit }}</td>
-                            <td>
-                                <span class="_genie_recipe_ingredient_amount"></span>
-                            </td>
-                            <td>
-                                <span class="_genie_recipe_ingredient_amount_volume"></span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        {# Tabs! #}
     </div>
 {% endblock %}
 
