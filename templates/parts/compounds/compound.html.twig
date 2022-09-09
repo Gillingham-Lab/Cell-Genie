@@ -1,54 +1,74 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Compounds{% endblock %}
+{% block title %}Gin :: Chemical :: {{ chemical.shortName }}{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="col">
-                    <canvas data-smiles-type="large" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}" class="border-right border-light d-inline align-middle"></canvas>
-                    <span class="align-middle pl-5">{{ chemical.shortName }}</span>
-                </h1>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {# Modified layout version #}
+            {{ layout.header(chemical.shortName ~ " | " ~ chemical.longName) }}
 
-                <div class="col text-right p-5">
-                    <div class="btn-group" role="group" aria-label="tools">
-                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to all chemicals"
-                           href="{{ url("app_compounds") }}"
-                        >
-                            <span class="fas fa-fw fa-arrow-up"></span>
-                        </a>
-                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
-                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": url("app_compounds"),
+                    "tooltipText": "Back to all chemicals",
+                },
+                {
+                    "type": "edit",
+                    "disabled": true,
+                    "tooltipText": "Edit chemical",
+                }
+            ]) }}
+
+
+            <div class="row row-cols-1 row-cols-lg-2">
+                {# Details #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Details", "Details") }}
+
+                        {{ layout.card_body_collapse_start("Details") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            <table class="table table-sm table-borderless table-hover">
+                                <tbody>
+                                {{ macros.definition_row("ID", chemical.ulid) }}
+                                {{ macros.definition_row("Short name", chemical.shortName) }}
+                                {{ macros.definition_row("Name", chemical.longName) }}
+
+                                {% if chemical.labjournal %}
+                                    {{ macros.definition_row("Labjournal", chemical.labjournal, chemical.labjournal) }}
+                                {% else %}
+                                    {{ macros.definition_row("Labjournal", "no entry") }}
+                                {% endif %}
+
+                                {% if chemical.vendor %}
+                                    {{ macros.definition_row("Vendor", chemical.vendor.name, chemical.vendor.catalogUrl) }}
+                                    {{ macros.definition_row("Vendor PN", chemical.vendorPN) }}
+                                {% else %}
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {# Structure #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header("Structure") }}
+
+                        {{ layout.card_body_start() }}
+                        <div class="card-body px-lg-5 mx-0 text-center">
+                            <canvas data-smiles-type="large" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}" class="border d-inline-block align-middle"></canvas>
+                        </div>
+                        {{ layout.card_body_end() }}
                     </div>
                 </div>
             </div>
         </div>
-
-        {# Short information #}
-        <div class="col col-12 bg-white mb-3 border p-5">
-            <table class="table table-sm table-borderless">
-                <tbody>
-                    {{ macros.definition_row("ID", chemical.ulid) }}
-                    {{ macros.definition_row("Short name", chemical.shortName) }}
-                    {{ macros.definition_row("Name", chemical.longName) }}
-
-                    {% if chemical.labjournal %}
-                        {{ macros.definition_row("Labjournal", chemical.labjournal, chemical.labjournal) }}
-                    {% else %}
-                        {{ macros.definition_row("Labjournal", "no entry") }}
-                    {% endif %}
-
-                    {% if chemical.vendor %}
-                        {{ macros.definition_row("Vendor", chemical.vendor.name, chemical.vendor.catalogUrl) }}
-                        {{ macros.definition_row("Vendor PN", chemical.vendorPN) }}
-                    {% else %}
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-
-        {# Tabs! #}
     </div>
 {% endblock %}

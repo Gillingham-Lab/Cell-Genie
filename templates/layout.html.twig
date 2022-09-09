@@ -35,6 +35,10 @@
                     {# Edit entry #}
                     {% set iconClass = "fa fa-edit" %}
                     {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "up" %}
+                    {# Hierarchy up #}
+                    {% set iconClass = "fas fa-fw fa-arrow-up" %}
+                    {% set btnClass = "btn-secondary" %}
                 {% endif %}
             {% endif %}
 
@@ -50,7 +54,7 @@
 
             <a
                     {% if tool.target is defined %}
-                        href="{{ target }}"
+                        href="{{ tool.target }}"
                     {% endif %}
 
                     class="btn {{ classTrail }}"

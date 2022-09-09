@@ -59,7 +59,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url("app_compounds") }}">
                                     <span class="fas fa-fw fa-tablets"></span>
-                                    Compounds
+                                    Chemicals
                                 </a>
                             </li>
 
@@ -185,13 +185,29 @@
             form_accordions.has(".is-invalid").addClass("border-warning");
 
             $(document).ready(function() {
-                $(".fancyTable").fancyTable({
+                /*$(".fancyTable").fancyTable({
                     sortColumn: 1,
                     pagination: true,
                     perPage: 30,
                     globalSearch: true,
                     globalSearchExcludeColumns: [0],
-                });
+                });*/
+
+                $(".fancyTable").each(function (e) {
+                    let sortColumn = 1;
+
+                    if (this.hasAttribute("data-ft-sort-column")) {
+                        sortColumn = this.getAttribute("data-ft-sort-column");
+                    }
+
+                    $(this).fancyTable({
+                        sortColumn: sortColumn,
+                        pagination: true,
+                        perPage: 30,
+                        globalSearch: true,
+                        globalSearchExcludeColumns: [0],
+                    })
+                })
             });
         </script>
         <script type="application/javascript">
@@ -217,7 +233,6 @@
             // let svgDrawer = new SmilesDrawer.SvgDrawer(options);
 
             canvas.each(function(index, canvas) {
-                console.log(canvas.dataset.smiles)
                 SmilesDrawer.parse(canvas.dataset.smiles, function(tree) {
                     smilesDrawer.draw(tree, canvas, "light", false)
                 })
@@ -239,6 +254,7 @@
             // let svgDrawer = new SmilesDrawer.SvgDrawer(options);
 
             largeCanvas.each(function(index, canvas) {
+                console.log(canvas)
                 console.log(canvas.dataset.smiles)
                 SmilesDrawer.parse(canvas.dataset.smiles, function(tree) {
                     largeSmilesDrawer.draw(tree, canvas, "light", false)

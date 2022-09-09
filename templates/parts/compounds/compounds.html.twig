@@ -1,48 +1,67 @@
 {% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Compounds{% endblock %}
+{% block title %}Gin :: Chemicals{% endblock %}
+
+{% macro tools(chemical=null) %}
+    {% if chemical == null %}
+        <div class="btn-group btn-group-sm mr-3" style="visibility: hidden">
+            <span class="btn btn-primary btn-sm"><span class="fa fa-eye"></span></span>
+        </div>
+    {% else %}
+        <div class="btn-group btn-group-sm mr-3">
+            <a
+                    href="{{ url("app_compound_view", {"compoundId": chemical.ulid}) }}"
+                    class="btn btn-primary btn-sm"
+                    data-toggle="tooltip" data-placement="bottom" title="View cell"
+            >
+                <span class="fa fa-eye"></span>
+            </a>
+        </div>
+    {% endif %}
+{% endmacro %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="col">Compounds</h1>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Chemicals") }}
 
-                <div class="col text-right">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
-                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
-                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
-                    </div>
+            {{ layout.toolbox([
+                {
+                    "type": "add",
+                    "disabled": true,
+                    "tooltipText": "Add new antibody",
+                },
+            ]) }}
+
+            <div class="row">
+                <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
+                    <table class="table table-hover fancyTable" data-ft-sort-column=2>
+                        <thead>
+                        <tr>
+                            <th scope="rol">{{ _self.tools() }}</th>
+                            <th scope="col" style="width: 200px">Structure</th>
+                            <th scope="col">Short Name</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Labjournal</th>
+                            <th class="d-none d-lg-table-cell" scope="col"># Experiments</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chemical in chemicals %}
+                            <tr>
+                                <td class="align-middle">
+                                    {{ _self.tools(chemical) }}
+                                </td>
+                                <td data-sortvalue="{{ chemical.smiles }}"  class="align-middle"><canvas data-smiles-type="small" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}"></canvas></td>
+                                <td class="align-middle"><strong>{{ chemical.shortName }}</strong></td>
+                                <td class="align-middle d-none d-lg-table-cell">{% if chemical.labjournal %}<a class="fa-fw fas fa-external-link-alt" href="#{{ chemical.ulid }}">Lab Journal entry</a>{% else %}No entry{% endif %}</td>
+                                <td class="align-middle d-none d-lg-table-cell">{{ chemical.experiments|length > 0 ? chemical.experiments|length : "none" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col" style="width: 200px">Structure</th>
-                    <th scope="col">Short Name</th>
-                    <th scope="col">Labjournal</th>
-                    <th scope="col"># Experiments</th>
-                    <th scope="col">Options</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for chemical in chemicals %}
-                    <tr>
-                        <td class="align-middle"><canvas data-smiles-type="small" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}"></canvas></td>
-                        <td class="align-middle">{{ chemical.shortName }}</td>
-                        <td class="align-middle">{% if chemical.labjournal %}<a class="fa-fw fas fa-external-link-alt" href="#{{ chemical.ulid }}">Lab Journal entry</a>{% else %}No entry{% endif %}</td>
-                        <td class="align-middle">{{ chemical.experiments|length > 0 ? chemical.experiments|length : "none" }}</td>
-                        <td class="align-middle">
-                            <a href="{{ url("app_compound_view", {"compoundId": chemical.ulid}) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
         </div>
     </div>
 {% endblock %}
