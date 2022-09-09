@@ -41,6 +41,11 @@
 
             {{ layout.toolbox([
                 {
+                    "type": "up",
+                    "target": url("app_cells"),
+                    "tooltipText": "Back to all cells",
+                },
+                {
                     "type": "clipboard",
                     "tooltipText": "Copy information",
                     "clipboardText": ( cell.name ~ "(" ~ (cell.rrid ? "RRID:" ~ cell.rrid : "") ~ ")"),

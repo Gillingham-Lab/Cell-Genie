@@ -11,6 +11,11 @@
 
             {{ layout.toolbox([
                 {
+                    "type": "up",
+                    "target": url("app_antibodies"),
+                    "tooltipText": "Back to all antibodies",
+                },
+                {
                     "type": "clipboard",
                     "tooltipText": "Copy information",
                     "clipboardText": ( antibody.longName ~ " (" ~ (antibody.vendor.name ?? "??") ~ ", " ~ (antibody.vendorPN ?? "??") ~(antibody.rrid ? ", RRID:" ~antibody.rrid : "") ~ ")" ),
