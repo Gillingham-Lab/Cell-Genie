@@ -1,11 +1,20 @@
 {% extends 'homepage.html.twig' %}
 {% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_epitopes %}
+{% import 'layout.html.twig' as layout %}
 
 {% macro format_antibody_name(antibody) %}
     <span data-toggle="tooltip" data-placement="bottom" title="{{ antibody.longName }}">{{ antibody.shortName }}</span>
 {% endmacro %}
 
-{% block title %}Cell Genie: Antibodies{% endblock %}
+{% set antibodyType = app.request.get('antibodyType')%}
+{% set pageTitle = "Antibodies" %}
+{% if antibodyType == "primaries" %}
+    {% set pageTitle = "Primary antibodies" %}
+{% elseif antibodyType == "secondaries" %}
+    {% set pageTitle = "Secondary antibodies" %}
+{% endif %}
+
+{% block title %}Gin :: {{ pageTitle }}{% endblock %}
 
 {% block search %}
     <form class="form-inline my-2 my-lg-0" action="{{ url("app_antibodies_search") }}" method="post">
@@ -19,67 +28,82 @@
 {% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        {% set antibodyType = app.request.get('antibodyType')%}
-        {% set pageTitle = "Antibodies" %}
-        {% if antibodyType == "primaries" %}
-            {% set pageTitle = "Primary antibodies" %}
-        {% elseif antibodyType == "secondaries" %}
-            {% set pageTitle = "Secondary antibodies" %}
-        {% endif %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(pageTitle) }}
 
+            {{
+            layout.toolbox([
+                {
+                    "type": "add",
+                    "disabled": true,
+                    "tooltipText": "Add new antibody",
+                },
+            ])
+            }}
 
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                {% if antibodies|length > 0 %}
-                    <div class="col"><h1>{{ pageTitle }}</h1></div>
-                {% else %}
-                    <h1 class="col">{{ pageTitle }}</h1>
+            <div class="row row-cols-1 row-cols-lg-2">
+                {% if antibodies|length > 0 or (primaryAntibodies is not defined and secondaryAntibodies is not defined) %}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header("Search results") }}
 
-                    <div class="col text-right">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+                        {{ layout.card_body_start() }}
+                        <div class="card-body">
+                            {{ _self.display_any(antibodies) }}
                         </div>
+                        {{ layout.card_body_end() }}
                     </div>
+                </div>
+                {% else %}
+                    {% if antibodyType == "primaries" %}
+                        <div class="col p-0 m-0 mb-3">
+                            <div class="card mx-3 h-100">
+                                {{ layout.card_header("Search results") }}
+                                {{ layout.card_body_start() }}
+                                <div class="card-body">
+                                    {{ _self.display_any(primaryAntibodies) }}
+                                </div>
+                                {{ layout.card_body_end() }}
+                            </div>
+                        </div>
+                    {% elseif antibodyType == "secondaries" %}
+                        <div class="col p-0 m-0 mb-3">
+                            <div class="card mx-3 h-100">
+                                {{ layout.card_header("Search results") }}
+                                {{ layout.card_body_start() }}
+                                <div class="card-body">
+                                    {{ _self.display_any(secondaryAntibodies) }}
+                                </div>
+                                {{ layout.card_body_end() }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col p-0 m-0 mb-3">
+                            <div class="card mx-3 h-100">
+                                {{ layout.card_header_collapse("Primary antibodies", "PrimaryAntibodies") }}
+                                {{ layout.card_body_collapse_start("PrimaryAntibodies") }}
+                                <div class="card-body">
+                                    {{ _self.display_any(primaryAntibodies) }}
+                                </div>
+                                {{ layout.card_body_collapse_end() }}
+                            </div>
+                        </div>
+
+                        <div class="col p-0 m-0 mb-3">
+                            <div class="card mx-3 h-100">
+                                {{ layout.card_header_collapse("Secondary antibodies", "SecondaryAntibodies") }}
+                                {{ layout.card_body_collapse_start("SecondaryAntibodies") }}
+                                <div class="card-body">
+                                    {{ _self.display_any(secondaryAntibodies) }}
+                                </div>
+                                {{ layout.card_body_collapse_end() }}
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
-
-        {% if antibodies|length > 0 or (primaryAntibodies is not defined and secondaryAntibodies is not defined) %}
-            <div class="col col-12 p-5 bg-white mb-3 border">
-                {# Display search results #}
-                {{ _self.display_any(antibodies) }}
-            </div>
-        {% else %}
-            {% if antibodyType == "primaries" %}
-                {# Display *only* primary antibodies #}
-                <div class="col col-12 p-5 bg-white mb-3 border">
-                    {{ _self.display_primaries(primaryAntibodies) }}
-                </div>
-            {% elseif antibodyType == "secondaries" %}
-                {# Display *only* secondary antibodies #}
-                <div class="col col-12 p-5 bg-white mb-3 border">
-                    {{ _self.display_secondaries(secondaryAntibodies) }}
-                </div>
-            {% else %}
-                {# Display *both* primary and secondary antibodies. #}
-                <div class="col col-6 ml-n3 mr-3">
-                    <div class="p-5 bg-white mb-3 border">
-                        <h2>Primary antibodies</h2>
-
-                        {{ _self.display_primaries(primaryAntibodies) }}
-                    </div>
-                </div>
-
-                <div class="col col-6 ml-3 mr-n3">
-                    <div class="p-5 bg-white mb-3 border">
-                        <h2>Secondary antibodies</h2>
-
-                        {{ _self.display_secondaries(secondaryAntibodies) }}
-                    </div>
-                </div>
-            {% endif %}
-        {% endif %}
     </div>
 {% endblock %}
 
@@ -108,18 +132,20 @@
 {% endmacro %}
 
 {% macro display_any(antibodies) %}
-    <table class="mb-5 mt-3 table px-5 table-hover">
+    <table class="table table-hover fancyTable">
         <thead>
             <tr>
                 <th scope="col">
                     {{ _self.antibody_tools(false) }}
+                </th>
+                <th scope="col">
                     ID
                 </th>
                 <th scope="col">Name</th>
                 <th scope="col">Epitope</th>
                 <th scope="col">Organism</th>
-                <th scope="col">Vendor</th>
-                <th scope="col">RRID</th>
+                <th class="d-none d-lg-table-cell" scope="col">Vendor</th>
+                <th class="d-none d-lg-table-cell" scope="col">RRID</th>
             </tr>
         </thead>
         <tbody>
@@ -127,15 +153,17 @@
             {% set antibody = entry[0] %}
             {# {% set antibody = entry %}  #}
             <tr>
-                <th>
+                <td>
                     {{ _self.antibody_tools(antibody) }}
-                    {{ antibody.number }}{{ validation_status(antibody) }}
-                </th>
+                </td>
+                <td>
+                    <strong>{{ antibody.number }}</strong>{{ validation_status(antibody) }}
+                </td>
                 <td>{{ _self.format_antibody_name(antibody) }}</td>
                 <td>{{ pillify_epitopes(antibody.epitopeTargets) }}</td>
                 <td>{{ pillify_epitopes([antibody.hostOrganism]) }}</td>
-                <td>{{ vendor_url(antibody.vendor, antibody.vendorPn) }}</td>
-                <td>{% if antibody.rrid %}{{ rrid_resolver(antibody.rrid)}}{% else %}-{% endif %}</td>
+                <td class="d-none d-lg-table-cell" >{{ vendor_url(antibody.vendor, antibody.vendorPn) }}</td>
+                <td class="d-none d-lg-table-cell" >{% if antibody.rrid %}{{ rrid_resolver(antibody.rrid)}}{% else %}-{% endif %}</td>
             </tr>
         {% else %}
             <tr><td colspan="7" class="align-content-center align-middle">No antibodies found</td></tr>

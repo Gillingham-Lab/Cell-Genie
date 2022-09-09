@@ -6,77 +6,89 @@
     </div>
 {% endmacro %}
 
+{% macro toolbox_content(tools, size="md") %}
+    {% set btnClass = size == "lg" ? "btn-group-lg" : (size == "sm" ? "btn-group-sm" : "") %}
+
+    <div class="btn-group {{ btnClass }}" role="group" aria-label="tools">
+        {% for tool in tools %}
+            {% set iconClass = "" %}
+            {% set btnClass = "" %}
+
+            {% if tool.iconClass is defined %}
+                {% set iconClass = tool["iconClass"] %}
+            {% endif %}
+
+            {% if tool.btnClass is defined %}
+                {% set btnClass = tool["btnClass"] %}
+            {% endif %}
+
+            {% if tool.type is defined %}
+                {% if tool.type == "add" %}
+                    {# Add a new entry #}
+                    {% set iconClass = "fas fa-fw fa-plus" %}
+                    {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "clipboard"%}
+                    {# Copy entry reference #}
+                    {% set iconClass = "far fa-fw fa-clipboard" %}
+                    {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "edit" %}
+                    {# Edit entry #}
+                    {% set iconClass = "fa fa-edit" %}
+                    {% set btnClass = "btn-primary" %}
+                {% endif %}
+            {% endif %}
+
+            {% set classTrail = "btn " ~ btnClass %}
+
+            {% if tool.disabled is defined and tool.disabled == true %}
+                {% set classTrail = classTrail ~ " disabled"  %}
+            {% endif %}
+
+            {% if too.clipboardText is defined %}
+                {% set classTrail = classTrail ~ " btn-clipboard" %}
+            {% endif %}
+
+            <a
+                    {% if tool.target is defined %}
+                        href="{{ target }}"
+                    {% endif %}
+
+                    class="btn {{ classTrail }}"
+
+                    {% if tool.tooltipText is defined %}
+                        data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltipText }}"
+                    {% endif %}
+
+                    {% if tool.clipboardText is defined %}
+                        data-clipboard-text="{{ tool.clipboardText }}"
+                    {% endif %}
+            >
+                <span class="{{ iconClass }}"></span>
+            </a>
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro toolbox_card(tools) %}
+    <div class="card-body border-bottom">
+        {{ _self.toolbox_content(tools) }}
+    </div>
+{% endmacro %}
+
 {% macro toolbox(tools) %}
     <div class="row">
         <div class="col p-0 m-0">
             <div class="bg-white mx-3 mb-3 border py-2 px-3 px-lg-5">
-                <div class="btn-group" role="group" aria-label="tools">
-                    {% for tool in tools %}
-                        {% set iconClass = "" %}
-                        {% set btnClass = "" %}
-
-                        {% if tool.iconClass is defined %}
-                            {% set iconClass = tool["iconClass"] %}
-                        {% endif %}
-
-                        {% if tool.btnClass is defined %}
-                            {% set btnClass = tool["btnClass"] %}
-                        {% endif %}
-
-                        {% if tool.type is defined %}
-                            {% if tool.type == "add" %}
-                                {# Add a new entry #}
-                                {% set iconClass = "fas fa-fw fa-plus" %}
-                                {% set btnClass = "btn-primary" %}
-                            {% elseif tool.type == "clipboard"%}
-                                {# Copy entry reference #}
-                                {% set iconClass = "far fa-fw fa-clipboard" %}
-                                {% set btnClass = "btn-primary" %}
-                            {% elseif tool.type == "edit" %}
-                                {# Edit entry #}
-                                {% set iconClass = "fa fa-edit" %}
-                                {% set btnClass = "btn-primary" %}
-                            {% endif %}
-                        {% endif %}
-
-                        {% set classTrail = "btn " ~ btnClass %}
-
-                        {% if tool.disabled is defined and tool.disabled == true %}
-                            {% set classTrail = classTrail ~ " disabled"  %}
-                        {% endif %}
-
-                        {% if too.clipboardText is defined %}
-                            {% set classTrail = classTrail ~ " btn-clipboard" %}
-                        {% endif %}
-
-                        <a
-                                {% if tool.target is defined %}
-                                    href="{{ target }}"
-                                {% endif %}
-
-                                class="btn {{ classTrail }}"
-
-                                {% if tool.tooltipText is defined %}
-                                    data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltipText }}"
-                                {% endif %}
-
-                                {% if tool.clipboardText is defined %}
-                                    data-clipboard-text="{{ tool.clipboardText }}"
-                                {% endif %}
-                        >
-                            <span class="{{ iconClass }}"></span>
-                        </a>
-                    {% endfor %}
-                </div>
+                {{ _self.toolbox_content(tools) }}
             </div>
         </div>
     </div>
 {% endmacro %}
 
-{% macro card_header_collapse(title, idPart) %}
-    <div class="card-header" id="collapse{{ idPart }}Header">
-        <h2 class="mb-0 text-right d-lg-none">
-            <button class="btn btn-lg w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapse{{ idPart }}Content" aria-expanded="false" aria-controls="collapse{{ idPart }}Content">
+{% macro card_header(title) %}
+    <div class="card-header">
+        <h2 class="mb-0 d-lg-none">
+            <button class="btn btn-lg w-100 text-start">
                 {{ title }}
             </button>
         </h2>
@@ -86,8 +98,35 @@
     </div>
 {% endmacro %}
 
-{% macro card_body_collapse_start(idPart) %}
-    <div id="collapse{{ idPart }}Content" class="collapse d-lg-block" aria-labelledby="collapse{{ idPart }}Header">
+{% macro card_header_collapse(title, idPart, size="lg") %}
+    {% set headerTag = size == "lg" ? "h2" : "h3" %}
+    {% set sizeClasses = size == "lg" ? "px-lg-4 " : "px-lg-2" %}
+
+    <div class="card-header" id="collapse{{ idPart }}Header">
+        <{{ headerTag }} class="mb-0 d-lg-none">
+            <button class="btn btn-lg w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapse{{ idPart }}Content" aria-expanded="false" aria-controls="collapse{{ idPart }}Content">
+                {{ title }}
+            </button>
+        </{{ headerTag }}>
+        <{{ headerTag }} class="mb-0 text-right d-none d-lg-block {{ sizeClasses }}">
+            {{ title }}
+        </{{ headerTag }}>
+    </div>
+{% endmacro %}
+
+{% macro card_body_start() %}
+    <div class="px-lg-4 overflow-auto">
+{% endmacro %}
+
+{% macro card_body_end() %}
+    </div>
+{% endmacro %}
+
+{% macro card_body_collapse_start(idPart, size="lg") %}
+    {% set sizeClasses = size == "lg" ? "px-lg-4 " : "px-lg-2" %}
+    {% set sizeClasses = "" %}
+
+    <div id="collapse{{ idPart }}Content" class="collapse d-lg-block overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header">
 {% endmacro %}
 
 {% macro card_body_collapse_end() %}

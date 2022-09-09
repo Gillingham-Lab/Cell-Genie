@@ -8,8 +8,8 @@ use App\Entity\Epitope;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
-use function App\Repository\str_ends_with;
-use function App\Repository\str_starts_with;
+use function \str_ends_with;
+use function \str_starts_with;
 
 /**
  * @method Antibody|null find($id, $lockMode = null, $lockVersion = null)
