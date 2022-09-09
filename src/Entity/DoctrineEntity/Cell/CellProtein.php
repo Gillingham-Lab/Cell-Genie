@@ -18,7 +18,7 @@ class CellProtein
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Cell $cellLine = null;
 
-    #[ORM\ManyToOne(targetEntity: Protein::class, fetch: "EAGER")]
+    #[ORM\ManyToOne(targetEntity: Protein::class, fetch: "LAZY")]
     #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private ?Protein $associatedProtein = null;
 

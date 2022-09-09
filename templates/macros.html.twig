@@ -1,6 +1,6 @@
 {% macro definition_row(n, d, url = none) %}
     <tr>
-        <th>{{ n }}</th>
+        <th scope="row">{{ n }}</th>
         {% if url %}
             <td><a href="{{ url }}">{{ d }}</a></td>
         {% else %}
@@ -26,7 +26,7 @@
         {% endfor %}
     {% endfor %}
 
-    <svg id="svg-image-box-{{ box.id }}" width="200" height="200" viewBox="-1 -1 201 201">
+    <svg id="svg-image-box-{{ box.id }}" width="100%" viewBox="-1 -1 201 201">
         {%- if box.cols < box.rows -%}
             {% set s = 200/box.rows %}
         {%- else -%}
@@ -155,7 +155,7 @@
 
 {% macro rrid_resolver(rrid) %}
     {% if rrid %}
-        <a href="https://scicrunch.org/resolver/{{ rrid }}">{{ rrid }}</a>
+        <a href="https://scicrunch.org/resolver/{{ rrid }}">{{ rrid }} <span class="fa fa-external-link-alt"></span></a>
     {% else %}
         (missing)
     {% endif %}

@@ -1,30 +1,108 @@
 {% extends 'homepage.html.twig' %}
 
+{% macro make_card(name, symbol, target) %}
+    <div class="col mb-2">
+        <div class="card w-100 p-2 text-center">
+            <a href="{{ target }}" class="link-dark text-decoration-none">
+                <span class="card-img-top display-3 {{ symbol }}"></span> <br />
+                <span class="card-text">{{ name }}</span>
+            </a>
+        </div>
+    </div>
+{% endmacro %}
+
 {% block title %}Gin{% endblock %}
 
 {% block body_main %}
-    <div class="row justify-content-md-center mb-5">
-        <div class="col col-md-6 col-sm-12 p-3">
-            <h1 class="bg-white p-5 border">System changes</h1>
-            {% if systemMessages > 0 %}
-                {% for message in systemMessages.messages %}
-                    <div class="bg-white mt-3 border">
-                        <h2 class="bg-dark text-white p-3 border-bottom border-dark">{{ message.title }}</h2>
-
-                        <div class="p-3">
-                            {{ message.body|raw }}
-                        </div>
-
-                        <p class="px-3">
-                            <small class="text-muted">{{ message.date|date("d. F Y H:i") }} by {{ message.author }}</small>
-                        </p>
+    <div class="row mb-5">
+        <div class="container container-fluid w-100 p-0 m-0">
+            <div class="row row-cols-1 d-lg-none">
+                <div class="col">
+                    <div class="bg-white m-2">
+                        <div id="qr-reader" style="display: none"></div>
+                        <div id="qr-reader-results"></div>
                     </div>
-                {% endfor -%}
-            {% endif -%}
-        </div>
+                </div>
+            </div>
 
-        {# <div class="col col-md-6 col-sm-12 p-3">
-            Dah
-        </div> #}
+            <div class="row row-cols-3 d-lg-none no-gutters">
+                <div class="col mb-2">
+                    <div class="card w-100 p-2 text-center">
+                        <a id="qr-reader-toggle" class="link-dark text-decoration-none">
+                            <span class="card-img-top display-3 fas fa-qrcode"></span> <br />
+                            <span class="card-text">Scan</span>
+                        </a>
+                    </div>
+                </div>
+
+                {{ _self.make_card("Cells", "fas fa-fw fa-disease", url("app_cells")) }}
+                {{ _self.make_card("Cell Cultures", "fas fa-fw fa-flask", url("app_cell_cultures")) }}
+                {{ _self.make_card("Antibodies", "icon icon-antibody", url("app_antibodies")) }}
+                {{ _self.make_card("1° Antibodies", "icon icon-antibody-primary", url("app_antibodies", {"antibodyType": "primaries"})) }}
+                {{ _self.make_card("2° Antibodies", "icon icon-antibody-secondary", url("app_antibodies", {"antibodyType": "secondaries"})) }}
+                {{ _self.make_card("Chemicals", "fas fa-fw fa-tablets", url("app_compounds")) }}
+                {{ _self.make_card("Proteins", "icon icon-protein", url("app_proteins")) }}
+                {{ _self.make_card("Oligos", "icon icon-oligomer", url("app_proteins")) }}
+                {{ _self.make_card("Recipes", "fas fa-fw fa-list-alt", url("app_recipes")) }}
+                {{ _self.make_card("Experiments", "fas fa-fw fa-flask", url("app_experiments")) }}
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col col-sm-12 col-md-12 col-lg-6 p-1">
+                    <h1 class="bg-white m-0 p-5 border">System changes</h1>
+                    {% if systemMessages > 0 %}
+                        {% for message in systemMessages.messages %}
+                            <div class="bg-white mt-3 border">
+                                <h2 class="bg-dark text-white p-3 border-bottom border-dark">{{ message.title }}</h2>
+
+                                <div class="p-3">
+                                    {{ message.body|raw }}
+                                </div>
+
+                                <p class="px-3">
+                                    <small class="text-muted">{{ message.date|date("d. F Y H:i") }} by {{ message.author }}</small>
+                                </p>
+                            </div>
+                        {% endfor -%}
+                    {% endif -%}
+                </div>
+            </div>
+        </div>
     </div>
+{% endblock %}
+
+{% block script_bottom %}
+    <script type="application/javascript">
+        $(document).ready(function() {
+            let qrcodeReader = $("#qr-reader");
+            let qrcodeResult = $("#qr-reader-results")
+            let html5Scanner = null;
+
+            $("#qr-reader-toggle").on("click", function (e) {
+                if (qrcodeReader.css("display") === "none") {
+                    html5Scanner = new Html5QrcodeScanner(
+                        "qr-reader", {
+                            fps: 10,
+                            qrbox: 250
+                        }
+                    );
+
+                    html5Scanner.render(function (decodedText, decodedResult) {
+                        console.log(`Scan result ${decodedText}`, decodedResult);
+                        qrcodeReader.toggle();
+
+                        qrcodeResult[0].innerHTML = decodedText;
+                        html5Scanner.clear();
+                    });
+                } else {
+                    if (html5Scanner !== null) {
+                        html5Scanner.clear();
+                        html5Scanner = null;
+                    }
+                }
+
+                qrcodeReader.toggle();
+            })
+        })
+    </script>
 {% endblock %}
