@@ -1,168 +1,215 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Protein Target{% endblock %}
+{% block title %}Gin :: Protein :: {{ protein.shortName }}{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        {# title #}
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1>{{ protein.shortName }}</h1>
-            </div>
-        </div>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(protein.shortName) }}
 
-        {# Short information #}
-        <div class="col col-6 mb-3 p-0 pr-2">
-            <div class="bg-white p-5 border h-100">
-                <table class="table table-sm table-borderless table-hover">
-                    <tbody>
-                        {{ macros.definition_row("ID", protein.ulid) }}
-                        {{ macros.definition_row("Short name", protein.shortName) }}
-                        {{ macros.definition_row("Name", protein.longName) }}
-                        {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
-                        {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
-                        {# Experiment types #}
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": url("app_proteins"),
+                    "tooltipText": "Back to all proteins",
+                },
+                {
+                    "type": "edit",
+                    "disabled": true,
+                    "tooltipText": "Edit protein",
+                }
+            ]) }}
 
-                        <tr>
-                            <th>Ancestors</th>
-                            <td>
-                                {% if protein.parents|length > 0 %}
-                                    {{ macros.pillify_proteins(protein.parents) }}
-                                {% else %}
-                                    None
-                                {% endif %}
-                            </td>
-                        </tr>
+            {# Details #}
+            <div class="row row-cols-1 row-cols-lg-2">
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Details", "Details") }}
 
-                        <tr>
-                            <th>Descendants</th>
-                            <td>
-                                {% if protein.children|length > 0 %}
-                                    {{ macros.pillify_proteins(protein.children) }}
-                                {% else %}
-                                    None
-                                {% endif %}
-                            </td>
-                        </tr>
+                        {{ layout.card_body_collapse_start("Details") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            <table class="table table-sm table-borderless table-hover">
+                                <tbody>
+                                {{ macros.definition_row("ID", protein.ulid) }}
+                                {{ macros.definition_row("Short name", protein.shortName) }}
+                                {{ macros.definition_row("Name", protein.longName) }}
+                                {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
+                                {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
+                                {# Experiment types #}
 
-                        <tr>
-                            <th>Epitopes</th>
-                            <td>
-                                {% if protein.epitopes|length > 0 %}
-                                    {{ macros.pillify_epitopes(protein.epitopes) }}
-                                {% else %}
-                                    None
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                                    <tr>
+                                        <th>Ancestors</th>
+                                        <td>
+                                            {% if protein.parents|length > 0 %}
+                                                {{ macros.pillify_proteins(protein.parents) }}
+                                            {% else %}
+                                                None
+                                            {% endif %}
+                                        </td>
+                                    </tr>
 
-        <div class="col col-6 mb-3 p-0 pr-2">
-            <div class="bg-white p-5 border h-100">
-                {% if protein.fastaSequence %}
-                <div id="sequenceViewer"></div>
-                {% else %}
-                    No sequence given.
-                {% endif %}
-            </div>
-        </div>
+                                    <tr>
+                                        <th>Descendants</th>
+                                        <td>
+                                            {% if protein.children|length > 0 %}
+                                                {{ macros.pillify_proteins(protein.children) }}
+                                            {% else %}
+                                                None
+                                            {% endif %}
+                                        </td>
+                                    </tr>
 
-        {# Tabbed info at the bottom #}
-        <div class="col col-12 mb-3">
-            <div class="row bg-white p-5 border">
-                <div class="col-3 col-xl-2">
-                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        {{ macros.tab_item("Antibodies", "tab-antibodies", "tab-antibodies-content", true) }}
-                        {{ macros.tab_item("Experiments", "tab-experiments", "tab-experiments-content") }}
-                        {{ macros.tab_item("Cells", "tab-cells", "tab-cells-content", false, associatedCells ? true : false) }}
+                                    <tr>
+                                        <th>Epitopes</th>
+                                        <td>
+                                            {% if protein.epitopes|length > 0 %}
+                                                {{ macros.pillify_epitopes(protein.epitopes) }}
+                                            {% else %}
+                                                None
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
                     </div>
                 </div>
 
-                <div class="col-9 col-xl-10">
-                    <div class="tab-content" id="v-pills-tabContent">
-                        {# Antibodies #}
-                        <div class="tab-pane fade show active" id="tab-antibodies-content" role="tabpanel" aria-labelledby="cell-info-origin">
-                            <div class="row">
+                {# Sequence #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Sequence", "Sequence") }}
+
+                        {{ layout.card_body_collapse_start("Sequence") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            {% if protein.fastaSequence %}
+                                {# Sequence is filled in by a JavaScript at the bottom of this template! #}
+                                <div id="sequenceViewer"></div>
+                            {% else %}
+                                No sequence given.
+                            {% endif %}
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {# Antibodies #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Antibodies", "Antibodies") }}
+
+                        {{ layout.card_body_collapse_start("Antibodies") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            {% if protein.epitopes|length == 0 %}
+                                No epitopes registered
+                            {% else %}
+                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                                 {% for epitope in protein.epitopes %}
                                     {% for antibody in epitope.antibodies %}
-                                        <div class="col-4 mb-3 pb-3">
-                                            <div class="bg-secondary p-2 mb-n1 border-secondary border">
-                                                <h4 class="float-left">{{ antibody }} <span class="badge rounded-pill bg-primary text-light">{{ epitope }}</span></h4>
-                                                <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}" class="text-right"><span class="far fa-eye"></span></a>
-                                            </div>
+                                        <div class="col">
+                                            <div class="card">
+                                                {{ layout.card_header_collapse(antibody.number ~ " | " ~ antibody.shortName, antibody.ulid, "md") }}
+                                                {{ layout.card_body_collapse_start(antibody.ulid, "md") }}
 
-                                            <div class="p-2 pt-3 border-secondary border">
-                                                {% if antibody.vendor %}
-                                                    <p class="text-muted">{{ macros.vendor_url(antibody.vendor, antibody.vendorPN) }}</p>
-                                                {% endif %}
-
-                                                <p>
-                                                    <strong>Lots:</strong>
-
-                                                    {% if antibody.lots|length > 0 %}
-                                                        {% for lot in antibody.lots %}
-                                                            <span>{{ antibody.number ~ "." ~ lot.number }}
-                                                                <a
-                                                                        data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
-                                                                        class="far fa-clipboard btn-clipboard "
-                                                                        role="button"
-                                                                ></a>
-                                                            </span>
-                                                        {% endfor %}
-                                                    {% else %}
-                                                        None
-                                                    {% endif %}
-                                                </p>
+                                                {{ layout.toolbox_card([{
+                                                    "type": "view",
+                                                    "target": url("app_antibody_view", {"antibodyId": antibody.ulid}),
+                                                }], "sm") }}
+                                                <div class="card-body px-lg-2">
+                                                    <table class="table table-sm table-borderless table-hover">
+                                                        <tbody>
+                                                            {{ macros.definition_row_raw("Epitope", macros.pillify_epitopes([epitope])) }}
+                                                            {{ macros.definition_row_raw("Vendor", macros.vendor_url(antibody.vendor, antibody.vendorPN)) }}
+                                                            <tr>
+                                                                <th scope="row">Lots</th>
+                                                                <td><ul class="list-group">
+                                                                    {% for lot in antibody.lots %}
+                                                                        <li class="list-group-item">
+                                                                        <span>{{ antibody.number ~ "." ~ lot.number }}
+                                                                            <a
+                                                                                data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
+                                                                                class="far fa-clipboard btn-clipboard"
+                                                                                role="button"
+                                                                            ></a>
+                                                                        </span></li>
+                                                                    {% endfor %}
+                                                                </ul></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                {{ layout.card_body_collapse_end() }}
                                             </div>
                                         </div>
                                     {% endfor %}
                                 {% endfor %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
-
-                        {# Experiments #}
-                        <div class="tab-pane fade" id="tab-experiments-content" role="tabpanel" aria-labelledby="tab-experiments">
-                            <div class="row">
-                                Coming soon (R)
-                            </div>
-                        </div>
-
-                        {# Cells #}
-                        <div class="tab-pane fade" id="tab-cells-content" role="tabpanel" aria-labelledby="tab-cells">
-                            <div class="row">
-                                {% for cell in associatedCells %}
-                                    <div class="col-4 mb-3 pb-3">
-                                        <div class="bg-secondary p-2 mb-n1 border-secondary border">
-                                            <h4 class="float-left">{{ cell }}</h4>
-                                            <a href="{{ url("app_cell_view", {"cellId": cell.id}) }}" class="text-right"><span class="far fa-eye"></span></a>
-                                        </div>
-
-                                        <div class="p-2 pt-3 border-secondary border">
-                                            {% for associatedProtein in cell.cellProteins|filter(p => protein == p.associatedProtein) %}
-                                                <p>
-                                                    {{ associatedProtein.description }}
-                                                </p>
-
-                                                {% if associatedProtein.detection %}
-                                                    <dl>
-                                                        {% for detection in associatedProtein.detection %}
-                                                            <dt class="{{ detection.isDetectable ? "text-success" : "text-danger"}}">{{ detection.method }}</dt>
-                                                            <dd>{{ detection.comment }}</dd>
-                                                        {% endfor %}
-                                                    </dl>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
+                        {{ layout.card_body_collapse_end() }}
                     </div>
                 </div>
+
+                {# Associated Cells #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Associated Cells", "AssociatedCells") }}
+
+                        {{ layout.card_body_collapse_start("AssociatedCells") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            {% if associatedCells|length == 0 %}
+                                No cells associated.
+                            {% else %}
+                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+                                    {% for cell in associatedCells %}
+                                    <div class="col">
+                                        <div class="card">
+                                            {{ layout.card_header_collapse(cell, "Cell" ~ cell.id, "md") }}
+                                            {{ layout.card_body_collapse_start("Cell" ~ cell.id, "md") }}
+
+                                            {{ layout.toolbox_card([{
+                                                "type": "view",
+                                                "target": url("app_cell_view", {"cellId": cell.id}),
+                                            }], "sm") }}
+                                            <div class="card-body px-lg-2">
+                                                {% for cellProtein in cell.cellProteins|filter(p => protein == p.associatedProtein) %}
+                                                    <div>{{ cellProtein.description }}</div>
+
+                                                    {% if cellProtein.detection %}
+                                                        <dl>
+                                                            {% for detection in cellProtein.detection %}
+                                                                <dt class="{{ detection.isDetectable ? "text-success" : "text-danger"}}">{{ detection.method }}</dt>
+                                                                <dd>{{ detection.comment }}</dd>
+                                                            {% endfor %}
+                                                        </dl>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            {{ layout.card_body_collapse_end() }}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {# Antibodies #}{#
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Antibodies", "Antibodies") }}
+
+                        {{ layout.card_body_collapse_start("Antibodies") }}
+                        <div class="card-body px-lg-5 mx-0">
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div> #}
             </div>
         </div>
     </div>

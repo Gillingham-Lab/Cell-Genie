@@ -7,9 +7,9 @@
 {% endmacro %}
 
 {% macro toolbox_content(tools, size="md") %}
-    {% set btnClass = size == "lg" ? "btn-group-lg" : (size == "sm" ? "btn-group-sm" : "") %}
+    {% set btnGroupClass = size == "lg" ? "btn-group-lg" : (size == "sm" ? "btn-group-sm" : "") %}
 
-    <div class="btn-group {{ btnClass }}" role="group" aria-label="tools">
+    <div class="btn-group {{ btnGroupClass }}" role="group" aria-label="tools">
         {% for tool in tools %}
             {% set iconClass = "" %}
             {% set btnClass = "" %}
@@ -34,6 +34,10 @@
                 {% elseif tool.type == "edit" %}
                     {# Edit entry #}
                     {% set iconClass = "fa fa-edit" %}
+                    {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "view" %}
+                    {# View #}
+                    {% set iconClass = "far fa-eye" %}
                     {% set btnClass = "btn-primary" %}
                 {% elseif tool.type == "up" %}
                     {# Hierarchy up #}
@@ -73,9 +77,9 @@
     </div>
 {% endmacro %}
 
-{% macro toolbox_card(tools) %}
-    <div class="card-body border-bottom">
-        {{ _self.toolbox_content(tools) }}
+{% macro toolbox_card(tools, size="md") %}
+    <div class="card-body border-bottom py-1">
+        {{ _self.toolbox_content(tools, size) }}
     </div>
 {% endmacro %}
 

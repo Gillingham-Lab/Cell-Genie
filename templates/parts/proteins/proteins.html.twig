@@ -1,93 +1,93 @@
 {% extends 'homepage.html.twig' %}
 {% from 'macros.html.twig' import pillify_epitopes, pillify_proteins %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Proteins{% endblock %}
+{% block title %}Gin :: Proteins{% endblock %}
 
 {% macro format_antibody_name(item) %}
     <span data-toggle="tooltip" data-placement="bottom" title="{{ item.longName }}">{{ item.shortName }}</span>
 {% endmacro %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Proteins") }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "add",
+                    "disabled": true,
+                    "tooltipText": "Add new antibody",
+                },
+            ]) }}
+
             <div class="row">
-                <h1 class="col">Proteins</h1>
-
-                <div class="col text-right">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
-                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
-                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <table class="table table-hover fancyTable">
-                <thead>
-                    <tr>
-                        <th scope="col" style="width: 2em;">
-                            <div class="btn-group mr-3" style="visibility: hidden;">
-                                <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            Name
-                        </th>
-                        <th scope="col">Descendants</th>
-                        <th scope="col">Epitopes </th>
-                        <th scope="col">Antibodies </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for protein in proteins %}
+                <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
+                    <table class="table table-hover fancyTable">
+                        <thead>
                         <tr>
-                            <td class="align-middle">
-                                <div class="btn-group mr-3">
-                                    <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
+                            <th scope="col">
+                                <div class="btn-group mr-3" style="visibility: hidden;">
+                                    <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
                                 </div>
-                            </td>
-                            <td class="align-middle" data-sortvalue="{{ protein.shortName }}">
-                                {{ _self.format_antibody_name(protein) }}
-                            </td>
+                            </th>
+                            <th scope="col">
+                                Name
+                            </th>
+                            <th class="d-none d-lg-table-cell" scope="col">Descendants</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Epitopes </th>
+                            <th class="d-none d-lg-table-cell" scope="col">Antibodies </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for protein in proteins %}
+                            <tr>
+                                <td class="align-middle">
+                                    <div class="btn-group mr-3">
+                                        <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
+                                    </div>
+                                </td>
+                                <td class="align-middle" data-sortvalue="{{ protein.shortName }}">
+                                    {{ _self.format_antibody_name(protein) }}
+                                </td>
 
-                            <td class="align-middle">
-                                {% if protein.children|length > 0 %}
-                                    {{ pillify_proteins(protein.children) }}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
+                                <td class="align-middle d-none d-lg-table-cell">
+                                    {% if protein.children|length > 0 %}
+                                        {{ pillify_proteins(protein.children) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
 
-                            <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
+                                <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
 
                                 {% set antibody_count = 0 %}
                                 {% for epitope in protein.epitopes %}
-                                    {% for antibody in epitope.antibodies %}
-                                        {% if antibody_count == 0 %}
+                                {% for antibody in epitope.antibodies %}
 
-                            <td class="align-middle" data-sortvalue="{{ antibody }}">
-                                        {% endif %}
+                                {% if antibody_count == 0 %}
+                                    <td class="align-middle d-none d-lg-table-cell" data-sortvalue="{{ antibody }}">
+                                {% endif %}
 
-                                        <a class="pr-3" href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}">{{ antibody }}</a>
-                                        {% set antibody_count = antibody_count + 1%}
+                                    <a class="pr-3" href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}"><span>{{ antibody.number }}</span> <span class="d-none d-lg-inline">{{ antibody.shortName }}</span></a>
+                                    {% set antibody_count = antibody_count + 1%}
                                     {% endfor %}
                                     {% set antibody_count = antibody_count + epitope.antibodies|length %}
-                                {% endfor %}
+                                    {% endfor %}
 
-                            {% if antibody_count == 0 %}
-                            <td class="align-middle" data-sortvalue="">
-                                None
-                            </td>
-                            {% else %}
-                                {{ "</td>" }}
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                    {% if antibody_count == 0 %}
+                                        <td class="align-middle d-none d-lg-table-cell" data-sortvalue="">
+                                            None
+                                        </td>
+                                    {% else %}
+                                        {{ "</td>" }}
+                                    {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

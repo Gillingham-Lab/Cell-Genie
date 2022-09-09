@@ -42,7 +42,7 @@
             ])
             }}
 
-            <div class="row row-cols-1 row-cols-lg-2">
+            <div class="row row-cols-1 {{ (antibodyType == "primaries" or antibodyType == "secondaries" or antibodies|length>0 or (primaryAntibodies is not defined and secondaryAntibodies is not defined))?"":"row-cols-lg-2" }}">
                 {% if antibodies|length > 0 or (primaryAntibodies is not defined and secondaryAntibodies is not defined) %}
                 <div class="col p-0 m-0 mb-3">
                     <div class="card mx-3 h-100">

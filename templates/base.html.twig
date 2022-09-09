@@ -155,7 +155,7 @@
                     if (shownOnRequest[id] === 1) {
                         collapsible = $("#" + id);
 
-                        if (collapsible.length > 0 && collapsible.hasClass("navbar-collapse") === false) {
+                        if (collapsible.length > 0 && collapsible.hasClass("navbar-collapse") === false && collapsible.css("display") === "none") {
                             let bsCollapse = new bootstrap.Collapse(collapsible).show();
                         }
                     }
