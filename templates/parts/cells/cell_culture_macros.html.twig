@@ -310,10 +310,15 @@
             .append("g")
         ;
 
+        function jitterOffset(d) {
+            //return (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10);
+            return d.jitter * 10;
+        }
+
         const testEvents = event_group.filter(function (d) { return d.eventType === "test" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10)); })
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + jitterOffset(d); })
             .attr("r", 5)
             .style("fill", function (d) { return d.testResult === "positive" ? "#FF0000" : (d.testResult === "negative" ? "#00FF00" : "#FFFF00")})
             .style("stroke", "black")
@@ -349,7 +354,7 @@
         const splitEvents = event_group.filter(function (d) { return d.eventType === "split" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10)); })
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + jitterOffset(d); })
             .attr("r", 5)
             .style("fill", "#FFFFFF")
             .style("stroke", "black")
@@ -360,7 +365,7 @@
             .append("text")
             .text(function (d) { return d.currentPassage; })
             .attr("x", function (d) { return timeAxis(d.date);})
-            .attr("y", -8)
+            .attr("y", d => d._cultureNumber * heightPerEntry -8)
             .attr("font-size", 11)
             .attr("text-anchor", "middle")
             .attr("text-height", 14)
@@ -395,7 +400,7 @@
         const otherEvents = event_group.filter(function (d) { return d.eventType === "other" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10)); })
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + jitterOffset(d); })
             .attr("r", 5)
             .style("fill", "#999999")
             .style("stroke", "black")
