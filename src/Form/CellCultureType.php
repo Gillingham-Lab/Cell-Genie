@@ -35,13 +35,15 @@ class CellCultureType extends AbstractType
             ])
             ->add("unfrozenOn", DateType::class, [
                 "label" => "Culture start",
-                "format" => "dd MMM yyyy",
+                //"format" => "dd MMM yyyy",
+                'widget' => 'single_text',
             ])
             ->add("trashedOn", DateType::class, [
                 "label" => "Culture trashed",
-                "format" => "dd MMM yyyy",
+                //"format" => "dd MMM yyyy",
                 "help" => "Choosing a date before culture start equals to a culture that has not been trashed, yet.",
                 "empty_data" => null,
+                'widget' => 'single_text',
             ])
         ;
 

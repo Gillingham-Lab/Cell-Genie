@@ -195,17 +195,21 @@ class CellController extends AbstractController
         $cultures = [];
         /** @var CellCulture $culture */
         foreach ($currentCultures as $culture) {
+            // Skip if already set
             if (isset($cultures[$culture->getId()->toBase58()])) {
                 continue;
             }
 
+            // Skip if it has a parent culture registered (for group reasons).
             if ($culture->getParentCellCulture() !== null) {
                 continue;
             }
 
+            // Add
             $cultures[$culture->getId()->toBase58()] = $culture;
 
-            $this->extractCultures($cultures, $culture);
+            // Now we add all child cultures of the current culture.
+            $this->extractCultures($currentCultures, $cultures, $culture);
         }
 
         return $this->render("parts/cells/cell_cultures.html.twig", [
@@ -428,16 +432,17 @@ class CellController extends AbstractController
         ]);
     }
 
-    private function extractCultures(array &$cultures, CellCulture $culture)
+    private function extractCultures(array $currentCultures, array &$cultureList, CellCulture $parentCulture)
     {
-        foreach ($culture->getSubCellCultures() as $subCulture) {
-            if (isset($cultures[$subCulture->getId()->toBase58()])) {
+        // Very bad at scaling (O(n^n)), but the lists are going to be short. Should be acceptable.
+        /** @var CellCulture $culture */
+        foreach ($currentCultures as $culture) {
+            if ($culture->getParentCellCulture() !== $parentCulture) {
                 continue;
             }
 
-            $cultures[$subCulture->getId()->toBase58()] = $subCulture;
-
-            $this->extractCultures($cultures, $subCulture);
+            $cultureList[$culture->getId()->toBase58()] = $culture;
+            $this->extractCultures($currentCultures, $cultureList, $culture);
         }
     }
 }

@@ -24,6 +24,7 @@
         {% endif %}
         {
         "owner": "{{event.owner}}",
+        "_cultureNumber": {{ culture_number }},
         "date": dateParse("{{ event.date|date("Y-m-d") }}"),
         "shortName": "{{ event.shortName }}",
         "description": "{{ event.description }}",
@@ -48,14 +49,34 @@
     },
 {% endmacro %}
 
-{% macro culture_timeline(cultures, startDate, endDate, leftMargin=320) %}
+{% macro culture_timeline(cultures, startDate, endDate, leftMargin=210) %}
     <script type="application/javascript">
         // set the dimensions and margins of the graph
-        const heightPerEntry = 50;
+        const heightPerEntry = 100;
 
-        const margin = {top: 60, right: 100, bottom: 30, left: {{ leftMargin }}},
-            width = $("#cellCultureChart").width() - margin.left - margin.right,
+        const totalChart = $("#cellCultureChart");
+        const totalChartWidth = totalChart.width();
+
+        let margin = {};
+        let width = 0;
+        let height = 0;
+
+        // Decide on which screen we are
+        if (totalChartWidth < 768) {
+            // Small screens
+            margin = {top: 60, right: 10, bottom: 30, left: {{ leftMargin > 60 ? 60 : leftMargin }}}
+            width = totalChartWidth - margin.left - margin.right
             height = heightPerEntry*{{ cultures|length }};
+        } else {
+            // Large screens
+            margin = {top: 60, right: 20, bottom: 30, left: {{ leftMargin }}}
+            width = totalChartWidth - margin.left - margin.right
+            height = heightPerEntry*{{ cultures|length }};
+        }
+
+        // Make sure we have a minimum width for the plot. Area should be scrollable.
+        console.log(width)
+        width = Math.max(width, 600);
 
         // append the svg object to the body of the page
         const svg = d3.select("#cellCultureChart")
@@ -93,7 +114,7 @@
         // Add axis
         svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + (height-50) + ")")
             .call(xAxis)
         ;
 
@@ -150,10 +171,9 @@
             .data(cultures)
             .enter()
             .append("g")
-            .attr("transform", function (d) { return "translate(0, " + 50 * d._cultureNumber + ")"})
         ;
 
-        rows
+        /*rows
             .filter(function (d) { return !d.endDate })
             .append("use")
             .attr("xref:href", function (d) { return "#mycoplasma-status-" + d.mycoplasmaStatus })
@@ -164,7 +184,7 @@
             .append("use")
             .attr("xref:href", "#culture-is-abandoned")
             .attr("x", timeAxis(endDate) + 80)
-            .attr("y", 0)
+            .attr("y", 0)*/
 
         /*const rowBoxes = rows.append("rect")
             .attr("x", -margin.left)
@@ -174,29 +194,27 @@
             .attr("fill", "white")
         ;*/
 
-        // Text box showing the cell line name
         const textbox = rows.append("text")
-            .attr("x", -20)
-            .attr("y", -10)
-            .attr("font-size", 11)
-            .attr("text-anchor", "end")
+            .attr("x", -margin.left)
+            .attr("y", d => -40 + heightPerEntry * d._cultureNumber)
+            .attr("text-anchor", "start")
             .attr("text-height", 14)
-        ;
-        textbox.append("tspan")
-            .text(function (d) { return d.cultureName })
-            .attr("x", -10)
-            .attr("dy", 0)
+
+        const title = textbox
+            .append("tspan")
+            .attr("font-weight", "bold")
+            .attr("font-size", 14)
+            .text(d => d.cultureName)
         ;
 
-        textbox.append("tspan")
-            .text(function (d) { return d.owner })
-            .attr("x", -10)
-            .attr("dy", 12);
-
-        textbox.append("tspan")
-            .text(function (d) { return d.incubator })
-            .attr("x", -10)
-            .attr("dy", 12);
+        const additionalInformation = textbox
+            .append("tspan")
+            .attr("font-size", 12)
+                .attr("dy", 14)
+                .attr("x", -margin.left)
+            .text(d => ` Incubator: ${d.incubator}, Scientist: ${d.owner}`)
+            //.text(d => "(Incubator: " + d.incubator + ", Scientist: " + d.owner + ")")
+        ;
 
         /*rowBoxes.on("mouseover", function(e) {
             let data = d3.select(this).data()[0];
@@ -219,32 +237,36 @@
             tools.style.display = "none";
         });*/
 
+        // Grid lines
+        /*rows.append("polyline")
+            .attr("points", function (d) {
+                let offset = d._cultureNumber * heightPerEntry;
+                return (
+                    timeAxis(startDate) + "," + (offset - 20) + " " +
+                    timeAxis(endDate) + "," + (offset - 20) + " "
+                );
+            })
+            .attr("stroke", "black")
+            .style("stroke-width", 0.5);*/
+
         // Connecting line
         rows.append("polyline")
-            .attr("points", function (d) { return (
-                String(timeAxis(d.startDate < startDate ? startDate : d.startDate)) + ",0 " +
-                String(timeAxis(d.endDate ? d.endDate : endDate) + ",0 ")
-            );
+            .attr("points", function (d) {
+                let xStart = timeAxis(d.startDate < startDate ? startDate : d.startDate);
+                let xEnd = timeAxis(d.endDate ? (d.endDate > endDate ? endDate : d.endDate) : endDate);
+                let y = d._cultureNumber * heightPerEntry;
+
+                return `${xStart},${y} ${xEnd},${y}`;
             })
             .attr("stroke", "black")
             .style("stroke-width", 3);
-
-        // Grid lines
-        rows.append("polyline")
-            .attr("points", function (d) { return (
-                timeAxis(startDate) + ",-" + heightPerEntry/2 + " " +
-                timeAxis(endDate) + ",-" + heightPerEntry/2 + " "
-            );
-            })
-            .attr("stroke", "black")
-            .style("stroke-width", 0.5);
 
         // Start point
         rows
             .filter(function(d) { return d.startDate >= startDate})
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.startDate); } )
-            .attr("cy", 0 )
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry} )
             .attr("r", 5)
             .style("fill", "#000000");
 
@@ -252,7 +274,7 @@
             .filter(function(d) { return d.startDate >= startDate}).append("text")
             .text(function (d) { return d.startPassage; })
             .attr("x", function (d) { return timeAxis(d.startDate); } )
-            .attr("y", -8)
+            .attr("y", function (d) { return d._cultureNumber * heightPerEntry -8 })
             .attr("font-size", 11)
             .attr("text-anchor", "middle")
             .attr("text-height", 14)
@@ -263,7 +285,7 @@
             .filter(function (d) { return !!d.endDate; })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.endDate); } )
-            .attr("cy", 0 )
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry} )
             .attr("r", 5)
             .style("fill", "#000000")
         ;
@@ -273,7 +295,7 @@
             .append("text")
             .text(function (d) { return d.endPassage; })
             .attr("x", function (d) { return timeAxis(d.endDate);})
-            .attr("y", -8)
+            .attr("y", function (d) { return d._cultureNumber * heightPerEntry -8 })
             .attr("font-size", 11)
             .attr("text-anchor", "middle")
             .attr("text-height", 14)
@@ -283,7 +305,7 @@
         const event_group = rows
             .append("g")
             .selectAll("g")
-            .data(function (d) {return d.events})
+            .data(function (d) { return d.events })
             .enter()
             .append("g")
         ;
@@ -291,7 +313,7 @@
         const testEvents = event_group.filter(function (d) { return d.eventType === "test" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", function (d) { return d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10); })
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10)); })
             .attr("r", 5)
             .style("fill", function (d) { return d.testResult === "positive" ? "#FF0000" : (d.testResult === "negative" ? "#00FF00" : "#FFFF00")})
             .style("stroke", "black")
@@ -301,14 +323,12 @@
         testEvents.on("mouseover", function (e) {
             let content = "";
             let output = $("#cellCultureChartEventInfo")[0];
-            let matrix = this.getCTM();
-
-            let position = $("#cellCultureChart svg")[0].createSVGPoint();
-            position.x = this.cx.animVal.value + 60;
-            position.y = 0 + heightPerEntry + 50;
-            position = position.matrixTransform(matrix);
 
             let data = d3.select(this).data()[0];
+
+            let position = {x: 0, y: 0}
+            position.x = e.pageX;
+            position.y = e.pageY + 10;
 
             content += "<b>" + dateFormat(data.date) + "</b><br />"
             content += data.shortName + "<br />";
@@ -329,7 +349,7 @@
         const splitEvents = event_group.filter(function (d) { return d.eventType === "split" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", function (d) { return d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10); })
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10)); })
             .attr("r", 5)
             .style("fill", "#FFFFFF")
             .style("stroke", "black")
@@ -349,12 +369,10 @@
         splitEvents.on("mouseover", function (e) {
             let content = "";
             let output = $("#cellCultureChartEventInfo")[0];
-            let matrix = this.getCTM();
 
-            let position = $("#cellCultureChart svg")[0].createSVGPoint();
-            position.x = this.cx.animVal.value + 60;
-            position.y = 0 + heightPerEntry + 50;
-            position = position.matrixTransform(matrix);
+            let position = {x: 0, y: 0}
+            position.x = e.pageX;
+            position.y = e.pageY + 10;
 
             let data = d3.select(this).data()[0];
 
@@ -377,7 +395,7 @@
         const otherEvents = event_group.filter(function (d) { return d.eventType === "other" })
             .append("circle")
             .attr("cx", function (d) { return timeAxis(d.date); } )
-            .attr("cy", function (d) { return d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10); })
+            .attr("cy", function (d) { return d._cultureNumber * heightPerEntry + (d.jitter === 0 ? 0 : (d.jitter%2 ? d.jitter * -10 : d.jitter * 10 - 10)); })
             .attr("r", 5)
             .style("fill", "#999999")
             .style("stroke", "black")
@@ -387,12 +405,10 @@
         otherEvents.on("mouseover", function (e) {
             let content = "";
             let output = $("#cellCultureChartEventInfo")[0];
-            let matrix = this.getCTM();
 
-            let position = $("#cellCultureChart svg")[0].createSVGPoint();
-            position.x = this.cx.animVal.value + 60;
-            position.y = 0 + heightPerEntry + 50;
-            position = position.matrixTransform(matrix);
+            let position = {x: 0, y: 0}
+            position.x = e.pageX;
+            position.y = e.pageY + 10;
 
             let data = d3.select(this).data()[0];
 

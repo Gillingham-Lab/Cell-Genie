@@ -1,19 +1,30 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 {% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
 
-{% block title %}Gin: New cell culture event{% endblock %}
+{% block title %}Gin :: Cell Culture :: {{ culture.name }} :: New Event{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="col">{{ culture.name }}: New event</h1>
-            </div>
-        </div>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("New event for " ~ culture.name) }}
 
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            {{ form(form) }}
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": url("app_cell_culture_view", {"cellCulture": culture.id}),
+                    "tooltipText": "Back to the culture",
+                },
+            ]) }}
+
+            <div class="row">
+                <div class="col p-0 m-0">
+                    <div class="bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-auto">
+                        {{ form(form) }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

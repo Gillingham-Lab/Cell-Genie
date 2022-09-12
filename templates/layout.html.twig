@@ -39,6 +39,14 @@
                     {# View #}
                     {% set iconClass = "far fa-eye" %}
                     {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "trash" %}
+                    {# Trash #}
+                    {% set iconClass = "fas fa-trash-alt" %}
+                    {% set btnClass = "btn-warning" %}
+                {% elseif tool.type == "restore" %}
+                    {# Trash #}
+                    {% set iconClass = "fas fa-trash-restore" %}
+                    {% set btnClass = "btn-warning" %}
                 {% elseif tool.type == "up" %}
                     {# Hierarchy up #}
                     {% set iconClass = "fas fa-fw fa-arrow-up" %}

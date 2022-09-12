@@ -30,7 +30,7 @@ class CellCultureEventTestType extends AbstractType
     {
         $builder
             ->add("date", DateType::class, [
-
+                'widget' => 'single_text',
             ])
             ->add("shortName", TextType::class, [
                 "label" => "Event name (required)",

@@ -1,71 +1,103 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 {% import 'parts/cells/cell_culture_macros.html.twig' as cell_culture_macros %}
 
-{% block title %}Gin: Cell Cultures{% endblock %}
+{% block title %}Gin :: Cell Cultures{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="col">Cell Cultures</h1>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Cell Cultures") }}
 
-                <div class="col text-right">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
-                        {# <button type="button" class="btn btn-secondary"><span class=""></span></button>
-                <button type="button" class="btn btn-secondary"><span class=""></span>Right</button> #}
+            {{
+                layout.toolbox([
+                    {
+                        "type": "add",
+                        "disabled": true,
+                        "tooltipText": "Add new cell culture",
+                    },
+                ])
+            }}
+
+            <div class="row">
+                <div class="col p-0 m-0">
+                    <div class="bg-white mx-3 mb-3 border py-2 px-3 px-lg-5">
+                        <form method="get" action="{{ app.request.getBaseUrl ~ app.request.getPathInfo }}">
+                            <div class="row">
+                                <div class="col col-12 col-lg-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><label for="ginCellCultureViewStartDate">From</label></span>
+                                        <input id="ginCellCultureViewStartDate" class="form-control" type="date" name="startDate" value="{{ startDate|date("Y-m-d") }}">
+                                        <span class="input-group-text" id="basic-addon1"><label for="ginCellCultureViewToDate">To</label></span>
+                                        <input id="ginCellCultureViewToDate" class="form-control" type="date" name="endDate" value="{{ endDate|date("Y-m-d") }}">
+                                    </div>
+                                </div>
+
+                                <div class="col col-12 col-md-6 col-lg-4 col-xl-2">
+                                    <button class="btn btn-primary form-control" type="submit">Display</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            {% if cultures|length == 0 %}
-                <p>There are currently no cells in culture.</p>
-            {% else %}
-                <div class="row g-0"><form method="get" action="{{ app.request.getBaseUrl ~ app.request.getPathInfo }}">
-                        <div class="col col-md-12 input-group">
-                            <input class="form-control" type="date" name="startDate" value="{{ startDate|date("Y-m-d") }}">
-                            <input class="form-control" type="date" name="endDate" value="{{ endDate|date("Y-m-d") }}">
-                            <button class="btn btn-primary" type="submit">Display</button>
-                        </div>
-                    </form></div>
-                <div id="cellCultureChart" style="position: relative;">
-                    {% for culture in cultures %}
-                        <div id="culture-buttons-{{ culture.id.toBase58 }}" class="btn-group btn-group-sm mr-3" style="position: absolute; left: 0px; top: {{ 60 + loop.index0*50 - 15}}px">
-                            <a class="btn btn-primary"
-                               href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
-                               data-toggle="tooltip" data-placement="bottom" title="View culture"
-                            ><span class="fa fa-eye"></span></a>
-                            <a class="btn btn-primary"
-                               href="{{ url("app_cell_culture_edit", {"cellCulture": culture.id}) }}"
-                               data-toggle="tooltip" data-placement="bottom" title="Edit culture"
-                            ><span class="fa fa-edit"></span></a>
-                            <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
-                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "other"}) }}"
-                               data-toggle="tooltip" data-placement="bottom" title="Add new event"
-                            ><span class="fas fa-tag"></span></a>
-                            <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
-                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "test"}) }}"
-                               data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"
-                            ><span class="fas fa-hospital-symbol"></span></a>
-                            <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
-                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "split"}) }}"
-                               data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"
-                            ><span class="fas fa-fill-drip"></span></a>
+            <div class="row">
+                <div class="col p-0 m-0">
+                    <div class="bg-white mx-3 mb-3 border py-2 px-3 px-lg-5 overflow-auto">
+                        {% if cultures|length == 0 %}
+                            <p>There are no cells in culture in the chosen timeframe.</p>
+                        {% else %}
+                            <div id="cellCultureChart" style="position: relative;">
+                                {% for culture in cultures %}
+                                    <div id="culture-buttons-group-{{ culture.id.toBase58 }}" style="position: absolute; left: 0px; top: {{ 60 + loop.index0*100 - 15}}px">
+                                        {# Small screens only get a single 'view' button #}
+                                        <div id="culture-buttons-sm-{{ culture.id.toBase58 }}" >
+                                            <a class="btn btn-primary btn-sm d-lg-none"
+                                               href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
+                                               data-toggle="tooltip" data-placement="bottom" title="View culture"
+                                            ><span class="fa fa-eye"></span></a>
+                                        </div>
 
-                            {% if culture.trashedOn %}
-                                <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_restore", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Restore cell culture"><span class="fas fa-trash-restore"></span></a>
-                            {% else %}
-                                <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_trash", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"><span class="fas fa-trash-alt"></span></a>
-                            {% endif %}
-                            <!--<a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create aliquots"><span class="fas fa-snowflake"></span></a>-->
-                        </div>
-                    {% endfor %}
+                                        {# Toolkit buttons for large screens #}
+                                        <div id="culture-buttons-{{ culture.id.toBase58 }}" class="btn-group btn-group-sm mr-3 d-none d-lg-inline-flex">
+                                            <a class="btn btn-primary"
+                                               href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
+                                               data-toggle="tooltip" data-placement="bottom" title="View culture"
+                                            ><span class="fa fa-eye"></span></a>
+                                            <a class="btn btn-primary"
+                                               href="{{ url("app_cell_culture_edit", {"cellCulture": culture.id}) }}"
+                                               data-toggle="tooltip" data-placement="bottom" title="Edit culture"
+                                            ><span class="fa fa-edit"></span></a>
+                                            <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "other"}) }}"
+                                               data-toggle="tooltip" data-placement="bottom" title="Add new event"
+                                            ><span class="fas fa-tag"></span></a>
+                                            <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "test"}) }}"
+                                               data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"
+                                            ><span class="fas fa-hospital-symbol"></span></a>
+                                            <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                                               href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "split"}) }}"
+                                               data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"
+                                            ><span class="fas fa-fill-drip"></span></a>
+
+                                            {% if culture.trashedOn %}
+                                                <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_restore", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Restore cell culture"><span class="fas fa-trash-restore"></span></a>
+                                            {% else %}
+                                                <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_trash", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"><span class="fas fa-trash-alt"></span></a>
+                                            {% endif %}
+                                            <!--<a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create aliquots"><span class="fas fa-snowflake"></span></a>-->
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div id="cellCultureChartEventInfo" style="color: black; background: whitesmoke; font-size: 10px; width: 150px; position: absolute; display: none; padding: 3px 6px; margin-left: -80px;"></div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div id="cellCultureChartEventInfo" style="color: black; background: whitesmoke; font-size: 10px; width: 150px; position: absolute; display: none; padding: 3px 6px; margin-left: -80px;"></div>
-            {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
