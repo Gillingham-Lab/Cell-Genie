@@ -35,6 +35,20 @@
                                 </div>
 
                                 <div class="col col-12 col-md-6 col-lg-4 col-xl-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><label for="ginCellCultureViewIncubator">Incubator</label></span>
+                                        <input id="ginCellCultureViewIncubator" class="form-control" type="text" name="incubator" value="{{ app.request.get("incubator") }}">
+                                    </div>
+                                </div>
+
+                                <div class="col col-12 col-md-6 col-lg-4 col-xl-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><label for="ginCellCultureViewScientist">Scientist</label></span>
+                                        <input id="ginCellCultureViewScientist" class="form-control" type="text" name="scientist" value="{{ app.request.get("scientist") }}">
+                                    </div>
+                                </div>
+
+                                <div class="col col-12 col-md-6 col-lg-4 col-xl-2">
                                     <button class="btn btn-primary form-control" type="submit">Display</button>
                                 </div>
                             </div>

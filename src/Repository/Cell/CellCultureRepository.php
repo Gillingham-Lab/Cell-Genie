@@ -22,7 +22,7 @@ class CellCultureRepository extends ServiceEntityRepository
         parent::__construct($registry, CellCulture::class);
     }
 
-    public function findAllBetween(\DateTimeInterface $start, \DateTimeInterface $end)
+    public function findAllBetween(\DateTimeInterface $start, \DateTimeInterface $end, string $incubator = null, string $scientist = null)
     {
         // Joins on events not possible due to https://github.com/doctrine/orm/pull/9743
         $qb = $this->createQueryBuilder("cc");
@@ -46,13 +46,30 @@ class CellCultureRepository extends ServiceEntityRepository
             ->orderBy("priority", "ASC")
             ->addOrderBy("cc.incubator", "ASC")
             ->addOrderBy("co.fullName", "ASC")
-            ->where("cc.unfrozenOn >= :start and cc.unfrozenOn <= :end")
+            ->where(
+                $qb->expr()
+                    ->orX("cc.unfrozenOn >= :start and cc.unfrozenOn <= :end")
+                    ->add("cc.trashedOn >= :start and cc.trashedOn <= :end")
+                    ->add("cc.unfrozenOn < :start and cc.trashedOn IS NULL")
+                    ->add("cc.unfrozenOn < :start and cc.trashedOn > :end")
+            )
+            /*->where("cc.unfrozenOn >= :start and cc.unfrozenOn <= :end")
             ->orWhere("cc.trashedOn >= :start and cc.trashedOn <= :end")
             ->orWhere("cc.unfrozenOn < :start and cc.trashedOn IS NULL")
-            ->orWhere("cc.unfrozenOn < :start and cc.trashedOn > :end")
+            ->orWhere("cc.unfrozenOn < :start and cc.trashedOn > :end")*/
             ->setParameter("start", $start)
             ->setParameter("end", $end)
         ;
+
+        if ($incubator) {
+            $qb->andWhere("cc.incubator LIKE :incubator");
+            $qb->setParameter("incubator", "%$incubator%");
+        }
+
+        if ($scientist) {
+            $qb->andWhere("co.fullName LIKE :scientist");
+            $qb->setParameter("scientist", "%$scientist%");
+        }
 
         return $qb->getQuery()->getResult();
     }

@@ -181,6 +181,9 @@ class CellController extends AbstractController
         $startDate = DateTimeImmutable::createFromFormat("Y-m-d", $request->get("startDate") ?? "");
         $endDate = DateTimeImmutable::createFromFormat("Y-m-d", $request->get("endDate") ?? "");
 
+        $filterScientist = $request->get("scientist");
+        $filterIncubator = $request->get("incubator");
+
         if ($startDate === false and $endDate === false) {
             $startDate = new DateTimeImmutable("today - 3 weeks");
             $endDate = new DateTimeImmutable("today + 1 weeks");
@@ -190,7 +193,7 @@ class CellController extends AbstractController
             $endDate = $startDate->add(new DateInterval("P4W"));
         }
 
-        $currentCultures = $this->cellCultureRepository->findAllBetween($startDate, $endDate);
+        $currentCultures = $this->cellCultureRepository->findAllBetween($startDate, $endDate, $filterIncubator, $filterScientist);
 
         $cultures = [];
         /** @var CellCulture $culture */
