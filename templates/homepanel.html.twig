@@ -83,16 +83,25 @@
                     html5Scanner = new Html5QrcodeScanner(
                         "qr-reader", {
                             fps: 10,
-                            qrbox: 250
+                            qrbox: 100,
                         }
                     );
 
                     html5Scanner.render(function (decodedText, decodedResult) {
-                        console.log(`Scan result ${decodedText}`, decodedResult);
+                        let redirect = "{{ url("app_homepage") }}";
                         qrcodeReader.toggle();
 
                         qrcodeResult[0].innerHTML = decodedText;
                         html5Scanner.clear();
+
+                        // Now do something with the decoded text
+                        if (decodedText.startsWith("gin:///")) {
+                            redirect += decodedText.substring(7);
+
+                            window.location.href = redirect;
+                        } else {
+                            window.location.href = redirect + "barcodes/" + decodedText;
+                        }
                     });
                 } else {
                     if (html5Scanner !== null) {

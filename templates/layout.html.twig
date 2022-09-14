@@ -1,11 +1,15 @@
 {% macro header(title, subtitle) %}
     <div class="row">
-        <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
-            {% if subtitle %}
-                <h2 class="text-muted">{{ subtitle }}</h2>
-            {% endif %}
+        <div class="col bg-white mx-3 mb-3 border d-flex align-items-center">
+            <div class="float-lg-start p-3 p-lg-5 flex-fill">
+                {% if subtitle %}
+                    <h2 class="text-muted">{{ subtitle }}</h2>
+                {% endif %}
 
-            <h1>{{ title }}</h1>
+                <h1>{{ title }}</h1>
+            </div>
+
+            <div class="d-none d-lg-block float-lg-end p-2 py-auto">{{ app.request.pathInfo|GinPathQRCode }}</div>
         </div>
     </div>
 {% endmacro %}
