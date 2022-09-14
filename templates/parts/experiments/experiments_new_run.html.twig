@@ -1,17 +1,22 @@
 {% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: New experimental run{% endblock %}
+{% block title %}Gin :: Experiment :: {{ experiment.name }} :: Run {{ run ? " :: " ~ run.name : "" }}{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="col">New experimental run for '{{ experiment.name }}'</h1>
-            </div>
-        </div>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {% if run %}
+                {{ layout.header("Change experimental run", experiment.name ~ ": " ~ run.name) }}
+            {% else %}
+                {{ layout.header("New experimental run", experiment.name) }}
+            {% endif %}
 
-        <div class="bg-white mt-3 border col col-12 p-5">
-            {{ form(form) }}
+            <div class="row">
+                <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
+                    {{ form(form) }}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

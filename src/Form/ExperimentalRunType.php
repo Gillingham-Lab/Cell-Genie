@@ -116,7 +116,7 @@ class ExperimentalRunType extends AbstractType
                 "expanded" => false,
                 "multiple" => false,
                 "attr"  => [
-                    "class" => "selectpicker",
+                    "class" => "gin-fancy-select",
                     "data-live-search" => "true"
                 ],
             ];
@@ -133,7 +133,7 @@ class ExperimentalRunType extends AbstractType
                 "expanded" => false,
                 "multiple" => false,
                 "attr"  => [
-                    "class" => "selectpicker",
+                    "class" => "gin-fancy-select",
                     "data-live-search" => "true"
                 ],
             ];

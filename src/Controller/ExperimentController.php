@@ -270,6 +270,7 @@ class ExperimentController extends AbstractController
         return $this->renderForm('parts/experiments/experiments_new_run.html.twig', [
             'controller_name' => 'ExperimentController',
             'experiment' => $experiment,
+            'run' => $experimentalRun,
             'form' => $form,
         ]);
     }

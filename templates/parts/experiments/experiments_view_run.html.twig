@@ -1,237 +1,247 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Experimental run: {{ run.name }} ({{ experiment.name }}){% endblock %}
+{% block title %}Gin :: Experiment :: {{ experiment.name }} :: {{ run.name }}{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(run.name) }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": url("app_experiments_view", {"experiment": experiment.id}),
+                    "tooltipText": "Back to experiment",
+                }, {
+                    "type": "other",
+                    "target": url("api_single_run", {"experimentalRun": run.id}),
+                    "btnClass": "btn-secondary",
+                    "iconClass": "fas fa-fw fa-download",
+                    "tooltipText": "Get run data as CSV",
+                }, {
+                    "type": "edit",
+                    "target": url("app_experiments_edit_run", {"experiment": experiment.id, "experimentalRun": run.id}),
+                    "tooltipText": "Edit experimental run",
+                }, {
+                    "type": "clone",
+                    "target": url("app_experiments_clone_run", {"experimentalRun": run.id}),
+                    "tooltipText": "Clone experimental run",
+                }, {
+                    "type": "trash",
+                    "target": url("app_experiments_drop_run", {"experimentalRun": run.id}),
+                    "tooltipText": "Trash experimental run",
+                    "confirmationRequired": true,
+                    "confirmationText": "Are you sure you want to delete this run? You cannot undo this action.",
+                }
+            ]) }}
+
             <div class="row">
-                <h1 class="col">Experimental run: {{ run.name }} ({{ experiment.name }})</h1>
+                <div class="col col-12 col-lg-6 p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Details", "Details") }}
 
-                <div class="col text-right">
-                    <div class="btn-group" role="group" aria-label="tools">
-                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to experiment"
-                           href="{{ url("app_experiments_view", {"experiment": experiment.id}) }}"
-                        >
-                            <span class="fas fa-fw fa-arrow-up"></span>
-                        </a>
+                        {{ layout.card_body_collapse_start("Details") }}
+                        <div class="card-body px-lg-5">
+                            <table class="table table-sm table-borderless table-hover">
+                                <tbody>
+                                {{ macros.definition_row("Name", run.name) }}
+                                {{ macros.definition_row("Owner", run.owner) }}
+                                {{ macros.definition_row("Created", run.createdAt|date("d. M Y H:i")) }}
+                                {{ macros.definition_row("Last modified", run.modifiedAt|date("d. M Y H:i")) }}
 
-                        <a class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Edit run"
-                           href="{{ url("app_experiments_edit_run", {"experiment": experiment.id, "experimentalRun": run.id}) }}"
-                        ><span class="fa fa-edit"></span></a>
-
-                        <a class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Get raw data"
-                           href="{{ url("api_single_run", {"experimentalRun": run.id}) }}"
-                        >
-                            <span class="fas fa-fw fa-download"></span>
-                        </a>
-                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Clone"
-                           href="{{ url("app_experiments_clone_run", {"experimentalRun": run.id}) }}"
-                        >
-                            <span class="fas fa-fw fa-clone"></span>
-                        </a>
-                        <a class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Delete" onclick="return confirm('Are you sure you want to delete this run? You cannot undo this action.')"
-                           href="{{ url("app_experiments_drop_run", {"experimentalRun": run.id}) }}"
-                        >
-                            <span class="fas fa-fw fa-trash"></span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white mt-3 border col col-12 p-5">
-            <table class="table table-sm table-borderless">
-                <tbody>
-                    {{ macros.definition_row("Name", run.name) }}
-                    {{ macros.definition_row("Owner", run.owner) }}
-                    {{ macros.definition_row("Created", run.createdAt|date("d. M Y H:i")) }}
-                    {{ macros.definition_row("Last modified", run.modifiedAt|date("d. M Y H:i")) }}
-
-                    {% if run.data.conditions is defined %}
-                        {% for condition in run.data["conditions"] %}
-                            {% if condition.type is defined and condition.type == "chemical" %}
-                                {% if condition.value|length < 10 %}
-                                    {{ macros.definition_row(condition.title, "((chemical#" ~ condition.value ~ "))") }}
-                                {% else %}
-                                    {% set chem = chemicals.find(condition.value) %}
-                                    {{ macros.definition_row_raw(condition.title, macros.chemlink(chem)) }}
-                                {% endif %}
-                            {% elseif condition.type is defined and condition.type == "protein" %}
-                                {% if condition.value|length < 10 %}
-                                    {{ macros.definition_row(condition.title, "((protein#" ~ condition.value ~ "))") }}
-                                {% else %}
-                                    {% set protein = proteins.find(condition.value) %}
-                                    {{ macros.definition_row_raw(condition.title, macros.proteinlink(protein)) }}
-                                {% endif %}
-                            {% else %}
-                                {{ macros.definition_row(condition.title, condition.value) }}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="bg-white mt-3 border col col-12 p-0">
-            <div class="bg-dark text-white p-3 border-bottom border-dark">
-                <div class="row">
-                    <h2 class="col">Wells</h2>
-
-                    <div class="col text-right">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit wells"
-                               href="{{ url("app_experiments_edit_run_wells", {"experimentalRun": run.id}) }}"
-                            ><span class="fa fa-pen"></span></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {% set condition_ids = [] %}
-            {% set measurement_ids = [] %}
-
-            <div class="p-5" style="max-height: 40em; overflow-y: scroll">
-                <table class="table table-hover table-sm">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>ESTD</th>
-                            <th>Name</th>
-                            {% for condition in experiment.conditions %}
-                                {% if condition.general == false %}
-                                    {% set condition_ids = condition_ids|merge([condition.id.toBase58()]) %}
-                                    <th>{{ condition.title }}</th>
-                                {% endif %}
-                            {% endfor %}
-                            {% for measurement in experiment.measurements %}
-                                {% set measurement_ids = measurement_ids|merge([measurement.id.toBase58()]) %}
-                                {% if measurement.internalStandard %}
-                                    <th>{{ measurement.title }} (ISTD)</th>
-                                {% else %}
-                                    <th>{{ measurement.title }}</th>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for well in run.wells %}
-                        <tr>
-                            <td>
-                                {{ well.wellNumber }}
-                            </td>
-                            <td>
-                                {% if well.isExternalStandard %}
-                                    Y
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ well.wellName }}
-                            </td>
-
-                            {% if well.wellData.conditions is defined %}
-                                {% for condition_id in condition_ids %}
-                                    {% for condition in well.wellData.conditions|filter(c => condition_id == c.id) %}
+                                {% if run.data.conditions is defined %}
+                                    {% for condition in run.data["conditions"] %}
                                         {% if condition.type is defined and condition.type == "chemical" %}
                                             {% if condition.value|length < 10 %}
-                                                <td>((chemical#{{ condition.value }}))</td>
+                                                {{ macros.definition_row(condition.title, "((chemical#" ~ condition.value ~ "))") }}
                                             {% else %}
                                                 {% set chem = chemicals.find(condition.value) %}
-                                                {% if chem %}
-                                                    <td>{{ macros.chemlink(chem) }}</a></td>
-                                                {% else %}
-                                                    <td>((chemical#{{ condition.value }}))</td>
-                                                {% endif %}
+                                                {{ macros.definition_row_raw(condition.title, macros.chemlink(chem)) }}
                                             {% endif %}
                                         {% elseif condition.type is defined and condition.type == "protein" %}
                                             {% if condition.value|length < 10 %}
-                                                {# Important if old data is around. #}
-                                                <td>((protein#{{ condition.value }}))</td>
+                                                {{ macros.definition_row(condition.title, "((protein#" ~ condition.value ~ "))") }}
                                             {% else %}
                                                 {% set protein = proteins.find(condition.value) %}
-                                                {% if protein %}
-                                                    <td>{{ macros.proteinlink(protein) }}</a></td>
-                                                {% else %}
-                                                    <td>((protein#{{ condition.value }}))</td>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% elseif condition.type == 'check' %}
-                                            {% if condition.value %}
-                                                <td>Y</td>
-                                            {% else %}
-                                                <td></td>
+                                                {{ macros.definition_row_raw(condition.title, macros.proteinlink(protein)) }}
                                             {% endif %}
                                         {% else %}
-                                            <td>{{ condition.value }}</td>
+                                            {{ macros.definition_row(condition.title, condition.value) }}
                                         {% endif %}
-                                    {% else %}
-                                        <td></td>
                                     {% endfor %}
-                                {% endfor %}
-                            {% else %}
-                                {% for condition_id in condition_ids %}
-                                        <td></td>
-                                {% endfor %}
-                            {% endif %}
-
-                            {% if well.wellData.measurements is defined %}
-                                {% for measurement_id in measurement_ids %}
-                                    {% for measurement in well.wellData.measurements|filter(m => measurement_id == m.id) %}
-                                        {% if measurement.type == 'check' %}
-                                            {% if measurement.value %}
-                                                <td>Y</td>
-                                            {% else %}
-                                                <td></td>
-                                            {% endif %}
-                                        {% else %}
-                                            <td>{{ measurement.value }}</td>
-                                        {% endif %}
-                                    {% else %}
-                                        <td></td>
-                                    {% endfor %}
-                                {% endfor %}
-                            {% else %}
-                                {% for measurement_id in measurement_ids %}
-                                    <td></td>
-                                {% endfor %}
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="bg-white mt-3 border col col-12 p-0 mb-5">
-            <div class="bg-dark text-white p-3 border-bottom border-dark">
-                <div class="row">
-                    <h2 class="col">Data Preview</h2>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
                 </div>
-            </div>
 
-            {% set x_id = null %}
-            {% set y_ids = [] %}
+                <div class="col col-12 col-lg-6 p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {# Non-collapsible because otherwise the data will not be drawn. For whatever reason. #}
+                        {{ layout.card_header_collapse("Data Preview") }}
 
-            {# Save the ID of the last 'isX' column. #}
-            {% for condition in experiment.conditions %}
-                {% if condition.isX == true %}
-                    {% set x_id = condition.id %}
-                {% endif %}
-            {% endfor %}
+                        {{ layout.card_body_collapse_start() }}
+                        <div class="card-body px-lg-5">
+                            {% set x_id = null %}
+                            {% set y_ids = [] %}
 
-            {# Save a collection of all IDs marked as 'isY' #}
-            {% for measurement in experiment.measurements %}
-                {% if measurement.isY == true %}
-                    {% set y_ids = y_ids|merge([measurement.id]) %}
-                {% endif %}
-            {% endfor %}
+                            {# Save the ID of the last 'isX' column. #}
+                            {% for condition in experiment.conditions %}
+                                {% if condition.isX == true %}
+                                    {% set x_id = condition.id %}
+                                {% endif %}
+                            {% endfor %}
 
-            {% if x_id == null or y_ids|length == 0 %}
-                <div class="p-5">Preview not possible, as the experiment does not define any conditions as X or any measurement as Y.</div>
-            {% else %}
-                <div class="m-5" id="preview_plot"></div>
-            {% endif %}
+                            {# Save a collection of all IDs marked as 'isY' #}
+                            {% for measurement in experiment.measurements %}
+                                {% if measurement.isY == true %}
+                                    {% set y_ids = y_ids|merge([measurement.id]) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if x_id == null or y_ids|length == 0 %}
+                                <div>Preview not possible, as the experiment does not define any conditions as X or any measurement as Y.</div>
+                            {% else %}
+                                <div id="preview_plot"></div>
+                            {% endif %}
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                <div class="col col-12 p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Data", "Data") }}
+
+                        {{ layout.card_body_collapse_start("Data") }}
+
+                        {{ layout.toolbox_card([
+                            {
+                                "type": "edit-table",
+                                "target": url("app_experiments_edit_run_wells", {"experimentalRun": run.id}),
+                                "tooltipText": "Edit data",
+                            }
+                        ]) }}
+
+                        <div class="card-body overflow-auto px-lg-5" style="max-height: 40rem">
+                            {% set condition_ids = [] %}
+                            {% set measurement_ids = [] %}
+
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ESTD</th>
+                                    <th>Name</th>
+                                    {% for condition in experiment.conditions %}
+                                        {% if condition.general == false %}
+                                            {% set condition_ids = condition_ids|merge([condition.id.toBase58()]) %}
+                                            <th>{{ condition.title }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for measurement in experiment.measurements %}
+                                        {% set measurement_ids = measurement_ids|merge([measurement.id.toBase58()]) %}
+                                        {% if measurement.internalStandard %}
+                                            <th>{{ measurement.title }} (ISTD)</th>
+                                        {% else %}
+                                            <th>{{ measurement.title }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for well in run.wells %}
+                                    <tr>
+                                        <td>
+                                            {{ well.wellNumber }}
+                                        </td>
+                                        <td>
+                                            {% if well.isExternalStandard %}
+                                                Y
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ well.wellName }}
+                                        </td>
+
+                                        {% if well.wellData.conditions is defined %}
+                                            {% for condition_id in condition_ids %}
+                                                {% for condition in well.wellData.conditions|filter(c => condition_id == c.id) %}
+                                                    {% if condition.type is defined and condition.type == "chemical" %}
+                                                        {% if condition.value|length < 10 %}
+                                                            <td>((chemical#{{ condition.value }}))</td>
+                                                        {% else %}
+                                                            {% set chem = chemicals.find(condition.value) %}
+                                                            {% if chem %}
+                                                                <td>{{ macros.chemlink(chem) }}</a></td>
+                                                            {% else %}
+                                                                <td>((chemical#{{ condition.value }}))</td>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% elseif condition.type is defined and condition.type == "protein" %}
+                                                        {% if condition.value|length < 10 %}
+                                                            {# Important if old data is around. #}
+                                                            <td>((protein#{{ condition.value }}))</td>
+                                                        {% else %}
+                                                            {% set protein = proteins.find(condition.value) %}
+                                                            {% if protein %}
+                                                                <td>{{ macros.proteinlink(protein) }}</a></td>
+                                                            {% else %}
+                                                                <td>((protein#{{ condition.value }}))</td>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% elseif condition.type == 'check' %}
+                                                        {% if condition.value %}
+                                                            <td>Y</td>
+                                                        {% else %}
+                                                            <td></td>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <td>{{ condition.value }}</td>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <td></td>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for condition_id in condition_ids %}
+                                                <td></td>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if well.wellData.measurements is defined %}
+                                            {% for measurement_id in measurement_ids %}
+                                                {% for measurement in well.wellData.measurements|filter(m => measurement_id == m.id) %}
+                                                    {% if measurement.type == 'check' %}
+                                                        {% if measurement.value %}
+                                                            <td>Y</td>
+                                                        {% else %}
+                                                            <td></td>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <td>{{ measurement.value }}</td>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <td></td>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for measurement_id in measurement_ids %}
+                                                <td></td>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -257,10 +267,24 @@
 
     {% if x_id != null and y_ids|length > 0 %}
     <script type="application/javascript">
+        const plotArea = $("#preview_plot");
+        const referenceElement = $(plotArea[0].parentElement.parentElement.parentElement);
+
+        let margin = {};
+        let width = 0;
+        let height = 0;
+
         // set the dimensions and margins of the graph
-        const margin = {top: 30, right: 30, bottom: 30, left: 60},
-            width = $("#preview_plot").width() - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
+        if (plotArea.width < 768) {
+            margin = {top: 10, right: 10, bottom: 10, left: 10};
+            width = referenceElement.width() - margin.left - margin.right - 20;
+            height = Math.max(400, plotArea.height()) - margin.top - margin.bottom;
+
+        } else {
+            margin = {top: 30, right: 30, bottom: 30, left: 30};
+            width = referenceElement.width() - margin.left - margin.right - 60;
+            height = Math.max(400, plotArea.height()) - margin.top - margin.bottom;
+        }
 
         // append the svg object to the body of the page
         const svg = d3.select("#preview_plot")

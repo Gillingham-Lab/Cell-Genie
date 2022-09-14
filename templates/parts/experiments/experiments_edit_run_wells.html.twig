@@ -1,120 +1,123 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Edit Experimental run: {{ run.name }} ({{ experiment.name }}){% endblock %}
+{% block title %}Gin :: Experiment :: {{ experiment.name }} :: Run :: {{ run.name }}{% endblock %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Change experimental run data", experiment.name ~ ": " ~ run.name) }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "back",
+                    "target": url("app_experiments_view_run", {"experimentalRun": run.id}),
+                    "tooltipText": "Return to the experimental run",
+                }, {
+                    "type": "up",
+                    "target": url("app_experiments_view", {"experiment": experiment.id}),
+                    "tooltipText": "Return to experiment",
+                }
+            ]) }}
+
             <div class="row">
-                <h1 class="col">Edit Experimental run: {{ run.name }} ({{ experiment.name }})</h1>
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ form_start(form, {"attr": {"data-table": "true"}}) }}
+                        <div class="card-body border-bottom p-2 px-lg-5">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a class="btn btn-secondary data-table-paste" data-toggle="tooltip" data-placement="bottom" title="Paste from Clipboard">
+                                    <span class="fa fa-paste"></span>
+                                </a>
 
-                <div class="col text-right">
-                    <div class="btn-group" role="group" aria-label="tools">
-                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to experiment"
-                           href="{{ url("app_experiments_view", {"experiment": experiment.id}) }}"
-                        >
-                            <span class="fas fa-fw fa-arrow-up"></span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                {% set save_button = form_widget(form.save) %}
 
-        <div class="bg-white mt-3 border col col-12 p-0">
-            {{ form_start(form, {"attr": {"data-table": "true"}}) }}
-
-            <div class="bg-dark text-white p-3 border-bottom border-dark">
-                <div class="row">
-                    <h2 class="col">Wells</h2>
-
-                    <div class="col text-right">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Cancel"
-                               href="{{ url("app_experiments_view_run", {"experimentalRun": run.id}) }}"
-                            ><span class="fa fa-arrow-left"></span></a>
-
-                            <a class="btn btn-secondary data-table-paste" data-toggle="tooltip" data-placement="bottom" title="Paste from Clipboard">
-                                <span class="fa fa-paste"></span>
-                            </a>
-
-                            {{ form_widget(form.save) }}
-
+                                {{ save_button|raw }}
+                            </div>
                         </div>
+
+                        <div id="data-table-clipboard" style="display: none; visibility: collapse;" class="card-body border-bottom">
+                            <p class="pb-3">Paste in here data, for example from Excel. Fields must be tab-separated for now. Press Shift+Enter to submit.</p>
+                            <textarea style="width: 100%"></textarea>
+                        </div>
+
+                        <div class="card-body p-2 p-lg-5">
+
+                            {{ form_errors(form) }}
+
+                            <table class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th>ESTD</th>
+                                    <th>Name</th>
+                                    {% for condition in experiment.conditions %}
+                                        {% if condition.general == false %}
+                                            <th>{{ condition.title }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for measurement in experiment.measurements %}
+                                        {% if measurement.internalStandard %}
+                                            <th>{{ measurement.title }} (ISTD)</th>
+                                        {% else %}
+                                            <th>{{ measurement.title }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for well in form.wells %}
+                                    {% set well_row_number = loop.index0 %}
+                                    {% set well_col_number = 1 %}
+                                    <tr>
+                                        <td>
+                                            {{ form_widget(well["isExternalStandard"], {"attr": {"data-table-row": well_row_number, "data-table-col": 0}}) }}
+                                            {{ form_errors(well["isExternalStandard"]) }}
+                                        </td>
+                                        <td>
+                                            {{ form_widget(well.wellName,  {"attr": {"data-table-row": well_row_number, "data-table-col": 1}}) }}
+                                            {{ form_errors(well.wellName) }}
+                                        </td>
+                                        {% if well.conditions is defined %}
+                                            {% for widget in well.conditions %}
+                                                {% set well_col_number = well_col_number + 1 %}
+                                                {% if not widget.isRendered() %}
+                                                    <td>
+                                                        {{ form_widget(widget,  {"attr": {"data-table-row": well_row_number, "data-table-col": well_col_number}}) }}
+                                                        {{ form_errors(widget) }}
+                                                    </td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if well.measurements is defined %}
+                                            {% for widget in well.measurements %}
+                                                {% set well_col_number = well_col_number + 1 %}
+
+                                                {% if not widget.isRendered() %}
+                                                    <td>
+                                                        {{ form_widget(widget,  {"attr": {"data-table-row": well_row_number, "data-table-col": well_col_number}}) }}
+                                                        {{ form_errors(widget) }}
+                                                    </td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="card-body border-top p-2 px-lg-5">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                {{ save_button|raw }}
+                            </div>
+                        </div>
+
+                        {{ form_end(form) }}
                     </div>
                 </div>
-            </div>
-
-            <div class="p-5" style="min-height: 30em; padding-bottom: 10em;">
-                <div id="data-table-clipboard" style="display: none; visibility: collapse;" class="pb-5">
-                    <p class="pb-3">Paste in here data, for example from Excel. Fields must be tab-separated for now. Press Shift+Enter to submit.</p>
-                    <textarea style="width: 100%"></textarea>
-                </div>
-
-                {{ form_errors(form) }}
-
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>ESTD</th>
-                            <th>Name</th>
-                            {% for condition in experiment.conditions %}
-                                {% if condition.general == false %}
-                                    <th>{{ condition.title }}</th>
-                                {% endif %}
-                            {% endfor %}
-                            {% for measurement in experiment.measurements %}
-                                {% if measurement.internalStandard %}
-                                    <th>{{ measurement.title }} (ISTD)</th>
-                                {% else %}
-                                    <th>{{ measurement.title }}</th>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for well in form.wells %}
-                            {% set well_row_number = loop.index0 %}
-                            {% set well_col_number = 1 %}
-                            <tr>
-                                <td>
-                                    {{ form_widget(well["isExternalStandard"], {"attr": {"data-table-row": well_row_number, "data-table-col": 0}}) }}
-                                    {{ form_errors(well["isExternalStandard"]) }}
-                                </td>
-                                <td>
-                                    {{ form_widget(well.wellName,  {"attr": {"data-table-row": well_row_number, "data-table-col": 1}}) }}
-                                    {{ form_errors(well.wellName) }}
-                                </td>
-                                {% if well.conditions is defined %}
-                                    {% for widget in well.conditions %}
-                                        {% set well_col_number = well_col_number + 1 %}
-                                        {% if not widget.isRendered() %}
-                                        <td>
-                                            {{ form_widget(widget,  {"attr": {"data-table-row": well_row_number, "data-table-col": well_col_number}}) }}
-                                            {{ form_errors(widget) }}
-                                        </td>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-
-                                {% if well.measurements is defined %}
-                                    {% for widget in well.measurements %}
-                                        {% set well_col_number = well_col_number + 1 %}
-
-                                        {% if not widget.isRendered() %}
-                                            <td>
-                                                {{ form_widget(widget,  {"attr": {"data-table-row": well_row_number, "data-table-col": well_col_number}}) }}
-                                                {{ form_errors(widget) }}
-                                            </td>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-                {{ form_end(form) }}
             </div>
         </div>
     </div>
@@ -124,7 +127,6 @@
     <script type="application/javascript">
         let clipboard_input = $("#data-table-clipboard");
         let textarea = clipboard_input.find("textarea").first();
-
 
         function toggle_datatable_clipboard() {
             if (clipboard_input.css("display") === "none") {

@@ -1,28 +1,44 @@
 {% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
 
-{% block title %}Cell Genie: Experiments{% endblock %}
+{% block title %}Gin :: Experiments{% endblock %}
 
 {% macro show_children(type) %}
     {% if type.children|length > 0 %}
-        {% for child_type in type.children %}
-            {% if child_type.experiments|length > 0 %}
-                <div class="p-3">
-                    <h3> {{ child_type.name  }}</h3>
+        <div class="row">
+            {% for child_type in type.children %}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse(child_type.name, child_type.id, "sm") }}
 
-                    <p>{{ child_type.description }}</p>
 
-                    {{ _self.show_table(child_type) }}
+                        {{ layout.card_body_collapse_start(child_type.id, "sm") }}
+                        {% if child_type.description %}
+                            <div class="card-body border-bottom">
+                                {{ child_type.description }}
+                            </div>
+                        {% endif %}
+
+                        {% if child_type.experiments|length > 0 %}
+                            <div class="card-body border-bottom">
+                                {{ _self.show_table(child_type) }}
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            {{ _self.show_children(child_type) }}
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
                 </div>
-            {% endif %}
-
-            {{ _self.show_children(child_type) }}
-        {% endfor %}
+            {% endfor %}
+        </div>
     {% endif %}
 {% endmacro %}
 
 {% macro show_table(type) %}
     {% if type.experiments|length > 0 %}
-        <table class="table table-sm full table-borderless table-hover">
+        <table class="table table-sm full table-borderless table-hover fancyTable">
             <thead>
                 <tr>
                     <th>
@@ -31,7 +47,8 @@
                             <a class="btn btn-sm btn-primary"><span class="fa fa-plus"></span></a>
                             <a class="btn btn-sm btn-primary"><span class="fa fa-download"></span></a>
                         </span>
-
+                    </th>
+                    <th>
                         Experiment
                     </th>
                     <th># Runs</th>
@@ -52,6 +69,8 @@
                                    href="{{ url("api_runs", {"experiment": experiment.id}) }}"
                                 ><span class="fas fa-fw fa-download"></span></a>
                             </span>
+                        </td>
+                        <td>
                             {{ experiment.name }}
                         </td>
                         <td>
@@ -65,31 +84,48 @@
 {% endmacro %}
 
 {% block body_main %}
-    <div class="row p-3">
-        <div class="col col-12 p-5 bg-white mb-3 border">
-            <div class="row">
-                <h1 class="col">Experiments</h1>
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Experiments") }}
 
-                <div class="col text-right">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary"><span class="fas fa-fw fa-plus"></span></button>
+            {{
+            layout.toolbox([
+                {
+                    "type": "add",
+                    "disabled": true,
+                    "tooltipText": "Add new experiment",
+                },
+            ])
+            }}
+
+            <div class="row row-cols-1">
+                {% for type in (experiment_types|filter(t => t.parent is null )) %}
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse(type.name, type.id) }}
+
+
+                            {{ layout.card_body_collapse_start(type.id) }}
+                            {% if type.description %}
+                                <div class="card-body border-bottom">
+                                    {{ type.description }}
+                                </div>
+                            {% endif %}
+
+                            {% if type.experiments|length > 0 %}
+                                <div class="card-body border-bottom">
+                                    {{ _self.show_table(type) }}
+                                </div>
+                            {% endif %}
+
+                            <div class="card-body">
+                                {{ _self.show_children(type) }}
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
-
-        {% for type in (experiment_types|filter(t => t.parent is null )) %}
-            <div class="bg-white mt-3 border col col-12 p-0">
-                <h2 class="bg-dark text-white p-3 border-bottom border-dark">{{ type.name }}</h2>
-
-                <div class="p-3">
-                    {{ type.description }}
-
-                    {{ _self.show_table(type) }}
-                </div>
-
-                {{ _self.show_children(type) }}
-            </div>
-        {% endfor %}
     </div>
 {% endblock %}
