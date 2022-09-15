@@ -36,7 +36,7 @@ class Chemical extends Substance
     private Collection $experiments;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $iupacName;
+    private ?string $iupacName = null;
 
     public function __construct()
     {
