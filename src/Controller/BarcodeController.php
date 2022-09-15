@@ -82,6 +82,7 @@ class BarcodeController extends AbstractController
 
         if ($barcodeEntity === null) {
             $barcodeEntity = new Barcode();
+            $barcodeEntity->setBarcode($barcode);
             $newEntry = true;
         } else {
             $newEntry = false;
