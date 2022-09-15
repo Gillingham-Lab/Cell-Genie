@@ -1,4 +1,4 @@
-{% macro header(title, subtitle) %}
+{% macro header(title, subtitle=false, barcode=true) %}
     <div class="row">
         <div class="col bg-white mx-3 mb-3 border d-flex align-items-center">
             <div class="float-lg-start p-3 p-lg-5 flex-fill">
@@ -9,7 +9,9 @@
                 <h1>{{ title }}</h1>
             </div>
 
-            <div class="d-none d-lg-block float-lg-end p-2 py-auto">{{ app.request.pathInfo|GinPathQRCode }}</div>
+            {% if barcode %}
+                <div class="d-none d-lg-block float-lg-end p-2 py-auto">{{ app.request.pathInfo|GinPathQRCode }}</div>
+            {% endif %}
         </div>
     </div>
 {% endmacro %}

@@ -71,11 +71,5 @@ class CellCultureEventTestType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes("save_button", "bool");
-        /*
-        $resolver->setRequired([
-            "experiment",
-        ]);
-
-        $resolver->setAllowedTypes("experiment", Experiment::class);*/
     }
 }

@@ -266,7 +266,10 @@
             $(document).ready(function() {
                 $("select.gin-fancy-select").each(function (e) {
                     new TomSelect(this, {
-                        plugins: ['dropdown_input'],
+                        plugins: {
+                            dropdown_input: true,
+                        },
+                        allowEmptyOption: this.attributes["data-allow-empty"] && this.attributes["data-allow-empty"].value === "true",
                     })
                 })
             })

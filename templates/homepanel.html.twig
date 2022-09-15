@@ -100,7 +100,8 @@
 
                             window.location.href = redirect;
                         } else {
-                            window.location.href = redirect + "barcodes/" + decodedText;
+                            decodedText = decodedText.replace("/", "")
+                            window.location.href = redirect + "barcode/" + decodedText;
                         }
                     });
                 } else {

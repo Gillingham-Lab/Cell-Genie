@@ -1,0 +1,26 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
+
+{% block title %}Gin :: Register Barcode :: {{ barcode }}{% endblock %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {% if new %}
+                {{ layout.header("Register new barcode " ~ barcode, false, false) }}
+            {% else %}
+                {{ layout.header("Change barcode " ~ barcode, false, false) }}
+            {% endif %}
+
+            <div class="row">
+                <div class="col p-0 m-0">
+                    <div class="bg-white mx-3 mb-3 border p-3 p-lg-5 h-100">
+                        {{ form(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
