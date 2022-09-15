@@ -7,6 +7,7 @@ use App\Entity\Lot;
 use App\Entity\Traits\NameTrait;
 use App\Entity\Traits\NewIdTrait;
 use App\Repository\Substance\SubstanceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -28,6 +29,11 @@ class Substance
     #[ORM\OrderBy(["lotNumber" => "ASC"])]
     #[Assert\Valid]
     private Collection $lots;
+
+    public function __construct()
+    {
+        $this->lots = new ArrayCollection();
+    }
 
     /**
      * @return Collection<int, Lot>

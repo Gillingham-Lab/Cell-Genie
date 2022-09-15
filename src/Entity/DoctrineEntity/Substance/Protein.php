@@ -53,6 +53,7 @@ class Protein extends Substance
 
     public function __construct()
     {
+        parent::__construct();
         $this->experiments = new ArrayCollection();
         $this->epitopes = new ArrayCollection();
         $this->parents = new ArrayCollection();

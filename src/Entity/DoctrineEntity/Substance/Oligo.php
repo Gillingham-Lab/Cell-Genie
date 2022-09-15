@@ -46,6 +46,7 @@ class Oligo extends Substance
 
     public function getSequence(): ?string
     {
+        parent::__construct();
         return $this->sequence;
     }
 

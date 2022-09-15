@@ -83,6 +83,7 @@ class Antibody extends Substance
 
     public function __construct()
     {
+        parent::__construct();
         $this->epitopeTargets = new ArrayCollection();
         $this->lots = new ArrayCollection();
         $this->vendorDocumentation = new ArrayCollection();

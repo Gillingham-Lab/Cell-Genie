@@ -40,6 +40,7 @@ class Chemical extends Substance
 
     public function __construct()
     {
+        parent::__construct();
         $this->experiments = new ArrayCollection();
     }
 
