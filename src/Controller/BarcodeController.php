@@ -67,7 +67,7 @@ class BarcodeController extends AbstractController
             return $this->redirectToRoute($routeParams["route"], $routeParams["params"]);
         } else {
             // Redirect to new
-            return $this->redirectToRoute("app_barcode_new", ["barcode" => $barcode]);
+            return $this->redirectToRoute("app_barcode_edit", ["barcode" => $barcode]);
         }
     }
 
