@@ -26,7 +26,7 @@
         {% endfor %}
     {% endfor %}
 
-    <svg id="svg-image-box-{{ box.id }}" width="100%" viewBox="-1 -1 201 201">
+    <svg id="svg-image-box-{{ box.id }}" width="100%" viewBox="-1 -1 201 201" style="width: 100%;">
         {%- if box.cols < box.rows -%}
             {% set s = 200/box.rows %}
         {%- else -%}

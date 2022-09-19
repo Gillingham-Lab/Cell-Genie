@@ -1,0 +1,16 @@
+{% macro protein(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-protein
+    {% else %}
+    <span class="icon icon-protein"></span>
+    {% endif %}
+{% endmacro %}
+
+{% macro oligo(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-oligomer
+    {% else %}
+        <span class="icon icon-oligomer"></span>
+    {% endif %}
+{% endmacro %}
+

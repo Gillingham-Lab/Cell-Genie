@@ -1,0 +1,20 @@
+{% macro view_sequence(substance) %}
+    {% import 'layout.html.twig' as layout %}
+
+    <div class="col p-0 m-0 mb-3">
+        <div class="card mx-3 h-100">
+            {{ layout.card_header_collapse("Sequence", "Sequence") }}
+
+            {{ layout.card_body_collapse_start("Sequence") }}
+            <div class="card-body px-lg-5 mx-0">
+                {% if substance.fastaSequence %}
+                    {# Sequence is filled in by a JavaScript at the bottom of this template! #}
+                    <div id="sequence-viewer-{{ substance.ulid }}" class="gin-sequenceViewer" data-gin-sequence-title="{{ substance.shortName }}">{{ substance.fastaSequence }}</div>
+                {% else %}
+                    No sequence given.
+                {% endif %}
+            </div>
+            {{ layout.card_body_collapse_end() }}
+        </div>
+    </div>
+{% endmacro %}

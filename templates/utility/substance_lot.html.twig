@@ -1,0 +1,53 @@
+
+
+{% macro lot(substance) %}
+    {% import 'layout.html.twig' as layout %}
+    {% import 'macros.html.twig' as macros %}
+
+    <div class="col p-0 m-0 mb-3">
+        <div class="card mx-3 h-100">
+            {{ layout.card_header_collapse("Lots", "Lots", null, substance.lots|length) }}
+            {{ layout.card_body_collapse_start("Lots") }}
+            <div class="card-body px-lg-5 mx-0">
+                {% if substance.lots|length == 0 %}
+                    No protein lots registered.
+                {% else %}
+                    <div class="row row-cols-1">
+                        {% for lot in substance.lots %}
+                            <div class="col mb-2">
+                                <div class="card">
+                                    {{ layout.card_header_collapse(substance.shortName ~ "." ~ lot.number, lot.id, "sm") }}
+                                    {{ layout.card_body_collapse_start(lot.id, "sm") }}
+
+                                    {# {{ layout.toolbox_card([{
+                                                    "type": "view",
+                                                    "target": url("app_antibody_view", {"antibodyId": lot.ulid}),
+                                                }], "sm") }} #}
+                                    <div class="card-body px-lg-2">
+                                        <table class="table table-sm table-borderless table-hover">
+                                            <tbody>
+                                            {{ macros.definition_row("Lot #", lot.lotNumber) }}
+                                            {{ macros.definition_row_raw("Vendor", macros.vendor_url(lot.vendor, lot.vendorPN)) }}
+                                            {{ macros.definition_row("Storage", lot.box) }}
+                                            {{ macros.definition_row("Amount", lot.amount) }}
+                                            {{ macros.definition_row("Concentration", lot.purity) }}
+
+                                            {% if lot.numberOfAliquotes > 0 %}
+                                                {{ macros.definition_row("Aliquots", lot.numberOfAliquotes ~ " (à " ~ lot.aliquoteSize ~ ")") }}
+                                            {% else %}
+                                                {{ macros.definition_row("Aliquots", "none") }}
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {{ layout.card_body_collapse_end() }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            {{ layout.card_body_collapse_end() }}
+        </div>
+    </div>
+{% endmacro %}

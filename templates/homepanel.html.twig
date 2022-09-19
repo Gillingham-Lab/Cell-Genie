@@ -1,4 +1,5 @@
 {% extends 'homepage.html.twig' %}
+{% import 'utility/icons.html.twig' as icons %}
 
 {% macro make_card(name, symbol, target) %}
     <div class="col mb-2">
@@ -41,8 +42,8 @@
                 {{ _self.make_card("1° Antibodies", "icon icon-antibody-primary", url("app_antibodies", {"antibodyType": "primaries"})) }}
                 {{ _self.make_card("2° Antibodies", "icon icon-antibody-secondary", url("app_antibodies", {"antibodyType": "secondaries"})) }}
                 {{ _self.make_card("Chemicals", "fas fa-fw fa-tablets", url("app_compounds")) }}
-                {{ _self.make_card("Proteins", "icon icon-protein", url("app_proteins")) }}
-                {{ _self.make_card("Oligos", "icon icon-oligomer", url("app_proteins")) }}
+                {{ _self.make_card("Proteins", icons.protein(true), url("app_proteins")) }}
+                {{ _self.make_card("Oligos", "icon icon-oligomer", url("app_oligos")) }}
                 {{ _self.make_card("Recipes", "fas fa-fw fa-list-alt", url("app_recipes")) }}
                 {{ _self.make_card("Experiments", "fas fa-fw fa-flask", url("app_experiments")) }}
             </div>

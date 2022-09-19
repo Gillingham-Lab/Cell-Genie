@@ -77,6 +77,13 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url("app_oligos") }}">
+                                    <span class="fa-fw icon icon-oligomer"></span>
+                                    Oligos
+                                </a>
+                            </li>
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
                                     <span class="icon icon-antibody"></span>
@@ -273,6 +280,33 @@
                     })
                 })
             })
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/gh/calipho-sib/sequence-viewer@master/dist/sequence-viewer.min.js"></script>
+        <script type="application/javascript">
+            $(document).ready(function () {
+                let viewers = $(".gin-sequenceViewer")
+
+                viewers.each(function (e) {
+                    let sequence = new Sequence(this.innerText);
+
+                    sequence.render("#" + this.id, {
+                        'showLineNumbers': true,
+                        'wrapAminoAcids': true,
+                        'charsPerLine': 100,
+                        'toolbar': true,
+                        'search': true,
+                        'title': this.hasAttribute("data-gin-sequence-title") ? this.getAttribute("data-gin-sequence-title") : "Sequence Viewer",
+                        'header' : {
+                            display:true,
+                            searchInTitle :true,
+                            unit: "Char",
+                            showCpl: false,
+                            badgeWithUnit : false
+                        }
+                    })
+                })
+            });
         </script>
 
         {% block script_bottom %}{% endblock %}

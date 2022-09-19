@@ -39,6 +39,22 @@ class OligoRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return array[Oligo, int]
+     */
+    public function findAllWithLotCount(): array
+    {
+        return $this->createQueryBuilder("o")
+            ->addSelect("COUNT(l)")
+            ->leftJoin("o.lots", "l")
+            ->groupBy("o.ulid")
+            ->addGroupBy("l.id")
+            ->addOrderBy("o.shortName", "ASC")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Oligo[] Returns an array of Oligo objects
 //     */

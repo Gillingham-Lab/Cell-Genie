@@ -1,13 +1,16 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+{% from 'utility/substance_lot.html.twig' import lot %}
+{% from 'utility/substance_sequence_viewer.html.twig' import view_sequence %}
 
 {% block title %}Gin :: Protein :: {{ protein.shortName }}{% endblock %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(protein.shortName) }}
+            {{ layout.header(protein.shortName, false, true, icons.protein()) }}
 
             {{ layout.toolbox([
                 {
@@ -22,8 +25,8 @@
                 }
             ]) }}
 
-            {# Details #}
             <div class="row row-cols-1 row-cols-lg-2">
+                {# Details #}
                 <div class="col p-0 m-0 mb-3">
                     <div class="card mx-3 h-100">
                         {{ layout.card_header_collapse("Details", "Details") }}
@@ -79,40 +82,41 @@
                 </div>
 
                 {# Sequence #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Sequence", "Sequence") }}
+                {{ view_sequence(protein) }}
+            </div>
 
-                        {{ layout.card_body_collapse_start("Sequence") }}
-                        <div class="card-body px-lg-5 mx-0">
-                            {% if protein.fastaSequence %}
-                                {# Sequence is filled in by a JavaScript at the bottom of this template! #}
-                                <div id="sequenceViewer"></div>
-                            {% else %}
-                                No sequence given.
-                            {% endif %}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
+            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+                {# Lots #}
+                {{ lot(protein) }}
 
                 {# Antibodies #}
                 <div class="col p-0 m-0 mb-3">
                     <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Antibodies", "Antibodies") }}
+                        {# We first create a list of antibodies from all epitopes #}
+                        {% set antibodyCount = 0 %}
+                        {% set antibodyList = [] %}
+                        {% for epitope in protein.epitopes %}
+                            {% for antibody in epitope.antibodies %}
+                                {% set antibodyCount = antibodyCount + 1 %}
+                                {% set antibodyList = antibodyList|merge([[antibody, epitope]]) %}
+                            {% endfor %}
+                        {% endfor %}
+
+                        {{ layout.card_header_collapse("Antibodies", "Antibodies", null, antibodyCount) }}
 
                         {{ layout.card_body_collapse_start("Antibodies") }}
                         <div class="card-body px-lg-5 mx-0">
                             {% if protein.epitopes|length == 0 %}
                                 No epitopes registered
                             {% else %}
-                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
-                                {% for epitope in protein.epitopes %}
-                                    {% for antibody in epitope.antibodies %}
-                                        <div class="col">
+                                <div class="row row-cols-1">
+                                    {% for row in antibodyList %}
+                                        {% set antibody = row[0] %}
+                                        {% set epitope = row[1] %}
+                                        <div class="col mb-2">
                                             <div class="card">
-                                                {{ layout.card_header_collapse(antibody.number ~ " | " ~ antibody.shortName, antibody.ulid, "md") }}
-                                                {{ layout.card_body_collapse_start(antibody.ulid, "md") }}
+                                                {{ layout.card_header_collapse(antibody.number ~ " | " ~ antibody.shortName, antibody.ulid, "sm") }}
+                                                {{ layout.card_body_collapse_start(antibody.ulid, "sm") }}
 
                                                 {{ layout.toolbox_card([{
                                                     "type": "view",
@@ -145,7 +149,6 @@
                                             </div>
                                         </div>
                                     {% endfor %}
-                                {% endfor %}
                                 </div>
                             {% endif %}
                         </div>
@@ -156,19 +159,19 @@
                 {# Associated Cells #}
                 <div class="col p-0 m-0 mb-3">
                     <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Associated Cells", "AssociatedCells") }}
+                        {{ layout.card_header_collapse("Associated Cells", "AssociatedCells", null, associatedCells|length) }}
 
                         {{ layout.card_body_collapse_start("AssociatedCells") }}
                         <div class="card-body px-lg-5 mx-0">
                             {% if associatedCells|length == 0 %}
                                 No cells associated.
                             {% else %}
-                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+                                <div class="row row-cols-1">
                                     {% for cell in associatedCells %}
-                                    <div class="col">
+                                    <div class="col mb-2">
                                         <div class="card">
-                                            {{ layout.card_header_collapse(cell, "Cell" ~ cell.id, "md") }}
-                                            {{ layout.card_body_collapse_start("Cell" ~ cell.id, "md") }}
+                                            {{ layout.card_header_collapse(cell, "Cell" ~ cell.id, "sm") }}
+                                            {{ layout.card_body_collapse_start("Cell" ~ cell.id, "sm") }}
 
                                             {{ layout.toolbox_card([{
                                                 "type": "view",
@@ -216,25 +219,5 @@
 {% endblock %}
 
 {% block script_bottom %}
-    <script src="https://cdn.jsdelivr.net/gh/calipho-sib/sequence-viewer@master/dist/sequence-viewer.min.js"></script>
-    <script type="application/javascript">
-        {% if protein.fastaSequence %}
-        let seq = new Sequence('{{ protein.fastaSequence }}');
 
-        seq.render('#sequenceViewer', {
-            'showLineNumbers': true,
-            'wrapAminoAcids': true,
-            'charsPerLine': 100,
-            'toolbar': true,
-            'search': true,
-            'header' : {
-                display:true,
-                searchInTitle :true,
-                unit: "Char",
-                showCpl: false,
-                badgeWithUnit : false
-            }
-        });
-        {% endif %}
-    </script>
 {% endblock %}

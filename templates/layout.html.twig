@@ -1,7 +1,8 @@
-{% macro header(title, subtitle=false, barcode=true) %}
+{% macro header(title, subtitle=false, barcode=true, icon=null) %}
     <div class="row">
         <div class="col bg-white mx-3 mb-3 border d-flex align-items-center">
-            <div class="float-lg-start p-3 p-lg-5 flex-fill">
+            {% if icon %}<div class="float-lg-start h2 p-3 p-lg-5 pe-lg-3">{{ icon }}</div>{% endif %}
+            <div class="{% if not icon %}float-lg-start p-3 p-lg-5{% else %}{% endif%} flex-fill">
                 {% if subtitle %}
                     <h2 class="text-muted">{{ subtitle }}</h2>
                 {% endif %}
@@ -112,7 +113,8 @@
 {% endmacro %}
 
 {% macro toolbox_card(tools, size="md") %}
-    <div class="card-body border-bottom py-1 px-lg-5">
+    {% set divClass = size == "sm" ? "px-lg-2" : "px-lg-5"  %}
+    <div class="card-body border-bottom py-1 {{ divClass }}">
         {{ _self.toolbox_content(tools, size) }}
     </div>
 {% endmacro %}
@@ -134,25 +136,35 @@
                 {{ title }}
             </button>
         </h2>
-        <h2 class="mb-0 text-right d-none d-lg-block">
+        <h2 class="mb-0 text-right d-none d-lg-block px-4">
             {{ title }}
         </h2>
     </div>
 {% endmacro %}
 
-{% macro card_header_collapse(title, idPart, size="lg") %}
+{% macro card_header_collapse(title, idPart, size="lg", badgeNumber=null) %}
+    {% set size = size ?? "lg" %}
     {% set headerTag = size == "lg" ? "h2" : "h3" %}
     {% set sizeClasses = size == "lg" ? "px-lg-4 " : "px-lg-2" %}
+    {% set displayClasses = size == "sm" ? "" : "d-lg-none" %}
 
     <div class="card-header" id="collapse{{ idPart }}Header">
-        <{{ headerTag }} class="mb-0 d-lg-none">
+        <{{ headerTag }} class="mb-0 {{ displayClasses }}">
             <button class="btn btn-lg w-100 text-start" data-bs-toggle="collapse" data-bs-target="#collapse{{ idPart }}Content" aria-expanded="false" aria-controls="collapse{{ idPart }}Content">
                 {{ title }}
+                <div class="float-end align-content-end"><span class="badge bg-primary">{{ badgeNumber }}</span></div>
             </button>
+            {% if badgeNumber %}
+            {% endif %}
         </{{ headerTag }}>
-        <{{ headerTag }} class="mb-0 text-right d-none d-lg-block {{ sizeClasses }}">
-            {{ title }}
-        </{{ headerTag }}>
+        {% if size != "sm" %}
+            <{{ headerTag }} class="mb-0 text-right d-none d-lg-block {{ sizeClasses }} float-start">
+                {{ title }}
+            </{{ headerTag }}>
+            {% if badgeNumber %}
+                <div class="{{ headerTag }} d-none d-lg-block float-end align-content-end"><span class="badge bg-primary">{{ badgeNumber }}</span></div>
+            {% endif %}
+        {% endif %}
     </div>
 {% endmacro %}
 
@@ -167,8 +179,9 @@
 {% macro card_body_collapse_start(idPart, size="lg") %}
     {% set sizeClasses = size == "lg" ? "px-lg-4 " : "px-lg-2" %}
     {% set sizeClasses = "" %}
+    {% set displayClasses = size == "sm" ? "" : "d-lg-block" %}
 
-    <div id="collapse{{ idPart }}Content" class="collapse d-lg-block overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header">
+    <div id="collapse{{ idPart }}Content" class="collapse {{ displayClasses }} overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header">
 {% endmacro %}
 
 {% macro card_body_collapse_end() %}

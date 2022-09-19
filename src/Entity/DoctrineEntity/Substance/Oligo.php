@@ -44,9 +44,13 @@ class Oligo extends Substance
     #[ORM\Column(type: "string", nullable: true)]
     private ?string $purification = null;
 
-    public function getSequence(): ?string
+    public function __construct()
     {
         parent::__construct();
+    }
+
+    public function getSequence(): ?string
+    {
         return $this->sequence;
     }
 
@@ -62,6 +66,11 @@ class Oligo extends Substance
         $this->sequenceLength = $i;
 
         return $this;
+    }
+
+    public function getFastaSequence(): string
+    {
+        return $this->sequence;
     }
 
     public function getSequenceLength(): ?int

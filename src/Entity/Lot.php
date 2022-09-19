@@ -104,7 +104,7 @@ class Lot
         return $this->boughtOn;
     }
 
-    public function setBoughtOn(DateTimeInterface $boughtOn): self
+    public function setBoughtOn(?DateTimeInterface $boughtOn): self
     {
         $this->boughtOn = $boughtOn;
 
@@ -116,7 +116,7 @@ class Lot
         return $this->openedOn;
     }
 
-    public function setOpenedOn(DateTimeInterface $openedOn): self
+    public function setOpenedOn(?DateTimeInterface $openedOn): self
     {
         $this->openedOn = $openedOn;
 

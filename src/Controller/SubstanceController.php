@@ -15,6 +15,7 @@ use App\Entity\EpitopeSmallMolecule;
 use App\Repository\Cell\CellRepository;
 use App\Repository\Substance\AntibodyRepository;
 use App\Repository\Substance\ChemicalRepository;
+use App\Repository\Substance\OligoRepository;
 use App\Repository\Substance\ProteinRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -170,6 +171,27 @@ class SubstanceController extends AbstractController
     ): Response {
         return $this->render("parts/compounds/compound.html.twig", [
             "chemical" => $chemical,
+        ]);
+    }
+
+    #[Route("/oligos", name: "app_oligos")]
+    public function oligos(
+        OligoRepository $oligoRepository,
+    ): Response {
+        $oligos = $oligoRepository->findAllWithLotCount();
+
+        return $this->render("parts/oligos/oligos.html.twig", [
+            "oligos" => $oligos,
+        ]);
+    }
+
+    #[Route("/oligos/view/{oligoId}", name: "app_oligo_view")]
+    #[ParamConverter("oligo", options: ["mapping" => ["oligoId"  => "ulid"]])]
+    public function viewOligo(
+        Oligo $oligo,
+    ): Response {
+        return $this->render("parts/oligos/oligo.html.twig", [
+            "oligo" => $oligo,
         ]);
     }
 

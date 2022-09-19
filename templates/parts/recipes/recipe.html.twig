@@ -28,7 +28,6 @@
 
                         {% if recipe.comment %}
                             <div class="card-body border-bottom">
-                                <h4>Comment</h4>
                                 {{ recipe.comment|raw }}
                             </div>
                         {% endif %}
@@ -54,7 +53,7 @@
                             </div>
                         </div>
 
-                        <div class="card-body">
+                        <div class="card-body py-lg-5 py-lg-3">
                             <table class="table table-hover _genie_recipe">
                                 <thead>
                                     <tr>
@@ -67,7 +66,7 @@
                                 <tbody>
                                 {% for ingredient in recipe.ingredients %}
                                     <tr id="ingredient_{{ ingredient.id }}" class="_genie_recipe_ingredient">
-                                        <td><strong>{{ ingredient.chemical.shortName }}</strong><span class="d-none d-lg-inline">({{ ingredient.chemical.molecularMass }} g/mol)</span></td>
+                                        <td><strong>{{ ingredient.chemical.shortName }}</strong> <span class="d-none d-lg-inline">({{ ingredient.chemical.molecularMass }} g/mol)</span></td>
                                         <td class="d-none d-lg-table-cell">{{ ingredient.concentration }}&nbsp;{{ ingredient.concentrationUnit }}</td>
                                         <td>
                                             <span class="_genie_recipe_ingredient_amount"></span>

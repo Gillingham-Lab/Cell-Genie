@@ -50,7 +50,7 @@ class LotCrudController extends AbstractCrudController
             TextField::new("purity")
                 ->setLabel("Concentration")
                 ->setHelp("Write down the concentration of the compound in the bottle, including a unit."),
-            TextField::new("numberOfAliquotes"),
+            IntegerField::new("numberOfAliquotes"),
             TextField::new("aliquoteSize")
                 ->setLabel("Aliquot size")
                 ->setHelp("The size of a individual aliquot."),
