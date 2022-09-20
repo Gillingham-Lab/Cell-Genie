@@ -120,6 +120,4 @@ class ProteinType extends SaveableType
 
         parent::configureOptions($resolver);
     }
-
-
 }
