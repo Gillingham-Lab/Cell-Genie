@@ -16,10 +16,28 @@ trait VocabularyTrait
         return $vocabEntry?->getVocabulary();
     }
 
-    private function addTextOrChoiceType(FormBuilderInterface $builder, string $field, ?string $databaseField = null, array $options)
+    private function getTextOrChoiceOptions(string $vocabularyName, array $options = []): array
     {
-        $databaseField ??= $field;
-        $vocab = $this->getVocabularyChoices($databaseField);
+        $vocabEntries = $this->getVocabularyChoices($vocabularyName);
+
+        if ($vocabEntries) {
+            $type = ChoiceType::class;
+
+            $options["choices"] = array_combine($vocabEntries, $vocabEntries);
+        } else {
+            $type = TextType::class;
+        }
+
+        return [
+            $type,
+            $options,
+        ];
+    }
+
+    private function addTextOrChoiceType(FormBuilderInterface $builder, string $field, ?string $vocabularyName, array $options)
+    {
+        $vocabularyName ??= $field;
+        $vocab = $this->getVocabularyChoices($vocabularyName);
 
         $choiceOptions = [];
 

@@ -18,6 +18,12 @@ class VendorType extends AbstractType
                 "label" => "Vendor",
                 "class" => Vendor::class,
                 "required" => false,
+                'empty_data' => null,
+                "placeholder" => "Empty",
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "true",
+                ],
             ])
             ->add("vendorPN", TextType::class, options: [
                 "label" => "Product number",

@@ -15,12 +15,14 @@ use App\Entity\EpitopeSmallMolecule;
 use App\Entity\Lot;
 use App\Form\Substance\LotType;
 use App\Form\Substance\OligoType;
+use App\Form\Substance\ProteinType;
 use App\Repository\Cell\CellRepository;
 use App\Repository\LotRepository;
 use App\Repository\Substance\AntibodyRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\OligoRepository;
 use App\Repository\Substance\ProteinRepository;
+use App\Repository\Substance\SubstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -267,53 +269,72 @@ class SubstanceController extends AbstractController
         ]);
     }
 
-    #[Route("/oligos/new", name: "app_oligo_new")]
-    #[Route("/oligos/edit/{oligoId}", name: "app_oligo_edit")]
-    #[ParamConverter("oligo", options: ["mapping" => ["oligoId"  => "ulid"]])]
-    public function addOligo(
+    #[Route("/substance/new/{type}", name: "app_substance_new")]
+    #[Route("/substance/edit/{substance}", name: "app_substance_edit")]
+    public function addSUbstance(
         Request $request,
-        OligoRepository $oligoRepository,
+        SubstanceRepository $substanceRepository,
         EntityManagerInterface $entityManager,
-        Oligo $oligo = null,
+        Substance $substance = null,
+        string $type = null,
     ): Response {
-        $new = !$oligo;
+        $new = !$substance;
 
-        if (!$oligo) {
-            $oligo = new Oligo();
+        if ($type === null and $substance === null) {
+            $this->createNotFoundException();
         }
+
+        if ($new) {
+            $substance = match($type) {
+                "antibody" => new Antibody(),
+                "chemical" => new Chemical(),
+                "oligo" => new Oligo(),
+                "protein" => new Protein(),
+            };
+        }
+
+        [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam] = match($substance::class) {
+            Antibody::class => [null, "Antibody", "app_antibodies", "app_antibody_view", "antibodyId"],
+            Chemical::class => [null, "Chemical", "app_chemicals", "app_chemical_view", "chemicalId"],
+            Oligo::class => [OligoType::class, "Oligo", "app_oligos", "app_oligo_view", "oligoId"],
+            Protein::class => [ProteinType::class, "Protein", "app_proteins", "app_protein_view", "proteinId"],
+            default => [$this->createNotFoundException(), null, null, null, null],
+        };
 
         $formOptions = [
             "save_button" => true,
         ];
 
-        $form = $this->createForm(OligoType::class, $oligo, $formOptions);
+        $form = $this->createForm($formType, $substance, $formOptions);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
             try {
                 if ($new) {
-                    $oligoRepository->add($oligo, flush: true);
-                    $this->addFlash("success", "The new oligo was successfully created.");
+                    $entityManager->persist($substance);
+                    $message = "The new {$typeName} was successfully created.";
                 } else {
-                    $entityManager->flush();
-                    $this->addFlash("success", "The oligo {$oligo->getShortName()} was successfully changed.");
+                    $message = "The {$typeName} {$substance->getShortName()} was successfully changed.";
                 }
 
-                return $this->redirectToRoute("app_oligo_view", ["oligoId" => $oligo->getUlid()]);
+                $entityManager->flush();
+                $this->addFlash("success", $message);
+
+                return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
             } catch (\Exception $e) {
                 if ($new) {
-                    $this->addFlash("error", "Adding a new oligo was not possible. Reason: {$e->getMessage()}.");
+                    $this->addFlash("error", "Adding a new {$typeName} was not possible. Reason: {$e->getMessage()}.");
                 } else {
-                    $this->addFlash("error", "Changing the oligo {$oligo->getShortName()} was not possible. Reason: {$e->getMessage()}.");
+                    $this->addFlash("error", "Changing the {$typeName} {$substance->getShortName()} was not possible. Reason: {$e->getMessage()}.");
                 }
             }
         }
 
         return $this->renderForm("parts/forms/add_substance.html.twig", [
-            "title" => $new ? "Oligo :: New" : "Oligo :: {$oligo->getShortName()} :: Edit",
-            "substance" => ($new ? null : $oligo),
+            "title" => $new ? "{$typeName} :: New" : "{$typeName} :: {$substance->getShortName()} :: Edit",
+            "substance" => ($new ? null : $substance),
             "form" => $form,
-            "returnTo" => $this->generateUrl("app_oligos"),
+            "returnTo" => $new ? $this->generateUrl($overviewRoute) : $this->generateUrl($specificRoute, [$routeParam => $substance->getUlid()]),
         ]);
     }
 
