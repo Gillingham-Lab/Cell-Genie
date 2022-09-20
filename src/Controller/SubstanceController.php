@@ -72,6 +72,7 @@ class SubstanceController extends AbstractController
 
         $formOptions = [
             "save_button" => true,
+            "hideVendor" => $substanceType === "Antibody",
         ];
 
         $form = $this->createForm(LotType::class, $lot, $formOptions);

@@ -11,6 +11,7 @@ use App\Entity\Lot;
 use App\Entity\User;
 use App\Entity\Vendor;
 use App\Form\SaveableType;
+use App\Form\VendorType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -126,18 +127,9 @@ class LotType extends SaveableType
         if ($options["hideVendor"] !== true) {
             $builder
                 ->add(
-                    $builder->create("vendor", FormType::class, options: [
+                    $builder->create("vendor", VendorType::class, options: [
                         "inherit_data" => true,
                         "label" => "Vendor"
-                    ])
-                    ->add("vendor", EntityType::class, options: [
-                        "label" => "Vendor",
-                        "class" => Vendor::class,
-                        "required" => false,
-                    ])
-                    ->add("vendorPN", TextType::class, options: [
-                        "label" => "Product number",
-                        "required" => false,
                     ])
                 )
             ;
