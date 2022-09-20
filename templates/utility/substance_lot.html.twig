@@ -19,10 +19,14 @@
                                     {{ layout.card_header_collapse(substance.shortName ~ "." ~ lot.number, lot.id, "sm") }}
                                     {{ layout.card_body_collapse_start(lot.id, "sm") }}
 
-                                    {# {{ layout.toolbox_card([{
-                                                    "type": "view",
-                                                    "target": url("app_antibody_view", {"antibodyId": lot.ulid}),
-                                                }], "sm") }} #}
+                                    {{ layout.toolbox_card([
+                                        {
+                                            "type": "edit",
+                                            "tooltipText": "Edit lot",
+                                            "target": url("app_substance_edit_lot", {"substance": substance.ulid, "lot": lot.id}),
+                                        },
+                                    ], "sm") }}
+
                                     <div class="card-body px-lg-2">
                                         <table class="table table-sm table-borderless table-hover">
                                             <tbody>

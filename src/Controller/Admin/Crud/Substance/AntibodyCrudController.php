@@ -9,7 +9,6 @@ use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Traits\HasRRID;
 use App\Form\DocumentationType;
-use App\Form\LotType;
 use App\Repository\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;

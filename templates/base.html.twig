@@ -20,6 +20,12 @@
             <script src="https://d3js.org/d3.v7.min.js"></script>
             {#{{ encore_entry_script_tags('app') }}#}
         {% endblock %}
+
+        <style rel="stylesheet">
+            label.required:after {
+                content: "* ";
+            }
+        </style>
     </head>
     <body class="h-100">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -277,6 +283,18 @@
                             dropdown_input: true,
                         },
                         allowEmptyOption: this.attributes["data-allow-empty"] && this.attributes["data-allow-empty"].value === "true",
+                        render: {
+                            optgroup_header: function(data, escape) {
+                                return '<div class="optgroup-header"><strong>' + escape(data.label) + '</strong></div>';
+                            },
+                            option: function(data, escape) {
+                                if (data.optgroup === undefined) {
+                                    return '<div>' + escape(data.text) + '</div>';
+                                } else {
+                                    return '<div class="ps-3">' + escape(data.text) + '</div>';
+                                }
+                            },
+                        }
                     })
                 })
             })

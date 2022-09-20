@@ -1,0 +1,72 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+
+{% block title %}Gin :: {{ title }}{% endblock %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : null, false) }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": returnTo,
+                    "tooltipText": "Back",
+                },
+            ]) }}
+
+            <div class="row">
+                <div class="col p-0 m-0">
+                    <div class="bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-auto">
+                        {{ form_start(form) }}
+
+                        <div class="my-custom-class-for-errors">
+                            {{ form_errors(form) }}
+                        </div>
+
+                        <nav>
+                            <ul class="nav nav-tabs" id="form-tab-navigation" role="tablist">
+                                {% for group in form|filter(e => e|length > 0) %}
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                            class="nav-link {% if loop.index0 == 0 %}active{% endif %}"
+                                            id="form-tab-navigation-tab-{{ group.vars.name }}"
+                                            data-bs-toggle="tab"
+                                            href="#form-tab-navigation-tab-{{ group.vars.name }}-content"
+                                            role="tab"
+                                            aria-controls="form-tab-navigation-tab-{{ group.vars.name }}-content"
+                                            aria-selected="true"
+                                        >{{ group.vars.label }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </nav>
+
+                        <div class="tab-content border-light border border-top-0 px-2 py-4 p-lg-5 mb-3 mb-lg-5" id="form-tab-content">
+                            {% for group in form|filter(e => e|length > 0) %}
+                                <div
+                                    class="tab-pane fade show {% if loop.index0 == 0 %}active{% endif %}"
+                                    id="form-tab-navigation-tab-{{ group.vars.name }}-content"
+                                    role="tabpanel"
+                                    aria-labelledby="form-tab-navigation-tab-{{ group.vars.name }}"
+                                >
+                                    {% for child in group %}
+                                        {% if not child.rendered %}
+                                            {{ form_row(child) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {{ form_rest(form) }}
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

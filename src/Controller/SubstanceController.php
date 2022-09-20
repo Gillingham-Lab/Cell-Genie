@@ -12,11 +12,16 @@ use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
+use App\Entity\Lot;
+use App\Form\Substance\LotType;
+use App\Form\Substance\OligoType;
 use App\Repository\Cell\CellRepository;
+use App\Repository\LotRepository;
 use App\Repository\Substance\AntibodyRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\OligoRepository;
 use App\Repository\Substance\ProteinRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -27,14 +32,80 @@ use Symfony\Component\Routing\Annotation\Route;
 class SubstanceController extends AbstractController
 {
 
-    #[Route("/substance/view/{substance}", "app_substance_view")]
-    public function viewSubstance(Substance $substance) {
+    #[Route("/substance/view/{substance}", name: "app_substance_view")]
+    public function viewSubstance(
+        Substance $substance
+    ) {
         return match($substance::class) {
             Antibody::class => $this->redirectToRoute("app_antibody_view", ["antibodyId" => $substance->getUlid()]),
             Chemical::class => $this->redirectToRoute("app_compound_view", ["compoundId" => $substance->getUlid()]),
-            Protein::class => $this->redirectToRoute("app_protein_view", ["proteinId" => $substance->getUlid()]),
             Oligo::class => $this->redirectToRoute("app_oligo_view", ["oligoId" => $substance->getUlid()]),
+            Protein::class => $this->redirectToRoute("app_protein_view", ["proteinId" => $substance->getUlid()]),
+            default => $this->createNotFoundException(),
         };
+    }
+
+
+    #[Route("/substance/{substance}/lot/add", name: "app_substance_add_lot")]
+    #[Route("/substance/{substance}/lot/edit/{lot}", name: "app_substance_edit_lot")]
+    public function addLotToSubstance(
+        Request $request,
+        SecurityController $securityController,
+        EntityManagerInterface $entityManager,
+        LotRepository $lotRepository,
+        Substance $substance ,
+        Lot $lot = null,
+    ): Response {
+        $new = !$lot;
+        $substanceType = match ($substance::class) {
+            Antibody::class => "Antibody",
+            Chemical::class => "Chemical",
+            Oligo::class => "Oligo",
+            Protein::class => "Protein",
+            default => "Other",
+        };
+
+        if (!$lot) {
+            $lot = new Lot();
+            $lot->setBoughtBy($securityController->getUser());
+        }
+
+        $formOptions = [
+            "save_button" => true,
+        ];
+
+        $form = $this->createForm(LotType::class, $lot, $formOptions);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            try {
+                if ($new) {
+                    $substance->addLot($lot);
+                    $message = "The new lot was successfully created.";
+                } else {
+                    $message = "The lot {$substance->getShortName()}.{$lot->getNumber()} was successfully changed.";
+                }
+
+                $entityManager->flush();
+                $this->addFlash("success", $message);
+
+                return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
+            } catch (\Exception $e) {
+                if ($new) {
+                    $this->addFlash("error", "Adding a new lot was not possible. Reason: {$e->getMessage()}.");
+                } else {
+                    $this->addFlash("error", "Changing the lot {$substance->getShortName()}.{$lot->getNumber()} was not possible. Reason: {$e->getMessage()}.");
+                }
+            }
+        }
+
+        return $this->renderForm("parts/forms/add_substance.html.twig", [
+            "substance_type" => $substanceType,
+            "title" => $new ? "$substanceType :: Lot :: New" : "$substanceType :: {$substance->getShortName()} :: Lot :: {$lot->getNumber()} :: Edit",
+            "substance" => ($new ? null : $substance),
+            "form" => $form,
+            "returnTo" => $this->generateUrl("app_substance_view", ["substance" => $substance->getUlid()]),
+        ]);
     }
 
     #[Route("/antibodies", name: "app_antibodies")]
@@ -192,6 +263,56 @@ class SubstanceController extends AbstractController
     ): Response {
         return $this->render("parts/oligos/oligo.html.twig", [
             "oligo" => $oligo,
+        ]);
+    }
+
+    #[Route("/oligos/new", name: "app_oligo_new")]
+    #[Route("/oligos/edit/{oligoId}", name: "app_oligo_edit")]
+    #[ParamConverter("oligo", options: ["mapping" => ["oligoId"  => "ulid"]])]
+    public function addOligo(
+        Request $request,
+        OligoRepository $oligoRepository,
+        EntityManagerInterface $entityManager,
+        Oligo $oligo = null,
+    ): Response {
+        $new = !$oligo;
+
+        if (!$oligo) {
+            $oligo = new Oligo();
+        }
+
+        $formOptions = [
+            "save_button" => true,
+        ];
+
+        $form = $this->createForm(OligoType::class, $oligo, $formOptions);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            try {
+                if ($new) {
+                    $oligoRepository->add($oligo, flush: true);
+                    $this->addFlash("success", "The new oligo was successfully created.");
+                } else {
+                    $entityManager->flush();
+                    $this->addFlash("success", "The oligo {$oligo->getShortName()} was successfully changed.");
+                }
+
+                return $this->redirectToRoute("app_oligo_view", ["oligoId" => $oligo->getUlid()]);
+            } catch (\Exception $e) {
+                if ($new) {
+                    $this->addFlash("error", "Adding a new oligo was not possible. Reason: {$e->getMessage()}.");
+                } else {
+                    $this->addFlash("error", "Changing the oligo {$oligo->getShortName()} was not possible. Reason: {$e->getMessage()}.");
+                }
+            }
+        }
+
+        return $this->renderForm("parts/forms/add_substance.html.twig", [
+            "title" => $new ? "Oligo :: New" : "Oligo :: {$oligo->getShortName()} :: Edit",
+            "substance" => ($new ? null : $oligo),
+            "form" => $form,
+            "returnTo" => $this->generateUrl("app_oligos"),
         ]);
     }
 

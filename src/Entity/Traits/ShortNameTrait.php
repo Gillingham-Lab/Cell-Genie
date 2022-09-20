@@ -12,7 +12,7 @@ trait ShortNameTrait
     #[ORM\Column(type: "string", length: 50, unique: True)]
     #[Assert\NotBlank]
     #[Assert\Length(
-        min: 1,
+        min: 2,
         max: 50,
     )]
     #[Gedmo\Versioned]

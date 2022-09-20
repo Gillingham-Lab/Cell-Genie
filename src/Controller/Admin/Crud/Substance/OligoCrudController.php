@@ -5,17 +5,13 @@ namespace App\Controller\Admin\Crud\Substance;
 
 use App\Controller\Admin\Crud\LotCrudController;
 use App\Entity\DoctrineEntity\Substance\Oligo;
-use App\Entity\Traits\VendorTrait;
-use App\Form\LotType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
 class OligoCrudController extends AbstractCrudController
 {

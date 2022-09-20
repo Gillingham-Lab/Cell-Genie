@@ -20,8 +20,13 @@
             },
             {
                 "type": "edit",
-                "disabled": true,
                 "tooltipText": "Edit oligo",
+                "target": url("app_oligo_edit", {"oligoId": oligo.ulid}),
+            },
+            {
+                "type": "add",
+                "tooltipText": "Add lot",
+                "target": url("app_substance_add_lot", {"substance": oligo.ulid}),
             }
         ]) }}
 
@@ -38,6 +43,8 @@
                                 {{ macros.definition_row("ID", oligo.ulid) }}
                                 {{ macros.definition_row("Short name", oligo.shortName) }}
                                 {{ macros.definition_row("Name", oligo.longName) }}
+                                {{ macros.definition_row("Molecular mass", oligo.molecularMass > 0 ? oligo.molecularMass ~ " Da" : "n.a.") }}
+                                {{ macros.definition_row("Molar extinction coefficient", oligo.extinctionCoefficient ? oligo.extinctionCoefficient ~ " mM⁻¹ cm⁻¹" : "n.a.") }}
                                 {# {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
                                 {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
                                 {# Experiment types # }
