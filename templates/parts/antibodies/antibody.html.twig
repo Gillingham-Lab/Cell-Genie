@@ -1,6 +1,8 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+{% from 'utility/substance_lot.html.twig' import lot %}
 
 {% block title %}Gin :: Antibody :: {{ antibody }}{% endblock %}
 
@@ -65,93 +67,8 @@
                     </div>
                 </div>
 
-                {# Antibody metadata #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Lots", "Lots") }}
-
-                        {{ layout.card_body_collapse_start("Lots") }}
-
-                        <div class="card-body px-lg-4">
-                            {% if not antibody.lots %}
-                                No lots registered
-                            {% else %}
-                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
-                                    {% for lot in antibody.lots %}
-                                        {% set lotName = antibody.number ~ "." ~ lot %}
-                                        <div class="col">
-                                            <div class="card">
-                                                {{ layout.card_header_collapse(lotName, lot.id, "md") }}
-                                                {{ layout.card_body_collapse_start(lot.id, "md") }}
-                                                {{ layout.toolbox_card([{
-                                                    "type": "clipboard",
-                                                    "tooltipText": "Copy information",
-                                                    "clipboardText": (
-                                                        antibody.longName
-                                                        ~ " ("
-                                                        ~ (antibody.vendor.name ?? "??")
-                                                        ~ ", "
-                                                        ~ (antibody.vendorPN ?? "??")
-                                                        ~ ", Lot#" ~ lot.lotNumber
-                                                        ~ (antibody.rrid ? ", RRID:" ~antibody.rrid : "") ~ ")"),
-                                                },]) }}
-
-                                                <div class="card-body px-lg-2">
-                                                    <table class="table table-sm table-borderless table-hover">
-                                                        <tbody>
-                                                        <tr>
-                                                            <th>Lot#</th>
-                                                            <td>{{ lot.lotNumber }}</td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <th>Storage</th>
-                                                            <td>{{ lot.box }}</td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <th>Amount</th>
-                                                            <td>{{ lot.amount }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Concentration</th>
-                                                            <td>{{ lot.purity }}</td>
-                                                        </tr>
-
-                                                        {% if lot.numberOfAliquotes > 0 %}
-                                                            <tr>
-                                                                <th>Aliquots</th>
-                                                                <td>{{ lot.numberOfAliquotes }} ({{ lot.aliquoteSize }})</td>
-                                                            </tr>
-                                                        {% else %}
-                                                            <tr><td colspan="2">Not aliquots</td></tr>
-                                                        {% endif %}
-                                                        </tbody>
-                                                    </table>
-
-                                                    {% if lot.comment %}
-                                                        <div>{{ (lot.comment ?? "")|raw }}</div>
-                                                    {% else %}
-                                                    {% endif %}
-                                                </div>
-
-                                                <div class="card-footer">
-                                                    <p class="text-muted">
-                                                        This antibody was bought by <em>{{ lot.boughtBy }}</em>
-                                                        on <em>{{ lot.boughtOn|date("d. M Y") }}</em>.
-                                                        Opened on <em>{{ lot.openedOn|date("d. M Y") }}</em>.
-                                                    </p>
-                                                </div>
-                                                {{ layout.card_body_collapse_end() }}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
+                {# Lots #}
+                {{ lot(antibody) }}
 
                 {# Attachments #}
                 {% if antibody.vendorDocumentation|length > 0 %}

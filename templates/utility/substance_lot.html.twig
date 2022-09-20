@@ -25,13 +25,34 @@
                                             "tooltipText": "Edit lot",
                                             "target": url("app_substance_edit_lot", {"substance": substance.ulid, "lot": lot.id}),
                                         },
+                                        {
+                                            "type": "clipboard",
+                                            "tooltipText": "Copy information",
+                                            "clipboardText": (
+                                                substance.longName
+                                                ~ " ("
+                                                ~ (substance is substanceAntibody ? (
+                                                    (substance.vendor.name ?? "??")
+                                                    ~ ", "
+                                                    ~ (substance.vendorPN ?? "??")
+                                                ) : (
+                                                    (lot.vendor.name ?? "??")
+                                                    ~ ", "
+                                                    ~ (lot.vendorPN ?? "??")
+                                                ))
+                                                ~ ", Lot#" ~ lot.lotNumber
+                                                ~ (substance.rrid is defined and substance.rrid ? ", RRID:" ~substance.rrid : "") ~ ")"
+                                            ),
+                                        }
                                     ], "sm") }}
 
                                     <div class="card-body px-lg-2">
                                         <table class="table table-sm table-borderless table-hover">
                                             <tbody>
                                             {{ macros.definition_row("Lot #", lot.lotNumber) }}
+                                            {% if substance is not substanceAntibody %}
                                             {{ macros.definition_row_raw("Vendor", macros.vendor_url(lot.vendor, lot.vendorPN)) }}
+                                            {% endif %}
                                             {{ macros.definition_row("Storage", lot.box) }}
                                             {{ macros.definition_row("Amount", lot.amount) }}
                                             {{ macros.definition_row("Concentration", lot.purity) }}
@@ -43,6 +64,14 @@
                                             {% endif %}
                                             </tbody>
                                         </table>
+                                    </div>
+
+                                    <div class="card-footer">
+                                        <p class="text-muted">
+                                            Bought by <em>{{ lot.boughtBy }}</em>
+                                            on <em>{{ lot.boughtOn|date("d. M Y") }}</em>.
+                                            Opened on <em>{{ lot.openedOn|date("d. M Y") }}</em>.
+                                        </p>
                                     </div>
                                     {{ layout.card_body_collapse_end() }}
                                 </div>
