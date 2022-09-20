@@ -24,7 +24,7 @@
                 <table class="table table-hover fancyTable">
                     <thead>
                         <tr>
-                            <th scope="col">
+                            <th scope="col" style="width: 50px;">
                                 <div class="btn-group mr-3" style="visibility: hidden;">
                                     <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
                                 </div>
@@ -49,7 +49,7 @@
                             </td>
                             <td>{{ oligo.shortName }}</td>
                             <td>{{ oligo.sequenceLength }}</td>
-                            <td>{{ lotCount }}</td>
+                            <td>{{ lotCount>0?lotCount:"-" }}</td>
                             <td class="d-none d-lg-table-cell">{{ oligo.sequence }}</td>
                         </tr>
                     {% endfor %}

@@ -35,13 +35,16 @@
                             <th scope="col">
                                 Name
                             </th>
+                            <th>Lots</th>
                             <th class="d-none d-lg-table-cell" scope="col">Descendants</th>
                             <th class="d-none d-lg-table-cell" scope="col">Epitopes </th>
                             <th class="d-none d-lg-table-cell" scope="col">Antibodies </th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for protein in proteins %}
+                        {% for proteinRow in proteins %}
+                            {% set protein = proteinRow[0] %}
+                            {% set numberOfLots = proteinRow[1] %}
                             <tr>
                                 <td class="align-middle">
                                     <div class="btn-group mr-3">
@@ -52,6 +55,8 @@
                                     {{ _self.format_antibody_name(protein) }}
                                 </td>
 
+                                <td>{{ numberOfLots>0?numberOfLots:"-" }}</td>
+
                                 <td class="align-middle d-none d-lg-table-cell">
                                     {% if protein.children|length > 0 %}
                                         {{ pillify_proteins(protein.children) }}
@@ -60,7 +65,7 @@
                                     {% endif %}
                                 </td>
 
-                                <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}None{% endif %}</td>
+                                <td class="align-middle">{% if protein.epitopes|length > 0 %}{{ pillify_epitopes(protein.epitopes, true) }}{% else %}-{% endif %}</td>
 
                                 {% set antibody_count = 0 %}
                                 {% for epitope in protein.epitopes %}
@@ -78,7 +83,7 @@
 
                                     {% if antibody_count == 0 %}
                                         <td class="align-middle d-none d-lg-table-cell" data-sortvalue="">
-                                            None
+                                            -
                                         </td>
                                     {% else %}
                                         {{ "</td>" }}

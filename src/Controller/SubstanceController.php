@@ -323,7 +323,7 @@ class SubstanceController extends AbstractController
         ProteinRepository $proteinRepository,
         Epitope $epitope = null
     ): Response {
-        $proteins = $proteinRepository->findWithAntibodies($epitope, orderBy: ["p.shortName" => "ASC"]);
+        $proteins = $proteinRepository->findWithAntibodiesAndLotCount($epitope, orderBy: ["p.shortName" => "ASC"]);
 
         return $this->render("parts/proteins/proteins.html.twig", [
             "proteins" => $proteins
