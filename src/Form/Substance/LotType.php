@@ -49,7 +49,7 @@ class LotType extends SaveableType
                 ])
                 ->add("boughtOn", DateType::class, options: [
                     "widget" => "single_text",
-                    "label" => "Bought on",
+                    "label" => "Bought on (or made on)",
                 ])
                 ->add("boughtBy", EntityType::class, options: [
                     "class" => User::class,
@@ -74,7 +74,7 @@ class LotType extends SaveableType
                 ])
                 ->add("comment", TextareaType::class, options: [
                     "label" => "Comment",
-                    "help" => "Anything what you think is important.",
+                    "help" => "Anything what you think is important. Important impurities?",
                     "required" => false,
                 ])
             )
@@ -110,7 +110,7 @@ class LotType extends SaveableType
                 ])
                 ->add("purity", TextType::class, options: [
                     "label" => "Concentration",
-                    "help" => "Write down the concentration with a unit",
+                    "help" => "Write down the concentration with a unit. If not a solution, write 'neat' instead.",
                     "required" => true,
                 ])
                 ->add("numberOfAliquotes", IntegerType::class, options: [

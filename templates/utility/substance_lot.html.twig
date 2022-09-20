@@ -10,7 +10,7 @@
             {{ layout.card_body_collapse_start("Lots") }}
             <div class="card-body px-lg-5 mx-0">
                 {% if substance.lots|length == 0 %}
-                    No protein lots registered.
+                    No lots registered.
                 {% else %}
                     <div class="row row-cols-1">
                         {% for lot in substance.lots %}
