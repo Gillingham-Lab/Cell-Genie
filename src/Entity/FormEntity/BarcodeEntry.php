@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Barcode;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\SubstanceLot;
 use App\Validators\BarcodeHasValidTarget;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -19,6 +20,7 @@ class BarcodeEntry
     private ?CellCulture $cellCulture = null;
     private ?Cell $cell = null;
     private ?Substance $substance = null;
+    private ?SubstanceLot $substanceLot = null;
 
     public function __construct(string $barcode) {
         $this->barcode = $barcode;
@@ -68,6 +70,17 @@ class BarcodeEntry
     public function setSubstance(?Substance $substance): self
     {
         $this->substance = $substance;
+        return $this;
+    }
+
+    public function getSubstanceLot(): ?SubstanceLot
+    {
+        return $this->substanceLot;
+    }
+
+    public function setSubstanceLot(?SubstanceLot $substanceLot): self
+    {
+        $this->substanceLot = $substanceLot;
         return $this;
     }
 }

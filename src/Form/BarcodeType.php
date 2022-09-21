@@ -11,10 +11,15 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
+use App\Entity\Lot;
+use App\Entity\SubstanceLot;
+use App\Repository\LotRepository;
+use App\Repository\Substance\SubstanceRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +28,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class BarcodeType extends AbstractType
 {
     public function __construct(
-
+        private LotRepository $lotRepository,
+        private SubstanceRepository $substanceRepository,
     ) {
     }
 
@@ -109,11 +115,55 @@ class BarcodeType extends AbstractType
                     };
                 },
             ])
+            ->add("substanceLot", ChoiceType::class, [
+                "choices" => $this->getLotChoices(),
+                "choice_label" => function ($choice) {
+                    if ($choice?->getSubstance() instanceof Antibody) {
+                        return $choice?->getSubstance()?->getNumber() . "." . $choice?->getLot()?->getNumber() . " (" . $choice?->getLot()?->getLotNumber() .")";
+                    } else {
+                        return $choice?->getSubstance()?->getShortName() . "." . $choice?->getLot()?->getNumber() . " (" . $choice?->getLot()?->getLotNumber() .")";
+                    }
+                },
+                "choice_value" => function ($choice) {
+                    return $choice?->getLot()?->getId();
+                },
+                'empty_data' => null,
+                "placeholder" => "Empty",
+                "required" => false,
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "true",
+                ],
+                "group_by" => function($choice, $key, $value) {
+                    return is_null($choice) ? "Other" : match(($choice->getSubstance())::class) {
+                        Antibody::class => "Antibodies",
+                        Chemical::class => "Chemicals",
+                        Oligo::class => "Oligos",
+                        Protein::class => "Proteins",
+                        default => "Other",
+                    };
+                },
+            ])
         ;
 
         if ($options["save_button"]) {
             $builder->add("save", SubmitType::class);
         }
+    }
+
+    private function getLotChoices()
+    {
+        $substances = $this->substanceRepository->findAllWithLot();
+
+        $choices = [];
+
+        foreach ($substances as $substance) {
+            foreach ($substance->getLots() as $lot) {
+                $choices[] = new SubstanceLot($substance, $lot);
+            }
+        }
+
+        return $choices;
     }
 
     public function configureOptions(OptionsResolver $resolver)

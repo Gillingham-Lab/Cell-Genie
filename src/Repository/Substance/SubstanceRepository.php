@@ -3,6 +3,7 @@
 namespace App\Repository\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\Lot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,33 @@ class SubstanceRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findOneByLot(string|Lot $lot): ?Substance
+    {
+        return $this->createQueryBuilder("s")
+            ->leftJoin("s.lots", "l")
+            ->groupBy("s.ulid")
+            ->addGroupBy("l.id")
+            ->where("l.id = :lot")
+            ->setParameter("lot", ($lot instanceof Lot ? $lot->getId() : $lot), "ulid")
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /** @return Substance[] */
+    public function findAllWithLot(): array
+    {
+        return $this->createQueryBuilder("s")
+            ->select("s")
+            ->addSelect("l")
+            ->leftJoin("s.lots", "l")
+            ->groupBy("s.ulid")
+            ->addGroupBy("l.id")
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
 //    /**

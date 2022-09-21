@@ -49,6 +49,21 @@ class SubstanceController extends AbstractController
         };
     }
 
+    #[Route("/substance/lot/{lot}", name: "app_substance_lot_view")]
+    public function viewLot(
+        SubstanceRepository $substanceRepository,
+        Lot $lot
+    ): Response {
+        $substance = $substanceRepository->findOneByLot($lot);
+
+        if ($substance === null) {
+            throw $this->createNotFoundException("A lot with the ID Number '{$lot->getNumber()}' and the id '{$lot->getId()}' was not found.");
+        }
+
+        // TODO: Show a real 'lot' information page.
+        return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
+    }
+
     #[Route("/substance/new/{type}", name: "app_substance_new")]
     #[Route("/substance/edit/{substance}", name: "app_substance_edit")]
     public function addSubstance(

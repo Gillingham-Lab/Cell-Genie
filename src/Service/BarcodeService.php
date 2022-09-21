@@ -8,8 +8,11 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
+use App\Entity\Lot;
+use App\Entity\SubstanceLot;
 use App\Repository\Cell\CellCultureRepository;
 use App\Repository\Cell\CellRepository;
+use App\Repository\LotRepository;
 use App\Repository\Substance\SubstanceRepository;
 use Symfony\Component\Uid\Ulid;
 
@@ -19,6 +22,7 @@ class BarcodeService
         private CellCultureRepository $cellCultureRepository,
         private CellRepository $cellRepository,
         private SubstanceRepository $substanceRepository,
+        private LotRepository $lotRepository,
     ) {
 
     }
@@ -41,6 +45,12 @@ class BarcodeService
                 $object = $this->substanceRepository->find($barcodeEntity->getReferencedId());
                 $barcodeEntry->setSubstance($object);
                 break;
+
+            case SubstanceLot::class:
+                $lotEntity = $this->lotRepository->find($barcodeEntity->getReferencedId());
+                $substanceEntity = $this->substanceRepository->findOneByLot($lotEntity);
+                $barcodeEntry->setSubstanceLot(new SubstanceLot($substanceEntity, $lotEntity));
+                break;
         }
     }
 
@@ -56,6 +66,9 @@ class BarcodeService
         } elseif ($barcodeEntry->getSubstance()) {
             $barcodeEntity->setReferencedTable(Substance::class);
             $barcodeEntity->setReferencedId($barcodeEntry->getSubstance()->getUlid()->toBase58());
+        } elseif ($barcodeEntry->getSubstanceLot()) {
+            $barcodeEntity->setReferencedTable(SubstanceLot::class);
+            $barcodeEntity->setReferencedId($barcodeEntry->getSubstanceLot()->getLot()->getId()->toBase58());
         }
     }
 }

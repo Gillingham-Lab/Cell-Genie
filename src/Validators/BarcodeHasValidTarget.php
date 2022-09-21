@@ -13,8 +13,9 @@ class BarcodeHasValidTarget
         $substance = !is_null($object->getSubstance());
         $cell = !is_null($object->getCell());
         $cellCulture = !is_null($object->getCellCulture());
+        $lot = !is_null($object->getSubstanceLot());
 
-        $evaluation = (int)$substance + (int)($cell) + (int)$cellCulture;
+        $evaluation = (int)$substance + (int)($cell) + (int)$cellCulture + (int)$lot;
 
         if ($evaluation === 0) {
             $context->buildViolation("You must choose a target of this barcode.")
