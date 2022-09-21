@@ -5,9 +5,9 @@ namespace App\Form;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
-use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
@@ -103,7 +103,9 @@ class BarcodeType extends AbstractType
                     return match($choice::class) {
                         Antibody::class => "Antibodies",
                         Chemical::class => "Chemicals",
+                        Oligo::class => "Oligos",
                         Protein::class => "Proteins",
+                        default => "Other",
                     };
                 },
             ])

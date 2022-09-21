@@ -282,6 +282,8 @@
                         plugins: {
                             dropdown_input: true,
                         },
+                        maxOptions: 1000,
+                        sortField:[{field: 'text'}, {field: '$order'}, {field: '$score'}],
                         allowEmptyOption: this.attributes["data-allow-empty"] && this.attributes["data-allow-empty"].value === "true",
                         render: {
                             optgroup_header: function(data, escape) {
