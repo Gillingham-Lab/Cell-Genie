@@ -24,8 +24,13 @@
                 },
                 {
                     "type": "edit",
-                    "disabled": true,
                     "tooltipText": "Edit antibody",
+                    "target": url("app_substance_edit", {"substance": antibody.ulid}),
+                },
+                {
+                    "type": "add",
+                    "tooltipText": "Add lot",
+                    "target": url("app_substance_add_lot", {"substance": antibody.ulid}),
                 }
             ]) }}
 
@@ -69,6 +74,21 @@
 
                 {# Lots #}
                 {{ lot(antibody) }}
+
+                {# Usage #}
+                {% if antibody.dilution %}
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse("Usage", "Usage") }}
+
+                            {{ layout.card_body_collapse_start("Usage") }}
+                            <div class="card-body px-lg-4">
+                                {{ antibody.dilution|raw }}
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+                {% endif %}
 
                 {# Attachments #}
                 {% if antibody.vendorDocumentation|length > 0 %}

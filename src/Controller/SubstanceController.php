@@ -13,6 +13,7 @@ use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
 use App\Entity\Lot;
+use App\Form\Substance\AntibodyType;
 use App\Form\Substance\ChemicalType;
 use App\Form\Substance\LotType;
 use App\Form\Substance\OligoType;
@@ -38,7 +39,7 @@ class SubstanceController extends AbstractController
     #[Route("/substance/view/{substance}", name: "app_substance_view")]
     public function viewSubstance(
         Substance $substance
-    ) {
+    ): Response {
         return match($substance::class) {
             Antibody::class => $this->redirectToRoute("app_antibody_view", ["antibodyId" => $substance->getUlid()]),
             Chemical::class => $this->redirectToRoute("app_compound_view", ["compoundId" => $substance->getUlid()]),
@@ -60,7 +61,7 @@ class SubstanceController extends AbstractController
         $new = !$substance;
 
         if ($type === null and $substance === null) {
-            $this->createNotFoundException();
+            throw $this->createNotFoundException();
         }
 
         if ($new) {
@@ -69,16 +70,25 @@ class SubstanceController extends AbstractController
                 "chemical" => new Chemical(),
                 "oligo" => new Oligo(),
                 "protein" => new Protein(),
+                default => null,
             };
         }
 
+        if ($substance === null) {
+            throw $this->createNotFoundException("Substance type '{$type}' has not been found.");
+        }
+
         [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam] = match($substance::class) {
-            Antibody::class => [null, "Antibody", "app_antibodies", "app_antibody_view", "antibodyId"],
+            Antibody::class => [AntibodyType::class, "Antibody", "app_antibodies", "app_antibody_view", "antibodyId"],
             Chemical::class => [ChemicalType::class, "Chemical", "app_compounds", "app_compound_view", "compoundId"],
             Oligo::class => [OligoType::class, "Oligo", "app_oligos", "app_oligo_view", "oligoId"],
             Protein::class => [ProteinType::class, "Protein", "app_proteins", "app_protein_view", "proteinId"],
-            default => [$this->createNotFoundException(), null, null, null, null],
+            default => [null, null, null, null, null],
         };
+
+        if ($formType === null) {
+            throw $this->createNotFoundException("Substance form not found.");
+        }
 
         $formOptions = [
             "save_button" => true,
