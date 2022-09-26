@@ -18,6 +18,7 @@ use App\Form\Substance\ChemicalType;
 use App\Form\Substance\LotType;
 use App\Form\Substance\OligoType;
 use App\Form\Substance\ProteinType;
+use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\Cell\CellRepository;
 use App\Repository\LotRepository;
 use App\Repository\Substance\AntibodyRepository;
@@ -231,21 +232,15 @@ class SubstanceController extends AbstractController
 
         /** @var Antibody $antibody */
         foreach ($antibodies as $row) {
-            $antibody = $row[0];
+            $antibody = $row;
 
             $addPrimary = false;
             $addSecondary = false;
 
-            $epitopes = $antibody->getEpitopeTargets();
-
-            foreach ($epitopes as $epitope) {
-                if ($epitope instanceof EpitopeHost) {
-                    $addSecondary = true;
-                }
-
-                if ($epitope instanceof EpitopeProtein or $epitope instanceof EpitopeSmallMolecule) {
-                    $addPrimary = true;
-                }
+            if ($antibody->getType() === AntibodyTypeEnum::Primary) {
+                $addPrimary = true;
+            } else {
+                $addSecondary = true;
             }
 
             if ($addPrimary and ($antibodyType === "primaries" or empty($antibodyType))) {
@@ -388,5 +383,14 @@ class SubstanceController extends AbstractController
             "protein" => $protein,
             "associatedCells" => $associatedCells,
         ]);
+    }
+
+    #[Route("/epitope/view/{epitope}", name: "app_epitope_view")]
+    public function viewEpitope(
+        Epitope $epitope,
+    ) {
+       return $this->render("parts/epitopes/epitope.html.twig", [
+           "epitope" => $epitope,
+       ]) ;
     }
 }

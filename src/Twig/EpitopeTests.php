@@ -16,9 +16,6 @@ class EpitopeTests extends AbstractExtension
     {
         return [
             new TwigTest("epitope", fn(?object $epitope) => $epitope instanceof Epitope),
-            new TwigTest("epitopeHost", fn(?object $epitope) => $epitope instanceof EpitopeHost),
-            new TwigTest("epitopeProtein", fn(?object $epitope) => $epitope instanceof EpitopeProtein),
-            new TwigTest("epitopeSmallMolecule", fn(?object $epitope) => $epitope instanceof EpitopeSmallMolecule),
         ];
     }
 }

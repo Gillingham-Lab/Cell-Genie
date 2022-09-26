@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Substance;
 
+use App\Entity\Epitope;
+use App\Entity\EpitopeProtein;
 use App\Entity\Lot;
 use App\Entity\Traits\NameTrait;
 use App\Entity\Traits\NewIdTrait;
@@ -32,14 +34,18 @@ class Substance
     #[Assert\Valid]
     private Collection $lots;
 
+    #[ORM\ManyToMany(targetEntity: Epitope::class, mappedBy: "substances", cascade: ["persist"])]
+    /*#[ORM\JoinTable(name: "substance_epitope")]
+    #[ORM\JoinColumn(name: "substance_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: "epitope_id", referencedColumnName: "id")]*/
+    private Collection $epitopes;
+
     public function __construct()
     {
         $this->lots = new ArrayCollection();
+        $this->epitopes = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, Lot>
-     */
     public function getLots(): Collection
     {
         return $this->lots;
@@ -57,6 +63,26 @@ class Substance
     public function removeLot(Lot $lot): self
     {
         $this->lots->removeElement($lot);
+        return $this;
+    }
+
+    public function getEpitopes(): Collection
+    {
+        return $this->epitopes;
+    }
+
+    public function addEpitope(Epitope $epitope): self
+    {
+        if (!$this->epitopes->contains($epitope)) {
+            $this->epitopes[] = $epitope;
+        }
+
+        return $this;
+    }
+
+    public function removeEpitope(Epitope $epitope): self
+    {
+        $this->epitopes->removeElement($epitope);
         return $this;
     }
 }

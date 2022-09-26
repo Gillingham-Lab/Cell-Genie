@@ -52,11 +52,11 @@
                                 {% if antibody.vendor %}
                                     {{ macros.definition_row_raw("Vendor", macros.vendor_url(antibody.vendor, antibody.vendorPN)) }}
                                 {% endif %}
-                                {{ macros.definition_row("Host organism", antibody.hostOrganism) }}
+                                {{ macros.definition_row("Host epitopes", macros.pillify_epitopes(antibody.epitopes, "antibody")) }}
                                 {{ macros.definition_row("Clonality", antibody.clonality) }}
 
                                 {% if antibody.epitopeTargets|length > 0 %}
-                                    {{ macros.definition_row("Epitope targets", macros.pillify_epitopes(antibody.epitopeTargets)) }}
+                                    {{ macros.definition_row("Epitope targets", macros.pillify_epitopes(antibody.epitopeTargets, "protein")) }}
                                 {% endif %}
 
                                 {% if antibody.detection %}

@@ -9,6 +9,7 @@ use App\Entity\File;
 use App\Entity\Lot;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
+use App\Genie\Enums\AntibodyType;
 use App\Repository\Substance\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,6 +29,9 @@ class Antibody extends Substance
 
     #[ORM\Column(type: "integer", nullable: true)]
     private ?int $id = null;
+
+    #[ORM\Column(type: "string", enumType: AntibodyType::class, options: ["default" => AntibodyType::Primary])]
+    private ?AntibodyType $type;
 
     #[ORM\ManyToMany(targetEntity: Epitope::class, inversedBy: "antibodies")]
     #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid", onDelete: "CASCADE")]
@@ -50,9 +54,6 @@ class Antibody extends Substance
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $externalReference = null;
-
-    #[ORM\ManyToOne(targetEntity: EpitopeHost::class, inversedBy: "hostAntibodies")]
-    private ?EpitopeHost $hostOrganism = null;
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $dilution = null;
@@ -183,19 +184,6 @@ class Antibody extends Substance
         return $this;
     }
 
-    public function getHostOrganism(): ?EpitopeHost
-    {
-        return $this->hostOrganism;
-    }
-
-    public function setHostOrganism(?EpitopeHost $hostOrganism): self
-    {
-        $this->hostOrganism = $hostOrganism;
-        $hostOrganism->addHostAntibody($this);
-
-        return $this;
-    }
-
     public function getDilution(): ?string
     {
         return $this->dilution;
@@ -265,6 +253,20 @@ class Antibody extends Substance
     {
         $this->vendorDocumentation->removeElement($vendorDocumentation);
 
+        return $this;
+    }
+
+    /**
+     * @return AntibodyType|null
+     */
+    public function getType(): ?AntibodyType
+    {
+        return $this->type;
+    }
+
+    public function setType(?AntibodyType $type): self
+    {
+        $this->type = $type;
         return $this;
     }
 }

@@ -36,9 +36,9 @@ class Protein extends Substance
 
     /*#[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "proteinTarget")]
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]*/
-    #[ORM\ManyToMany(targetEntity: EpitopeProtein::class, mappedBy: "proteins")]
+    /*#[ORM\ManyToMany(targetEntity: EpitopeProtein::class, mappedBy: "proteins")]
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
-    private Collection $epitopes;
+    private Collection $substanceEpitope;*/
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
@@ -174,15 +174,15 @@ class Protein extends Substance
     /**
      * @return Collection<int, EpitopeProtein>
      */
-    public function getEpitopes(): Collection
+    /*public function getSubstanceEpitope(): Collection
     {
-        return $this->epitopes;
+        return $this->substanceEpitope;
     }
 
     public function addEpitope(EpitopeProtein $epitope): self
     {
-        if (!$this->epitopes->contains($epitope)) {
-            $this->epitopes[] = $epitope;
+        if (!$this->substanceEpitope->contains($epitope)) {
+            $this->substanceEpitope[] = $epitope;
             $epitope->addProtein($this);
         }
 
@@ -191,12 +191,12 @@ class Protein extends Substance
 
     public function removeEpitope(EpitopeProtein $epitope): self
     {
-        if ($this->epitopes->removeElement($epitope)) {
+        if ($this->substanceEpitope->removeElement($epitope)) {
             $epitope->removeProtein($this);
         }
 
         return $this;
-    }
+    }*/
 
     public function getProteinType(): ?string
     {

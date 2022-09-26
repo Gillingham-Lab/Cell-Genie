@@ -15,6 +15,7 @@ use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
 use App\Entity\EpitopeSmallMolecule;
@@ -82,12 +83,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section("Substances"),
             MenuItem::linkToCrud("Antibodies", "icon icon-antibody fw-icon", Antibody::class),
             MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
-            MenuItem::subMenu("Epitopes", "fas fas-horse fw-icon")
-                ->setSubItems([
-                    MenuItem::linkToCrud("Hosts", "fas fa-horse fw-icon", EpitopeHost::class),
-                    MenuItem::linkToCrud("Proteins", "icon icon-protein fw-icon", EpitopeProtein::class),
-                    MenuItem::linkToCrud("Small Molecules", "fas fa-tablets fw-icon", EpitopeSmallMolecule::class),
-                ]),
+            MenuItem::linkToCrud("Epitopes", "fas fas-horse fw-icon", Epitope::class),
             MenuItem::linkToCrud("Oligos", "icon icon-oligomer", Oligo::class),
             MenuItem::linkToCrud("Proteins", "icon icon-protein", Protein::class),
 

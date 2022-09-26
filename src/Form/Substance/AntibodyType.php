@@ -8,9 +8,11 @@ use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\VendorType;
+use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\VocabularyRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -44,6 +46,15 @@ class AntibodyType extends SaveableType
                     "label" => "#RRID",
                     "help" => "Most commercial available antibodies have a research resource identifier, and some journals require or encourage the usage of them in the supporting identifer.",
                     "required" => false,
+                ])
+                ->add("type", ChoiceType::class, [
+                    "label" => "Type",
+                    "help" => "Mark if the antibody is primary or secondary",
+                    "required" => true,
+                    "choices" => [
+                        "Primary" => AntibodyTypeEnum::Primary,
+                        "Secondary" => AntibodyTypeEnum::Secondary,
+                    ],
                 ])
             )
             ->add(

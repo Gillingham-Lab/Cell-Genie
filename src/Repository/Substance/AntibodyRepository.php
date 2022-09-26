@@ -27,19 +27,17 @@ class AntibodyRepository extends ServiceEntityRepository
     public function findAnyAntibody(?Epitope $epitope = null): array
     {
         $qb = $this->createQueryBuilder("a")
-            ->addSelect("ho")
-            ->addSelect("ep")
-            ->addSelect("ho.shortName as hostName")
-            ->leftJoin("a.epitopeTargets", "ep", conditionType: Join::ON)
-            ->leftJoin("a.hostOrganism", "ho", conditionType: Join::ON)
+            ->addSelect("eph")
+            ->addSelect("ept")
+            ->leftJoin("a.epitopeTargets", "ept", conditionType: Join::ON)
+            ->leftJoin("a.epitopes", "eph", conditionType: Join::ON)
             ->groupBy("a.ulid")
-            ->addGroupBy("ep.id")
-            ->addGroupBy("ho.id")
-            ->having("count(distinct ep.id) > 0")
+            ->addGroupBy("ept.id")
+            ->addGroupBy("eph.id")
             ->orderBy("a.number");
 
         if ($epitope !== null) {
-            $qb = $qb->andWhere("ep.id = :epitope")
+            $qb = $qb->andWhere("ept.id = :epitope")
                 ->setParameter("epitope", $epitope->getId(), "ulid");
         }
 

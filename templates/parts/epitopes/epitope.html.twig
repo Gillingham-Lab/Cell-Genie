@@ -1,0 +1,126 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+{% from 'utility/substance_lot.html.twig' import lot %}
+
+{% block title %}Gin :: Epitope :: {{ epitope.shortName }}{% endblock %}
+
+
+{% block body_main %}
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0">
+        {{ layout.header(epitope.shortName, "Epitope", false) }}
+
+        {{ layout.toolbox([
+            {
+                "type": "edit",
+                "tooltipText": "Edit epitope",
+                "disabled": true,
+                "target": url("app_epitope_view", {"epitope": epitope.id}),
+            }
+        ]) }}
+
+
+        <div class="row row-cols-1">
+            <div class="col p-0 m-0 mb-3">
+                <div class="card mx-3 h-100">
+                    {{ layout.card_header_collapse("Details", "Details") }}
+
+                    {{ layout.card_body_collapse_start("Details") }}
+                    <div class="card-body px-lg-5 mx-0">
+                        {{ epitope.description ?? "no description given." }}
+                    </div>
+                    {{ layout.card_body_collapse_end() }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-xl-2">
+            <div class="col p-0 m-0 mb-3">
+                <div class="card mx-3 h-100">
+                    {{ layout.card_header_collapse("Substances with this epitope", "Substances") }}
+
+                    {{ layout.card_body_collapse_start("Substances") }}
+                    <div class="card-body px-lg-5 mx-0">
+                        {% if epitope.substances|length == 0 %}
+                            No substances with this epitope.
+                        {% else %}
+                            <table class="table table-hover table-sm fancyTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px"></th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for substance in epitope.substances %}
+                                        <tr>
+                                            <td>
+                                                <div class="btn-group btn-group-sm mr-3">
+                                                    <a
+                                                            href="{{ url("app_substance_view", {"substance": substance.ulid}) }}"
+                                                            class="btn btn-primary btn-sm"
+                                                            data-toggle="tooltip" data-placement="bottom" title="View substance"
+                                                    >
+                                                        <span class="fa fa-eye"></span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td>{{ substance.shortName }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                    {{ layout.card_body_collapse_end() }}
+                </div>
+            </div>
+
+            <div class="col p-0 m-0 mb-3">
+                <div class="card mx-3 h-100">
+                    {{ layout.card_header_collapse("Antibodies targeting this epitope", "Antibodies") }}
+
+                    {{ layout.card_body_collapse_start("Antibodies") }}
+                    <div class="card-body px-lg-5 mx-0">
+                        {% if epitope.substances|length == 0 %}
+                            No antibody targeting this epitope.
+                        {% else %}
+                            <table class="table table-hover table-sm fancyTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px"></th>
+                                        <th>Number</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for antibody in epitope.antibodies %}
+                                    <tr>
+                                        <td>
+                                            <div class="btn-group btn-group-sm mr-3">
+                                                <a
+                                                        href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}"
+                                                        class="btn btn-primary btn-sm"
+                                                        data-toggle="tooltip" data-placement="bottom" title="View antibody"
+                                                >
+                                                    <span class="fa fa-eye"></span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>{{ antibody.number }}</td>
+                                        <td> {{ antibody.shortName }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                    {{ layout.card_body_collapse_end() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

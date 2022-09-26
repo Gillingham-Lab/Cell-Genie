@@ -9,12 +9,14 @@ use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Traits\HasRRID;
 use App\Form\DocumentationType;
+use App\Genie\Enums\AntibodyType;
 use App\Repository\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -55,7 +57,10 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
             TextField::new("shortName")
                 ->setHelp("A combination of protein target and antibody source or detection would be helpful, such as MGMT (goat), or Goat (VIS 700)"),
             TextField::new("longName", label: "Long name"),
-            ... HasRRID::rridCrudFields(),
+            ... Antibody::rridCrudFields(),
+            ChoiceField::new("type", label: "Antibody type")
+                ->setChoices(["Primary" => AntibodyType::Primary, "Secondary" => AntibodyType::Secondary])
+                ->setRequired(true),
             IntegerField::new("storageTemperature", label: "Storage temperature (°C)")
                 ->setHelp("Note down a storage temperature between -200 and 25 °C. Commonly, -20 °C is used."),
 

@@ -132,7 +132,7 @@
 {% endmacro %}
 
 {% macro display_any(antibodies) %}
-    <table class="table table-hover fancyTable">
+    <table class="table table-hover {% if antibodies|length > 0 %}fancyTable{% endif %}">
         <thead>
             <tr>
                 <th scope="col">
@@ -150,8 +150,7 @@
         </thead>
         <tbody>
         {% for entry in antibodies %}
-            {% set antibody = entry[0] %}
-            {# {% set antibody = entry %}  #}
+            {% set antibody = entry %}
             <tr>
                 <td>
                     {{ _self.antibody_tools(antibody) }}
@@ -161,7 +160,7 @@
                 </td>
                 <td>{{ _self.format_antibody_name(antibody) }}</td>
                 <td>{{ pillify_epitopes(antibody.epitopeTargets) }}</td>
-                <td>{{ pillify_epitopes([antibody.hostOrganism]) }}</td>
+                <td>{{ pillify_epitopes(antibody.epitopes) }}</td>
                 <td class="d-none d-lg-table-cell" >{{ vendor_url(antibody.vendor, antibody.vendorPn) }}</td>
                 <td class="d-none d-lg-table-cell" >{% if antibody.rrid %}{{ rrid_resolver(antibody.rrid)}}{% else %}-{% endif %}</td>
             </tr>
@@ -173,7 +172,7 @@
 {% endmacro %}
 
 {% macro display_primaries(primaryAntibodies) %}
-    <table class="mb-5 mt-3 table px-5 table-hover">
+    <table class="mb-5 mt-3 table px-5 table-hover {% if primaryAntibodies|length > 0 %}fancyTable{% endif %}">
         <thead>
             <tr>
                 <th scope="col">
@@ -189,8 +188,7 @@
         </thead>
         <tbody>
         {% for entry in primaryAntibodies %}
-            {% set primaryAntibody = entry[0] %}
-            {# {% set primaryAntibody = entry %}  #}
+            {% set primaryAntibody = entry %}
             <tr>
                 <th>
                     {{ _self.antibody_tools(primaryAntibody) }}
@@ -198,7 +196,7 @@
                 </th>
                 <td>{{ _self.format_antibody_name(primaryAntibody) }}</td>
                 <td>{{ pillify_epitopes(primaryAntibody.epitopeTargets) }}</td>
-                <td>{{ pillify_epitopes([primaryAntibody.hostOrganism]) }}</td>
+                <td>{{ pillify_epitopes(primaryAntibody.epitopes) }}</td>
                 <td>{{ vendor_url(primaryAntibody.vendor, primaryAntibody.vendorPn) }}</td>
                 <td>{% if primaryAntibody.rrid %}{{ rrid_resolver(primaryAntibody.rrid)}}{% else %}-{% endif %}</td>
             </tr>
@@ -208,7 +206,7 @@
 {% endmacro %}
 
 {% macro display_secondaries(secondaryAntibodies) %}
-    <table class="mb-5 mt-3 table table-hover">
+    <table class="mb-5 mt-3 table table-hover {% if secondaryAntibodies|length > 0 %}fancyTable{% endif %}">
         <thead>
             <tr>
                 <th scope="col">
@@ -225,7 +223,7 @@
         </thead>
         <tbody>
         {% for entry in secondaryAntibodies %}
-            {% set secondaryAntibody = entry[0] %}
+            {% set secondaryAntibody = entry %}
             {# {% set secondaryAntibody = entry %} #}
             <tr>
                 <th>
@@ -234,7 +232,7 @@
                 </th>
                 <td>{{ _self.format_antibody_name(secondaryAntibody) }}</td>
                 <td>{{ pillify_epitopes(secondaryAntibody.epitopeTargets) }}</td>
-                <td>{{ pillify_epitopes([secondaryAntibody.hostOrganism]) }}</td>
+                <td>{{ pillify_epitopes(secondaryAntibody.epitopes) }}</td>
                 <td>{{ secondaryAntibody.detection }}</td>
                 <td>{{ vendor_url(secondaryAntibody.vendor, secondaryAntibody.vendorPn) }}</td>
                 <td>{% if secondaryAntibody.rrid %}{{ rrid_resolver(secondaryAntibody.rrid)}}{% else %}-{% endif %}</td>
