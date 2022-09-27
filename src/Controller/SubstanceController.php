@@ -139,6 +139,7 @@ class SubstanceController extends AbstractController
             "substance" => ($new ? null : $substance),
             "form" => $form,
             "returnTo" => $new ? $this->generateUrl($overviewRoute) : $this->generateUrl($specificRoute, [$routeParam => $substance->getUlid()]),
+            "typeName" => $typeName,
         ]);
     }
 
