@@ -73,8 +73,10 @@ class Substance
 
     public function addEpitope(Epitope $epitope): self
     {
+        var_dump("Add epitope");
         if (!$this->epitopes->contains($epitope)) {
             $this->epitopes[] = $epitope;
+            $epitope->addSubstance($this);
         }
 
         return $this;
@@ -82,7 +84,11 @@ class Substance
 
     public function removeEpitope(Epitope $epitope): self
     {
-        $this->epitopes->removeElement($epitope);
+        var_dump("Remove epitope");
+        if ($this->epitopes->contains($epitope)) {
+            $this->epitopes->removeElement($epitope);
+            $epitope->removeSubstance($this);
+        }
         return $this;
     }
 }

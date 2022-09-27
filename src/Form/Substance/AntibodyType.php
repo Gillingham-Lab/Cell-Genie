@@ -4,13 +4,16 @@ declare(strict_types=1);
 namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\Epitope;
 use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\VendorType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\VocabularyRepository;
+use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -73,6 +76,44 @@ class AntibodyType extends SaveableType
                     "help" => "Give information if this antibody has some type of tag (ex/em wavelengths, HRP, ...). Leave empty if there is no reporter.",
                     "empty_data" => null,
                     "required" => false,
+                ])
+                ->add("epitopes", EntityType::class, [
+                    "label" => "Has epitopes",
+                    "class" => Epitope::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.shortName", "ASC")
+                            ;
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                        //"data-allow-add" => true,
+                    ],
+                ])
+                ->add("epitopeTargets", EntityType::class, [
+                    "label" => "Targets epitopes",
+                    "class" => Epitope::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.shortName", "ASC")
+                            ;
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                        //"data-allow-add" => true,
+                    ],
                 ])
             )
             ->add(

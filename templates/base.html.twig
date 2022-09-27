@@ -40,7 +40,7 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-cell-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                <a class="nav-link dropdown-toggle" href="{{ url("app_cells") }}" id="navbar-dropdown-cell-link" role="button" data-toggle="dropdown" aria-haspopup="true">
                                     <span class="fas fa-fw fa-disease"></span>
                                     Cells
                                 </a>
@@ -54,6 +54,40 @@
                             <a class="dropdown-item"><span class="fas fa-fw fa-plus"></span>New</a>-->
                                 </div>
                             </li>
+
+                            {# <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-substance-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                    Substances
+                                </a>
+
+                                <ul class="dropdown-menu" aria-labelledby="navbar-dropdown-substance-link">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url("app_antibodies") }}" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                            <span class="fa-fw icon icon-antibody"></span>
+                                            Antibodies &raquo;
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-submenu" aria-labelledby="navbar-dropdown-antibody-link">
+                                            <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw icon icon-antibody-primary"></span>Primaries</a>
+                                            <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw icon icon-antibody-secondary"></span>Secondaries</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item"><span class="fas fa-fw fa-plus"></span>New</a>
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url("app_compounds") }}"><span class="fas fa-fw fa-tablets"></span>Chemicals</a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url("app_oligos") }}"><span class="fa-fw icon icon-oligomer"></span>Oligos</a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url("app_proteins") }}"><span class="fa-fw icon icon-protein"></span>Proteins</a>
+                                    </li>
+                                </ul>
+                            </li> #}
 
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url("app_experiments") }}">
@@ -91,7 +125,7 @@
                             </li>
 
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                <a class="nav-link dropdown-toggle" href="{{ url("app_antibodies") }}" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
                                     <span class="icon icon-antibody"></span>
                                     Antibodies
                                 </a>
@@ -102,6 +136,8 @@
                                     <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw icon icon-antibody-secondary"></span>Secondaries</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item"><span class="fas fa-fw fa-plus"></span>New</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url("app_epitopes") }}"><span class="fas fa-fw"></span>Epitopes</a>
                                 </div>
                             </li>
 
@@ -284,6 +320,7 @@
                         },
                         maxOptions: 1000,
                         sortField:[{field: 'text'}, {field: '$order'}, {field: '$score'}],
+                        create: !!this.attributes["data-allow-add"],
                         allowEmptyOption: this.attributes["data-allow-empty"] && this.attributes["data-allow-empty"].value === "true",
                         render: {
                             optgroup_header: function(data, escape) {

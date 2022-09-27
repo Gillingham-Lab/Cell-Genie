@@ -9,17 +9,16 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
-use App\Entity\EpitopeHost;
-use App\Entity\EpitopeProtein;
-use App\Entity\EpitopeSmallMolecule;
 use App\Entity\Lot;
 use App\Form\Substance\AntibodyType;
 use App\Form\Substance\ChemicalType;
+use App\Form\Substance\EpitopeType;
 use App\Form\Substance\LotType;
 use App\Form\Substance\OligoType;
 use App\Form\Substance\ProteinType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\Cell\CellRepository;
+use App\Repository\EpitopeRepository;
 use App\Repository\LotRepository;
 use App\Repository\Substance\AntibodyRepository;
 use App\Repository\Substance\ChemicalRepository;
@@ -125,7 +124,7 @@ class SubstanceController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash("success", $message);
 
-                return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
+                //return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
             } catch (\Exception $e) {
                 if ($new) {
                     $this->addFlash("error", "Adding a new {$typeName} was not possible. Reason: {$e->getMessage()}.");
@@ -385,12 +384,76 @@ class SubstanceController extends AbstractController
         ]);
     }
 
+    #[Route("/epitope", name: "app_epitopes")]
+    public function epitopes(
+        EpitopeRepository $epitopeRepository,
+    ): Response {
+        $epitopes = $epitopeRepository->findAll();
+
+        return $this->render("parts/epitopes/epitopes.html.twig", [
+            "epitopes" => $epitopes,
+        ]);
+    }
+
     #[Route("/epitope/view/{epitope}", name: "app_epitope_view")]
     public function viewEpitope(
         Epitope $epitope,
-    ) {
+    ): Response {
        return $this->render("parts/epitopes/epitope.html.twig", [
            "epitope" => $epitope,
-       ]) ;
+       ]);
+    }
+
+    #[Route("/epitope/new", name: "app_epitope_new")]
+    #[Route("/epitope/edit/{epitope}", name: "app_epitope_edit")]
+    public function addEpitope(
+        Request $request,
+        EpitopeRepository $epitopeRepository,
+        EntityManagerInterface $entityManager,
+        Epitope $epitope = null,
+    ): Response {
+        $new = !$epitope;
+
+        if ($new) {
+            $epitope = new Epitope();
+        }
+
+        $formType = EpitopeType::class;
+
+        $formOptions = [
+            "save_button" => true,
+        ];
+
+        $form = $this->createForm($formType, $epitope, $formOptions);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            try {
+                if ($new) {
+                    $entityManager->persist($epitope);
+                    $message = "The new epitope was successfully created.";
+                } else {
+                    $message = "The epitope '{$epitope->getShortName()}' was successfully changed.";
+                }
+
+                $entityManager->flush();
+                $this->addFlash("success", $message);
+
+                return $this->redirectToRoute("app_epitope_view", ["epitope" => $epitope->getId()]);
+            } catch (\Exception $e) {
+                if ($new) {
+                    $this->addFlash("error", "Adding a new epitope was not possible. Reason: {$e->getMessage()}.");
+                } else {
+                    $this->addFlash("error", "Changing the epitope '{$epitope->getShortName()}' was not possible. Reason: {$e->getMessage()}.");
+                }
+            }
+        }
+
+        return $this->renderForm("parts/forms/add_substance.html.twig", [
+            "title" => $new ? "Epitope :: New" : "Epitope :: {$epitope->getShortName()} :: Edit",
+            "substance" => ($new ? null : $epitope),
+            "form" => $form,
+            "returnTo" => $new ? $this->generateUrl("app_epitopes") : $this->generateUrl("app_epitope_view", ["epitope" => $epitope->getId()]),
+        ]);
     }
 }

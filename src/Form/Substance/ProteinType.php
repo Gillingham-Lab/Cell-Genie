@@ -5,6 +5,7 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\Epitope;
 use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
@@ -62,6 +63,25 @@ class ProteinType extends SaveableType
                     "label" => "Mutation",
                     "help" => "In the form of G12C, for example. Make sure the sequence is correct.",
                     "required" => false,
+                ])
+                ->add("epitopes", EntityType::class, [
+                    "label" => "Epitopes",
+                    "class" => Epitope::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.shortName", "ASC")
+                            ;
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                        //"data-allow-add" => true,
+                    ],
                 ])
             )
             ->add(

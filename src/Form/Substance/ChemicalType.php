@@ -5,13 +5,19 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\Epitope;
 use App\Form\NameType;
 use App\Form\SaveableType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChemicalType extends SaveableType
@@ -59,6 +65,24 @@ class ChemicalType extends SaveableType
                     "help" => "The density of the compound. If given, recipes requiring this chemical will also provide a volume.",
                     "scale" => 3,
                     "required" => false,
+                ])
+                ->add("epitopes", EntityType::class, [
+                    "class" => Epitope::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.shortName", "ASC")
+                        ;
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                        //"data-allow-add" => true,
+                    ],
                 ])
             )
         ;
