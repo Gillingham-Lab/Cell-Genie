@@ -23,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Security\Core\Security;
 
 class AntibodyCrudController extends ExtendedAbstractCrudController
@@ -59,16 +60,38 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
             TextField::new("longName", label: "Long name"),
             ... Antibody::rridCrudFields(),
             ChoiceField::new("type", label: "Antibody type")
-                ->setChoices(["Primary" => AntibodyType::Primary, "Secondary" => AntibodyType::Secondary])
-                ->setRequired(true),
+                ->onlyOnIndex()
+                ->setChoices(function () {
+                    $choices = array_map(static fn (?AntibodyType $type) => [$type->value => $type->name], AntibodyType::cases());
+                    return array_merge(...$choices);
+                })
+                ->setRequired(true)
+                ->setFormType(EnumType::class)
+                ->setFormTypeOption('class', AntibodyType::class)
+                ->setFormTypeOption('choice_label', function (AntibodyType $enum) {
+                    return $enum->value;
+                }),
+
+            ChoiceField::new("type", label: "Antibody type")
+                ->onlyOnForms()
+                ->setChoices(function () {
+                    $choices = array_map(static fn (?AntibodyType $type) => [$type->value => $type], AntibodyType::cases());
+                    return array_merge(...$choices);
+                })
+                ->setRequired(true)
+                ->setFormType(EnumType::class)
+                ->setFormTypeOption('class', AntibodyType::class)
+                ->setFormTypeOption('choice_label', function (AntibodyType $enum) {
+                    return $enum->value;
+                }),
             IntegerField::new("storageTemperature", label: "Storage temperature (°C)")
                 ->setHelp("Note down a storage temperature between -200 and 25 °C. Commonly, -20 °C is used."),
 
             FormField::addPanel("Properties"),
-            AssociationField::new("hostOrganism", label: "Host Organism")
-                ->setHelp("Host organism for this antibody. Important to automatically determine secondary antibodies."),
+            AssociationField::new("epitopes", label: "Epitopes")
+                ->setHelp("Epitopes this antibody has."),
             AssociationField::new("epitopeTargets", label: "Epitopes")
-                ->setHelp("Set epitopes for this antibody"),
+                ->setHelp("SEpitopes this antibody targets."),
             $this->textFieldOrChoices("clonality")
                 ->setHelp("Usually, this is either 'monoclonal' or 'polyclonal'."),
             TextField::new("usage", label: "Purpose")
