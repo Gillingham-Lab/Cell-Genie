@@ -161,6 +161,36 @@
     {% endif %}
 {% endmacro %}
 
+{% macro pillify_substance(substance) %}
+    {% from 'utility/icons.html.twig' import any as any_icon %}
+    {% if substance is null %}
+        <span class="badge round bg-white border-dark">null</span>
+    {% elseif substance is substance %}
+        {% if substance is substanceAntibody %}
+            <a class='badge rounded-pill bg-primary text-light text-decoration-none' href="{{ url("app_substance_view", {"substance": substance.ulid}) }}">{{ any_icon(substance) }} {{ substance.number }}</a>
+        {% else %}
+            <a class='badge rounded-pill bg-primary text-light text-decoration-none' href="{{ url("app_substance_view", {"substance": substance.ulid}) }}">{{ any_icon(substance) }} {{ substance.shortName }}</a>
+        {% endif %}
+    {% else %}
+        ??
+    {% endif %}
+{% endmacro %}
+
+{% macro pillify_lot(substance, lot) %}
+    {% from 'utility/icons.html.twig' import any as any_icon %}
+    {% if substance is null %}
+        <span class="badge round bg-white border-dark">null</span>
+    {% elseif substance is substance %}
+        {% if substance is substanceAntibody %}
+            <a class='badge rounded-pill bg-dark text-light text-decoration-none' href="{{ url("app_substance_lot_view", {"lot": lot.id}) }}">{{ any_icon(substance) }} {{ substance.number }}.{{ lot.number }}</a>
+        {% else %}
+            <a class='badge rounded-pill bg-dark text-light text-decoration-none' href="{{ url("app_substance_lot_view", {"lot": lot.id}) }}">{{ any_icon(substance) }} {{ substance.shortName }}.{{ lot.number }}</a>
+        {% endif %}
+    {% else %}
+        ??
+    {% endif %}
+{% endmacro %}
+
 {% macro pillify_proteins(proteins) %}
     {% for protein in proteins %}
         <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_protein_view", {"proteinId": protein.ulid}) }}'>{{ protein }}</a>

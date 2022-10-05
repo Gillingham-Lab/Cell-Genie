@@ -39,15 +39,6 @@ class ExperimentCrudController extends ExtendedAbstractCrudController
             CollectionField::new("measurements", "Measurements")
                 ->setEntryType(ExperimentalMeasurementType::class)
                 ->setEntryIsComplex(true),
-
-            //FormField::addPanel("Experimental relations"),
-            //AssociationField::new("cells"),
-            //AssociationField::new("proteinTargets"),
-            //AssociationField::new("chemicals"),
-
-            //CollectionField::new("antibodyDilutions", "Antibody dilutions")
-            //    ->setEntryType(AntibodyDilutionType::class)
-            //    ->setEntryIsComplex(true),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\DoctrineEntity\Substance\SubstanceLot;
 use App\Entity\Lot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,6 +54,31 @@ class SubstanceRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findOneSubstanceLotByLot(string|lot $lot): ?SubstanceLot
+    {
+        $result = $this->createQueryBuilder("s")
+            ->select("s")
+            ->addSelect("l")
+            ->leftJoin("s.lots", "l")
+            ->groupBy("s.ulid")
+            ->addGroupBy("l.id")
+            ->where("l.id = :lot")
+            ->setParameter("lot", ($lot instanceof Lot ? $lot->getId() : $lot), "ulid")
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if ($result === null) {
+            return null;
+        }
+
+        foreach ($result->getLots() as $lot) {
+            if ($lot->getId() === null) {}
+        }
+
+        return new SubstanceLot($result[0], $result[1]);
+    }
+
     /** @return Substance[] */
     public function findAllWithLot(): array
     {
@@ -65,6 +91,32 @@ class SubstanceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @return SubstanceLot[]
+     */
+    public function findAllSubstanceLots(): array
+    {
+        $results = $this->createQueryBuilder("s")
+            ->select("s")
+            ->addSelect("l")
+            ->leftJoin("s.lots", "l")
+            ->groupBy("s.ulid")
+            ->addGroupBy("l.id")
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $return = [];
+        /** @var Substance $result */
+        foreach ($results as $result) {
+            foreach ($result->getLots() as $lot) {
+                $return[] = new SubstanceLot($result, $lot);
+            }
+        }
+
+        return $return;
     }
 
 //    /**

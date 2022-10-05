@@ -1,3 +1,19 @@
+{% macro antibody(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-protein
+    {% else %}
+        <span class="icon icon-antibody"></span>
+    {% endif %}
+{% endmacro %}
+
+{% macro chemical(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-protein
+    {% else %}
+        <span class="fas fa-fw fa-tablets"></span>
+    {% endif %}
+{% endmacro %}
+
 {% macro protein(classOnly=false) %}
     {% if classOnly %}
         icon icon-protein
@@ -14,3 +30,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro any(any, classOnly=false) %}
+    {% if any is substanceAntibody %}
+        {{ _self.antibody(classOnly) }}
+    {% elseif any is substanceChemical %}
+        {{ _self.chemical(classOnly) }}
+    {% elseif any is substanceOligo %}
+        {{ _self.oligo(classOnly) }}
+    {% elseif any is substanceProtein %}
+        {{ _self.protein(classOnly) }}
+    {% endif %}
+{% endmacro %}

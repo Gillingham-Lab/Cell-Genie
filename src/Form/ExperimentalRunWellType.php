@@ -3,13 +3,19 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Experiment;
 use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalMeasurement;
 use App\Entity\ExperimentalRunWellFormEntity;
 use App\Entity\InputType;
+use App\Repository\LotRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
+use App\Repository\Substance\SubstanceRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,13 +26,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ExperimentalRunWellType extends AbstractType
+class ExperimentalRunWellType extends ExperimentRunBaseType
 {
-    public function __construct(
-        private ChemicalRepository  $chemicalRepository,
-        private ProteinRepository $proteinRepository,
-    ) {
-    }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -88,95 +89,6 @@ class ExperimentalRunWellType extends AbstractType
 
         if ($measurementForm !== null) {
             $builder->add($measurementForm);
-        }
-    }
-
-    protected function addInputTypeToForm(FormBuilderInterface $formBuilder, InputType $inputType)
-    {
-        $type = match ($inputType->getType()) {
-            InputType::INTEGER_TYPE => IntegerType::class,
-            InputType::FLOAT_TYPE => NumberType::class,
-            InputType::CHOICE_TYPE => ChoiceType::class,
-            InputType::CHEMICAL_TYPE, InputType::PROTEIN_TYPE => ChoiceType::class,
-            InputType::CHECK_TYPE => CheckboxType::class,
-            default => TextType::class,
-        };
-
-        $label = $inputType->getTitle();
-        $istd = false;
-
-        if ($inputType instanceof ExperimentalMeasurement and $inputType->isInternalStandard()) {
-            $label .= " (ISTD)";
-            $istd = true;
-        }
-
-        $baseOptions = [
-            "label" => $label,
-            "help" => $inputType->getDescription(),
-        ];
-
-        $options = [];
-
-        // Prepare choices for CHOICE_TYPE
-        // Should be made more flexible later.
-        if ($inputType->getType() === InputType::CHOICE_TYPE) {
-            $choices = explode(",", $inputType->getConfig());
-            $choices = array_map("trim", $choices);
-
-            $options = [
-                "choices" => $choices,
-                "choice_label" => function($choice, $key, $value) {
-                    return $value;
-                },
-                "expanded" => false,
-                "multiple" => false,
-            ];
-        } elseif ($inputType->getType() === InputType::CHEMICAL_TYPE) {
-            $chemicals = $this->chemicalRepository->findAll();
-
-            $choices = [];
-            foreach ($chemicals as $chemical) {
-                $choices[$chemical->getShortName()] = $chemical->getUlid()->toBase58();
-            }
-
-            $options = [
-                "choices" => $choices,
-                "expanded" => false,
-                "multiple" => false,
-                "attr"  => [
-                    "class" => "selectpicker",
-                    "data-live-search" => "true"
-                ],
-            ];
-        } elseif ($inputType->getType() === InputType::PROTEIN_TYPE) {
-            $proteins = $this->proteinRepository->findAll();
-
-            $choices = [];
-            foreach ($proteins as $protein) {
-                $choices[$protein->getShortName()] = $protein->getUlid()->toBase58();
-            }
-
-            $options = [
-                "choices" => $choices,
-                "expanded" => false,
-                "multiple" => false,
-                "attr"  => [
-                    "class" => "selectpicker",
-                    "data-live-search" => "true"
-                ],
-            ];
-        } elseif ($inputType->getType() === InputType::CHECK_TYPE) {
-            $options = [
-                "false_values" => ["no", "off", 0, 0.0, "n", "-", "N", null],
-            ];
-        }
-
-        if ($inputType instanceof ExperimentalMeasurement) {
-            $formBuilder->add("measurement_{$inputType->getId()->toBase58()}", $type, array_merge($options, $baseOptions));
-        } elseif ($inputType instanceof ExperimentalCondition) {
-            $formBuilder->add("condition_{$inputType->getId()->toBase58()}", $type, array_merge($options, $baseOptions));
-        } else {
-            $formBuilder->add("value_{$inputType->getId()->toBase58()}", $type, array_merge($options, $baseOptions));
         }
     }
 

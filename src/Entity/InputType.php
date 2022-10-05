@@ -15,6 +15,8 @@ abstract class InputType
     const FREE_TYPE = "free";
     const CHEMICAL_TYPE = "chemical";
     const PROTEIN_TYPE = "protein";
+    const SUBSTANCE_TYPE = "substance";
+    const LOT_TYPE = "lot";
 
     const TYPES = [
         self::FREE_TYPE,
@@ -24,6 +26,8 @@ abstract class InputType
         self::CHOICE_TYPE,
         self::CHEMICAL_TYPE,
         self::PROTEIN_TYPE,
+        self::SUBSTANCE_TYPE,
+        self::LOT_TYPE,
     ];
 
     const LABEL_TYPES = [
@@ -34,6 +38,8 @@ abstract class InputType
         "Choice" => self::CHOICE_TYPE,
         "Chemical" => self::CHEMICAL_TYPE,
         "Protein" => self::PROTEIN_TYPE,
+        "Substance" => self::SUBSTANCE_TYPE,
+        "Lot" => self::LOT_TYPE,
     ];
 
     #[ORM\Column(type: "string", length: 30, nullable: false)]

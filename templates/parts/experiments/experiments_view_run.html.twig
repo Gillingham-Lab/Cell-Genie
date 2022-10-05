@@ -4,6 +4,49 @@
 
 {% block title %}Gin :: Experiment :: {{ experiment.name }} :: {{ run.name }}{% endblock %}
 
+{% macro format_experimental_datum(datum, substances, lots) %}
+    {% if datum.type is defined %}
+        {% if datum.value is null %}
+            Empty
+        {% elseif datum.type == "substance" %}
+            {% if datum.value is integer %}
+                ((substance#{{ datum.value }}))
+            {% else %}
+                {% set substance = substances.find(datum.value) %}
+                {{ (substance is null ? "((substance#" ~ datum.value ~ "))" : macros.pillify_substance(substance)) }}
+            {% endif %}
+        {% elseif datum.type == "lot" %}
+            {% set lot = lots.find(datum.value) %}
+            {% set substance = substances.findOneByLot(datum.value) %}
+            {{ (lot is null or substance is null ? "((lot#" ~ datum.value ~ "))" : macros.pillify_lot(substance, lot)) }}
+        {% elseif datum.type == "chemical" %}
+            {% if datum.value is integer %}
+                ((chemical#{{ datum.value }}))
+            {% else %}
+                {% set substance = substances.find(datum.value) %}
+                {{ (substance is null ? "((chemical#" ~ datum.value ~ "))" : macros.pillify_substance(substance)) }}
+            {% endif %}
+        {% elseif datum.type == "protein" %}
+            {% if datum.value is integer %}
+                ((chemical#{{ datum.value }}))
+            {% else %}
+                {% set substance = substances.find(datum.value) %}
+                {{ (substance is null ? "((protein#" ~ datum.value ~ "))" : macros.pillify_substance(substance)) }}
+            {% endif %}
+        {% elseif datum.type == "check" %}
+            {% if datum.value %}
+                Y
+            {% else %}
+                -
+            {% endif %}
+        {% else %}
+            {{ datum.value }}
+        {% endif %}
+    {% else %}
+        {{ datum.value }}
+    {% endif %}
+{% endmacro %}
+
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
@@ -53,23 +96,7 @@
 
                                 {% if run.data.conditions is defined %}
                                     {% for condition in run.data["conditions"] %}
-                                        {% if condition.type is defined and condition.type == "chemical" %}
-                                            {% if condition.value|length < 10 %}
-                                                {{ macros.definition_row(condition.title, "((chemical#" ~ condition.value ~ "))") }}
-                                            {% else %}
-                                                {% set chem = chemicals.find(condition.value) %}
-                                                {{ macros.definition_row_raw(condition.title, macros.chemlink(chem)) }}
-                                            {% endif %}
-                                        {% elseif condition.type is defined and condition.type == "protein" %}
-                                            {% if condition.value|length < 10 %}
-                                                {{ macros.definition_row(condition.title, "((protein#" ~ condition.value ~ "))") }}
-                                            {% else %}
-                                                {% set protein = proteins.find(condition.value) %}
-                                                {{ macros.definition_row_raw(condition.title, macros.proteinlink(protein)) }}
-                                            {% endif %}
-                                        {% else %}
-                                            {{ macros.definition_row(condition.title, condition.value) }}
-                                        {% endif %}
+                                        {{ macros.definition_row_raw(condition.title, _self.format_experimental_datum(condition, substances, lots)) }}
                                     {% endfor %}
                                 {% endif %}
                                 </tbody>
@@ -171,7 +198,9 @@
                                         {% if well.wellData.conditions is defined %}
                                             {% for condition_id in condition_ids %}
                                                 {% for condition in well.wellData.conditions|filter(c => condition_id == c.id) %}
-                                                    {% if condition.type is defined and condition.type == "chemical" %}
+                                                    <td>{{ _self.format_experimental_datum(condition, substances, lots) }}</td>
+                                                    {# {% if condition.type is defined and condition.type == "chemical" %}
+                                                        <td></td>
                                                         {% if condition.value|length < 10 %}
                                                             <td>((chemical#{{ condition.value }}))</td>
                                                         {% else %}
@@ -184,7 +213,7 @@
                                                         {% endif %}
                                                     {% elseif condition.type is defined and condition.type == "protein" %}
                                                         {% if condition.value|length < 10 %}
-                                                            {# Important if old data is around. #}
+                                                            {# Important if old data is around. # }
                                                             <td>((protein#{{ condition.value }}))</td>
                                                         {% else %}
                                                             {% set protein = proteins.find(condition.value) %}
@@ -202,7 +231,7 @@
                                                         {% endif %}
                                                     {% else %}
                                                         <td>{{ condition.value }}</td>
-                                                    {% endif %}
+                                                    {% endif %} #}
                                                 {% else %}
                                                     <td></td>
                                                 {% endfor %}
@@ -216,15 +245,7 @@
                                         {% if well.wellData.measurements is defined %}
                                             {% for measurement_id in measurement_ids %}
                                                 {% for measurement in well.wellData.measurements|filter(m => measurement_id == m.id) %}
-                                                    {% if measurement.type == 'check' %}
-                                                        {% if measurement.value %}
-                                                            <td>Y</td>
-                                                        {% else %}
-                                                            <td></td>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <td>{{ measurement.value }}</td>
-                                                    {% endif %}
+                                                    <td>{{ _self.format_experimental_datum(measurement, substances, lots) }}</td>
                                                 {% else %}
                                                     <td></td>
                                                 {% endfor %}
