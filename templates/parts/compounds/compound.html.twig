@@ -10,7 +10,7 @@
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
             {# Modified layout version #}
-            {{ layout.header(chemical.shortName ~ " | " ~ chemical.longName) }}
+            {{ layout.header(chemical.shortName ~ " | " ~ chemical.longName, false, true, icons.chemical()) }}
 
             {{ layout.toolbox([
                 {
@@ -27,7 +27,7 @@
                     "type": "add",
                     "tooltipText": "Add lot",
                     "target": url("app_substance_add_lot", {"substance": chemical.ulid}),
-                }
+                },
             ]) }}
 
 

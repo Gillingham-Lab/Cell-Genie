@@ -1,24 +1,29 @@
 {% extends 'homepage.html.twig' %}
 {% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
 
 {% block title %}Gin :: Epitopes{% endblock %}
 
 {% macro tools(epitope=null) %}
-    <div class="btn-group btn-group-sm mr-3">
-        <a
-                href="{{ url("app_epitope_view", {"epitope": epitope.id}) }}"
-                class="btn btn-primary btn-sm"
-                data-toggle="tooltip" data-placement="bottom" title="View epitope"
-        >
-            <span class="fa fa-eye"></span>
-        </a>
-    </div>
+    {{ layout.toolbox_column([
+        {
+            "type": "view",
+            "tooltipText": "View epitope",
+            "target": url("app_epitope_view", {"epitope": epitope.id}),
+        },
+        {
+            "type": "edit",
+            "tooltipText": "Edit epitope",
+            "target": url("app_epitope_edit", {"epitope": epitope.id}),
+            "display": "lg",
+        },
+    ]) }}
 {% endmacro %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header("Epitopes") }}
+            {{ layout.header("Epitopes", false, true, icons.epitope()) }}
 
             {{ layout.toolbox([
                 {

@@ -1,35 +1,36 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
-{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
+{% import 'utility/icons.html.twig' as icon %}
 
 {% macro cell_tools(cell=null) %}
-    {% if cell == null %}
-        <div class="btn-group btn-group-sm mr-3" style="visibility: hidden">
-            <span class="btn btn-primary btn-sm"><span class="far fa-clipboard"></span></span>
-            <span class="btn btn-primary btn-sm"><span class="fa fa-eye"></span></span>
-        </div>
+    {% if cell is null %}
     {% else %}
-        <div class="btn-group btn-group-sm mr-3">
-            {% if cell.rrid %}
-                <a
-                    class="btn btn-primary btn-sm btn-clipboard"
-                    data-toggle="tooltip" data-placement="bottom" title="Copy cell line information"
-                    data-clipboard-text="{{ cell.name }} ({{ cell.rrid ? "RRID:" ~ cell.rrid : "" }})"
-                >
-                    <span class="far fa-clipboard"></span>
-                </a>
-            {% else %}
-                <span class="btn btn-outline-secondary btn-sm disabled"><span class="far fa-clipboard"></span></span>
-            {% endif %}
-            <a
-                href="{{ cell_macros.url_cell(cell) }}"
-                class="btn btn-primary btn-sm"
-                data-toggle="tooltip" data-placement="bottom" title="View cell"
-            >
-                <span class="fa fa-eye"></span>
-            </a>
-        </div>
+        {{ layout.toolbox_column([
+            {
+                "type": "view",
+                "tooltipText": "View cell",
+                "target": macros.cell_resolver(cell),
+            },
+            {
+                "type": "clipboard",
+                "tooltipText": "Copy information",
+                "clipboardText": ( cell.name ~ " (" ~ (cell.rrid ? "RRID:" ~ cell.rrid : "") ~ ")"),
+                "disabled": cell.rrid ? false : true,
+            },
+            {
+                "type": "edit",
+                "disabled": true,
+                "tooltipText": "Edit cell",
+                "display": "lg",
+            },
+            {
+                "type": "add",
+                "disabled": true,
+                "tooltipText": "Add aliquot",
+                "display": "lg",
+            }
+        ]) }}
     {% endif %}
 {% endmacro %}
 
@@ -39,7 +40,7 @@
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header("Cells") }}
+            {{ layout.header("Cells", false, true, icon.cell()) }}
 
             {{
                 layout.toolbox([
@@ -51,26 +52,12 @@
                 ])
             }}
 
-            {# <div class="row">
-                <div class="col bg-white mx-3 mb-3 border py-2 px-3 px-lg-5">
-                    <div class="btn-group" role="group" aria-label="tools">
-                        <a
-                            class="btn btn-primary disabled"
-                            data-toggle="tooltip" data-placement="bottom" title="Add new cell"
-                        >
-                            <span class="fas fa-fw fa-plus"></span>
-                        </a>
-                    </div>
-                </div>
-            </div> #}
-
             <div class="row">
                 <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
                     <table class="table table-hover fancyTable">
                         <thead>
                         <tr>
-                            <th>
-                                {{ _self.cell_tools() }}
+                            <th style="width: 50px">
                             </th>
                             <th scope="col">
                                 Nr

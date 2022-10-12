@@ -1,6 +1,8 @@
 {% extends 'homepage.html.twig' %}
 {% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_epitopes %}
 {% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+
 
 {% macro format_antibody_name(antibody) %}
     <span data-toggle="tooltip" data-placement="bottom" title="{{ antibody.longName }}">{{ antibody.shortName }}</span>
@@ -30,7 +32,7 @@
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(pageTitle) }}
+            {{ layout.header(pageTitle, false, true, icons.antibody()) }}
 
             {{
             layout.toolbox([
@@ -108,7 +110,35 @@
 {% endblock %}
 
 {% macro antibody_tools(antibody) %}
-    {% if antibody is not same as(false) %}
+    {% if antibody == null %}
+    {% else %}
+        {{ layout.toolbox_column([
+            {
+                "type": "view",
+                "tooltipText": "View chemical",
+                "target": antibody.number ? url("app_antibody_view_number", {"antibodyNr": antibody.number}) : url("app_antibody_view", {"antibodyId": antibody.ulid}),
+            },
+            {
+                "type": "clipboard",
+                "tooltipText": "Copy information",
+                "clipboardText": ( antibody.longName ~ " (" ~ (antibody.vendor.name ?? "??") ~ ", " ~ (antibody.vendorPN ?? "??") ~(antibody.rrid ? ", RRID:" ~antibody.rrid : "") ~ ")" ),
+            },
+            {
+                "type": "edit",
+                "tooltipText": "Edit antibody",
+                "target": url("app_substance_edit", {"substance": antibody.ulid}),
+                "display": "lg",
+            },
+            {
+                "type": "add",
+                "tooltipText": "Add lot",
+                "target": url("app_substance_add_lot", {"substance": antibody.ulid}),
+                "display": "lg",
+            },
+        ]) }}
+    {% endif %}
+
+    {# {% if antibody is not same as(false) %}
         <div class="btn-group btn-group-sm mr-3">
             <a
                     class="btn btn-info btn-clipboard"
@@ -128,15 +158,14 @@
             <span class="btn btn-info btn-clipboard" ><span class="far fa-clipboard"></span></span>
             <span class="btn btn-info"><span class="far fa-eye"></span></span>
         </div>
-    {% endif %}
+    {% endif %}#}
 {% endmacro %}
 
 {% macro display_any(antibodies) %}
     <table class="table table-hover {% if antibodies|length > 0 %}fancyTable{% endif %}">
         <thead>
             <tr>
-                <th scope="col">
-                    {{ _self.antibody_tools(false) }}
+                <th scope="col" style="width: 50px;">
                 </th>
                 <th scope="col">
                     ID
@@ -175,8 +204,8 @@
     <table class="mb-5 mt-3 table px-5 table-hover {% if primaryAntibodies|length > 0 %}fancyTable{% endif %}">
         <thead>
             <tr>
+                <th scope="col" style="width: 50px;"></th>
                 <th scope="col">
-                    {{ _self.antibody_tools(false) }}
                     ID
                 </th>
                 <th scope="col">Name</th>
@@ -190,10 +219,12 @@
         {% for entry in primaryAntibodies %}
             {% set primaryAntibody = entry %}
             <tr>
-                <th>
+                <td>
                     {{ _self.antibody_tools(primaryAntibody) }}
+                </td>
+                <td>
                     {{ primaryAntibody.number }}{{ validation_status(primaryAntibody) }}
-                </th>
+                </td>
                 <td>{{ _self.format_antibody_name(primaryAntibody) }}</td>
                 <td>{{ pillify_epitopes(primaryAntibody.epitopeTargets) }}</td>
                 <td>{{ pillify_epitopes(primaryAntibody.epitopes) }}</td>
@@ -209,8 +240,8 @@
     <table class="mb-5 mt-3 table table-hover {% if secondaryAntibodies|length > 0 %}fancyTable{% endif %}">
         <thead>
             <tr>
+                <th scope="col" style="width: 50px;"></th>
                 <th scope="col">
-                    {{ _self.antibody_tools(false) }}
                     ID
                 </th>
                 <th scope="col">Name</th>
@@ -226,10 +257,12 @@
             {% set secondaryAntibody = entry %}
             {# {% set secondaryAntibody = entry %} #}
             <tr>
-                <th>
+                <td>
                     {{ _self.antibody_tools(secondaryAntibody) }}
+                </td>
+                <td>
                     {{ secondaryAntibody.number }}{{ validation_status(secondaryAntibody) }}
-                </th>
+                </td>
                 <td>{{ _self.format_antibody_name(secondaryAntibody) }}</td>
                 <td>{{ pillify_epitopes(secondaryAntibody.epitopeTargets) }}</td>
                 <td>{{ pillify_epitopes(secondaryAntibody.epitopes) }}</td>

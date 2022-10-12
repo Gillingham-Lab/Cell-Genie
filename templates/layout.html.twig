@@ -1,13 +1,17 @@
 {% macro header(title, subtitle=false, barcode=true, icon=null) %}
     <div class="row">
         <div class="col bg-white mx-3 mb-3 border d-flex align-items-center">
-            {% if icon %}<div class="float-lg-start h2 p-3 p-lg-5 pe-lg-3">{{ icon }}</div>{% endif %}
-            <div class="{% if not icon %}float-lg-start p-3 p-lg-5{% else %}{% endif%} flex-fill">
-                {% if subtitle %}
-                    <h2 class="text-muted">{{ subtitle }}</h2>
-                {% endif %}
+            <div class="float-lg-start p-3 p-lg-5 flex-fill">
+                <h1 class="align-middle">
+                    {% if icon %}{{ icon }}{% endif %}
+                    {{ title }}
+                </h1>
 
-                <h1>{{ title }}</h1>
+                {% if subtitle %}
+                    <h2 class="text-muted">
+                        {{ subtitle }}
+                    </h2>
+                {% endif %}
             </div>
 
             {% if barcode %}
@@ -24,6 +28,7 @@
         {% for tool in tools %}
             {% set iconClass = "" %}
             {% set btnClass = "" %}
+            {% set displayClass = "" %}
 
             {% if tool.iconClass is defined %}
                 {% set iconClass = tool["iconClass"] %}
@@ -31,6 +36,12 @@
 
             {% if tool.btnClass is defined %}
                 {% set btnClass = tool["btnClass"] %}
+            {% endif %}
+
+            {% if tool.display is defined %}
+                {% if tool.display == "lg" %}
+                    {% set displayClass = "d-none d-lg-inline" %}
+                {% endif %}
             {% endif %}
 
             {% if tool.type is defined %}
@@ -92,7 +103,7 @@
                         href="{{ tool.target }}"
                     {% endif %}
 
-                    class="btn {{ classTrail }}"
+                    class="{{ classTrail }} {{ displayClass }}"
 
                     {% if tool.confirmationRequired is defined %}
                         onclick='return confirm("{{ tool.confirmationText is defined ? tool.confirmationText : 'Are you sure?' }}")'
@@ -117,6 +128,10 @@
     <div class="card-body border-bottom py-1 {{ divClass }}">
         {{ _self.toolbox_content(tools, size) }}
     </div>
+{% endmacro %}
+
+{% macro toolbox_column(tools, size="sm") %}
+    {{ _self.toolbox_content(tools, size) }}
 {% endmacro %}
 
 {% macro toolbox(tools) %}

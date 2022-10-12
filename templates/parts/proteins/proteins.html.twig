@@ -1,5 +1,5 @@
 {% extends 'homepage.html.twig' %}
-{% from 'macros.html.twig' import pillify_epitopes, pillify_proteins %}
+{% from 'macros.html.twig' import pillify_epitopes, pillify_substances %}
 {% import 'layout.html.twig' as layout %}
 {% import 'utility/icons.html.twig' as icons %}
 
@@ -59,7 +59,7 @@
 
                                 <td class="align-middle d-none d-lg-table-cell">
                                     {% if protein.children|length > 0 %}
-                                        {{ pillify_proteins(protein.children) }}
+                                        {{ pillify_substances(protein.children) }}
                                     {% else %}
                                         -
                                     {% endif %}

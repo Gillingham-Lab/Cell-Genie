@@ -1,30 +1,38 @@
 {% extends 'homepage.html.twig' %}
 {% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
 
 {% block title %}Gin :: Chemicals{% endblock %}
 
 {% macro tools(chemical=null) %}
     {% if chemical == null %}
-        <div class="btn-group btn-group-sm mr-3" style="visibility: hidden">
-            <span class="btn btn-primary btn-sm"><span class="fa fa-eye"></span></span>
-        </div>
     {% else %}
-        <div class="btn-group btn-group-sm mr-3">
-            <a
-                    href="{{ url("app_compound_view", {"compoundId": chemical.ulid}) }}"
-                    class="btn btn-primary btn-sm"
-                    data-toggle="tooltip" data-placement="bottom" title="View cell"
-            >
-                <span class="fa fa-eye"></span>
-            </a>
-        </div>
+        {{ layout.toolbox_column([
+            {
+                "type": "view",
+                "tooltipText": "View chemical",
+                "target": url("app_compound_view", {"compoundId": chemical.ulid}),
+            },
+            {
+                "type": "edit",
+                "tooltipText": "Edit chemical",
+                "target": url("app_substance_edit", {"substanceId": chemical.ulid}),
+                "display": "lg",
+            },
+            {
+                "type": "add",
+                "tooltipText": "Add lot",
+                "target": url("app_substance_add_lot", {"substance": chemical.ulid}),
+                "display": "lg",
+            },
+        ]) }}
     {% endif %}
 {% endmacro %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header("Chemicals") }}
+            {{ layout.header("Chemicals", false, true, icons.chemical()) }}
 
             {{ layout.toolbox([
                 {
@@ -39,7 +47,7 @@
                     <table class="table table-hover fancyTable" data-ft-sort-column=2>
                         <thead>
                         <tr>
-                            <th scope="rol">{{ _self.tools() }}</th>
+                            <th scope="col" style="width: 50px;"></th>
                             <th scope="col" style="width: 200px">Structure</th>
                             <th scope="col">Short Name</th>
                             <th class="d-none d-lg-table-cell" scope="col">Labjournal</th>

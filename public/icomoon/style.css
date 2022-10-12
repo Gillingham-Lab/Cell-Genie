@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?fuvery');
-  src:  url('fonts/icomoon.eot?fuvery#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?fuvery') format('truetype'),
-    url('fonts/icomoon.woff?fuvery') format('woff'),
-    url('fonts/icomoon.svg?fuvery#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?rf5tzh');
+  src:  url('fonts/icomoon.eot?rf5tzh#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?rf5tzh') format('truetype'),
+    url('fonts/icomoon.woff?rf5tzh') format('woff'),
+    url('fonts/icomoon.svg?rf5tzh#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,11 +25,44 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-oligomer:before {
-  content: "\e904";
+.icon-epitope-twocolor .path1:before {
+  content: "\e909";
+  color: rgb(0, 0, 0);
 }
-.icon-protein:before {
-  content: "\e903";
+.icon-epitope-twocolor .path2:before {
+  content: "\e90a";
+  margin-left: -0.9287109375em;
+  color: rgb(136, 136, 136);
+}
+.icon-antibody-primary-twocolor .path1:before {
+  content: "\e907";
+  color: rgb(136, 136, 136);
+}
+.icon-antibody-primary-twocolor .path2:before {
+  content: "\e908";
+  margin-left: -0.9287109375em;
+  color: rgb(0, 0, 0);
+}
+.icon-antibody-secondary-twocolor .path1:before {
+  content: "\e90f";
+  color: rgb(0, 0, 0);
+}
+.icon-antibody-secondary-twocolor .path2:before {
+  content: "\e910";
+  margin-left: -0.9287109375em;
+  color: rgb(136, 136, 136);
+}
+.icon-mammalian-cell:before {
+  content: "\e90b";
+}
+.icon-mammalian-cell-alt:before {
+  content: "\e90c";
+}
+.icon-epitope:before {
+  content: "\e906";
+}
+.icon-chemical:before {
+  content: "\e905";
 }
 .icon-antibody:before {
   content: "\e900";
@@ -39,4 +72,10 @@
 }
 .icon-antibody-secondary:before {
   content: "\e902";
+}
+.icon-oligomer:before {
+  content: "\e904";
+}
+.icon-protein:before {
+  content: "\e903";
 }

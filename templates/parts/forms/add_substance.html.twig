@@ -1,13 +1,14 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icon %}
 
 {% block title %}Gin :: {{ title }}{% endblock %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false) }}
+            {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
 
             {{ layout.toolbox([
                 {

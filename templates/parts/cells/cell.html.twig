@@ -2,6 +2,7 @@
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
 {% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
+{% import 'utility/icons.html.twig' as icon %}
 
 {% block title %}Gin :: Cell :: {{ cell.cellNumber ~ " -" ~ cell.name }}{% endblock %}
 
@@ -37,7 +38,7 @@
 
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(cell.cellNumber ~ " -" ~ cell.name) }}
+            {{ layout.header(cell.cellNumber ~ " -" ~ cell.name, false, true, icon.cell()) }}
 
             {{ layout.toolbox([
                 {
@@ -81,11 +82,7 @@
                                     <tr>
                                         <th scope="row">Children</th>
                                         <td>
-                                            {% for child in cell.children %}
-                                                {% set childUrl = cell_macros.url_cell(child) %}
-
-                                                <a class='badge rounded-pill bg-primary text-light' href='{{ childUrl }}'>{{ child.name }}</a>
-                                            {% endfor %}
+                                            {{ macros.pillify(cell.children) }}
                                         </td>
                                     </tr>
                                 {% else %}

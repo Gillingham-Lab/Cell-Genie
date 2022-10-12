@@ -10,7 +10,7 @@
 {% block body_main %}
 <div class="row">
     <div class="container container-fluid w-100 p-0 m-0">
-        {{ layout.header(epitope.shortName, "Epitope", false) }}
+        {{ layout.header(epitope.shortName, "Epitope", false, icons.epitope()) }}
 
         {{ layout.toolbox([
             {
@@ -66,7 +66,11 @@
                                                     </a>
                                                 </div>
                                             </td>
-                                            <td>{{ substance.shortName }}</td>
+                                            {% if substance is substanceAntibody %}
+                                                <td data-sortvalue="{{ substance.number }}">{{ icons.any(substance) }} {{ substance.number }} | {{ substance.shortName }}</td>
+                                            {% else %}
+                                                <td data-sortvalue="{{ substance.shortName }}">{{ icons.any(substance) }} {{ substance.shortName }}</td>
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
                                 </tbody>

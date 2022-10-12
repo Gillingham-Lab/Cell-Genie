@@ -1,16 +1,40 @@
 {% macro antibody(classOnly=false) %}
     {% if classOnly %}
-        icon icon-protein
+        icon icon-antibody
     {% else %}
         <span class="icon icon-antibody"></span>
     {% endif %}
 {% endmacro %}
 
+{% macro antibody_primary(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-antibody-primary
+    {% else %}
+        <span class="icon icon-antibody-primary-twocolor"><span class="path1"></span><span class="path2"></span></span>
+    {% endif %}
+{% endmacro %}
+
+{% macro antibody_secondary(classOnly=false) %}
+    {% if classOnly %}
+        icon icon--antibody-secondary
+    {% else %}
+        <span class="icon icon-antibody-secondary-twocolor"><span class="path1"></span><span class="path2"></span></span>
+    {% endif %}
+{% endmacro %}
+
+{% macro epitope(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-epitope
+    {% else %}
+        <span class="icon icon-epitope-twocolor"><span class="path1"></span><span class="path2"></span></span>
+    {% endif %}
+{% endmacro %}
+
 {% macro chemical(classOnly=false) %}
     {% if classOnly %}
-        icon icon-protein
+        icon icon-chemical
     {% else %}
-        <span class="fas fa-fw fa-tablets"></span>
+        <span class="icon icon-chemical"></span>
     {% endif %}
 {% endmacro %}
 
@@ -30,6 +54,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro cell(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-oligomer
+    {% else %}
+        <span class="icon icon-mammalian-cell"></span>
+    {% endif %}
+{% endmacro %}
+
 {% macro any(any, classOnly=false) %}
     {% if any is substanceAntibody %}
         {{ _self.antibody(classOnly) }}
@@ -39,5 +71,7 @@
         {{ _self.oligo(classOnly) }}
     {% elseif any is substanceProtein %}
         {{ _self.protein(classOnly) }}
+    {% elseif any is cell %}
+        {{ _self.cell(classOnly) }}
     {% endif %}
 {% endmacro %}

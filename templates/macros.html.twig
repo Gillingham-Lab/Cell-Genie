@@ -161,6 +161,36 @@
     {% endif %}
 {% endmacro %}
 
+{% macro cell_resolver(cell) %}
+    {% if cell.cellNumber %}
+        {{ url("app_cell_view_number", {"cellNumber": cell.cellNumber}) }}
+    {% else %}
+        {{ url("app_cell_view", {"cellId": cell.id}) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro pillify(objects) %}
+    {% for object in objects %}
+        {% if object is substance %}
+            {{ _self.pillify_substance(object) }}
+        {% elseif object is cell %}
+            {{ _self.pillify_cell(object) }}
+        {% elseif object is lot %}
+            {% set substance = object[0] %}
+            {% set lot = object[1] %}
+
+            {{ _self.pillify_lot(substance, lot) }}
+        {% else %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro pillify_substances(substances) %}
+    {% for substance in substances %}
+        {{  _self.pillify_substance(substance) }}
+    {% endfor %}
+{% endmacro %}
+
 {% macro pillify_substance(substance) %}
     {% from 'utility/icons.html.twig' import any as any_icon %}
     {% if substance is null %}
@@ -198,9 +228,21 @@
 {% endmacro %}
 
 {% macro pillify_epitopes(epitopes, link_to_antobodies = false) %}
+    {% from 'utility/icons.html.twig' import epitope as epitope_icon %}
     {% for epitope in epitopes %}
-        <a class='badge rounded-pill bg-primary text-light' href='{{ url("app_epitope_view", {"epitope": epitope.id}) }}'>{{ epitope }}</a>
+        <a class='badge rounded-pill bg-warning text-decoration-none text-light' href='{{ url("app_epitope_view", {"epitope": epitope.id}) }}'>{{ epitope_icon() }} {{ epitope }}</a>
     {% endfor %}
+{% endmacro %}
+
+{% macro pillify_cell(cell) %}
+    {% from 'utility/icons.html.twig' import cell as cell_icon %}
+    {% if cell is null %}
+        <span class="badge round bg-white border-dark">null</span>
+    {% elseif cell is cell %}
+        <a class='badge rounded-pill bg-info text-light text-decoration-none' href="{{ _self.cell_resolver(cell) }}">{{ cell_icon() }} {{ cell.cellNumber }} {{ cell.name }}</a>
+    {% else %}
+        ??
+    {% endif %}
 {% endmacro %}
 
 {% macro list_of_files(files) %}

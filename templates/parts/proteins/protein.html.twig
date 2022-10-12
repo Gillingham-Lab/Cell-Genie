@@ -51,7 +51,7 @@
                                         <th>Ancestors</th>
                                         <td>
                                             {% if protein.parents|length > 0 %}
-                                                {{ macros.pillify_proteins(protein.parents) }}
+                                                {{ macros.pillify_substances(protein.parents) }}
                                             {% else %}
                                                 None
                                             {% endif %}
@@ -62,7 +62,7 @@
                                         <th>Descendants</th>
                                         <td>
                                             {% if protein.children|length > 0 %}
-                                                {{ macros.pillify_proteins(protein.children) }}
+                                                {{ macros.pillify_substances(protein.children) }}
                                             {% else %}
                                                 None
                                             {% endif %}

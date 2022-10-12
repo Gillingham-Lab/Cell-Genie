@@ -1,3 +1,5 @@
+{% import 'utility/icons.html.twig' as icon %}
+
 <!DOCTYPE html>
 <html class="h-100">
     <head>
@@ -25,6 +27,14 @@
             label.required:after {
                 content: "* ";
             }
+
+            .text-light span.icon .path1:before {
+                color: #f6f6f6;
+            }
+
+            .text-light span.icon .path2:before {
+                color: #777777;
+            }
         </style>
     </head>
     <body class="h-100">
@@ -41,12 +51,12 @@
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="{{ url("app_cells") }}" id="navbar-dropdown-cell-link" role="button" data-toggle="dropdown" aria-haspopup="true">
-                                    <span class="fas fa-fw fa-disease"></span>
+                                    {{ icon.cell() }}
                                     Cells
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="navbar-dropdown-cell-link">
-                                    <a class="dropdown-item" href="{{ url("app_cells") }}"><span class="fas fa-fw fa-disease"></span>All</a>
+                                    <a class="dropdown-item" href="{{ url("app_cells") }}">{{ icon.cell() }}All</a>
                                     <a class="dropdown-item" href="{{ url("app_cell_cultures") }}"><span class="fas fa-fw fa-flask"></span>Cell Cultures</a>
                                     <!--<a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw icon icon-antibody-primary"></span>Primaries</a>
                             <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw icon icon-antibody-secondary"></span>Secondaries</a>
@@ -98,7 +108,7 @@
 
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url("app_compounds") }}">
-                                    <span class="fas fa-fw fa-tablets"></span>
+                                    {{ icon.chemical() }}
                                     Chemicals
                                 </a>
                             </li>
@@ -112,32 +122,32 @@
 
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url("app_proteins") }}">
-                                    <span class="fa-fw icon icon-protein"></span>
+                                    {{ icon.protein() }}
                                     Proteins
                                 </a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url("app_oligos") }}">
-                                    <span class="fa-fw icon icon-oligomer"></span>
+                                    {{ icon.oligo() }}
                                     Oligos
                                 </a>
                             </li>
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="{{ url("app_antibodies") }}" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
-                                    <span class="icon icon-antibody"></span>
+                                    {{ icon.antibody() }}
                                     Antibodies
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="navbar-dropdown-antibody-link">
                                     <a class="dropdown-item" href="{{ url("app_antibodies") }}"><span class="fas fa-fw"></span>All</a>
-                                    <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw icon icon-antibody-primary"></span>Primaries</a>
-                                    <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw icon icon-antibody-secondary"></span>Secondaries</a>
+                                    <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}">{{ icon.antibody_primary() }} Primaries</a>
+                                    <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}">{{ icon.antibody_secondary() }} Secondaries</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url("app_substance_new", {"type": "antibody"}) }}"><span class="fas fa-fw fa-plus"></span>New Antibody</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url("app_epitopes") }}"><span class="fas fa-fw"></span>Epitopes</a>
+                                    <a class="dropdown-item" href="{{ url("app_epitopes") }}">{{ icon.epitope() }}Epitopes</a>
                                 </div>
                             </li>
 
