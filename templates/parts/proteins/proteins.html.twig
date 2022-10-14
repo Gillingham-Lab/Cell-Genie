@@ -9,6 +9,31 @@
     <span data-toggle="tooltip" data-placement="bottom" title="{{ item.longName }}">{{ item.shortName }}</span>
 {% endmacro %}
 
+{% macro protein_tools(protein) %}
+    {% if protein == null %}
+    {% else %}
+        {{ layout.toolbox_column([
+            {
+                "type": "view",
+                "tooltipText": "View protein",
+                "target": url("app_protein_view", {"proteinId": protein.ulid}),
+            },
+            {
+                "type": "edit",
+                "tooltipText": "Edit protein",
+                "target": url("app_substance_edit", {"substance": protein.ulid}),
+                "display": "lg",
+            },
+            {
+                "type": "add",
+                "tooltipText": "Add lot",
+                "target": url("app_substance_add_lot", {"substance": protein.ulid}),
+                "display": "lg",
+            },
+        ]) }}
+    {% endif %}
+{% endmacro %}
+
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
@@ -27,10 +52,7 @@
                     <table class="table table-hover fancyTable">
                         <thead>
                         <tr>
-                            <th scope="col">
-                                <div class="btn-group mr-3" style="visibility: hidden;">
-                                    <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
-                                </div>
+                            <th scope="col" style="width: 25px;">
                             </th>
                             <th scope="col">
                                 Name
@@ -47,9 +69,7 @@
                             {% set numberOfLots = proteinRow[1] %}
                             <tr>
                                 <td class="align-middle">
-                                    <div class="btn-group mr-3">
-                                        <a href="{{ url("app_protein_view", {"proteinId": protein.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
-                                    </div>
+                                    {{ _self.protein_tools(protein) }}
                                 </td>
                                 <td class="align-middle" data-sortvalue="{{ protein.shortName }}">
                                     {{ _self.format_antibody_name(protein) }}

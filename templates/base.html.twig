@@ -58,6 +58,9 @@
 
                                 <div class="dropdown-menu" aria-labelledby="navbar-dropdown-cell-link">
                                     <a class="dropdown-item" href="{{ url("app_cells") }}">{{ icon.cell() }}All</a>
+                                    <a class="dropdown-item" href="{{ url("app_cell_add") }}"><span class="fas fa-fw fa-plus"></span>Add cell</a>
+
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url("app_cell_cultures") }}"><span class="fas fa-fw fa-flask"></span>Cell Cultures</a>
                                     <!--<a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}"><span class="fas fa-fw icon icon-antibody-primary"></span>Primaries</a>
                             <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}"><span class="fas fa-fw icon icon-antibody-secondary"></span>Secondaries</a>

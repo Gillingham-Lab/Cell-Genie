@@ -137,28 +137,6 @@
             },
         ]) }}
     {% endif %}
-
-    {# {% if antibody is not same as(false) %}
-        <div class="btn-group btn-group-sm mr-3">
-            <a
-                    class="btn btn-info btn-clipboard"
-                    data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
-            >
-                <span class="far fa-clipboard"></span>
-            </a>
-
-            {% if antibody.number %}
-                <a href="{{ url("app_antibody_view_number", {"antibodyNr": antibody.number}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
-            {% else %}
-                <a href="{{ url("app_antibody_view", {"antibodyId": antibody.ulid}) }}" class="btn btn-info btn-sm"><span class="far fa-eye"></span></a>
-            {% endif %}
-        </div>
-    {% else %}
-        <div class="btn-group btn-group-sm mr-3" style="visibility: hidden">
-            <span class="btn btn-info btn-clipboard" ><span class="far fa-clipboard"></span></span>
-            <span class="btn btn-info"><span class="far fa-eye"></span></span>
-        </div>
-    {% endif %}#}
 {% endmacro %}
 
 {% macro display_any(antibodies) %}
