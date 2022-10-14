@@ -5,6 +5,7 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
+use App\Form\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
@@ -158,6 +159,15 @@ class AntibodyType extends SaveableType
                 $builder->create("vendor", VendorType::class, [
                     "inherit_data" => true,
                     "label" => "Vendor",
+                ])
+            )
+            ->add(
+                $builder->create("_attachments", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Attachments",
+                ])
+                ->add("attachments", AttachmentCollectionType::class, [
+                    "label" => "Attachments",
                 ])
             )
         ;

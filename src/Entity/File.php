@@ -23,6 +23,9 @@ class File
     #[ORM\Column(type: "string", length: 255)]
     private string $contentType = "";
 
+    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 0])]
+    private ?int $orderValue = 0;
+
     #[ORM\Column(type: "string", length: 255, options: ["default" => ""])]
     private string $originalFileName = "";
 
@@ -181,6 +184,17 @@ class File
     {
         $this->uploadedOn = $uploadedOn;
 
+        return $this;
+    }
+
+    public function getOrderValue(): ?int
+    {
+        return $this->orderValue;
+    }
+
+    public function setOrderValue(?int $orderValue): self
+    {
+        $this->orderValue = $orderValue;
         return $this;
     }
 }

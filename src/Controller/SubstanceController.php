@@ -25,6 +25,7 @@ use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\OligoRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,6 +71,7 @@ class SubstanceController extends AbstractController
         Request $request,
         SubstanceRepository $substanceRepository,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Substance $substance = null,
         string $type = null,
     ): Response {
@@ -113,6 +115,9 @@ class SubstanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $fileUploader->upload($form);
+            $fileUploader->updateSequence($substance);
+
             try {
                 if ($new) {
                     $entityManager->persist($substance);
@@ -150,6 +155,7 @@ class SubstanceController extends AbstractController
         SecurityController $securityController,
         EntityManagerInterface $entityManager,
         LotRepository $lotRepository,
+        FileUploader $fileUploader,
         Substance $substance ,
         Lot $lot = null,
     ): Response {
@@ -176,6 +182,9 @@ class SubstanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $fileUploader->upload($form);
+            $fileUploader->updateSequence($lot);
+
             try {
                 if ($new) {
                     $substance->addLot($lot);

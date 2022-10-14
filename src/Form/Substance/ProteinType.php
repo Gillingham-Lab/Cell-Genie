@@ -6,6 +6,7 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
+use App\Form\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
@@ -126,6 +127,15 @@ class ProteinType extends SaveableType
                         "class" => "gin-fancy-select",
                         "data-allow-empty" => "true",
                     ],
+                ])
+            )
+            ->add(
+                $builder->create("_attachments", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Attachments",
+                ])
+                ->add("attachments", AttachmentCollectionType::class, [
+                    "label" => "Attachments",
                 ])
             )
         ;

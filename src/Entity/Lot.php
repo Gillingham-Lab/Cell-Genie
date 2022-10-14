@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\LotRepository;
@@ -17,6 +18,7 @@ class Lot
 {
     use HasBoxTrait;
     use VendorTrait;
+    use HasAttachmentsTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]

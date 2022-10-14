@@ -6,6 +6,7 @@ namespace App\Entity\DoctrineEntity\Substance;
 use App\Entity\Epitope;
 use App\Entity\EpitopeProtein;
 use App\Entity\Lot;
+use App\Entity\Traits\HasUlidAttachmentsTrait;
 use App\Entity\Traits\NameTrait;
 use App\Entity\Traits\NewIdTrait;
 use App\Repository\Substance\SubstanceRepository;
@@ -25,6 +26,7 @@ class Substance
 {
     use NewIdTrait;
     use NameTrait;
+    use HasUlidAttachmentsTrait;
 
     #[ORM\ManyToMany(targetEntity: Lot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "substance_lots")]

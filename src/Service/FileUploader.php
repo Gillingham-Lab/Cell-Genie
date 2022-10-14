@@ -59,4 +59,16 @@ class FileUploader
     {
         return $this->user;
     }
+
+    public function updateSequence(object $object): void
+    {
+        if (method_exists($object, "getAttachments")) {
+            $i = 0;
+            /** @var File $attachment */
+            foreach ($object->getAttachments() as $attachment) {
+                $attachment->setOrderValue($i);
+                $i++;
+            }
+        }
+    }
 }

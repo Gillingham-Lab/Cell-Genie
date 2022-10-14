@@ -14,7 +14,7 @@ trait HasAttachmentsTrait
 {
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable]
-    #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true)]
+    #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]
     #[ORM\OrderBy(["title" => "ASC"])]
     #[Assert\Valid]
     private Collection $attachments;

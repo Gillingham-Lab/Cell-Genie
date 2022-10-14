@@ -6,6 +6,7 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
+use App\Form\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -83,6 +84,15 @@ class ChemicalType extends SaveableType
                         "data-allow-empty" => "true",
                         //"data-allow-add" => true,
                     ],
+                ])
+            )
+            ->add(
+                $builder->create("_attachments", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Attachments",
+                ])
+                ->add("attachments", AttachmentCollectionType::class, [
+                    "label" => "Attachments",
                 ])
             )
         ;

@@ -174,6 +174,7 @@ class CellController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             $fileUploader->upload($form);
+            $fileUploader->updateSequence($cell);
 
             try {
                 $i = 0;
@@ -221,6 +222,7 @@ class CellController extends AbstractController
     public function addNewOrEditCellAliquot(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Cell $cell,
         CellAliquot $cellAliquot = null,
     ): Response {
@@ -249,6 +251,10 @@ class CellController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            // @ToDo: Add attachments to CellAliquots.
+            //$fileUploader->upload($form);
+            //$fileUploader->updateSequence($cellAliquot);
+
             try {
                 $entityManager->persist($cellAliquot);
                 $entityManager->flush();

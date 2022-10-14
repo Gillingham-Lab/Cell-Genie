@@ -364,19 +364,8 @@ class CellType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Attachments",
                 ])
-                ->add("attachments", CollectionJsType::class, [
+                ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                    "required" => false,
-                    "entry_type" => DocumentationType::class,
-                    "by_reference" => false,
-                    "allow_add" => true,
-                    "allow_delete" => true,
-                    "allow_move_up" => true,
-                    "allow_move_down" => true,
-                    "call_post_add_on_init" => true,
-                    "attr" => array(
-                        "class" => "collection",
-                    ),
                 ])
             )
         ;

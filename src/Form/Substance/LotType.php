@@ -10,6 +10,7 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Lot;
 use App\Entity\User;
 use App\Entity\Vendor;
+use App\Form\AttachmentCollectionType;
 use App\Form\SaveableType;
 use App\Form\VendorType;
 use Doctrine\ORM\EntityRepository;
@@ -120,6 +121,15 @@ class LotType extends SaveableType
                 ->add("aliquoteSize", TextType::class, options: [
                     "label" => "Size of each aliquot",
                     "required" => false,
+                ])
+            )
+            ->add(
+                $builder->create("_attachments", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Attachments",
+                ])
+                ->add("attachments", AttachmentCollectionType::class, [
+                    "label" => "Attachments",
                 ])
             )
         ;
