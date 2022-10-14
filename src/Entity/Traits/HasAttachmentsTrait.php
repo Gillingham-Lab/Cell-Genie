@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\Traits;
 
 use App\Entity\File;
-use App\Form\DocumentationType;
+use App\Form\AdminCrud\DocumentationType;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;

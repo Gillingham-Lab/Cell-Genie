@@ -5,7 +5,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\File;
 use App\Entity\User;
-use App\Form\DocumentationType;
+use App\Form\AdminCrud\DocumentationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\Form\FormInterface;

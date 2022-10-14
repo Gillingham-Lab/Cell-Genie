@@ -24,6 +24,7 @@ use App\Repository\Cell\CellRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
+use App\Service\FileUploader;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -150,6 +151,7 @@ class CellController extends AbstractController
     public function addNewOrEditCell(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Cell $cell = null,
     ): Response {
         if (!$cell and $request->get("_route") === "app_cell_add") {
@@ -171,6 +173,8 @@ class CellController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $fileUploader->upload($form);
+
             try {
                 $i = 0;
                 foreach ($cell->getCellProteins() as $cellProtein) {

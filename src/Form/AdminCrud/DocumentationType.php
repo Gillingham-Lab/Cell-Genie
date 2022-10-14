@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\AdminCrud;
 
 use App\Entity\File;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
@@ -21,10 +19,10 @@ class DocumentationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add("title", TextType::class, options: [
+            ->add("title", options: [
                 "label" => "File title (not necessarily a file name)",
             ])
-            ->add("description", TextareaType::class, options: [
+            ->add("description", options: [
                 "label" => "Short file description.",
             ])
             ->add("uploadedBy", options: ["disabled" => true])
