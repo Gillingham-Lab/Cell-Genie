@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
@@ -10,10 +11,12 @@ use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\User;
+use App\Form\Cell\CellAliquotType;
 use App\Form\CellCultureEventTestType;
 use App\Form\CellCultureOtherType;
 use App\Form\CellCultureSplittingType;
 use App\Form\CellCultureType;
+use App\Form\CellType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellCultureRepository;
@@ -27,6 +30,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +71,7 @@ class CellController extends AbstractController
     #[Route("/cells/view/no/{cellNumber}", name: "app_cell_view_number")]
     #[Route("/cells/view/{cellId}/{aliquoteId}", name: "app_cell_aliquote_view")]
     #[Route("/cells/view/no/{cellNumber}/{aliquoteId}", name: "app_cell_aliquote_view_number")]
-    public function cell_overview(
+    public function viewCell(
         string $cellId = null,
         string $aliquoteId = null,
         string $cellNumber = null,
@@ -134,6 +138,139 @@ class CellController extends AbstractController
             "experimentTypes" => $experimentTypes,
         ]);
     }
+
+    #[Route("/cells/add", name: "app_cell_add")]
+    public function addCell(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        return $this->addNewOrEditCell($request, $entityManager);
+    }
+
+    #[Route("/cells/edit/{cell}", name: "app_cell_edit")]
+    #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
+    public function addNewOrEditCell(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Cell $cell = null,
+    ): Response {
+        if (!$cell and $request->get("_route") === "app_cell_add") {
+            $cell = new Cell();
+            $new = true;
+        } elseif (!$cell) {
+            throw $this->createNotFoundException("Cell has not been found");
+        } else {
+            $new = false;
+        }
+
+        $formType = CellType::class;
+        $formOptions = [
+            "save_button" => true,
+            "current_cell" => $new ? null : $cell,
+        ];
+
+        $form = $this->createForm($formType, $cell, $formOptions);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            try {
+                $i = 0;
+                foreach ($cell->getCellProteins() as $cellProtein) {
+                    $cellProtein->setOrderValue($i);
+                    $i++;
+                }
+
+                $entityManager->persist($cell);
+                $entityManager->flush();
+
+                $this->addFlash("success", "Cell has been updated.");
+
+                if ($cell->getCellNumber()) {
+                    return $this->redirectToRoute("app_cell_view_number", ["cellNumber" => $cell->getCellNumber()]);
+                } else {
+                    return $this->redirectToRoute("app_cell_view", ["cellId" => $cell->getId()]);
+                }
+            } catch (\Exception $e) {
+                $this->addFlash("error", "Something went wrong: {$e->getMessage()}.");
+            }
+        }
+
+        return $this->renderForm("parts/forms/add_or_edit_cell.html.twig", [
+            "cell" => ($new ? null : $cell),
+            "form" => $form,
+            "returnTo" => $new
+                ? $this->generateUrl("app_cells")
+                : $this->generateUrl("app_cell_view_number", ["cellNumber" => $cell->getCellNumber()]),
+        ]);
+    }
+
+    #[Route("/cells/addAliquot/{cell}", name: "app_cell_aliquot_add")]
+    #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
+    public function addNewCellAliquot(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Cell $cell
+    ): Response {
+        return $this->addNewOrEditCellAliquot($request, $entityManager, $cell, null);
+    }
+
+    #[Route("/cells/editAliquot/{cell}/{cellAliquot}", name: "app_cell_aliquot_edit")]
+    #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
+    public function addNewOrEditCellAliquot(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Cell $cell,
+        CellAliquot $cellAliquot = null,
+    ): Response {
+        if (!$cellAliquot and $request->get("_route") === "app_cell_aliquot_add") {
+            $cellAliquot = new CellAliquot();
+            $cellAliquot->setCell($cell);
+            $new = true;
+        } elseif (!$cellAliquot) {
+            throw $this->createNotFoundException("Cell aliquot has not been found.");
+        } else {
+            $new = false;
+
+            if ($cellAliquot->getCell() !== $cell) {
+                throw $this->createNotFoundException("No aliquot with the id '{$cellAliquot->getId()}' has been found for the given cell line.");
+            }
+        }
+
+        $formType = CellAliquotType::class;
+        $formOptions = [
+            "save_button" => true,
+            "current_cell" => $cell,
+            "current_aliquot" => $new ? null : $cellAliquot,
+        ];
+
+        $form = $this->createForm($formType, $cellAliquot, $formOptions);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            try {
+                $entityManager->persist($cellAliquot);
+                $entityManager->flush();
+
+                $this->addFlash("success", "Cell aliquot has been updated.");
+
+                if ($cell->getCellNumber()) {
+                    return $this->redirectToRoute("app_cell_aliquote_view_number", ["cellNumber" => $cell->getCellNumber(), "aliquoteId" => $cellAliquot->getId()]);
+                } else {
+                    return $this->redirectToRoute("app_cell_aliquote_view", ["cellId" => $cell->getId(), "aliquoteId" => $cellAliquot->getId()]);
+                }
+            } catch (\Exception $e) {
+                $this->addFlash("error", "Something went wrong: {$e->getMessage()}.");
+            }
+        }
+
+        return $this->renderForm("parts/forms/add_or_edit_cell_aliquot.html.twig", [
+            "cell" => $cell,
+            "aliquot" => $new ? null : $cellAliquot,
+            "form" => $form,
+            "returnTo" => $new
+                ? $this->generateUrl("app_cell_view_number", ["cellNumber" => $cell->getCellNumber()])
+                : $this->generateUrl("app_cell_aliquote_view_number", ["cellNumber" => $cell->getCellNumber(), "aliquoteId" => $cellAliquot->getId()]),
+        ]);
+    }
+
 
     #[Route("/cells/consume/{aliquoteId}", name: "app_cell_consume_aliquote")]
     #[ParamConverter("aliquot", options: ["mapping" => ["aliquoteId"  => "id"]])]

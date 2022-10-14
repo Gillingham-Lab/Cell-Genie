@@ -20,6 +20,13 @@ trait VocabularyTrait
     {
         $vocabEntries = $this->getVocabularyChoices($vocabularyName);
 
+        $options = array_merge([
+            "attr"  => [
+                "class" => "gin-fancy-select",
+                "data-allow-empty" => "true",
+            ],
+        ], $options);
+
         if ($vocabEntries) {
             $type = ChoiceType::class;
 

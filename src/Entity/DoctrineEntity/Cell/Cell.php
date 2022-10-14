@@ -122,7 +122,6 @@ class Cell
     private ?string $origin = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
-    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     #[Gedmo\Versioned]
     private ?DateTimeInterface $acquiredOn = null;
 
@@ -186,7 +185,8 @@ class Cell
     private ?string $cellNumber = "???";
 
     #[ORM\OneToMany(mappedBy: 'cellLine', targetEntity: CellProtein::class, cascade: ["persist", "remove"], orphanRemoval: true)]
-    private $cellProteins;
+    #[ORM\OrderBy(["orderValue" => "ASC"])]
+    private Collection $cellProteins;
 
     public function __construct()
     {

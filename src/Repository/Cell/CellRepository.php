@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * @method Cell|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,6 +21,23 @@ class CellRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Cell::class);
+    }
+
+    public function findCellByIdOrNumber(string $numberOrId): Cell
+    {
+        $qb = $this->createQueryBuilder("c");
+
+        $qb = $qb->select("c")
+            ->addSelect("CASE WHEN c.id = :id THEN 1 ELSE 0 END AS HIDDEN sortCondition")
+            ->where("c.id = :id")
+            ->orWhere("c.cellNumber = :number")
+            ->orderBy("sortCondition", "DESC")
+            ->setMaxResults(1)
+            ->setParameter("id", intval($numberOrId), "integer")
+            ->setParameter("number", $numberOrId, "string")
+        ;
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function getCellsWithAliquotes(?array $orderBy = null)

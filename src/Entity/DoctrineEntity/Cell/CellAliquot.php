@@ -26,9 +26,8 @@ class CellAliquot
     private ?int $id = 0;
 
     #[ORM\Column(type: "datetime", nullable: true)]
-    #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     #[Gedmo\Versioned]
-    private ?DateTimeInterface $aliquoted_on;
+    private ?DateTimeInterface $aliquoted_on = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -42,9 +41,14 @@ class CellAliquot
     private ?string $vialColor = "grey";
 
     #[ORM\Column(type: "integer")]
-    #[Assert\Range(min: 1)]
+    #[Assert\Range(min: 0)]
     #[Gedmo\Versioned]
     private ?int $vials = 1;
+
+    #[ORM\Column(type: "integer", nullable: true, options: ["default" => 0])]
+    #[Assert\Ramge(min: 1)]
+    #[Gedmo\Versioned]
+    private ?int $maxVials = 1;
 
     #[ORM\Column(type: "integer", nullable: true)]
     #[Gedmo\Versioned]
@@ -54,9 +58,9 @@ class CellAliquot
     #[Gedmo\Versioned]
     private ?string $passageDetail = null;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: "integer", nullable: true)]
     #[Gedmo\Versioned]
-    private ?int $cellCount = 0;
+    private ?int $cellCount = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Gedmo\Versioned]
@@ -160,6 +164,22 @@ class CellAliquot
     public function setVials(int $vials): self
     {
         $this->vials = $vials;
+
+        return $this;
+    }
+
+    public function getMaxVials(): ?int
+    {
+        return $this->maxVials ?? $this->vials;
+    }
+
+    public function setMaxVials(?int $maxVials): self
+    {
+        $this->maxVials = $maxVials;
+
+        if ($this->vials === null) {
+            $this->vials = $maxVials;
+        }
 
         return $this;
     }

@@ -28,8 +28,10 @@
         "symfony/proxy-manager-bridge": "*",
         "symfony/uid": "*",
         "symfony/validator": "*",
+        "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "*",
-        "tecnickcom/tcpdf": "^6.5"
+        "tecnickcom/tcpdf": "^6.5",
+        "tienvx/ux-collection-js": "1.1"
     },
     "repositories": [
         {

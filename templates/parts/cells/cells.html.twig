@@ -20,9 +20,9 @@
             },
             {
                 "type": "edit",
-                "disabled": true,
                 "tooltipText": "Edit cell",
                 "display": "lg",
+                "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id })
             },
             {
                 "type": "add",
@@ -46,8 +46,8 @@
                 layout.toolbox([
                     {
                         "type": "add",
-                        "disabled": true,
                         "tooltipText": "Add new cell",
+                        "target": url("app_cell_add"),
                     },
                 ])
             }}

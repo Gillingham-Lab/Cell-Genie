@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bca0a0dfb5819a762c012f4db004e408",
+    "content-hash": "0bb6db1ba8874f88ecb8c4e5c089558a",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -6880,6 +6880,79 @@
             "time": "2022-07-04T16:01:56+00:00"
         },
         {
+            "name": "symfony/webpack-encore-bundle",
+            "version": "v1.15.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/webpack-encore-bundle.git",
+                "reference": "718673b1e758533614190ae74d07305a72bc66a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/718673b1e758533614190ae74d07305a72bc66a9",
+                "reference": "718673b1e758533614190ae74d07305a72bc66a9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3",
+                "symfony/asset": "^4.4 || ^5.0 || ^6.0",
+                "symfony/config": "^4.4 || ^5.0 || ^6.0",
+                "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
+                "symfony/deprecation-contracts": "^2.1 || ^3.0",
+                "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
+                "symfony/polyfill-php80": "^1.25.0",
+                "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
+            },
+            "require-dev": {
+                "symfony/framework-bundle": "^4.4 || ^5.0 || ^6.0",
+                "symfony/phpunit-bridge": "^5.3 || ^6.0",
+                "symfony/twig-bundle": "^4.4 || ^5.0 || ^6.0",
+                "symfony/web-link": "^4.4 || ^5.0 || ^6.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "thanks": {
+                    "name": "symfony/webpack-encore",
+                    "url": "https://github.com/symfony/webpack-encore"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\WebpackEncoreBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Integration with your Symfony app & Webpack Encore!",
+            "support": {
+                "issues": "https://github.com/symfony/webpack-encore-bundle/issues",
+                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.15.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-07-13T17:07:35+00:00"
+        },
+        {
             "name": "symfony/yaml",
             "version": "v6.1.4",
             "source": {
@@ -7024,6 +7097,77 @@
                 }
             ],
             "time": "2022-08-12T07:50:54+00:00"
+        },
+        {
+            "name": "tienvx/ux-collection-js",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tienvx/ux-collection-js.git",
+                "reference": "1fe7c67ac48ebb9301a3cf19ae6fa8e3d8990a80"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tienvx/ux-collection-js/zipball/1fe7c67ac48ebb9301a3cf19ae6fa8e3d8990a80",
+                "reference": "1fe7c67ac48ebb9301a3cf19ae6fa8e3d8990a80",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0",
+                "symfony/config": "^4.4|^5.0|^6.0",
+                "symfony/dependency-injection": "^4.4.17|^5.0|^6.0",
+                "symfony/form": "^4.4.17|^5.0|^6.0",
+                "symfony/http-kernel": "^4.4.17|^5.0|^6.0",
+                "twig/twig": "^2.12|^3.0"
+            },
+            "conflict": {
+                "symfony/flex": "<1.13"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "symfony/framework-bundle": "^4.4.17|^5.0|^6.0",
+                "symfony/twig-bundle": "^4.4.17|^5.0|^6.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.0-dev"
+                },
+                "thanks": {
+                    "name": "ruano-a/symfonyCollectionJs",
+                    "url": "https://github.com/ruano-a/symfonyCollectionJs"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tienvx\\UX\\CollectionJs\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tien",
+                    "email": "tien.xuan.vo@gmail.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https://github.com/tienvx/ux-collection-js/contributors"
+                }
+            ],
+            "description": "Symfony UX integration for collection form type",
+            "homepage": "https://github.com/tienvx/ux-collection-js",
+            "keywords": [
+                "symfony-ux",
+                "ux-collection-js"
+            ],
+            "support": {
+                "issues": "https://github.com/tienvx/ux-collection-js/issues",
+                "source": "https://github.com/tienvx/ux-collection-js/tree/v1.1.0"
+            },
+            "time": "2022-07-17T06:58:23+00:00"
         },
         {
             "name": "twig/twig",

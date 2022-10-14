@@ -28,6 +28,9 @@ class CellProtein
     #[ORM\Column(type: 'array', nullable: true)]
     private ?array $detection = [];
 
+    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 0])]
+    private int $orderValue = 0;
+
     private ?Collection $detectionCollection = null;
 
     public function __toString()
@@ -80,6 +83,17 @@ class CellProtein
     {
         $this->detection = $detection;
 
+        return $this;
+    }
+
+    public function getOrderValue(): int
+    {
+        return $this->orderValue;
+    }
+
+    public function setOrderValue(int $orderValue): self
+    {
+        $this->orderValue = $orderValue;
         return $this;
     }
 }

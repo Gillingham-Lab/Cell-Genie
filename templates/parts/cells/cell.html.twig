@@ -53,8 +53,13 @@
                 },
                 {
                     "type": "edit",
-                    "disabled": true,
                     "tooltipText": "Edit cell",
+                    "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id })
+                },
+                {
+                    "type": "add",
+                    "tooltipText": "Add cell aliquot",
+                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id })
                 }
             ]) }}
 
@@ -65,7 +70,7 @@
                         {{ layout.card_header_collapse("Details", "Details") }}
 
                         {{ layout.card_body_collapse_start("Details") }}
-                        <div class="card-body">
+                        <div class="card-body px-lg-5">
                             <table class="table w-100 table-borderless table-sm table-hover">
                                 <tbody>
                                 {{ macros.definition_row("ID", cell.id) }}
@@ -111,9 +116,31 @@
                     <div class="card mx-3 h-100">
                         {{ layout.card_header_collapse("Aliquot Overview", "AliquotOverview") }}
 
+                        {% if aliquote %}
+                            {{ layout.toolbox_card([
+                                {
+                                    "type": "add",
+                                    "tooltipText": "Add cell aliquot",
+                                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id })
+                                },
+                                {
+                                    "type": "edit",
+                                    "tooltipText": "Edit current aliquot",
+                                    "target": url("app_cell_aliquot_edit", {"cell": cell.cellNumber ?: cell.id, "cellAliquot": aliquote.id})
+                                },
+                            ]) }}
+                        {% else %}
+                            {{ layout.toolbox_card([
+                                {
+                                    "type": "add",
+                                    "tooltipText": "Add aliquot",
+                                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id })
+                                },
+                            ]) }}
+                        {% endif %}
 
                         {{ layout.card_body_collapse_start("AliquotOverview") }}
-                            <div class="card-body">
+                            <div class="card-body px-lg-5">
                                 {% if boxes|length == 0 %}
                                     <em>No aliquotes registered.</em>
                                 {% else %}
@@ -166,7 +193,16 @@
                                                         {{ macros.definition_row("Mycoplasma", aliquote.mycoplasmaResult) }}
                                                         {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
                                                         {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
-                                                        {{ macros.definition_row("Vials left", aliquote.vials) }}
+
+                                                        <tr>
+                                                            <th>Vials left</th>
+                                                            <td>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar" style="width: {{ aliquote.vials/aliquote.maxVials*100 }}%;" aria-valuenow="{{ aliquote.vials }}" aria-valuemin="0" aria-valuemax="aliquote.maxVials">{{ aliquote.vials}}/{{ aliquote.maxVials }}</div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+
                                                         {{ macros.definition_row("Cell count", "#{aliquote.cellCount} k") }}
                                                         {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
                                                         </tbody>
@@ -409,6 +445,50 @@
                         </div>
                     </div>
                 {% endif %}
+
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Aliquot list", "AliquotList") }}
+
+                        {{ layout.card_body_collapse_start("AliquotList") }}
+                        <div class="card-body px-lg-5">
+                            <table class="table table-sm table-borderless table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 25px;"></th>
+                                        <th>ID</th>
+                                        <th>Passage</th>
+                                        <th>Vials</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for aliquot in cell.cellAliquotes %}
+                                        <tr>
+                                            <td>
+                                                {{ layout.toolbox_column([
+                                                    {
+                                                        "type": "view",
+                                                        "tooltipText": "View aliquot",
+                                                        "target": url("app_cell_aliquote_view", {"cellId": cell.cellNumber ?: cell.id, "aliquoteId": aliquot.id})
+                                                    },
+                                                    {
+                                                        "type": "edit",
+                                                        "tooltipText": "Edit aliquot",
+                                                        "target": url("app_cell_aliquot_edit", {"cell": cell.cellNumber ?: cell.id, "cellAliquot": aliquot.id})
+                                                    },
+                                                ]) }}
+                                            </td>
+                                            <td>{{ aliquot.id }}</td>
+                                            <td>{{ aliquot.passage }}</td>
+                                            <td>{{ aliquot.vials }}/{{ aliquot.maxVials }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
 
                 {# Attachments #}
                 {% if cell.attachments|length > 0 %}

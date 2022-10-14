@@ -3,10 +3,10 @@
 {% import 'layout.html.twig' as layout %}
 {% import 'utility/icons.html.twig' as icon %}
 
-{% block title %}Gin :: {{ title }}{% endblock %}
+{% block title %}Gin :: {{ cell is not null ? cell.cellNumber ~ " :: Edit" : "New" }}{% endblock %}
 
 {% block form_header %}
-    {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+    {{ layout.header(cell is not null ? "Edit" : "New", cell ? cell : "Cell", false, icon.any(cell)) }}
 
     {{ layout.toolbox([
         {

@@ -3,10 +3,10 @@
 {% import 'layout.html.twig' as layout %}
 {% import 'utility/icons.html.twig' as icon %}
 
-{% block title %}Gin :: {{ title }}{% endblock %}
+{% block title %}Gin :: {{ cell.cellNumber ?? cell.cellName }} :: {{ aliquot is not null ? "Edit Aliquot" : "New Aliquot" }}{% endblock %}
 
 {% block form_header %}
-    {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+    {{ layout.header(aliquot is not null ? "Edit" : "New", aliquot ? aliquot : "Aliquot", false, icon.any(cell)) }}
 
     {{ layout.toolbox([
         {
