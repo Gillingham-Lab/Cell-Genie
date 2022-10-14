@@ -3,6 +3,7 @@
 {% import 'layout.html.twig' as layout %}
 {% import 'utility/icons.html.twig' as icons %}
 {% from 'utility/substance_lot.html.twig' import lot %}
+{% from 'utility/attachments.html.twig' import attachments %}
 
 {% block title %}Gin :: Chemical :: {{ chemical.shortName }}{% endblock %}
 
@@ -78,6 +79,8 @@
 
                 {# Lot #}
                 {{ lot(chemical) }}
+
+                {{ attachments(chemical.attachments) }}
             </div>
         </div>
     </div>

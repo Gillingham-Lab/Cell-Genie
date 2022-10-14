@@ -46,6 +46,7 @@ class Substance
     {
         $this->lots = new ArrayCollection();
         $this->epitopes = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
     }
 
     public function getLots(): Collection

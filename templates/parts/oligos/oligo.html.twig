@@ -4,6 +4,7 @@
 {% import 'utility/icons.html.twig' as icons %}
 {% from 'utility/substance_lot.html.twig' import lot %}
 {% from 'utility/substance_sequence_viewer.html.twig' import view_sequence %}
+{% from 'utility/attachments.html.twig' import attachments %}
 
 {% block title %}Gin :: Oligo :: {{ oligo.shortName }}{% endblock %}
 
@@ -93,6 +94,8 @@
 
             {# Lot #}
             {{ lot(oligo) }}
+
+            {{ attachments(oligo.attachments) }}
         </div>
     </div>
 </div>

@@ -3,6 +3,7 @@
 {% import 'layout.html.twig' as layout %}
 {% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
 {% import 'utility/icons.html.twig' as icon %}
+{% from 'utility/attachments.html.twig' import attachments %}
 
 {% block title %}Gin :: Cell :: {{ cell.cellNumber ~ " -" ~ cell.name }}{% endblock %}
 
@@ -490,20 +491,7 @@
                     </div>
                 </div>
 
-                {# Attachments #}
-                {% if cell.attachments|length > 0 %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Attachments", "Attachments") }}
-
-                            {{ layout.card_body_collapse_start("Attachments") }}
-                            <div class="card-body">
-                                {{ macros.list_of_files(cell.attachments) }}
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
-                {% endif %}
+                {{ attachments(cell.attachments) }}
             </div>
         </div>
     </div>

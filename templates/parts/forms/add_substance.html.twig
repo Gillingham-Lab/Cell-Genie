@@ -6,7 +6,11 @@
 {% block title %}Gin :: {{ title }}{% endblock %}
 
 {% block form_header %}
-    {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+    {% if createLot is defined %}
+        {{ layout.header(substance ? "Edit Lot" : "New Lot", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+    {% else %}
+        {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+    {% endif %}
 
     {{ layout.toolbox([
         {

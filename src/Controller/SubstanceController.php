@@ -129,7 +129,7 @@ class SubstanceController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash("success", $message);
 
-                //return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
+                return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
             } catch (\Exception $e) {
                 if ($new) {
                     $this->addFlash("error", "Adding a new {$typeName} was not possible. Reason: {$e->getMessage()}.");
@@ -212,6 +212,8 @@ class SubstanceController extends AbstractController
             "substance" => ($new ? null : $substance),
             "form" => $form,
             "returnTo" => $this->generateUrl("app_substance_view", ["substance" => $substance->getUlid()]),
+            "typeName" => $substanceType,
+            "createLot" => true,
         ]);
     }
 

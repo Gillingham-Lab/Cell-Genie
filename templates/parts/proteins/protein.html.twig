@@ -4,6 +4,7 @@
 {% import 'utility/icons.html.twig' as icons %}
 {% from 'utility/substance_lot.html.twig' import lot %}
 {% from 'utility/substance_sequence_viewer.html.twig' import view_sequence %}
+{% from 'utility/attachments.html.twig' import attachments %}
 
 {% block title %}Gin :: Protein :: {{ protein.shortName }}{% endblock %}
 
@@ -207,17 +208,7 @@
                     </div>
                 </div>
 
-                {# Antibodies #}{#
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Antibodies", "Antibodies") }}
-
-                        {{ layout.card_body_collapse_start("Antibodies") }}
-                        <div class="card-body px-lg-5 mx-0">
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div> #}
+                {{ attachments(protein.attachments) }}
             </div>
         </div>
     </div>

@@ -1,8 +1,8 @@
 
-
 {% macro lot(substance) %}
     {% import 'layout.html.twig' as layout %}
     {% import 'macros.html.twig' as macros %}
+    {% from 'utility/attachments.html.twig' import list_of_files %}
 
     <div class="col p-0 m-0 mb-3">
         <div class="card mx-3 h-100">
@@ -65,6 +65,8 @@
                                             </tbody>
                                         </table>
                                     </div>
+
+                                    {{ list_of_files(lot.attachments) }}
 
                                     <div class="card-footer">
                                         <p class="text-muted">

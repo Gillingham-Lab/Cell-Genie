@@ -8,6 +8,7 @@ use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\LotRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Uid\Ulid;
@@ -66,6 +67,11 @@ class Lot
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
+
+    public function __construct()
+    {
+        $this->attachments = new ArrayCollection();
+    }
 
     public function __toString()
     {

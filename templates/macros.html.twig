@@ -245,69 +245,6 @@
     {% endif %}
 {% endmacro %}
 
-{% macro list_of_files(files) %}
-    {% for file in files %}
-        <div class="card mb-3 col-12">
-            <div class="row no-gutters p-3">
-
-                <div class="card-body">
-                    <h5 class="card-title">
-                        {% if file.contentType == "application/pdf" %}
-                            {% set icon = "fa-file-pdf" %}
-                        {% elseif
-                            file.contentType == "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                            or (file.originalFileName ends with ".pptx")
-                            or  (file.originalFileName ends with ".ppt")
-                        %}
-                            {% set icon = "fa-file-powerpoint" %}
-                        {% elseif
-                            (file.originalFileName ends with ".docx")
-                            or  (file.originalFileName ends with ".doc")
-                        %}
-                            {% set icon = "fa-file-word" %}
-                        {% elseif
-                            (file.originalFileName ends with ".xlsx")
-                            or  (file.originalFileName ends with ".slx")
-                        %}
-                            {% set icon = "fa-file-excel" %}
-                        {% else %}
-                            {% set icon = "fa-file" %}
-                        {% endif %}
-
-                        <span class="fas {{ icon }} mr-1"></span>
-                        {{ file.title }}
-                        <a class="ml-3" href="{{ url("file_download", {"fileid": file.id}) }}"><span class="fa fa-download"></span></a>
-                    </h5>
-                    <p class="card-text">{{ file.description ?? "(no description)" }}</p>
-                    <p class="card-text"><small class="text-muted">{{ file.originalFileName }} ({{ _self.format_file_size(file.contentSize)|trim }})</small></p>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-{% endmacro %}
-
-{% macro format_file_size(size, limit = 200) %}
-    {% if size < limit %}
-        {{ size }} B
-    {% else %}
-        {% set size = size/1024 %}
-
-        {% if size < limit %}
-            {{ size|round(1) }} kiB
-        {% else %}
-            {% set size = size/1024 %}
-
-            {% if size < limit %}
-                {{ size|round(1) }} MiB
-            {% else %}
-                {% set size = size/1024 %}
-
-                {{ size|round(1) }} GiB
-            {% endif %}
-        {% endif %}
-    {% endif %}
-{% endmacro %}
-
 {% macro tab_item(name, id, tabid, active=false, enabled=true) %}
     <a class="nav-link {{ active?"active":"" }} {{ enabled ? "" : "disabled" }}" id="{{ id }}" data-toggle="pill" href="#{{ tabid }}" role="tab" aria-controls="{{ tabid }}" aria-selected="{{ active?"true":"false" }}">{{ name }}</a>
 {% endmacro %}
