@@ -164,7 +164,7 @@
 
                                                         <a class="nav-item nav-link {{ found and found.id == box.id ? "active" : "" }}"
                                                            id="box-tab-{{ loop.index }}"
-                                                           data-toggle="tab" href="#box-{{ loop.index }}" role="tab"
+                                                           data-bs-toggle="tab" href="#box-{{ loop.index }}" role="tab"
                                                            aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
                                                         >Box {{ loop.index }}</a>
                                                     {% endfor %}

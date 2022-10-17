@@ -80,7 +80,7 @@
                         data-toggle="tooltip" data-placement="bottom"
                         title="{{ contents[n].cell.name }}, aliquote {{ contents[n].id }}, passage {{ contents[n].passage }},<br> vials left: {{ contents[n].vials }}"
                     >
-                        <circle cx="{{ j*s+r }}" cy="{{ i*s+r }}" r="{{ r }}" fill="gray" stroke="black" stroke-width="1px"></circle>
+                        <circle cx="{{ j*s+r/0.75 }}" cy="{{ i*s+r/0.75 }}" r="{{ r }}" fill="gray" stroke="black" stroke-width="1px"></circle>
                     </a>
                 {% endif %}
 
