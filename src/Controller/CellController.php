@@ -141,9 +141,12 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/add", name: "app_cell_add")]
-    public function addCell(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        return $this->addNewOrEditCell($request, $entityManager);
+    public function addCell(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+    ): Response {
+        return $this->addNewOrEditCell($request, $entityManager, $fileUploader);
     }
 
     #[Route("/cells/edit/{cell}", name: "app_cell_edit")]
@@ -212,9 +215,10 @@ class CellController extends AbstractController
     public function addNewCellAliquot(
         Request $request,
         EntityManagerInterface $entityManager,
-        Cell $cell
+        FileUploader $fileUploader,
+        Cell $cell,
     ): Response {
-        return $this->addNewOrEditCellAliquot($request, $entityManager, $cell, null);
+        return $this->addNewOrEditCellAliquot($request, $entityManager, $fileUploader, $cell, null);
     }
 
     #[Route("/cells/editAliquot/{cell}/{cellAliquot}", name: "app_cell_aliquot_edit")]
