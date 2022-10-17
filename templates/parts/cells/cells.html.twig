@@ -22,11 +22,11 @@
                 "type": "edit",
                 "tooltipText": "Edit cell",
                 "display": "lg",
-                "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id })
+                "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id }),
             },
             {
                 "type": "add",
-                "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id })
+                "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
                 "tooltipText": "Add aliquot",
                 "display": "lg",
             }
