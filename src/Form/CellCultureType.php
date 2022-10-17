@@ -32,18 +32,22 @@ class CellCultureType extends AbstractType
             ->add("number", TextType::class, [
                 "label" => "Culture number",
                 "help" => "A short (max 10) identifier of the cell culture, like FLC001 (First name, Last name, Cell).",
+                "required" => true,
             ])
             ->add("unfrozenOn", DateType::class, [
                 "label" => "Culture start",
                 //"format" => "dd MMM yyyy",
                 'widget' => 'single_text',
+                "required" => true,
             ])
             ->add("trashedOn", DateType::class, [
                 "label" => "Culture trashed",
                 //"format" => "dd MMM yyyy",
                 "help" => "Choosing a date before culture start equals to a culture that has not been trashed, yet.",
-                "empty_data" => null,
+                "empty_data" => "",
+                "placeholder" => "Set a date",
                 'widget' => 'single_text',
+                "required" => false,
             ])
         ;
 
