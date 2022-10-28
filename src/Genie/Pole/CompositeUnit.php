@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Pole;
-
-use App\Pole\Exception\UnitNotSupportedException;
+namespace App\Genie\Pole;
 
 abstract class CompositeUnit extends BaseUnit
 {

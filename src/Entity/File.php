@@ -52,6 +52,8 @@ class File
     #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTime $uploadedOn = null;
 
+    private bool $freshlyUploaded = false;
+
     public function setFromFile(UploadedFile $uploadedFile)
     {
         try {
@@ -70,6 +72,7 @@ class File
 
         $this->fileBlob->setContent($uploadedFile->getContent());
         $this->setUploadedOn(new DateTime("now"));
+        $this->freshlyUploaded = true;
     }
 
     public function __toString(): string
@@ -196,5 +199,10 @@ class File
     {
         $this->orderValue = $orderValue;
         return $this;
+    }
+
+    public function isFreshlyUploaded(): bool
+    {
+        return $this->freshlyUploaded;
     }
 }

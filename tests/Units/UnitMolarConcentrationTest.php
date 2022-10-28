@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Units;
 
-use App\Pole\Unit\MolarConcentration;
+use App\Genie\Pole\Unit\MolarConcentration;
 use PHPUnit\Framework\TestCase;
 
 class UnitMolarConcentrationTest extends TestCase

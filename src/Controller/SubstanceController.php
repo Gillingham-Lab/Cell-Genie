@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\AnnotateableInterface;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
@@ -15,6 +17,7 @@ use App\Form\Substance\ChemicalType;
 use App\Form\Substance\EpitopeType;
 use App\Form\Substance\LotType;
 use App\Form\Substance\OligoType;
+use App\Form\Substance\PlasmidType;
 use App\Form\Substance\ProteinType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\Cell\CellRepository;
@@ -23,9 +26,11 @@ use App\Repository\LotRepository;
 use App\Repository\Substance\AntibodyRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\OligoRepository;
+use App\Repository\Substance\PlasmidRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Service\FileUploader;
+use App\Service\GeneBankImporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,6 +51,7 @@ class SubstanceController extends AbstractController
             Chemical::class => $this->redirectToRoute("app_compound_view", ["compoundId" => $substance->getUlid()]),
             Oligo::class => $this->redirectToRoute("app_oligo_view", ["oligoId" => $substance->getUlid()]),
             Protein::class => $this->redirectToRoute("app_protein_view", ["proteinId" => $substance->getUlid()]),
+            Plasmid::class => $this->redirectToRoute("app_plasmid_view", ["plasmidId" => $substance->getUlid()]),
             default => $this->createNotFoundException(),
         };
     }
@@ -70,6 +76,7 @@ class SubstanceController extends AbstractController
     public function addSubstance(
         Request $request,
         SubstanceRepository $substanceRepository,
+        GeneBankImporter $geneBankImporter,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         Substance $substance = null,
@@ -87,6 +94,7 @@ class SubstanceController extends AbstractController
                 "chemical" => new Chemical(),
                 "oligo" => new Oligo(),
                 "protein" => new Protein(),
+                "plasmid" => new Plasmid(),
                 default => null,
             };
         }
@@ -100,6 +108,7 @@ class SubstanceController extends AbstractController
             Chemical::class => [ChemicalType::class, "Chemical", "app_compounds", "app_compound_view", "compoundId"],
             Oligo::class => [OligoType::class, "Oligo", "app_oligos", "app_oligo_view", "oligoId"],
             Protein::class => [ProteinType::class, "Protein", "app_proteins", "app_protein_view", "proteinId"],
+            Plasmid::class => [PlasmidType::class, "Plasmid", "app_plasmids", "app_plasmid_view", "plasmidId"],
             default => [null, null, null, null, null],
         };
 
@@ -116,7 +125,25 @@ class SubstanceController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             $fileUploader->upload($form);
-            $fileUploader->updateSequence($substance);
+            $fileUploader->updateFileSequence($substance);
+
+            // If the substance is Annotateable, we call the GenBankImporter to help us import the file.
+            if ($substance instanceof AnnotateableInterface) {
+                try {
+                    $imported = $geneBankImporter->addSequenceAnnotations(
+                        $substance,
+                        $substance->getAttachments(),
+                        $form["_attachments"]["importSequence"]->getData(),
+                        $form["_attachments"]["importFeatures"]->getData(),
+                    );
+
+                    if ($imported) {
+                        $this->addFlash("success", "GenBank files have successfully been imported.");
+                    }
+                } catch (\Exception $e) {
+                    $this->addFlash("error", "GenBank import was not successful: {$e->getMessage()}.");
+                }
+            }
 
             try {
                 if ($new) {
@@ -131,6 +158,7 @@ class SubstanceController extends AbstractController
 
                 return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
             } catch (\Exception $e) {
+                var_dump($e);
                 if ($new) {
                     $this->addFlash("error", "Adding a new {$typeName} was not possible. Reason: {$e->getMessage()}.");
                 } else {
@@ -183,7 +211,7 @@ class SubstanceController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             $fileUploader->upload($form);
-            $fileUploader->updateSequence($lot);
+            $fileUploader->updateFileSequence($lot);
 
             try {
                 if ($new) {
@@ -393,6 +421,27 @@ class SubstanceController extends AbstractController
         return $this->render("parts/proteins/protein.html.twig", [
             "protein" => $protein,
             "associatedCells" => $associatedCells,
+        ]);
+    }
+
+    #[Route("/plasmid", name: "app_plasmids")]
+    public function viewPlasmids(
+        PlasmidRepository $plasmidRepository,
+    ): Response {
+        $plasmids = $plasmidRepository->findAllWithLotCount();
+
+        return $this->render("parts/plasmids/plasmids.html.twig", [
+            "plasmids" => $plasmids,
+        ]);
+    }
+
+    #[Route("/plasmid/view/{plasmidId}", name: "app_plasmid_view")]
+    #[ParamConverter("plasmid", options: ["mapping" => ["plasmidId"  => "ulid"]])]
+    public function viewPlasmid(
+        Plasmid $plasmid
+    ): Response {
+        return $this->render("parts/plasmids/plasmid.html.twig", [
+            "plasmid" => $plasmid,
         ]);
     }
 

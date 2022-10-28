@@ -7,7 +7,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
-use App\Entity\User;
+use App\Form\Collection\AttachmentCollectionType;
 use App\Form\Traits\VocabularyTrait;
 use App\Repository\Cell\CellRepository;
 use App\Repository\VocabularyRepository;

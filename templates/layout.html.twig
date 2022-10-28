@@ -184,7 +184,7 @@
 {% endmacro %}
 
 {% macro card_body_start() %}
-    <div class="px-lg-4 overflow-auto">
+    <div class="px-lg-4 overflow-auto" style="max-height: 400px;">
 {% endmacro %}
 
 {% macro card_body_end() %}
@@ -196,7 +196,7 @@
     {% set sizeClasses = "" %}
     {% set displayClasses = size == "sm" ? "" : "d-lg-block" %}
 
-    <div id="collapse{{ idPart }}Content" class="collapse {{ displayClasses }} overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header">
+    <div id="collapse{{ idPart }}Content" class="collapse {{ displayClasses }} overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header" style="max-height: 400px;">
 {% endmacro %}
 
 {% macro card_body_collapse_end() %}

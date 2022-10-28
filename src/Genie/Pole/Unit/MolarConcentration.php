@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Pole\Unit;
+namespace App\Genie\Pole\Unit;
 
-use App\Pole\CompositeUnit;
+use App\Genie\Pole\CompositeUnit;
 
 class MolarConcentration extends CompositeUnit
 {

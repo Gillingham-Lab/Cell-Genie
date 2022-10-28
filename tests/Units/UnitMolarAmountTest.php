@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Units;
 
-use App\Pole\Unit\Amount;
-use App\Pole\Unit\MolarAmount;
-use App\Pole\Exception\UnitNotSupportedException;
+use App\Genie\Pole\Unit\Amount;
+use App\Genie\Pole\Unit\MolarAmount;
 use PHPUnit\Framework\TestCase;
 
 class UnitMolarAmountTest extends TestCase

@@ -14,7 +14,7 @@ trait NumberTrait
         min: 1,
         max: 10,
     )]
-    private ?string $number = "???";
+    private ?string $number = null;
 
     public function getNumber(): ?string
     {

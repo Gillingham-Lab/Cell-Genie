@@ -33,6 +33,8 @@ trait VocabularyTrait
             $options["choices"] = array_combine($vocabEntries, $vocabEntries);
         } else {
             $type = TextType::class;
+
+            unset($options["multiple"]);
         }
 
         return [

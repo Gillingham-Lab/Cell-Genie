@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Pole;
+namespace App\Genie\Pole;
 
-use App\Pole\Exception\UnitInterconversionNotSupportedException;
-use App\Pole\Exception\UnitNotSupportedException;
+use App\Genie\Pole\Exception\UnitInterconversionNotSupportedException;
+use App\Genie\Pole\Exception\UnitNotSupportedException;
 
 abstract class BaseUnit implements UnitInterface
 {

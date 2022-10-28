@@ -5,7 +5,7 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\Epitope;
-use App\Form\AttachmentCollectionType;
+use App\Form\Collection\AttachmentCollectionType;
 use App\Form\SaveableType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

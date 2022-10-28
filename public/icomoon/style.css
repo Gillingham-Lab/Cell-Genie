@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?rf5tzh');
-  src:  url('fonts/icomoon.eot?rf5tzh#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?rf5tzh') format('truetype'),
-    url('fonts/icomoon.woff?rf5tzh') format('woff'),
-    url('fonts/icomoon.svg?rf5tzh#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?g3i5a3');
+  src:  url('fonts/icomoon.eot?g3i5a3#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?g3i5a3') format('truetype'),
+    url('fonts/icomoon.woff?g3i5a3') format('woff'),
+    url('fonts/icomoon.svg?g3i5a3#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-plasmid-twocolor .path1:before {
+  content: "\e90d";
+  color: rgb(136, 136, 136);
+}
+.icon-plasmid-twocolor .path2:before {
+  content: "\e90e";
+  margin-left: -1em;
+  color: rgb(35, 31, 32);
+}
 .icon-epitope-twocolor .path1:before {
   content: "\e909";
   color: rgb(0, 0, 0);
@@ -51,6 +60,9 @@
   content: "\e910";
   margin-left: -0.9287109375em;
   color: rgb(136, 136, 136);
+}
+.icon-plasmid:before {
+  content: "\e913";
 }
 .icon-mammalian-cell:before {
   content: "\e90b";

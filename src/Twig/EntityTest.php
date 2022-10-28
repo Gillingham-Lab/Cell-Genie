@@ -11,6 +11,7 @@ use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
@@ -37,6 +38,7 @@ class EntityTest extends AbstractExtension
             new TwigTest("substanceChemical", fn(?object $substance) => $substance instanceof Chemical),
             new TwigTest("substanceProtein", fn(?object $substance) => $substance instanceof Protein),
             new TwigTest("substanceOligo", fn(?object $substance) => $substance instanceof Oligo),
+            new TwigTest("substancePlasmid", fn(?object $substance) => $substance instanceof Plasmid),
 
             new TwigTest("lot", fn(?object $lot) => $lot instanceof Lot),
 

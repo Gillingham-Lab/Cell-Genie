@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Pole;
 
-use App\Pole\Quantity;
-use App\Pole\Unit\Amount;
-use App\Pole\Unit\MolarAmount;
-use App\Pole\UnitInterface;
+use App\Genie\Pole\Quantity;
+use App\Genie\Pole\Unit\Amount;
+use App\Genie\Pole\Unit\MolarAmount;
 use PHPUnit\Framework\TestCase;
 
 class QuantityTest extends TestCase

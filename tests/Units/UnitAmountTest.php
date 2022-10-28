@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Units;
 
-use App\Pole\Quantity;
-use App\Pole\Unit\Amount;
+use App\Genie\Pole\Unit\Amount;
 use PHPUnit\Framework\TestCase;
 
 class UnitAmountTest extends TestCase

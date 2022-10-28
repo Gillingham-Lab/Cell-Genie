@@ -4,12 +4,10 @@ declare(strict_types=1);
 namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Chemical;
-use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
-use App\Form\AttachmentCollectionType;
+use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -17,8 +15,6 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChemicalType extends SaveableType

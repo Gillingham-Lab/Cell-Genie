@@ -54,6 +54,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro plasmid(classOnly=false) %}
+    {% if classOnly %}
+        icon icon-plasmid
+    {% else %}
+        <span class="icon icon-plasmid"></span>
+    {% endif %}
+{% endmacro %}
+
 {% macro cell(classOnly=false) %}
     {% if classOnly %}
         icon icon-oligomer
@@ -71,6 +79,8 @@
         {{ _self.oligo(classOnly) }}
     {% elseif any is substanceProtein %}
         {{ _self.protein(classOnly) }}
+    {% elseif any is substancePlasmid %}
+        {{ _self.plasmid(classOnly) }}
     {% elseif any is cell %}
         {{ _self.cell(classOnly) }}
     {% endif %}

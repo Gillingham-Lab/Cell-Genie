@@ -177,7 +177,7 @@ class CellController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             $fileUploader->upload($form);
-            $fileUploader->updateSequence($cell);
+            $fileUploader->updateFileSequence($cell);
 
             try {
                 $i = 0;

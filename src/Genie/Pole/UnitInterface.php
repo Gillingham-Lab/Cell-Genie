@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Pole;
+namespace App\Genie\Pole;
 
 interface UnitInterface
 {

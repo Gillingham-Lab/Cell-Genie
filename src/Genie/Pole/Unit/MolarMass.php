@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Pole\Unit;
+namespace App\Genie\Pole\Unit;
 
-use App\Pole\BaseUnit;
+use App\Genie\Pole\BaseUnit;
 
 class MolarMass extends BaseUnit
 {

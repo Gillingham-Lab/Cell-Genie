@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Units;
 
-use App\Pole\Calculator;
-use App\Pole\Exception\CalculationNotSupported;
-use App\Pole\Unit\Amount;
-use App\Pole\Unit\Mass;
-use App\Pole\Unit\MassConcentration;
-use App\Pole\Unit\MolarAmount;
-use App\Pole\Unit\Volume;
+use App\Genie\Pole\Calculator;
+use App\Genie\Pole\Exception\CalculationNotSupported;
+use App\Genie\Pole\Unit\Amount;
+use App\Genie\Pole\Unit\Mass;
+use App\Genie\Pole\Unit\MassConcentration;
+use App\Genie\Pole\Unit\MolarAmount;
+use App\Genie\Pole\Unit\Volume;
 use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase

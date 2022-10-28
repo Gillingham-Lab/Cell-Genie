@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Pole;
+namespace App\Genie\Pole;
 
-use App\Pole\Exception\CalculationNotSupported;
-use App\Pole\Exception\OperationNotSupported;
-use App\Pole\Exception\UnitInterconversionNotSupportedException;
-use App\Pole\Unit\Amount;
-use App\Pole\Unit\MassConcentration;
-use App\Pole\Unit\Mass;
-use App\Pole\Unit\MolarAmount;
-use App\Pole\Unit\MolarConcentration;
-use App\Pole\Unit\MolarMass;
-use App\Pole\Unit\Volume;
+use App\Genie\Pole\Exception\CalculationNotSupported;
+use App\Genie\Pole\Exception\OperationNotSupported;
+use App\Genie\Pole\Exception\UnitInterconversionNotSupportedException;
+use App\Genie\Pole\Unit\Amount;
+use App\Genie\Pole\Unit\Mass;
+use App\Genie\Pole\Unit\MassConcentration;
+use App\Genie\Pole\Unit\MolarAmount;
+use App\Genie\Pole\Unit\MolarConcentration;
+use App\Genie\Pole\Unit\MolarMass;
+use App\Genie\Pole\Unit\Volume;
 
 class Calculator
 {

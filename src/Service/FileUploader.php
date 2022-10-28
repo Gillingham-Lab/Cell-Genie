@@ -44,7 +44,7 @@ class FileUploader
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = $child->get("uploadedFile")->getData();
 
-            # Check if a file has actually been uploaded.
+            // Check if a file has actually been uploaded.
             if ($uploadedFile) {
                 $entity->setFromFile($uploadedFile);
 
@@ -60,7 +60,7 @@ class FileUploader
         return $this->user;
     }
 
-    public function updateSequence(object $object): void
+    public function updateFileSequence(object $object): void
     {
         if (method_exists($object, "getAttachments")) {
             $i = 0;
