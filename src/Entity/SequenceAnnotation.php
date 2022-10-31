@@ -53,6 +53,7 @@ class SequenceAnnotation implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            "id" => $this->getId()->toBase32(),
             "type" => $this->annotationType,
             "label" => $this->annotationLabel,
             "start" => $this->annotationStart,

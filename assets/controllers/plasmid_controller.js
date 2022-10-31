@@ -101,10 +101,9 @@ export default class extends Controller {
             level = 1;
         }
 
-        let pathId = Math.random().toString(36);
-
         plasmidFeature.append("path")
             //.attr("d", this.makeCircularPath(totalWidth, totalHeight, radius-5, angleStart, angleEnd))
+            .attr("id", "plasmid-feature-element-" + feature["id"])
             .attr("d", this.getFeaturePath(totalWidth, totalHeight, radius + level*20, angleStart, angleEnd, 10))
             .attr("stroke-width", 1)
             .attr("stroke", "black")
@@ -118,7 +117,7 @@ export default class extends Controller {
             plasmidFeature
                 //.append("defs")
                 .append("path")
-                .attr("id", "plasmid-p-" + pathId)
+                .attr("id", "plasmid-feature-label-path-" + feature["id"])
                 .attr("d", this.makeCircularPath(totalWidth, totalHeight, radius + level*20 - 10 - 10, angleStart, angleEnd))
                 .attr("stroke", "none")
                 .attr("fill", "none")
@@ -129,21 +128,38 @@ export default class extends Controller {
                 .attr("font-size", "10px")
                 .append("textPath")
                 .attr("startOffset", "50%")
-                .attr("href", "#plasmid-p-" + pathId)
+                .attr("href", "#plasmid-feature-label-path-" + feature["id"])
                 .text(feature["label"])
             ;
         }
     }
 
     showFeaturePermanently(feature) {
-        console.log(feature);
-        this.permanentFeature = feature;
-        this.showFeature(feature);
+        let oldFeature = this.permanentFeature;
+        let featureElement = document.getElementById("plasmid-feature-element-" + feature["id"]);
+
+        if (oldFeature === null || feature["id"] !== oldFeature["id"]) {
+            this.permanentFeature = feature;
+            this.showFeature(feature);
+
+            featureElement.setAttribute("stroke-width", 2);
+
+            if (oldFeature !== null) {
+                let oldFeatureElement = document.getElementById("plasmid-feature-element-" + oldFeature["id"])
+
+                oldFeatureElement.setAttribute("stroke-width", 1);
+            }
+        } else {
+            // Toggle state
+            console.log("toggle off");
+            this.permanentFeature = null;
+            featureElement.setAttribute("stroke-width", 1);
+            this.plasmidFeatureDetailsTarget.innerText = null;
+        }
     }
 
     hideFeature() {
         if (this.permanentFeature !== null) {
-            console.log(this.permanentFeature);
             this.showFeature(this.permanentFeature);
         }
     }
