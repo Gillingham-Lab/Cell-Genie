@@ -14,6 +14,7 @@ use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
@@ -82,10 +83,11 @@ class DashboardController extends AbstractDashboardController
 
             MenuItem::section("Substances"),
             MenuItem::linkToCrud("Antibodies", "icon icon-antibody fw-icon", Antibody::class),
-            MenuItem::linkToCrud("Chemicals", "fas fa-tablets", Chemical::class),
-            MenuItem::linkToCrud("Epitopes", "fas fas-horse fw-icon", Epitope::class),
+            MenuItem::linkToCrud("Chemicals", "icon icon-chemical", Chemical::class),
             MenuItem::linkToCrud("Oligos", "icon icon-oligomer", Oligo::class),
             MenuItem::linkToCrud("Proteins", "icon icon-protein", Protein::class),
+            MenuItem::linkToCrud("Plasmids", "icon icon-plasmid", Plasmid::class),
+            MenuItem::linkToCrud("Epitopes", "icon icon-epitope", Epitope::class),
 
             MenuItem::section("Experimental"),
             MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
