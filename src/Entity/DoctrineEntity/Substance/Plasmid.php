@@ -39,6 +39,14 @@ class Plasmid extends Substance implements AnnotateableInterface
     #[Assert\Valid]
     private Collection $expressedProteins;
 
+    #[ORM\OneToMany(mappedBy: "parent", targetEntity: Plasmid::class)]
+    private Collection $children;
+
+    #[ORM\ManyToOne(targetEntity: Plasmid::class, fetch: "EAGER", inversedBy: "children")]
+    #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
+    private ?Plasmid $parent = null;
+
     #[ORM\ManyToOne(targetEntity: Organism::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
@@ -71,8 +79,17 @@ class Plasmid extends Substance implements AnnotateableInterface
 
         $this->expressedProteins = new ArrayCollection();
         $this->sequenceAnnotations = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return "{$this->getNumber()} | {$this->getShortName()}";
+    }
+
+    /**
+     * @return Collection<int, Protein>
+     */
     public function getExpressedProteins(): Collection
     {
         return $this->expressedProteins;
@@ -90,6 +107,48 @@ class Plasmid extends Substance implements AnnotateableInterface
     public function removeExpressedProtein(Protein $protein): self
     {
         $this->expressedProteins->removeElement($protein);
+
+        return $this;
+    }
+
+    public function getParent(): ?Plasmid
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Plasmid $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Plasmid>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(Plasmid $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(Plasmid $child): self
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
 
         return $this;
     }

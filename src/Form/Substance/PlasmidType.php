@@ -133,6 +133,47 @@ class PlasmidType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Structure",
                 ])
+                ->add("parent", EntityType::class, [
+                    "label" => "Parent plasmid",
+                    "class" => Plasmid::class,
+                    "query_builder" => function (EntityRepository $er) use ($builder) {
+                        return $er
+                            ->createQueryBuilder("e")
+                            ->orderBy("e.number", "ASC")
+                            ->where("e.ulid != :current")
+                            ->setParameter("current", $builder->getData()->getUlid(), "ulid")
+                            ;
+                    },
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                    'empty_data' => null,
+                    'by_reference' => false,
+                    "required" => false,
+                    "placeholder" => "Empty",
+                ])
+                ->add("children", EntityType::class, [
+                    "label" => "Children plasmids",
+                    "class" => Plasmid::class,
+                    "query_builder" => function (EntityRepository $er) use ($builder) {
+                        return $er
+                            ->createQueryBuilder("e")
+                            ->orderBy("e.number", "ASC")
+                            ->where("e.ulid != :current")
+                            ->setParameter("current", $builder->getData()->getUlid(), "ulid")
+                        ;
+                    },
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                    'empty_data' => [],
+                    "multiple" => true,
+                    'by_reference' => false,
+                    "required" => false,
+                    "placeholder" => "Empty",
+                ])
                 ->add("sequence", TextareaType::class, [
                     "label" => "Sequence",
                     "help" => "The plasmid sequence (5' to 3').",

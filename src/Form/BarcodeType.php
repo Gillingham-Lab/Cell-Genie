@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
@@ -111,6 +112,7 @@ class BarcodeType extends AbstractType
                         Chemical::class => "Chemicals",
                         Oligo::class => "Oligos",
                         Protein::class => "Proteins",
+                        Plasmid::class => "Plasmids",
                         default => "Other",
                     };
                 },
@@ -140,6 +142,7 @@ class BarcodeType extends AbstractType
                         Chemical::class => "Chemicals",
                         Oligo::class => "Oligos",
                         Protein::class => "Proteins",
+                        Plasmid::class => "Plasmids",
                         default => "Other",
                     };
                 },

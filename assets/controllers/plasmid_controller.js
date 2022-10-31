@@ -107,7 +107,7 @@ export default class extends Controller {
             .attr("d", this.getFeaturePath(totalWidth, totalHeight, radius + level*20, angleStart, angleEnd, 10))
             .attr("stroke-width", 1)
             .attr("stroke", "black")
-            .attr("fill", feature["color"] ? feature["color"] : this.getFeatureColorForType(feature["type"]))
+            .attr("fill", (feature["color"] && feature["color"] !== "#000000") ? feature["color"] : this.getFeatureColorForType(feature["type"]))
             .on("mouseover", this.showFeature.bind(this, feature))
             .on("mouseout", this.hideFeature.bind(this))
             .on("click", this.showFeaturePermanently.bind(this, feature))

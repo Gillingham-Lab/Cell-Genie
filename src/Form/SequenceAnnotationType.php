@@ -30,7 +30,7 @@ class SequenceAnnotationType extends AbstractType
             ->add("color", ColorType::class, options: [
                 "label" => "Feature colour",
                 "required" => false,
-                "empty_data" => null,
+                "empty_data" => "#000000",
                 "html5" => true,
             ])
             ->add("isComplement", CheckboxType::class, options: [
