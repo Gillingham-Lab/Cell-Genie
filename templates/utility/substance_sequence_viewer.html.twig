@@ -21,3 +21,26 @@
         </div>
     </div>
 {% endmacro %}
+
+{% macro view_sequence_2(substance) %}
+    {% import 'layout.html.twig' as layout %}
+
+    <div class="col p-0 m-0 mb-3">
+        <div class="card mx-3 h-100">
+            {{ layout.card_header_collapse("Sequence", "Sequence") }}
+
+            {{ layout.card_body_collapse_start("Sequence") }}
+            <div class="card-body px-lg-5 mx-0" {{ stimulus_controller("plasmid", {
+                sequence: substance.sequence,
+                sequenceLength: substance.sequenceLength,
+                features: substance.sequenceAnnotations.toArray|json_encode,
+            }) }}>
+                <div class="row row-cols-1 row-cols-lg-2">
+                    <div {{ stimulus_target("plasmid", "plasmidMap") }} class="text-center"></div>
+                    <div {{ stimulus_target("plasmid", "plasmidFeatureDetails") }}></div>
+                </div>
+            </div>
+            {{ layout.card_body_collapse_end() }}
+        </div>
+    </div>
+{% endmacro %}

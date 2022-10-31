@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[Gedmo\Loggable]
-class SequenceAnnotation
+class SequenceAnnotation implements \JsonSerializable
 {
     use IdTrait;
     use CommentTrait;
@@ -48,6 +48,19 @@ class SequenceAnnotation
     public function __toString(): string
     {
         return sprintf("%s<%s%d..%d>", $this->getAnnotationLabel(), $this->isComplement() ? "c" : "", $this->getAnnotationStart(), $this->getAnnotationEnd());
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            "type" => $this->annotationType,
+            "label" => $this->annotationLabel,
+            "start" => $this->annotationStart,
+            "end" => $this->annotationEnd,
+            "complement" => $this->isComplement,
+            "color" => $this->color,
+            "annotations" => $this->annotations,
+        ];
     }
 
     public function getAnnotationLabel(): ?string
