@@ -113,25 +113,25 @@ export default class extends Controller {
             .on("click", this.showFeaturePermanently.bind(this, feature))
         ;
 
-        if (level === 0) {
-            plasmidFeature
-                //.append("defs")
-                .append("path")
-                .attr("id", "plasmid-feature-label-path-" + feature["id"])
-                .attr("d", this.makeCircularPath(totalWidth, totalHeight, radius + level*20 - 10 - 10, angleStart, angleEnd))
-                .attr("stroke", "none")
-                .attr("fill", "none")
-            ;
+        let levelShift = level === 0 ? -20 : +20;
 
-            plasmidFeature.append("text")
-                .attr("text-anchor", "middle")
-                .attr("font-size", "10px")
-                .append("textPath")
-                .attr("startOffset", "50%")
-                .attr("href", "#plasmid-feature-label-path-" + feature["id"])
-                .text(feature["label"])
-            ;
-        }
+        plasmidFeature
+            //.append("defs")
+            .append("path")
+            .attr("id", "plasmid-feature-label-path-" + feature["id"])
+            .attr("d", this.makeCircularPath(totalWidth, totalHeight, radius + level*20 + levelShift, angleStart, angleEnd))
+            .attr("stroke", "none")
+            .attr("fill", "none")
+        ;
+
+        plasmidFeature.append("text")
+            .attr("text-anchor", "middle")
+            .attr("font-size", "10px")
+            .append("textPath")
+            .attr("startOffset", "50%")
+            .attr("href", "#plasmid-feature-label-path-" + feature["id"])
+            .text(feature["label"])
+        ;
     }
 
     showFeaturePermanently(feature) {
