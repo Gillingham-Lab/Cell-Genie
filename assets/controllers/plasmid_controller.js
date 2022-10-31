@@ -95,9 +95,9 @@ export default class extends Controller {
 
         let level = -1;
 
-        if (["cds", "promoter", "rep_origin", "repeat_region", "misc_feature", "polya_signal"].includes(featureType)) {
+        if (["cds", "promoter", "rep_origin", "repeat_region", "polya_signal"].includes(featureType)) {
             level = 0;
-        } else if (["primer", "primer_bind", "protein_bind"].includes(featureType)) {
+        } else if (["primer", "primer_bind", "misc_feature", "protein_bind"].includes(featureType)) {
             level = 1;
         }
 

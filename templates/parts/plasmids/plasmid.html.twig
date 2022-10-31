@@ -57,6 +57,8 @@
 
                                 {{ macros.definition_row("Fit for expression", plasmid.forProduction ? "Yes" : "No") }}
                                 {{ macros.definition_row("Created by", plasmid.createdBy.fullName) }}
+                                {{ macros.definition_row_raw("Parent", plasmid.parent ? macros.pillify([plasmid.parent]) : "None") }}
+                                {{ macros.definition_row_raw("Children", plasmid.children|length>0 ? macros.pillify(plasmid.children) : "None") }}
 
                                 </tbody>
                             </table>
