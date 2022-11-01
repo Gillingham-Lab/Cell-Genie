@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Validators;
+namespace App\Validator;
 
 use App\Entity\FormEntity\BarcodeEntry;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class BarcodeHasValidTarget
 {
-    public static function validate($object, ExecutionContextInterface $context, $payload) {
+    public static function validate($object, ExecutionContextInterface $context, $payload)
+    {
         /** @var BarcodeEntry $object */
         $substance = !is_null($object->getSubstance());
         $cell = !is_null($object->getCell());

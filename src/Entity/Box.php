@@ -46,7 +46,7 @@ class Box
 
     public function __toString(): string
     {
-        return $this->getFullLocation();
+        return $this->getFullLocation() . " ({$this->getRows()} × {$this->getCols()})";
     }
 
     public function getId(): ?int

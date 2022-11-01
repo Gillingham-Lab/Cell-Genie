@@ -99,6 +99,11 @@ class LotType extends SaveableType
                         "data-allow-empty" => "true",
                     ],
                 ])
+                ->add("boxCoordinate", TextType::class, options: [
+                    "label" => "Position in box",
+                    "help" => "Give the position in the box. Use letters for row, and numbers for column (A12 is the first row, 12th column; AA1 is the 27th row, 1st column)",
+                    "required" => false,
+                ])
                 ->add("amount", TextType::class, options: [
                     "label" => "Amount",
                     "help" => "Write down the amount with a unit",

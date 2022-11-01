@@ -8,7 +8,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\SubstanceLot;
-use App\Validators\BarcodeHasValidTarget;
+use App\Validator\BarcodeHasValidTarget;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Assert\Callback([BarcodeHasValidTarget::class, "validate"])]

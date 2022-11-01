@@ -7,6 +7,8 @@ use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\LotRepository;
+use App\Validator\Constraint\ValidBoxCoordinate;
+use App\Validator\Constraint\WithinBoxBounds;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +17,7 @@ use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
+#[WithinBoxBounds("boxCoordinate", "box")]
 class Lot
 {
     use HasBoxTrait;
@@ -67,6 +70,11 @@ class Lot
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
+
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    #[Assert\Length(max: 10)]
+    #[ValidBoxCoordinate]
+    private ?string $boxCoordinate = null;
 
     public function __construct()
     {
@@ -200,6 +208,17 @@ class Lot
     {
         $this->comment = $comment;
 
+        return $this;
+    }
+
+    public function getBoxCoordinate(): ?string
+    {
+        return $this->boxCoordinate;
+    }
+
+    public function setBoxCoordinate(?string $boxCoordinate): self
+    {
+        $this->boxCoordinate = $boxCoordinate;
         return $this;
     }
 }
