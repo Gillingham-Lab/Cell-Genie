@@ -7,7 +7,7 @@ use App\Validator\WithinBoxBoundsValidator;
 use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute]
+#[\Attribute(\Attribute::TARGET_CLASS)]
 class WithinBoxBounds  extends Constraint
 {
     public string $outOfBoundsMessage = "The coordinates are out of bound in box '%box%'.";
