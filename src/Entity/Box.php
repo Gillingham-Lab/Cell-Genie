@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\NewIdTrait;
 use App\Repository\BoxRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,10 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: BoxRepository::class)]
 class Box
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = null;
+    use NewIdTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(
@@ -36,8 +34,7 @@ class Box
     private ?int $cols = 1;
 
     #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "EAGER", inversedBy: "boxes")]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
-    #[Assert\NotBlank]
+    #[ORM\JoinColumn(name: "rack_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     private ?Rack $rack = null;
 
     public function __construct()
@@ -47,11 +44,6 @@ class Box
     public function __toString(): string
     {
         return $this->getFullLocation() . " ({$this->getRows()} × {$this->getCols()})";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getFullLocation(): string
@@ -104,7 +96,7 @@ class Box
         return $this->rack;
     }
 
-    public function setRack(Rack $rack): self
+    public function setRack(?Rack $rack): self
     {
         $this->rack = $rack;
 

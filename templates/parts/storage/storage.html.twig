@@ -1,0 +1,100 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+
+{% block title %}Gin :: Storage{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style rel="stylesheet">
+        .list-group.list-group-root {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .list-group.list-group-root .list-group {
+            margin-bottom: 0;
+        }
+
+        .list-group.list-group-root .list-group-item {
+            border-radius: 0;
+            border-width: 1px 0 0 0;
+        }
+
+        .list-group.list-group-root > .list-group-item:first-child {
+            border-top-width: 0;
+        }
+
+        .list-group.list-group-root > .list-group > .list-group-item {
+            padding-left: 60px;
+        }
+
+        .list-group.list-group-root > .list-group > .list-group > .list-group-item {
+            padding-left: 90px;
+        }
+    </style>
+{% endblock %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Storage", false) }}
+
+            <div class="row row-cols-1 row-cols-lg-2">
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Storage locations", "StorageLocations") }}
+
+                        {{ layout.card_body_collapse_start("StorageLocations") }}
+                        <div class="card-body px-lg-5">
+                            <div class="list-group list-group-root well border-1 border">
+                                {% for rack in racks %}
+                                    {% set groupId = "gin-storage-" ~ rack.id %}
+                                    <a href="#{{ groupId }}" class="list-group-item" data-bs-toggle="collapse">
+                                        <span class="collapse-icon far fa-plus-square fa-fw"></span>
+                                        <span class="fas fa-boxes fa-fw"></span>
+                                        {{ rack.name }}
+                                    </a>
+                                    {% if rack.boxes|length > 0 %}
+                                        <div class="list-group collapse" id="{{ groupId }}">
+                                            {% for box in rack.boxes %}
+                                                <a href="#" class="list-group-item">
+                                                    <span class="fas fa-box fa-fw"></span>
+                                                    {{ box.name }}
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Box content", "BoxContent") }}
+
+                        {{ layout.card_body_collapse_start("BoxContent") }}
+                        <div class="card-body px-lg-5">
+                            No box selected
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_bottom %}
+    <script type="application/javascript">
+        $(function() {
+            $('.list-group-item').on('click', function() {
+                $('.far', this)
+                    .toggleClass('fa-plus-square')
+                    .toggleClass('fa-minus-square');
+            });
+        });
+    </script>
+{% endblock %}

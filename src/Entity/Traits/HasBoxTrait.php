@@ -10,7 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 trait HasBoxTrait
 {
     #[ORM\ManyToOne(targetEntity: Box::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[ORM\JoinColumn(name: "box_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     private ?Box $box = null;
 
     public function getBox(): ?Box

@@ -111,48 +111,6 @@ class Plasmid extends Substance implements AnnotateableInterface
         return $this;
     }
 
-    public function getParent(): ?Plasmid
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?Plasmid $parent): self
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Plasmid>
-     */
-    public function getChildren(): Collection
-    {
-        return $this->children;
-    }
-
-    public function addChild(Plasmid $child): self
-    {
-        if (!$this->children->contains($child)) {
-            $this->children[] = $child;
-            $child->setParent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChild(Plasmid $child): self
-    {
-        if ($this->children->removeElement($child)) {
-            // set the owning side to null (unless already changed)
-            if ($child->getParent() === $this) {
-                $child->setParent(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getExpressionIn(): ?Organism
     {
         return $this->expressionIn;
