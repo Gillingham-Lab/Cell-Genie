@@ -6,6 +6,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\User;
 use App\Repository\Cell\CellAliquotRepository;
+use App\Validator\Constraint\ValidBoxCoordinate;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CellAliquotRepository::class)]
 #[ORM\Table("cell_aliquote")]
 #[Gedmo\Loggable]
-class CellAliquot
+class CellAliquot implements \JsonSerializable
 {
     use HasBoxTrait;
 
@@ -105,6 +106,11 @@ class CellAliquot
     #[ORM\OneToMany(mappedBy: 'parentAliquot', targetEntity: self::class)]
     private Collection $childAliquots;
 
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    #[Assert\Length(max: 10)]
+    #[ValidBoxCoordinate]
+    private ?string $boxCoordinate = null;
+
     public function __construct()
     {
         $this->childAliquots = new ArrayCollection();
@@ -113,6 +119,23 @@ class CellAliquot
     public function __toString(): string
     {
         return $this->cell . " | p" . $this->passage . " (id {$this->id})";
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "vialColor" => $this->getVialColor(),
+            "numberOfAliquots" => $this->getVials(),
+            "maxNumberOfAliquots" => $this->getMaxVials(),
+            "number" => $this->getId(),
+            "passage" => $this->getPassage(),
+            "mycoplasmaResult" => $this->getMycoplasmaResult(),
+            "cell" => [
+                "id" => $this->getCell()->getId(),
+                "number" => $this->getCell()->getCellNumber(),
+                "name" => $this->getCell()->getName(),
+            ]
+        ];
     }
 
     public function getId(): ?int
@@ -351,6 +374,17 @@ class CellAliquot
             }
         }
 
+        return $this;
+    }
+
+    public function getBoxCoordinate(): ?string
+    {
+        return $this->boxCoordinate;
+    }
+
+    public function setBoxCoordinate(?string $boxCoordinate): self
+    {
+        $this->boxCoordinate = $boxCoordinate;
         return $this;
     }
 }

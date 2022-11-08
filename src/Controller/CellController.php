@@ -108,12 +108,13 @@ class CellController extends AbstractController
         $boxAliquotes = [];
         foreach ($aliquotes as $aliquote) {
             $aliquoteBox = $aliquote->getBox();
+            $boxId = $aliquoteBox->getUlid()->toBase58();
 
-            if (empty($boxAliquotes[$aliquoteBox->getId()])) {
-                $boxAliquotes[$aliquoteBox->getId()] = [];
+            if (empty($boxAliquotes[$boxId])) {
+                $boxAliquotes[$boxId] = [];
             }
 
-            $boxAliquotes[$aliquoteBox->getId()][] = $aliquote;
+            $boxAliquotes[$boxId][] = $aliquote;
         }
 
         if ($aliquoteId) {

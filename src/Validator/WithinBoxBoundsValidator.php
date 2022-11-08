@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Validator;
 
 use App\Entity\Box;
+use App\Entity\BoxCoordinate;
 use App\Validator\Constraint\WithinBoxBounds;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
@@ -56,15 +57,13 @@ class WithinBoxBoundsValidator extends ConstraintValidator
         $maxNumberOfRows = $boxValue->getRows();
         $maxNUmberOfCols = $boxValue->getCols();
 
-        $matches = [];
-        $matchReturn = preg_match("#^(?P<row>[A-Z]+)(-?)(?P<col>[0-9]+)$#", $coordinateValue, $matches);
-
-        if ($matchReturn !== 1) {
+        try {
+            $boxCoordinate = new BoxCoordinate($coordinateValue);
+        } catch (\InvalidArgumentException) {
             return;
         }
 
-        $rowNumber = $this->stringCoordinateToNumber($matches["row"]);
-        $colNumber = (int)$matches["col"];
+        [$rowNumber, $colNumber] = $boxCoordinate->getIntCoordinates();
 
         if ($rowNumber <= 0 or $colNumber <= 0 or $rowNumber > $maxNumberOfRows or $colNumber > $maxNUmberOfCols) {
             $this->context->buildViolation($constraint->outOfBoundsMessage)
@@ -73,20 +72,5 @@ class WithinBoxBoundsValidator extends ConstraintValidator
                 ->addViolation()
             ;
         }
-    }
-
-    private function stringCoordinateToNumber($stringCoordinate): int
-    {
-        $length = strlen($stringCoordinate);
-        $number = 0;
-
-        for ($i=0; $i < $length; $i++) {
-            $value = 26**($length - $i);
-            $letterValue = ord($stringCoordinate[$i])-65;
-
-            $number += $letterValue*$value;
-        }
-
-        return $number+1;
     }
 }

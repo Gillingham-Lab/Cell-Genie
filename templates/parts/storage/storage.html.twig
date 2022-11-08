@@ -25,14 +25,74 @@
         }
 
         .list-group.list-group-root > .list-group > .list-group-item {
-            padding-left: 60px;
+            padding-left: 40px;
         }
 
         .list-group.list-group-root > .list-group > .list-group > .list-group-item {
-            padding-left: 90px;
+            padding-left: 80px;
+        }
+
+        .list-group.list-group-root > .list-group > .list-group > .list-group > .list-group-item {
+            padding-left: 120px;
+        }
+
+        .list-group.list-group-root > .list-group > .list-group > .list-group > .list-group .list-group-item {
+            padding-left: 160px;
+        }
+
+        .list-group.list-group-root > .list-group > .list-group > .list-group > .list-group > .list-group .list-group-item {
+            padding-left: 200px;
         }
     </style>
 {% endblock %}
+
+{% macro display_boxes(boxes, currentBox=null) %}
+    {% for box in boxes %}
+        <div class="list-group-item d-flex justify-content-between align-items-center {% if currentBox is same as(box) %}bg-primary text-white{% endif %}">
+            <a href="{{ url("app_storage_view_box", {"box": box.ulid}) }}"  class="text-decoration-none text-black text-reset">
+                <span class="fas fa-box fa-fw"></span>
+                {{ box.name }} ({{ box.rows }} × {{ box.cols }})
+            </a>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro display_racks(racks, currentBox=null, namePrefix="") %}
+    {% for rack in racks %}
+        {% set groupId = "gin-storage-" ~ rack.ulid %}
+
+        {% if rack.children|length == 1 %}
+            {# Collapse nesting when there is only 1 child #}
+            {{ _self.display_racks(rack.children, currentBox, namePrefix ~ rack.name ~ "/") }}
+        {% else %}
+            {# Rack entry #}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
+                    <span class="collapse-icon far fa-plus-square fa-fw"></span>
+                    <span class="fas fa-boxes fa-fw"></span>
+                    {{ namePrefix }}{{ rack.name }}
+                </a>
+                <span>
+                    <span class="badge bg-secondary rounded-pill" style="width: 30px;">{{ rack.children|length }}</span>
+                    <span class="badge bg-primary rounded-pill" style="width: 30px;">{{ rack.boxes|length }}</span>
+                </span>
+            </div>
+
+            <div class="list-group collapse" id="{{ groupId }}">
+
+                {# Display boxes #}
+                {% if rack.boxes|length > 0 %}
+                    {{ _self.display_boxes(rack.boxes, currentBox)  }}
+                {% endif %}
+
+                {# Display children #}
+                {% if rack.children|length > 0 %}
+                    {{ _self.display_racks(rack.children, currentBox) }}
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
 
 {% block body_main %}
     <div class="row">
@@ -47,24 +107,9 @@
                         {{ layout.card_body_collapse_start("StorageLocations") }}
                         <div class="card-body px-lg-5">
                             <div class="list-group list-group-root well border-1 border">
-                                {% for rack in racks %}
-                                    {% set groupId = "gin-storage-" ~ rack.id %}
-                                    <a href="#{{ groupId }}" class="list-group-item" data-bs-toggle="collapse">
-                                        <span class="collapse-icon far fa-plus-square fa-fw"></span>
-                                        <span class="fas fa-boxes fa-fw"></span>
-                                        {{ rack.name }}
-                                    </a>
-                                    {% if rack.boxes|length > 0 %}
-                                        <div class="list-group collapse" id="{{ groupId }}">
-                                            {% for box in rack.boxes %}
-                                                <a href="#" class="list-group-item">
-                                                    <span class="fas fa-box fa-fw"></span>
-                                                    {{ box.name }}
-                                                </a>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                                {{ _self.display_racks(racks|filter(r => not r.parent), box) }}
+
+                                {{ _self.display_boxes(boxes|filter(b => not b.rack), box) }}
                             </div>
                         </div>
                         {{ layout.card_body_collapse_end() }}
@@ -77,7 +122,25 @@
 
                         {{ layout.card_body_collapse_start("BoxContent") }}
                         <div class="card-body px-lg-5">
-                            No box selected
+                            {% if box is same as(null) %}
+                                No box selected
+                            {% else %}
+                                <div class="card-body px-lg-5 mx-0" {{ stimulus_controller("box", {
+                                    boxMap: boxMap,
+                                    substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
+                                    cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
+                                }) }}>
+                                    <div class="row row-cols-1 row-cols-lg-2">
+                                        <div class="col">
+                                            <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>
+                                            <div {{ stimulus_target("box", "boxMap") }} class="text-center"></div>
+                                        </div>
+                                        <div class="col mb-5" {{ stimulus_target("box", "boxMapContent") }}>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                         {{ layout.card_body_collapse_end() }}
                     </div>
@@ -90,10 +153,22 @@
 {% block script_bottom %}
     <script type="application/javascript">
         $(function() {
-            $('.list-group-item').on('click', function() {
-                $('.far', this)
-                    .toggleClass('fa-plus-square')
-                    .toggleClass('fa-minus-square');
+            $('.list-group').on('shown.bs.collapse', function(e) {
+                let id = this.id;
+
+                if (e.target === this) {
+                    $(`#anchor-for-${id} > .collapse-icon`, this.parentElement)
+                        .toggleClass('fa-plus-square')
+                        .toggleClass('fa-minus-square');
+                }
+            }).on('hidden.bs.collapse', function(e) {
+                let id = this.id;
+
+                if (e.target === this) {
+                    $(`#anchor-for-${id} > .collapse-icon`, this.parentElement)
+                        .toggleClass('fa-plus-square')
+                        .toggleClass('fa-minus-square');
+                }
             });
         });
     </script>

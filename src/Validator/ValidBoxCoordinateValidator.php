@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Validator;
 
 use App\Entity\Box;
+use App\Entity\BoxCoordinate;
 use App\Validator\Constraint\ValidBoxCoordinate;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
@@ -29,14 +30,12 @@ class ValidBoxCoordinateValidator extends ConstraintValidator
             return;
         }
 
-        $matchReturn = preg_match("#^(?P<row>[A-Z]+)(-?)(?P<col>[0-9]+)$#", $value, $matches);
-
-        if ($matchReturn !== 1) {
+        try {
+            $boxCoordinate = new BoxCoordinate($value);
+        } catch (\InvalidArgumentException) {
             $this->context->buildViolation($constraint->invalidCoordinateMessage)
                 ->addViolation()
             ;
-
-            return;
         }
     }
 }

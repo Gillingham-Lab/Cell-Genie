@@ -30,11 +30,16 @@ class CellAliquotRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder("ca");
 
+        $boxUlids = [];
+        foreach ($boxes as $box) {
+            $boxUlids[] = $box->getUlid()->toRfc4122();
+        }
+
         return $qb->select("ca")
             ->distinct(True)
             ->leftJoin("ca.box", "b", Join::ON)
             ->where("ca.box IN (:boxes)")
-            ->setParameter("boxes", $boxes)
+            ->setParameter("boxes", $boxUlids)
             ->getQuery()
             ->getResult()
         ;

@@ -8,9 +8,11 @@ use App\Repository\BoxRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BoxRepository::class)]
+#[Gedmo\Loggable]
 class Box
 {
     use NewIdTrait;
@@ -23,18 +25,22 @@ class Box
         maxMessage: "Only 255 characters allowed"
     )]
     #[Assert\NotBlank]
+    #[Gedmo\Versioned]
     private ?string $name;
 
     #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]
+    #[Gedmo\Versioned]
     private ?int $rows = 1;
 
     #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]
+    #[Gedmo\Versioned]
     private ?int $cols = 1;
 
-    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "EAGER", inversedBy: "boxes")]
+    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "LAZY", inversedBy: "boxes")]
     #[ORM\JoinColumn(name: "rack_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
     private ?Rack $rack = null;
 
     public function __construct()

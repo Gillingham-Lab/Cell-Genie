@@ -151,8 +151,8 @@
                                             <nav>
                                                 <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
                                                     {% for box in boxes %}
-                                                        {% if aliquote %}
-                                                            {% for a in boxAliquotes[box.id] %}
+                                                        {% if aliquote and boxAliquotes[box.ulid.toBase58] is defined %}
+                                                            {% for a in boxAliquotes[box.ulid.toBase58] %}
                                                                 {% if a.id == aliquote.id %}
                                                                     {% set found = box %}
                                                                 {% endif %}
@@ -162,7 +162,7 @@
                                                         {% endif %}
 
 
-                                                        <a class="nav-item nav-link {{ found and found.id == box.id ? "active" : "" }}"
+                                                        <a class="nav-item nav-link {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "active" : "" }}"
                                                            id="box-tab-{{ loop.index }}"
                                                            data-bs-toggle="tab" href="#box-{{ loop.index }}" role="tab"
                                                            aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
@@ -173,11 +173,11 @@
 
                                             <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
                                                 {% for box in boxes %}
-                                                    <div class="px-lg-5 tab-pane fade {{ found and found.id == box.id ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                                                    <div class="px-lg-5 tab-pane fade {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
                                                         <h6>{{ box.fullLocation }}</h6>
 
                                                         <div style="max-width: 20rem">
-                                                            {{ macros.make_box(box, boxAliquotes[box.id], cell, aliquote) }}
+                                                            {{ macros.make_box(box, boxAliquotes[box.ulid.toBase58] is defined ? boxAliquotes[box.ulid.toBase58] : null, cell, aliquote) }}
                                                         </div>
                                                     </div>
                                                 {% endfor %}

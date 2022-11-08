@@ -5,12 +5,20 @@ namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Lot;
 
-class SubstanceLot
+class SubstanceLot implements \JsonSerializable
 {
-    function __construct(
-        private Substance $substance,
-        private Lot $lot,
+    public function __construct(
+        private readonly Substance $substance,
+        private readonly Lot $lot,
     ) {
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "substance" => $this->substance,
+            "lot" => $this->lot,
+        ];
     }
 
     public function getSubstance(): Substance

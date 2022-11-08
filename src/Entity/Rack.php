@@ -30,10 +30,10 @@ class Rack
     #[ORM\OneToMany(mappedBy: "rack", targetEntity: Box::class)]
     private Collection $boxes;
 
-    #[ORM\OneToMany(mappedBy: "parent", targetEntity: Box::class)]
+    #[ORM\OneToMany(mappedBy: "parent", targetEntity: Rack::class)]
     private Collection $children;
 
-    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "EAGER", inversedBy: "children")]
+    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "LAZY", inversedBy: "children")]
     #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
     private ?Rack $parent = null;

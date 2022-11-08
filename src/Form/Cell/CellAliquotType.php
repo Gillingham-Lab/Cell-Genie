@@ -113,6 +113,11 @@ class CellAliquotType extends SaveableType
                         "data-allow-empty" => "true",
                     ],
                 ])
+                ->add("boxCoordinate", TextType::class, options: [
+                    "label" => "Position in box",
+                    "help" => "Give the position in the box. Use letters for row, and numbers for column (A12 is the first row, 12th column; AA1 is the 27th row, 1st column)",
+                    "required" => false,
+                ])
                 ->add("vialColor", TextType::class, [
                     "label" => "Vial colour",
                     "help" => "Write down the colour of the cryo vial lid (eg, red, blue, green, purple ...). Any named colour is accepted.",

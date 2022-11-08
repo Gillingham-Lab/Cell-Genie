@@ -2,6 +2,7 @@
 
 namespace App\Repository\Substance;
 
+use App\Entity\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\Substance\SubstanceLot;
 use App\Entity\Lot;
@@ -96,6 +97,22 @@ class SubstanceRepository extends ServiceEntityRepository
     /**
      * @return SubstanceLot[]
      */
+    private function turnIntoSubstanceLot($results): array
+    {
+        $return = [];
+        /** @var Substance $result */
+        foreach ($results as $result) {
+            foreach ($result->getLots() as $lot) {
+                $return[] = new SubstanceLot($result, $lot);
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * @return SubstanceLot[]
+     */
     public function findAllSubstanceLots(): array
     {
         $results = $this->createQueryBuilder("s")
@@ -108,39 +125,26 @@ class SubstanceRepository extends ServiceEntityRepository
             ->getResult()
         ;
 
-        $return = [];
-        /** @var Substance $result */
-        foreach ($results as $result) {
-            foreach ($result->getLots() as $lot) {
-                $return[] = new SubstanceLot($result, $lot);
-            }
-        }
-
-        return $return;
+        return $this->turnIntoSubstanceLot($results);
     }
 
-//    /**
-//     * @return Substance[] Returns an array of Substance objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAllSubstanceLotsInBox(Box $box): array
+    {
+        $results = $this->createQueryBuilder("s")
+            ->select("s")
+            ->addSelect("l")
+            ->addSelect("b")
+            ->leftJoin("s.lots", "l")
+            ->leftJoin("l.box", "b")
+            ->groupBy("s.ulid")
+            ->addGroupBy("l.id")
+            ->addGroupBy("b")
+            ->where("b.ulid = :ulid")
+            ->setParameter("ulid", $box->getUlid(), "ulid")
+            ->getQuery()
+            ->getResult()
+        ;
 
-//    public function findOneBySomeField($value): ?Substance
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $this->turnIntoSubstanceLot($results);
+    }
 }

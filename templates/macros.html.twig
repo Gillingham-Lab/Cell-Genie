@@ -26,7 +26,7 @@
         {% endfor %}
     {% endfor %}
 
-    <svg id="svg-image-box-{{ box.id }}" width="100%" viewBox="-1 -1 201 201" style="width: 100%;">
+    <svg id="svg-image-box-{{ box.ulid.toBase58 }}" width="100%" viewBox="-1 -1 201 201" style="width: 100%;">
         {%- if box.cols < box.rows -%}
             {% set s = 200/box.rows %}
         {%- else -%}
@@ -43,15 +43,15 @@
             {% if n<contents|length %}
                 {%- if currentAliquote -%}
                     {%- if currentAliquote.id == contents[n].id -%}
-        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}" x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="black" fill="skyblue" stroke-width="1px" />
+        <rect id="svg-image-box-{{ box.ulid.toBase58 }}-row-{{ i }}-col-{{ j }}" x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="black" fill="skyblue" stroke-width="1px" />
                     {%- else -%}
-        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}" x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
+        <rect id="svg-image-box-{{ box.ulid.toBase58 }}-row-{{ i }}-col-{{ j }}" x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
                     {%- endif -%}
                 {%- else -%}
-        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}"  x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
+        <rect id="svg-image-box-{{ box.ulid.toBase58 }}-row-{{ i }}-col-{{ j }}"  x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
                 {%- endif -%}
             {%- else -%}
-        <rect id="svg-image-box-{{ box.id }}-row-{{ i }}-col-{{ j }}"  x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
+        <rect id="svg-image-box-{{ box.ulid.toBase58 }}-row-{{ i }}-col-{{ j }}"  x="{{ j*s }}" y="{{ i*s }}" width="{{ s }}" height="{{ s }}" stroke="lightgray" fill="none" stroke-width="1px" />
             {%- endif -%}
         {% endfor %}
     {% endfor %}

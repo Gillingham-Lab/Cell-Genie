@@ -217,10 +217,10 @@
                         if (collapsible.length > 0 && collapsible.hasClass("navbar-collapse") === false && collapsible.css("display") === "none") {
                             let bsCollapse = new bootstrap.Collapse(collapsible).show();
 
-                            console.log($('.far', collapsible))
-                            $('.collapse-icon', collapsible.parent())
+                            console.log($(`[href^='#${id}'] > .collapse-icon`, collapsible.parent()));
+                            /*$(`[href^='#gin-storage-01GGVPMNS7F2KBVHCFSYZ43VGC'] > .collapse-icon`, collapsible.parent())
                                 .toggleClass('fa-plus-square')
-                                .toggleClass('fa-minus-square');
+                                .toggleClass('fa-minus-square');*/
                         } else if (collapsible.length > 0 && collapsible.hasClass("nav-link")) {
                             collapsible.tab("show");
                         }

@@ -20,6 +20,24 @@ class RackRepository extends ServiceEntityRepository
         parent::__construct($registry, Rack::class);
     }
 
+    public function findAllWithBoxes()
+    {
+        return $this->createQueryBuilder("r")
+            ->select("r")
+            ->addSelect("rc")
+            ->addSelect("b")
+            ->leftJoin("r.boxes", "b")
+            ->leftJoin("r.children", "rc")
+            ->orderBy("r.name")
+            ->addOrderBy("b.name")
+            ->groupBy("r")
+            ->addGroupBy("b")
+            ->addGroupBy("rc")
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Rack[] Returns an array of Rack objects
     //  */

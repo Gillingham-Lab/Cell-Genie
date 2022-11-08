@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 #[WithinBoxBounds("boxCoordinate", "box")]
-class Lot
+class Lot implements \JsonSerializable
 {
     use HasBoxTrait;
     use VendorTrait;
@@ -68,6 +68,9 @@ class Lot
     #[Assert\NotBlank]
     private ?int $numberOfAliquotes = 1;
 
+    #[ORM\Column(type: "smallint", nullable: true)]
+    private ?int $maxNumberOfAliquots = null;
+
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
@@ -84,6 +87,18 @@ class Lot
     public function __toString()
     {
         return $this->getNumber() ?? "???";
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            "number" => $this->number,
+            "amount" => $this->amount,
+            "aliquotSize" => $this->aliquoteSize,
+            "numberOfAliquots" => $this->numberOfAliquotes,
+            "maxNumberOfAliquots" => $this->maxNumberOfAliquots,
+            "purity" => $this->purity,
+        ];
     }
 
     public function getId(): ?Ulid
@@ -195,6 +210,22 @@ class Lot
     public function setNumberOfAliquotes(?int $numberOfAliquotes): self
     {
         $this->numberOfAliquotes = $numberOfAliquotes;
+
+        return $this;
+    }
+
+    public function getMaxNumberOfAliquots(): ?int
+    {
+        return $this->maxNumberOfAliquots ?? $this->numberOfAliquotes;
+    }
+
+    public function setMaxNumberOfAliquots(?int $maxVials): self
+    {
+        $this->maxNumberOfAliquots = $maxVials;
+
+        if ($this->numberOfAliquotes === null) {
+            $this->numberOfAliquotes = $maxVials;
+        }
 
         return $this;
     }

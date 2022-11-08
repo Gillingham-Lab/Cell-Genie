@@ -17,11 +17,10 @@ class BoxCrudController extends AbstractCrudController
         return Box::class;
     }
 
-
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')
+            IdField::new('ulid')
                 ->hideOnForm(),
             TextField::new('name'),
             IntegerField::new("rows"),

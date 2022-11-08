@@ -5,6 +5,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\Rack;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class RackCrudController extends AbstractCrudController
 {
@@ -13,14 +16,16 @@ class RackCrudController extends AbstractCrudController
         return Rack::class;
     }
 
-    /*
+
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            IdField::new('ulid')
+                ->hideOnForm(),
+            TextField::new('name'),
+            AssociationField::new("parent"),
+            AssociationField::new("children")->onlyOnIndex(),
+            AssociationField::new("boxes")->onlyOnIndex(),
         ];
     }
-    */
 }

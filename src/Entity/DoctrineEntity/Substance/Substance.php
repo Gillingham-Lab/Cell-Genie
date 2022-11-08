@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\DiscriminatorColumn(name: "substance_type", type: "string")]
 #[Gedmo\Loggable]
 #[UniqueEntity("shortName")]
-class Substance
+class Substance implements \JsonSerializable
 {
     use NewIdTrait;
     use NameTrait;
@@ -47,6 +47,17 @@ class Substance
         $this->lots = new ArrayCollection();
         $this->epitopes = new ArrayCollection();
         $this->attachments = new ArrayCollection();
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            "ulid" => $this->ulid,
+            "type" => static::class,
+            "shortName" => $this->shortName,
+            "longName" => $this->longName,
+            "number" => (method_exists($this, "getNumber") ? $this->getNumber() : null)
+        ];
     }
 
     public function getLots(): Collection
