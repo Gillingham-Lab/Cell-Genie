@@ -182,4 +182,27 @@ class BoxMap implements \JsonSerializable
     {
         return $this->count;
     }
+
+    public function add(object $object, int $numberOfAliquots, ?string $lotCoordinate) {
+        // Do not display lots with no aliquots.
+        if ($numberOfAliquots === 0) {
+            return;
+        }
+
+        // If no coordinate is given, add loose.
+        if (empty($lotCoordinate)) {
+            for ($i=0; $i < $numberOfAliquots; $i++) {
+                $this->addLoose($object);
+            }
+        } else {
+            for ($i = 0; $i < $numberOfAliquots; $i++) {
+                // Try to set at coordinate. If it fails, add loose.
+                try {
+                    $this->setAtCoordinate($lotCoordinate, $object, shift: $i);
+                } catch (\InvalidArgumentException) {
+                    $this->addLoose($object);
+                }
+            }
+        }
+    }
 }

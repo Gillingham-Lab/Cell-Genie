@@ -9,6 +9,7 @@ export default class extends Controller {
         yShift: {type: Number, default: 20},
         substanceTarget: String,
         cellTarget: String,
+        currentAliquot: Object,
     }
 
     static targets = ["boxMap", "boxMapContent"];
@@ -152,14 +153,21 @@ export default class extends Controller {
         let startTime;
         let endTime;
 
+        let borderColor = "black";
+
+        if (this.currentAliquotValue && e.object.cell && this.currentAliquotValue.cell && this.currentAliquotValue.cell.id !== e.object.cell.id) {
+            borderColor = "grey";
+        }
+
         this.svgContainer
             .append("circle")
             .attr("data-substance", id)
             .attr("cx", grid_size*(e.col-1)+x_shift+grid_size/2)
             .attr("cy", grid_size*(e.row-1)+y_shift+grid_size/2)
             .attr("r", grid_size*0.9/2)
-            .attr("stroke", "black")
-            .attr("fill", (e.object.vialColor ? e.object.vialColor : "white"))
+            .attr("stroke", borderColor)
+            .attr("fill", (
+                (e.object.cell && this.currentAliquotValue && this.currentAliquotValue.cell) ? (this.currentAliquotValue.cell.id === e.object.cell.id ?e.object.vialColor:"white") :  "white"))
             .on("mouseover", this.onBoxEntryMouseOver.bind(this, e))
             .on("mouseout", this.onBoxEntryMouseOut.bind(this))
             .on("click", this.onBoxEntryClick.bind(this, e))
@@ -183,6 +191,7 @@ export default class extends Controller {
             .attr("text-anchor", "middle")
             .attr("font-family", "icomoon")
             .attr("font-size", 25)
+            .attr("fill", borderColor)
             .append("tspan")
             .text(icon)
             .on("mouseover", this.onBoxEntryMouseOver.bind(this, e))

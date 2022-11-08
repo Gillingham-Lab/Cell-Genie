@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\BoxMap;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
@@ -101,6 +102,12 @@ class CellController extends AbstractController
         // Get all boxes that contain aliquotes of the current cell line
         $boxes = $this->boxRepository->findByAliquotedCell($cell);
 
+        // Create box maps for each box
+        $boxMaps = [];
+        foreach ($boxes as $box) {
+            $boxMaps[$box->getUlid()->toBase58()] = BoxMap::fromBox($box);
+        }
+
         // Get all aliquotes from those boxes
         $aliquotes = $this->cellAliquoteRepository->findAllFromBoxes($boxes);
 
@@ -110,11 +117,16 @@ class CellController extends AbstractController
             $aliquoteBox = $aliquote->getBox();
             $boxId = $aliquoteBox->getUlid()->toBase58();
 
-            if (empty($boxAliquotes[$boxId])) {
+            $numberOfAliquots = $aliquote->getVials();
+            $lotCoordinate = $aliquote->getBoxCoordinate();
+
+            $boxMaps[$boxId]->add($aliquote, $numberOfAliquots, $lotCoordinate);
+
+            /*if (empty($boxAliquotes[$boxId])) {
                 $boxAliquotes[$boxId] = [];
             }
 
-            $boxAliquotes[$boxId][] = $aliquote;
+            $boxAliquotes[$boxId][] = $aliquote;*/
         }
 
         if ($aliquoteId) {
@@ -133,7 +145,8 @@ class CellController extends AbstractController
         return $this->render('parts/cells/cell.html.twig', [
             "cell" => $cell,
             "boxes" => $boxes,
-            "boxAliquotes" => $boxAliquotes,
+            //"boxAliquotes" => $boxAliquotes,
+            "boxMaps" => $boxMaps,
             "aliquote" => $aliquote,
             "chemicals" => $chemicals,
             "proteins" => $proteins,

@@ -117,6 +117,8 @@
                     <div class="card mx-3 h-100">
                         {{ layout.card_header_collapse("Aliquot Overview", "AliquotOverview") }}
 
+                        {{ layout.card_body_collapse_start("AliquotOverview") }}
+
                         {% if aliquote %}
                             {{ layout.toolbox_card([
                                 {
@@ -140,88 +142,142 @@
                             ]) }}
                         {% endif %}
 
-                        {{ layout.card_body_collapse_start("AliquotOverview") }}
-                            <div class="card-body px-lg-5">
-                                {% if boxes|length == 0 %}
-                                    <em>No aliquotes registered.</em>
-                                {% else %}
-                                    <div class="row row-cols-1 row-cols-xl-2">
-                                        <div class="col">
-                                            {% set found = null %}
-                                            <nav>
-                                                <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
-                                                    {% for box in boxes %}
-                                                        {% if aliquote and boxAliquotes[box.ulid.toBase58] is defined %}
-                                                            {% for a in boxAliquotes[box.ulid.toBase58] %}
-                                                                {% if a.id == aliquote.id %}
-                                                                    {% set found = box %}
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        {% elseif loop.first %}
-                                                            {% set found = box %}
-                                                        {% endif %}
-
-
-                                                        <a class="nav-item nav-link {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "active" : "" }}"
-                                                           id="box-tab-{{ loop.index }}"
-                                                           data-bs-toggle="tab" href="#box-{{ loop.index }}" role="tab"
-                                                           aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
-                                                        >Box {{ loop.index }}</a>
-                                                    {% endfor %}
-                                                </div>
-                                            </nav>
-
-                                            <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
-                                                {% for box in boxes %}
-                                                    <div class="px-lg-5 tab-pane fade {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
-                                                        <h6>{{ box.fullLocation }}</h6>
-
-                                                        <div style="max-width: 20rem">
-                                                            {{ macros.make_box(box, boxAliquotes[box.ulid.toBase58] is defined ? boxAliquotes[box.ulid.toBase58] : null, cell, aliquote) }}
-                                                        </div>
-                                                    </div>
+                        <div class="card-body p-0 pt-2">
+                            {% if boxes|length == 0 %}
+                                <em>No aliquotes registered.</em>
+                            {% else %}
+                                {% set found = null %}
+                                <nav>
+                                    <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
+                                        {% for box in boxes %}
+                                            {% if aliquote and boxAliquotes[box.ulid.toBase58] is defined %}
+                                                {% for a in boxAliquotes[box.ulid.toBase58] %}
+                                                    {% if a.id == aliquote.id %}
+                                                        {% set found = box %}
+                                                    {% endif %}
                                                 {% endfor %}
+                                            {% elseif loop.first %}
+                                                {% set found = box %}
+                                            {% endif %}
+
+
+                                            <a class="nav-item nav-link {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "active" : "" }}"
+                                               id="box-tab-{{ loop.index }}"
+                                               data-bs-toggle="tab" href="#box-{{ loop.index }}" role="tab"
+                                               aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
+                                            >Box {{ loop.index }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </nav>
+
+                                <div class="tab-content border-light border border-top-0 p-3" id="box-tab-content">
+                                    {% for box in boxes %}
+                                        <div class="tab-pane fade {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                                            <h6>{{ box.fullLocation }}</h6>
+
+                                            <!--<div style="max-width: 20rem">
+                                                {{ box }}
+                                                {# {{ macros.make_box(box, boxAliquotes[box.ulid.toBase58] is defined ? boxAliquotes[box.ulid.toBase58] : null, cell, aliquote) }} #}
+                                            </div>-->
+
+                                            <div class="mx-0" {{ stimulus_controller("box", {
+                                                boxMap: boxMaps[box.ulid.toBase58],
+                                                substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
+                                                cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
+                                                currentAliquot: aliquote|json_encode,
+                                            }) }}>
+                                                <div class="row row-cols-1 row-cols-lg-2">
+                                                    <div class="col">
+                                                        <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>
+                                                        <div {{ stimulus_target("box", "boxMap") }} class="text-center"></div>
+                                                    </div>
+                                                    <div class="col mb-5" {{ stimulus_target("box", "boxMapContent") }}>
+
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                    {% endfor %}
+                                </div>
 
-                                        <div class="col p-3">
-                                            {% if aliquote %}
-                                                <div class="full-width flex-fill p-3">
-                                                    <table class="table w-100 table-borderless table-sm">
-                                                        <tbody>
-                                                        {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("d. F Y") : "unknown") }}
-                                                        {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
-                                                        {{ macros.definition_row("Mycoplasma", aliquote.mycoplasmaResult) }}
-                                                        {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
-                                                        {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
+                                {# <div class="row row-cols-1 row-cols-xl-2">
+                                    <div class="col">
+                                        {% set found = null %}
+                                        <nav>
+                                            <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
+                                                {% for box in boxes %}
+                                                    {% if aliquote and boxAliquotes[box.ulid.toBase58] is defined %}
+                                                        {% for a in boxAliquotes[box.ulid.toBase58] %}
+                                                            {% if a.id == aliquote.id %}
+                                                                {% set found = box %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% elseif loop.first %}
+                                                        {% set found = box %}
+                                                    {% endif %}
 
-                                                        <tr>
-                                                            <th>Vials left</th>
-                                                            <td>
-                                                                <div class="progress">
-                                                                    <div class="progress-bar" role="progressbar" style="width: {{ aliquote.vials/aliquote.maxVials*100 }}%;" aria-valuenow="{{ aliquote.vials }}" aria-valuemin="0" aria-valuemax="aliquote.maxVials">{{ aliquote.vials}}/{{ aliquote.maxVials }}</div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
 
-                                                        {{ macros.definition_row("Cell count", "#{aliquote.cellCount} k") }}
-                                                        {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
-                                                        </tbody>
-                                                    </table>
+                                                    <a class="nav-item nav-link {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "active" : "" }}"
+                                                       id="box-tab-{{ loop.index }}"
+                                                       data-bs-toggle="tab" href="#box-{{ loop.index }}" role="tab"
+                                                       aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
+                                                    >Box {{ loop.index }}</a>
+                                                {% endfor %}
+                                            </div>
+                                        </nav>
 
-                                                    <div class="pb-3">
-                                                        {% if aliquote.vials > 0 %}
-                                                            <a href="{{ url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id}) }}" class="btn btn-primary">Consume</a>
-                                                        {% else %}
-                                                            <em class="alert-warning">No aliquote left.</em>
-                                                        {% endif %}
+                                        <div class="tab-content border-light border border-top-0 p-5" id="box-tab-content">
+                                            {% for box in boxes %}
+                                                <div class="px-lg-5 tab-pane fade {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
+                                                    <h6>{{ box.fullLocation }}</h6>
+
+                                                    <div style="max-width: 20rem">
+                                                        {{ macros.make_box(box, boxAliquotes[box.ulid.toBase58] is defined ? boxAliquotes[box.ulid.toBase58] : null, cell, aliquote) }}
                                                     </div>
                                                 </div>
-                                            {% endif %}
+                                            {% endfor %}
                                         </div>
                                     </div>
-                                {% endif %}
-                            </div>
+
+                                    <div class="col p-3">
+                                        {% if aliquote %}
+                                            <div class="full-width flex-fill p-3">
+                                                <table class="table w-100 table-borderless table-sm">
+                                                    <tbody>
+                                                    {{ macros.definition_row("Aliquoted on", aliquote.aliquotedOn ? aliquote.aliquotedOn|date("d. F Y") : "unknown") }}
+                                                    {{ macros.definition_row("Aliquoted by", aliquote.aliquotedBy ? aliquote.aliquotedBy.fullName : "unknown") }}
+                                                    {{ macros.definition_row("Mycoplasma", aliquote.mycoplasmaResult) }}
+                                                    {{ macros.definition_row("Cryomedium", aliquote.cryoMedium ?? "unknown") }}
+                                                    {{ macros.definition_row("Vial color", aliquote.vialColor ?? "unknown") }}
+
+                                                    <tr>
+                                                        <th>Vials left</th>
+                                                        <td>
+                                                            <div class="progress">
+                                                                <div class="progress-bar" role="progressbar" style="width: {{ aliquote.vials/aliquote.maxVials*100 }}%;" aria-valuenow="{{ aliquote.vials }}" aria-valuemin="0" aria-valuemax="aliquote.maxVials">{{ aliquote.vials}}/{{ aliquote.maxVials }}</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    {{ macros.definition_row("Cell count", "#{aliquote.cellCount} k") }}
+                                                    {{ macros.definition_row("Passage", "p#{aliquote.passage}") }}
+                                                    </tbody>
+                                                </table>
+
+                                                <div class="pb-3">
+                                                    {% if aliquote.vials > 0 %}
+                                                        <a href="{{ url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id}) }}" class="btn btn-primary">Consume</a>
+                                                    {% else %}
+                                                        <em class="alert-warning">No aliquote left.</em>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div> #}
+                            {% endif %}
+                        </div>
+
                         {{ layout.card_body_collapse_end() }}
                     </div>
                 </div>
