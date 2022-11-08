@@ -130,6 +130,11 @@ class CellAliquot implements \JsonSerializable
             "number" => $this->getId(),
             "passage" => $this->getPassage(),
             "mycoplasmaResult" => $this->getMycoplasmaResult(),
+            "aliquotedOn" => $this->getAliquotedOn()->format("c"),
+            "aliquotedBy" => $this->getAliquotedBy()->getFullName(),
+            "cryoMedium" => $this->getCryoMedium(),
+            "cellCount" => $this->getCellCount(),
+
             "cell" => [
                 "id" => $this->getCell()->getId(),
                 "number" => $this->getCell()->getCellNumber(),

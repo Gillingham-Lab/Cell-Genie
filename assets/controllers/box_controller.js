@@ -168,8 +168,6 @@ export default class extends Controller {
             .on("touchend", function() {
                 endTime = new Date();
 
-                console.log(endTime - startTime);
-
                 if ((endTime - startTime) > 500) {
                      this.onBoxEntryDoubleClick(e, null);
                 } else {
@@ -195,8 +193,6 @@ export default class extends Controller {
             .on("touchend", function() {
                 endTime = new Date();
 
-                console.log(endTime - startTime);
-
                 if ((endTime - startTime) > 200) {
                     this.onBoxEntryDoubleClick(e, null);
                 } else {
@@ -217,9 +213,6 @@ export default class extends Controller {
     }
 
     relocateToOject(object) {
-        console.log(object);
-        console.log("Relocate");
-
         if (!object) {
             return false;
         }
@@ -236,8 +229,6 @@ export default class extends Controller {
     }
 
     onBoxEntryClick(e, event) {
-        console.log("Click Event");
-
         if (event && event.ctrlKey) {
             this.relocateToOject(e.object)
         } else {
@@ -354,7 +345,12 @@ export default class extends Controller {
         annotationElement.classList.add("table", "table-small", "table-hover", "mt-5");
 
         const annotations = {
+            "Aliquoted on": Date(aliquot.aliquotedOn).toLocaleString(),
+            "Aliquoted by": aliquot.aliquotedBy,
             "Mycoplasma Test": aliquot.mycoplasmaResult,
+            "Cryomedium": aliquot.cryoMedium,
+            "Vial colour": aliquot.vialColor,
+            "Cell count": aliquot.cellCount,
         };
 
         this.addPreviewTable(annotationElement, annotations);
