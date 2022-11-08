@@ -22,9 +22,12 @@ export default class extends Controller {
     }
 
     connect() {
-        console.log(this.boxMapValue);
         this.drawBoxGrid(this.boxMapTarget, this.boxMapValue.rows, this.boxMapValue.cols);
         this.fillBox(this.boxMapValue);
+
+        if (this.currentAliquotValue) {
+            this.onBoxEntryClick({"object": this.currentAliquotValue}, null);
+        }
     }
 
     rowCoordinateToLetter(coordinate) {
