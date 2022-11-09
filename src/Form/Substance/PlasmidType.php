@@ -149,7 +149,8 @@ class PlasmidType extends SaveableType
                         "data-allow-empty" => "true",
                     ],
                     'empty_data' => null,
-                    'by_reference' => false,
+                    'by_reference' => true,
+                    "multiple" => false,
                     "required" => false,
                     "placeholder" => "Empty",
                 ])
