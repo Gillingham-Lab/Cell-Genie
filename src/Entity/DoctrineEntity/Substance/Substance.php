@@ -52,10 +52,10 @@ class Substance implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            "ulid" => $this->ulid,
+            "ulid" => $this->getUlid(),
             "type" => static::class,
-            "shortName" => $this->shortName,
-            "longName" => $this->longName,
+            "shortName" => $this->getShortName(),
+            "longName" => $this->getLongName(),
             "number" => (method_exists($this, "getNumber") ? $this->getNumber() : null)
         ];
     }

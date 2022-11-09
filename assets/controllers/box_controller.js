@@ -50,6 +50,7 @@ export default class extends Controller {
         let grid_size = this.gridSizeValue;
         let x_shift = this.xShiftValue;
         let y_shift = this.yShiftValue;
+        let grid_color = "grey";
 
         let width = grid_size*rows;
         let height = grid_size*cols;
@@ -67,7 +68,7 @@ export default class extends Controller {
             .attr("height", height)
             .attr("x", x_shift)
             .attr("y", y_shift)
-            .attr("stroke", "black")
+            .attr("stroke", grid_color)
             .attr("fill", "none")
         ;
 
@@ -76,7 +77,7 @@ export default class extends Controller {
             if (i < rows) {
                 grid.append("path")
                     .attr("d", `M ${x_shift} ${grid_size*i+y_shift} h ${width}`)
-                    .attr("stroke", "black")
+                    .attr("stroke", grid_color)
                     .attr("stroke-width", 1)
                 ;
             }
@@ -95,7 +96,7 @@ export default class extends Controller {
             if (i < cols) {
                 grid.append("path")
                     .attr("d", `M ${grid_size*i+x_shift} ${y_shift}  v ${height}`)
-                    .attr("stroke", "black")
+                    .attr("stroke", grid_color)
                     .attr("stroke-width", 1)
                 ;
             }

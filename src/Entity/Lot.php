@@ -92,11 +92,11 @@ class Lot implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            "number" => $this->number,
-            "amount" => $this->amount,
-            "aliquotSize" => $this->aliquoteSize,
-            "numberOfAliquots" => $this->numberOfAliquotes,
-            "maxNumberOfAliquots" => $this->maxNumberOfAliquots,
+            "number" => $this->getNumber(),
+            "amount" => $this->getAmount(),
+            "aliquotSize" => $this->getAliquoteSize(),
+            "numberOfAliquots" => $this->getNumberOfAliquotes(),
+            "maxNumberOfAliquots" => $this->getMaxNumberOfAliquots(),
             "purity" => $this->purity,
         ];
     }
