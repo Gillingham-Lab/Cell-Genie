@@ -42,7 +42,7 @@ class Plasmid extends Substance implements AnnotateableInterface
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Plasmid::class)]
     private Collection $children;
 
-    #[ORM\ManyToOne(targetEntity: Plasmid::class, fetch: "EAGER", inversedBy: "children")]
+    #[ORM\ManyToOne(targetEntity: Plasmid::class, inversedBy: "children")]
     #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
     private ?Plasmid $parent = null;
