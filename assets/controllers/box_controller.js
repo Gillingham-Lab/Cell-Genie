@@ -171,7 +171,17 @@ export default class extends Controller {
             .attr("r", grid_size*0.9/2)
             .attr("stroke", borderColor)
             .attr("fill", (
-                (e.object.cell && this.currentAliquotValue && this.currentAliquotValue.cell) ? (this.currentAliquotValue.cell.id === e.object.cell.id ?e.object.vialColor:"white") :  "white"))
+                (e.object.cell && this.currentAliquotValue && this.currentAliquotValue.cell)
+                    ? (
+                        this.currentAliquotValue.cell.id === e.object.cell.id
+                            ? e.object.vialColor
+                            : "white"
+                    ) : (
+                        e.object.vialColor
+                            ? e.object.vialColor
+                            : "white"
+                    )
+                ))
             .on("mouseover", this.onBoxEntryMouseOver.bind(this, e))
             .on("mouseout", this.onBoxEntryMouseOut.bind(this))
             .on("click", this.onBoxEntryClick.bind(this, e))
@@ -356,8 +366,6 @@ export default class extends Controller {
         subHeader.innerText = `Aliquot#${aliquot.number}, p${aliquot.passage}`;
 
         annotationElement.classList.add("table", "table-small", "table-hover", "mt-5");
-
-        console.log(aliquot.aliquotedOn);
 
         const annotations = {
             "Aliquoted on": aliquot.aliquotedOn === null ? "unknown" : new Date(aliquot.aliquotedOn).toLocaleDateString(),
