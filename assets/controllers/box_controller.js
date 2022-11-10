@@ -52,8 +52,8 @@ export default class extends Controller {
         let y_shift = this.yShiftValue;
         let grid_color = "grey";
 
-        let width = grid_size*rows;
-        let height = grid_size*cols;
+        let width = grid_size*cols;
+        let height = grid_size*rows;
 
         this.svgContainer = d3.select(target)
             .append("svg")
@@ -357,8 +357,10 @@ export default class extends Controller {
 
         annotationElement.classList.add("table", "table-small", "table-hover", "mt-5");
 
+        console.log(aliquot.aliquotedOn);
+
         const annotations = {
-            "Aliquoted on": Date(aliquot.aliquotedOn).toLocaleString(),
+            "Aliquoted on": aliquot.aliquotedOn === null ? "unknown" : new Date(aliquot.aliquotedOn).toLocaleDateString(),
             "Aliquoted by": aliquot.aliquotedBy,
             "Mycoplasma Test": aliquot.mycoplasmaResult,
             "Cryomedium": aliquot.cryoMedium,
