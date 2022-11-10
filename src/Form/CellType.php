@@ -135,7 +135,7 @@ class CellType extends SaveableType
             ->add("isCancer", CheckboxType::class, [
                 "label" => "Cancer?",
                 "help" => "Check if the cell is a cancer cell line (or based on one).",
-                "required" => true,
+                "required" => false,
                 "empty_data" => null,
             ])
         ;
