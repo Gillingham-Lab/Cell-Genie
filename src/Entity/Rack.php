@@ -6,6 +6,7 @@ namespace App\Entity;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\Traits\NewIdTrait;
 use App\Repository\RackRepository;
+use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -13,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RackRepository::class)]
 #[Gedmo\Loggable]
+#[NotLooped("parent", "children")]
 class Rack
 {
     use NewIdTrait;
@@ -38,9 +40,31 @@ class Rack
     #[Gedmo\Versioned]
     private ?Rack $parent = null;
 
+    // Transient properties only sometimes present
+
+    private ?int $depth = null;
+
+    /** @var array<string> */
+    private array $ulidTree = [];
+    /** @var array<string> */
+    private array $nameTree = [];
+
     public function __toString(): string
     {
         return $this->getName() ?? "unknown";
+    }
+
+    public function getPathName(): ? string
+    {
+        if ($this->getParent() and substr_count($this->getParent()->getPathName(), " | ") < 10) {
+            $name = $this->getParent()->getPathName() . " | ";
+        } else {
+            $name = "";
+        }
+
+        $name .= $name;
+
+        return $name;
     }
 
     public function getName(): ?string
@@ -106,6 +130,10 @@ class Rack
     {
         $this->parent = $parent;
 
+        if ($parent !== null) {
+            $parent->addChild($this);
+        }
+
         return $this;
     }
 
@@ -136,6 +164,48 @@ class Rack
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDepth(): ?int
+    {
+        return $this->depth;
+    }
+
+    public function setDepth(?int $depth): self
+    {
+        $this->depth = $depth;
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getUlidTree(): array
+    {
+        return $this->ulidTree;
+    }
+
+    public function setUlidTree(array $ulidTree): self
+    {
+        $this->ulidTree = $ulidTree;
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getNameTree(): array
+    {
+        return $this->nameTree;
+    }
+
+    public function setNameTree(array $nameTree): self
+    {
+        $this->nameTree = $nameTree;
         return $this;
     }
 }

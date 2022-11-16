@@ -70,7 +70,6 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
                 ->setFormTypeOption('choice_label', function (AntibodyType $enum) {
                     return $enum->value;
                 }),
-
             ChoiceField::new("type", label: "Antibody type")
                 ->onlyOnForms()
                 ->setChoices(function () {

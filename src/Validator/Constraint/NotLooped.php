@@ -3,19 +3,22 @@ declare(strict_types=1);
 
 namespace App\Validator\Constraint;
 
-use App\Validator\WithinBoxBoundsValidator;
+use App\Validator\NotLoopedValidator;
 use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class WithinBoxBounds extends Constraint
+class NotLooped extends Constraint
 {
-    public string $outOfBoundsMessage = "The coordinates are out of bound in box '%box%'.";
+    public string $message = "The current entity was found in the parental hierarchy.";
+    public string $childrenMessage = "The current entity's parent was found in the child hierarchy.";
+    public string $parentNotInstanceMessage = "The current entity's parent cannot be the entity itself.";
 
     #[HasNamedArguments]
     public function __construct(
-        public string $coordinateField,
-        public string $boxField,
+        public string $parentField,
+        public string $childrenField,
+        public int $maxNestingLevel = 10,
         array $groups = null,
         mixed $payload = null
     ) {
@@ -29,6 +32,6 @@ class WithinBoxBounds extends Constraint
 
     public function validatedBy(): string
     {
-        return WithinBoxBoundsValidator::class;
+        return NotLoopedValidator::class;
     }
 }
