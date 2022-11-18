@@ -45,7 +45,7 @@ class BoxType extends SaveableType
                 "class" => Rack::class,
                 "group_by" => function(Rack $rack) { return ($rack->getMaxBoxes() > 0 && $rack->getBoxes()->count() >= $rack->getMaxBoxes()) ? "Full" : "Space available"; },
                 "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
-                "choice_value" => function(Rack $rack) { return $rack->getUlid()->toBase58(); },
+                "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("r")
                         ->select("r")
