@@ -1,0 +1,33 @@
+{% extends 'parts/forms/base_form.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icon %}
+
+
+{% block title %}
+{% if type == "box" %}
+    Gin :: Storage :: Box :: {{ box.ulid is not null ? box ~ " :: Edit" : "New Box"}}
+{% elseif type == "rack" %}
+    Gin :: Storage :: Location :: {{ rack.ulid is not null ? rack ~ " :: Edit" : "New Location"}}
+{% else %}
+    Gin :: Storage :: Unknown operation
+{% endif %}
+{% endblock %}
+
+{% block form_header %}
+    {% if type == "box" %}
+        {{ layout.header(box.ulid is not null ? "Edit" : "New box", box.ulid ? box : null, false, icon.box()) }}
+    {% elseif type == "rack" %}
+        {{ layout.header(rack.ulid is not null ? "Edit" : "New location", rack.ulid ? rack : null, false, icon.rack()) }}
+    {% else %}
+        ???
+    {% endif %}
+
+    {{ layout.toolbox([
+        {
+            "type": "up",
+            "target": returnTo,
+            "tooltipText": "Back",
+        },
+    ]) }}
+{% endblock %}

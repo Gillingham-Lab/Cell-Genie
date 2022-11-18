@@ -119,7 +119,7 @@ class LotType extends SaveableType
                     "required" => false,
                 ])
                 ->add("maxNumberOfAliquots", IntegerType::class, options: [
-                    "label" => "Number of Aliquots",
+                    "label" => "Max Number of Aliquots",
                     "required" => false,
                 ])
                 ->add("aliquoteSize", TextType::class, options: [

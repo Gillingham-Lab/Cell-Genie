@@ -26,7 +26,7 @@ class Box
     )]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]

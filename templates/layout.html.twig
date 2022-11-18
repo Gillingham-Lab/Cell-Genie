@@ -21,7 +21,7 @@
     </div>
 {% endmacro %}
 
-{% macro toolbox_content(tools, size="md") %}
+{% macro toolbox_content(tools, size="md", nobutton=false) %}
     {% set btnGroupClass = size == "lg" ? "btn-group-lg" : (size == "sm" ? "btn-group-sm" : "") %}
 
     <div class="btn-group {{ btnGroupClass }}" role="group" aria-label="tools">
@@ -88,7 +88,11 @@
                 {% endif %}
             {% endif %}
 
-            {% set classTrail = "btn " ~ btnClass %}
+            {% if nobutton %}
+                {% set classTrail = "link-dark" %}
+            {% else %}
+                {% set classTrail = "btn " ~ btnClass %}
+            {% endif %}
 
             {% if tool.disabled is defined and tool.disabled == true %}
                 {% set classTrail = classTrail ~ " disabled"  %}
@@ -130,8 +134,8 @@
     </div>
 {% endmacro %}
 
-{% macro toolbox_column(tools, size="sm") %}
-    {{ _self.toolbox_content(tools, size) }}
+{% macro toolbox_column(tools, size="sm", nobutton=false) %}
+    {{ _self.toolbox_content(tools, size, nobutton) }}
 {% endmacro %}
 
 {% macro toolbox(tools) %}
@@ -184,7 +188,7 @@
 {% endmacro %}
 
 {% macro card_body_start() %}
-    <div class="px-lg-4 overflow-auto" style="max-height: 600px;">
+    <div class="px-lg-4 overflow-auto" style="max-height: 800px;">
 {% endmacro %}
 
 {% macro card_body_end() %}
@@ -196,7 +200,7 @@
     {% set sizeClasses = "" %}
     {% set displayClasses = size == "sm" ? "" : "d-lg-block" %}
 
-    <div id="collapse{{ idPart }}Content" class="collapse {{ displayClasses }} overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header" style="max-height: 600px;">
+    <div id="collapse{{ idPart }}Content" class="collapse {{ displayClasses }} overflow-auto {{ sizeClasses }}" aria-labelledby="collapse{{ idPart }}Header" style="max-height: 800px;">
 {% endmacro %}
 
 {% macro card_body_collapse_end() %}

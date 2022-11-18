@@ -180,12 +180,22 @@
                                                 {# {{ macros.make_box(box, boxAliquotes[box.ulid.toBase58] is defined ? boxAliquotes[box.ulid.toBase58] : null, cell, aliquote) }} #}
                                             </div>-->
 
-                                            <div class="mx-0" {{ stimulus_controller("box", {
-                                                boxMap: boxMaps[box.ulid.toBase58],
-                                                substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
-                                                cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
-                                                currentAliquot: aliquote|json_encode,
-                                            }) }}>
+                                            <div class="mx-0"
+                                                    {% if aliquote %}
+                                                        {{ stimulus_controller("box", {
+                                                            boxMap: boxMaps[box.ulid.toBase58],
+                                                            substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
+                                                            cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
+                                                            currentAliquot: aliquote|json_encode,
+                                                        }) }}
+                                                    {% else %}
+                                                        {{ stimulus_controller("box", {
+                                                            boxMap: boxMaps[box.ulid.toBase58],
+                                                            substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
+                                                            cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
+                                                        }) }}
+                                                    {% endif %}
+                                            >
                                                 <div class="row row-cols-1 row-cols-lg-2">
                                                     <div class="col">
                                                         <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>

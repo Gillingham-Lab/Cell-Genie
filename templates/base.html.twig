@@ -116,11 +116,27 @@
 
                             <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_storage") }}">
-                                    <span class="fas fa-fw fa-boxes"></span>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="{{ url("app_storage") }}"  id="navbar-dropdown-storage-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                    {{ icon.rack() }}
                                     Storage
                                 </a>
+
+                                <div class="dropdown-menu" aria-labelledby="navbar-dropdown-storage-link">
+                                    <a class="dropdown-item" href="{{ url("app_storage_add_rack") }}">
+                                        {{ icon.add(false) }}
+                                        {{ icon.rack(false) }}
+                                        New Location
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url("app_storage_add_box") }}">
+                                        {{ icon.add() }}
+                                        {{ icon.box() }}
+                                        New Box
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
                             </li>
 
                             <li class="nav-item">

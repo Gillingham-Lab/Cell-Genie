@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use App\Entity\Box;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
@@ -16,6 +17,7 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
 use App\Entity\Lot;
+use App\Entity\Rack;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;
 
@@ -43,6 +45,9 @@ class EntityTest extends AbstractExtension
             new TwigTest("lot", fn(?object $lot) => $lot instanceof Lot),
 
             new TwigTest("epitope", fn(?object $epitope) => $epitope instanceof Epitope),
+
+            new TwigTest("box", fn(?object $box) => $box instanceof Box),
+            new TwigTest("rack", fn(?object $rack) => $rack instanceof Rack),
         ];
     }
 }

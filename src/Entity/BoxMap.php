@@ -199,7 +199,7 @@ class BoxMap implements \JsonSerializable
                 // Try to set at coordinate. If it fails, add loose.
                 try {
                     $this->setAtCoordinate($lotCoordinate, $object, shift: $i);
-                } catch (\InvalidArgumentException) {
+                } catch (\InvalidArgumentException | \ErrorException) {
                     $this->addLoose($object);
                 }
             }

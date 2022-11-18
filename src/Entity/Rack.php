@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\Traits\NewIdTrait;
 use App\Repository\RackRepository;
 use App\Validator\Constraint\NotLooped;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -35,19 +36,23 @@ class Rack
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Rack::class)]
     private Collection $children;
 
-    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "LAZY", inversedBy: "children")]
+    #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "EXTRA_LAZY", inversedBy: "children")]
     #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
     private ?Rack $parent = null;
 
     // Transient properties only sometimes present
-
     private ?int $depth = null;
-
     /** @var array<string> */
     private array $ulidTree = [];
     /** @var array<string> */
     private array $nameTree = [];
+
+    public function __construct()
+    {
+        $this->children = new ArrayCollection();
+        $this->boxes = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -62,7 +67,7 @@ class Rack
             $name = "";
         }
 
-        $name .= $name;
+        $name .= $this->getName();
 
         return $name;
     }

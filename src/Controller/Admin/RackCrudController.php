@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
@@ -63,6 +64,7 @@ class RackCrudController extends AbstractCrudController
                     return $rack->getParent();
                 }),*/
             #AssociationField::new("parent")->setHelp("Try not to cause a looped structure; There are currently no safety measures in place."),
+            IntegerField::new("maxBoxes"),
             AssociationField::new("children")->onlyOnIndex(),
             AssociationField::new("boxes")->onlyOnIndex(),
         ];

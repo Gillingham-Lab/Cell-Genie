@@ -49,29 +49,60 @@
 {% macro display_boxes(boxes, currentBox=null) %}
     {% for box in boxes %}
         <div class="list-group-item d-flex justify-content-between align-items-center {% if currentBox is same as(box) %}bg-primary text-white{% endif %}">
-            <a href="{{ url("app_storage_view_box", {"box": box.ulid}) }}"  class="text-decoration-none text-black text-reset">
-                <span class="fas fa-box fa-fw"></span>
-                {{ box.name }} ({{ box.rows }} × {{ box.cols }})
-            </a>
+            <span>
+                <a href="{{ url("app_storage_view_box", {"box": box.ulid}) }}"  class="text-decoration-none text-black text-reset">
+                    <span class="fas fa-box fa-fw"></span>
+                    {{ box.name }} ({{ box.rows }} × {{ box.cols }})
+
+                </a>
+                {{ _self.tools(box) }}
+            </span>
         </div>
     {% endfor %}
+{% endmacro %}
+
+{% macro tools(entity) %}
+    {% if entity is box %}
+        {{ layout.toolbox_column([
+            {
+                "type": "edit",
+                "tooltipText": "Edit box",
+                "target": url("app_storage_edit_box", {"box": entity.ulid}),
+                "display": "sm",
+            },
+        ], "sm", true) }}
+    {% elseif entity is rack %}
+        {{ layout.toolbox_column([
+            {
+                "type": "edit",
+                "tooltipText": "Edit rack",
+                "target": url("app_storage_edit_rack", {"rack": entity.ulid}),
+                "display": "sm",
+            },
+        ], "sm", true) }}
+    {% else %}
+    {% endif %}
 {% endmacro %}
 
 {% macro display_racks(racks, currentBox=null, namePrefix="") %}
     {% for rack in racks %}
         {% set groupId = "gin-storage-" ~ rack.ulid %}
 
-        {% if rack.children|length == 1 %}
-            {# Collapse nesting when there is only 1 child #}
+        {% if rack.children|length == 1 and rack.boxes|length == 0 %}
+            {# Collapse nesting when there is only 1 child with no boxes #}
             {{ _self.display_racks(rack.children, currentBox, namePrefix ~ rack.name ~ "/") }}
         {% else %}
             {# Rack entry #}
             <div class="list-group-item d-flex justify-content-between align-items-center">
-                <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
-                    <span class="collapse-icon far fa-plus-square fa-fw"></span>
-                    <span class="fas fa-boxes fa-fw"></span>
-                    {{ namePrefix }}{{ rack.name }}
-                </a>
+                <span>
+                    <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
+                        <span class="collapse-icon far fa-plus-square fa-fw"></span>
+                        <span class="fas fa-boxes fa-fw"></span>
+                        {{ namePrefix }}{{ rack.name }}
+                    </a>
+
+                    {{ _self.tools(rack) }}
+                </span>
                 <span>
                     <span class="badge bg-secondary rounded-pill" style="width: 30px;">{{ rack.children|length }}</span>
                     <span class="badge bg-primary rounded-pill" style="width: 30px;">{{ rack.boxes|length }}</span>

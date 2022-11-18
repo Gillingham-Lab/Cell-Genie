@@ -16,7 +16,11 @@
                         {% for lot in substance.lots %}
                             <div class="col mb-2">
                                 <div class="card">
-                                    {{ layout.card_header_collapse(substance.shortName ~ "." ~ lot.number, lot.id, "sm") }}
+                                    {% if substance.number %}
+                                        {{ layout.card_header_collapse(substance.number ~ "." ~ lot.number ~ " (" ~ substance.shortName ~ ")", lot.id, "sm") }}
+                                    {% else %}
+                                        {{ layout.card_header_collapse(substance.shortName ~ "." ~ lot.number, lot.id, "sm") }}
+                                    {% endif %}
                                     {{ layout.card_body_collapse_start(lot.id, "sm") }}
 
                                     {{ layout.toolbox_card([

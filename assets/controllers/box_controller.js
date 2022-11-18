@@ -9,7 +9,7 @@ export default class extends Controller {
         yShift: {type: Number, default: 20},
         substanceTarget: String,
         cellTarget: String,
-        currentAliquot: Object,
+        currentAliquot: {type: Object, default: {}},
     }
 
     static targets = ["boxMap", "boxMapContent"];
@@ -161,6 +161,10 @@ export default class extends Controller {
 
         if (this.currentAliquotValue && e.object.cell && this.currentAliquotValue.cell && this.currentAliquotValue.cell.id !== e.object.cell.id) {
             borderColor = "grey";
+        }
+
+        if (e.doublyOccupied) {
+            borderColor = "red";
         }
 
         this.svgContainer
@@ -322,7 +326,7 @@ export default class extends Controller {
         const annotationElement = document.createElement("table");
 
         if (substance.number) {
-            header.innerText = `${substance.number} | ${substance.shortName}.${lot.number}`;
+            header.innerText = `${substance.number}.${lot.number} (${substance.shortName})`;
         } else {
             header.innerText = `${substance.shortName}`;
         }
