@@ -64,16 +64,44 @@ class StorageController extends AbstractController
     }
 
     #[Route("/storage/box/add", name: "app_storage_add_box")]
+    public function addBox(
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ) {
+        return $this->addStorage($request, $entityManager, null, new Box());
+    }
+
     #[Route("/storage/box/edit/{box}", name: "app_storage_edit_box")]
-    #[Route("/storage/rack/add", name: "app_storage_add_rack")]
-    #[Route("/storage/rack/edit/{rack}", name: "app_storage_edit_rack")]
+    public function editBox(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Box $box = null,
+    ) {
+        return $this->addStorage($request, $entityManager, null, $box);
+    }
+
+    #[Route("/storage/rack/add", name: "app_storage_add_rack", defaults: ["box" => null, "rack" => null])]
+    public function addRack(
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ) {
+        return $this->addStorage($request, $entityManager, new Rack(), null);
+    }
+
+    #[Route("/storage/rack/edit/{rack}", name: "app_storage_edit_rack", defaults: ["box" => null, "rack" => null])]
+    public function editRack(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Rack $rack,
+    ) {
+        return $this->addStorage($request, $entityManager, $rack, null);
+    }
+
     public function addStorage(
         Request $request,
         EntityManagerInterface $entityManager,
-        RackRepository $rackRepository,
-        BoxRepository $boxRepository,
-        Rack $rack = null,
-        Box $box = null,
+        ?Rack $rack,
+        ?Box $box,
     ): Response {
         $routeName = $request->attributes->get("_route");
 
@@ -84,8 +112,7 @@ class StorageController extends AbstractController
         if ($routeName === "app_storage_add_box" or $routeName === "app_storage_edit_box") {
             $type = "box";
 
-            if (!$box) {
-                $box = new Box();
+            if ($box and !$box->getUlid()) {
                 $new = true;
             }
 
@@ -103,8 +130,7 @@ class StorageController extends AbstractController
         } elseif ($routeName === "app_storage_add_rack" or $routeName === "app_storage_edit_rack") {
             $type = "rack";
 
-            if (!$rack) {
-                $rack = new Rack();
+            if ($rack and !$rack->getUlid()) {
                 $new = true;
             }
 
