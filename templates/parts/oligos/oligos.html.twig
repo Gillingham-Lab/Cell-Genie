@@ -4,6 +4,31 @@
 
 {% block title %}Gin :: Oligos{% endblock %}
 
+{% macro oligo_tools(oligo) %}
+    {% if oligo == null %}
+    {% else %}
+        {{ layout.toolbox_column([
+            {
+                "type": "view",
+                "tooltipText": "View oligo",
+                "target": url("app_oligo_view", {"oligoId": oligo.ulid}),
+            },
+            {
+            "type": "edit",
+            "tooltipText": "Edit oligo",
+            "target": url("app_substance_edit", {"substance": oligo.ulid}),
+            "display": "lg",
+            },
+            {
+            "type": "add",
+            "tooltipText": "Add lot",
+            "target": url("app_substance_add_lot", {"substance": oligo.ulid}),
+            "display": "lg",
+            }
+        ]) }}
+    {% endif %}
+{% endmacro %}
+
 
 {% block body_main %}
 <div class="row">
@@ -24,9 +49,6 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 50px;">
-                                <div class="btn-group mr-3" style="visibility: hidden;">
-                                    <span class="btn btn-sm btn-info"><span class="fa fa-eye"></span></span>
-                                </div>
                             </th>
                             <th scope="col">
                                 Name
@@ -42,9 +64,7 @@
                         {% set lotCount = oligo_row[1] %}
                         <tr>
                             <td class="align-middle">
-                                <div class="btn-group mr-3">
-                                    <a href="{{ url("app_oligo_view", {"oligoId": oligo.ulid}) }}" class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
-                                </div>
+                                {{ _self.oligo_tools(oligo) }}
                             </td>
                             <td>{{ oligo.shortName }}</td>
                             <td>{{ oligo.sequenceLength }}</td>

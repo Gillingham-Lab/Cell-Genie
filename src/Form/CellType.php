@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
@@ -130,6 +131,7 @@ class CellType extends SaveableType
             ->add("cultureType", ... $this->getTextOrChoiceOptions("cultureType", [
                 "label" => "Culture type",
                 "required" => false,
+                "empty_data" => "",
                 "help" => "Set the culture type (if known). Are the cells adherent or suspension? In clusters? Both?",
             ]))
             ->add("isCancer", CheckboxType::class, [
@@ -230,10 +232,26 @@ class CellType extends SaveableType
                     "data-allow-empty" => "true",
                 ],
             ])
-            ->add("engineeringPlasmid", TextType::class, [
+            ->add("engineeringPlasmid", EntityType::class, [
+                "class" => Plasmid::class,
                 "label" => "Plasmid",
                 "help" => "Which plasmid has been used to construct this cell line?",
                 "required" => false,
+                "query_builder" => function (EntityRepository $er) {
+                    $qb = $er->createQueryBuilder("p")
+                        ->addOrderBy("p.number", "ASC")
+                        ->addOrderBy("p.shortName", "ASC")
+                    ;
+
+                    return $qb;
+                },
+                "empty_data" => null,
+                "placeholder" => "Select a cell line",
+                "multiple" => false,
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "true",
+                ],
             ])
             ->add("engineeringDescription", CKEditorType::class, [
                 "label" => "Engineering description",

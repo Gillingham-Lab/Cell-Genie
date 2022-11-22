@@ -44,6 +44,7 @@
                                 {{ macros.definition_row("ID", protein.ulid) }}
                                 {{ macros.definition_row("Short name", protein.shortName) }}
                                 {{ macros.definition_row("Name", protein.longName) }}
+                                {{ macros.definition_row("Organism", protein.organism) }}
                                 {{ macros.definition_row("Type", protein.proteinType ? protein.proteinType : "unknown") }}
                                 {{ macros.definition_row("Protein Atlas", protein.proteinAtlasUri ?? "unknown", protein.proteinAtlasUri ?? null) }}
                                 {# Experiment types #}
@@ -116,7 +117,7 @@
                                 No epitopes registered
                             {% else %}
                                 <div class="row row-cols-1">
-                                    {% for row in antibodyList %}
+                                    {% for row in antibodyList|sort((a, b) => a[0].number <=> b[0].number) %}
                                         {% set antibody = row[0] %}
                                         {% set epitope = row[1] %}
                                         <div class="col mb-2">

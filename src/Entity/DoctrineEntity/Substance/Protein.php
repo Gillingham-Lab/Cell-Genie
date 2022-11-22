@@ -5,6 +5,7 @@ namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\EpitopeProtein;
 use App\Entity\Experiment;
+use App\Entity\Organism;
 use App\Repository\Substance\ProteinRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,12 +35,6 @@ class Protein extends Substance
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private Collection $experiments;
 
-    /*#[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "proteinTarget")]
-    #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]*/
-    /*#[ORM\ManyToMany(targetEntity: EpitopeProtein::class, mappedBy: "proteins")]
-    #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
-    private Collection $substanceEpitope;*/
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
     private ?string $proteinType = null;
@@ -50,6 +45,11 @@ class Protein extends Substance
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
     private ?string $mutation = null;
+
+    #[ORM\ManyToOne(targetEntity: Organism::class, fetch: "EAGER")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[Gedmo\Versioned]
+    private ?Organism $organism = null;
 
     public function __construct()
     {
@@ -231,6 +231,17 @@ class Protein extends Substance
     {
         $this->mutation = $mutation;
 
+        return $this;
+    }
+
+    public function getOrganism(): ?Organism
+    {
+        return $this->organism;
+    }
+
+    public function setOrganism(?Organism $organism): self
+    {
+        $this->organism = $organism;
         return $this;
     }
 }

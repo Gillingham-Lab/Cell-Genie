@@ -57,6 +57,7 @@
                             <th scope="col">
                                 Name
                             </th>
+                            <th>Organism</th>
                             <th>Lots</th>
                             <th class="d-none d-lg-table-cell" scope="col">Descendants</th>
                             <th class="d-none d-lg-table-cell" scope="col">Epitopes </th>
@@ -74,6 +75,8 @@
                                 <td class="align-middle" data-sortvalue="{{ protein.shortName }}">
                                     {{ _self.format_antibody_name(protein) }}
                                 </td>
+
+                                <td>{{ protein.organism }}</td>
 
                                 <td>{{ numberOfLots>0?numberOfLots:"-" }}</td>
 

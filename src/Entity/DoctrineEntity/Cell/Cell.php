@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Cell;
 
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\Experiment;
 use App\Entity\Morphology;
 use App\Entity\Organism;
@@ -81,10 +82,10 @@ class Cell
     #[Gedmo\Versioned]
     private ?string $engineeringDescription = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Assert\Length(max: 200)]
+    #[ORM\ManyToOne(targetEntity: Plasmid::class)]
+    #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
-    private ?string $engineeringPlasmid = null;
+    private ?Plasmid $engineeringPlasmid = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -280,9 +281,9 @@ class Cell
         return $this->cultureType;
     }
 
-    public function setCultureType(string $cultureType): self
+    public function setCultureType(?string $cultureType): self
     {
-        $this->cultureType = $cultureType;
+        $this->cultureType = $cultureType ?? "";
 
         return $this;
     }
@@ -637,12 +638,12 @@ class Cell
         return $this;
     }
 
-    public function getEngineeringPlasmid(): ?string
+    public function getEngineeringPlasmid(): ?Plasmid
     {
         return $this->engineeringPlasmid;
     }
 
-    public function setEngineeringPlasmid(?string $engineeringPlasmid): self
+    public function setEngineeringPlasmid(?Plasmid $engineeringPlasmid): self
     {
         $this->engineeringPlasmid = $engineeringPlasmid;
 

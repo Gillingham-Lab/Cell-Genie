@@ -5,6 +5,7 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
+use App\Entity\Organism;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
@@ -41,6 +42,24 @@ class ProteinType extends SaveableType
                     "label" => "Protein Atlas",
                     "help" => "A link to the protein atlas entry",
                     "required" => false,
+                ])
+                ->add("organism", EntityType::class, [
+                    "label" => "Origin organism",
+                    "help" => "Which organism does this specific protein come from? Please remember to group similar proteins together by using a parent/child structure.",
+                    "required" => true,
+                    "class" => Organism::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.name", "ASC")
+                            ;
+                    },
+                    "empty_data" => null,
+                    "placeholder" => "Select an organism",
+                    "multiple" => false,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
                 ])
             )
             ->add(

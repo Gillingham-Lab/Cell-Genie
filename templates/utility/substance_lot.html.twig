@@ -16,7 +16,7 @@
                         {% for lot in substance.lots %}
                             <div class="col mb-2">
                                 <div class="card">
-                                    {% if substance.number %}
+                                    {% if substance.number is defined %}
                                         {{ layout.card_header_collapse(substance.number ~ "." ~ lot.number ~ " (" ~ substance.shortName ~ ")", lot.id, "sm") }}
                                     {% else %}
                                         {{ layout.card_header_collapse(substance.shortName ~ "." ~ lot.number, lot.id, "sm") }}

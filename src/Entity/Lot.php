@@ -44,8 +44,7 @@ class Lot implements \JsonSerializable
     #[Assert\NotBlank]
     private ?DateTimeInterface $boughtOn = null;
 
-    #[ORM\Column(type: "date")]
-    #[Assert\NotBlank]
+    #[ORM\Column(type: "date", nullable: true)]
     private ?DateTimeInterface $openedOn = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]

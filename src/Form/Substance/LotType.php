@@ -67,6 +67,9 @@ class LotType extends SaveableType
                 ->add("openedOn", DateType::class, options: [
                     "widget" => "single_text",
                     "label" => "Opened on",
+                    "required" => false,
+                    "html5" => true,
+                    "empty_data" => "",
                 ])
                 ->add("comment", TextareaType::class, options: [
                     "label" => "Comment",

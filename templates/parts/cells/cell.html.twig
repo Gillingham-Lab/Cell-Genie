@@ -447,7 +447,7 @@
                                 <p>Cells have been engineered by {{ cell.engineer ? cell.engineer.fullName : "whoever" }}.</p>
 
                                 {% if cell.engineeringPlasmid %}
-                                    <p><em>Plasmid information:</em> {{ cell.engineeringPlasmid}}.</p>
+                                    <p><em>Engineered with</em> {{ macros.pillify([cell.engineeringPlasmid]) }}</p>
                                 {% endif %}
 
                                 {% if cell.engineeringDescription %}
