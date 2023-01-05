@@ -131,6 +131,13 @@
                                     "tooltipText": "Edit current aliquot",
                                     "target": url("app_cell_aliquot_edit", {"cell": cell.cellNumber ?: cell.id, "cellAliquot": aliquote.id})
                                 },
+                                {
+                                    "type": "other",
+                                    "text": "Consume #" ~ aliquote.id,
+                                    "tooltipText": aliquote.vials > 0 ? "Consume one aliquot" : "No aliquots left to consume.",
+                                    "disabled": aliquote.vials > 0 ? false : true,
+                                    "target": url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id})
+                                }
                             ]) }}
                         {% else %}
                             {{ layout.toolbox_card([

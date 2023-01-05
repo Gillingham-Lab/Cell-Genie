@@ -29,6 +29,7 @@
             {% set iconClass = "" %}
             {% set btnClass = "" %}
             {% set displayClass = "" %}
+            {% set toolText = "" %}
 
             {% if tool.iconClass is defined %}
                 {% set iconClass = tool["iconClass"] %}
@@ -42,6 +43,10 @@
                 {% if tool.display == "lg" %}
                     {% set displayClass = "d-none d-lg-inline" %}
                 {% endif %}
+            {% endif %}
+
+            {% if tool.text is defined %}
+                {% set toolText = tool.text %}
             {% endif %}
 
             {% if tool.type is defined %}
@@ -85,6 +90,8 @@
                     {# Hierarchy up #}
                     {% set iconClass = "fas fa-fw fa-arrow-left" %}
                     {% set btnClass = "btn-secondary" %}
+                {% elseif tool.type == "other" %}
+                    {% set btnClass = "btn-secondary" %}
                 {% endif %}
             {% endif %}
 
@@ -121,7 +128,13 @@
                         data-clipboard-text="{{ tool.clipboardText }}"
                     {% endif %}
             >
-                <span class="{{ iconClass }}"></span>
+                {% if iconClass %}
+                    <span class="{{ iconClass }}"></span>
+                {% endif %}
+
+                {% if toolText  %}
+                    {{ toolText }}
+                {% endif %}
             </a>
         {% endfor %}
     </div>
