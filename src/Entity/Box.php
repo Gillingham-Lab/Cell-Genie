@@ -55,9 +55,9 @@ class Box
     public function getFullLocation(): string
     {
         if ($this->rack) {
-            return "{$this->rack->getName()}/{$this->name}";
+            return "{$this->rack->getPathName()} | {$this->name}";
         } else {
-            return "no-rack/{$this->name}";
+            return "no-rack | {$this->name}";
         }
     }
 
