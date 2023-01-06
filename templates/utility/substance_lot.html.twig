@@ -15,7 +15,7 @@
                     <div class="row row-cols-1">
                         {% for lot in substance.lots %}
                             <div class="col mb-2">
-                                <div class="card">
+                                <div class="card {{ lot.availability is isAvailable ? "border-success" : (lot.availability is isNotAvailable ? "border-error" : "border-warning") }}">
                                     {% if substance.number is defined %}
                                         {{ layout.card_header_collapse(substance.number ~ "." ~ lot.number ~ " (" ~ substance.shortName ~ ")", lot.id, "sm") }}
                                     {% else %}
@@ -54,6 +54,7 @@
                                         <table class="table table-sm table-borderless table-hover">
                                             <tbody>
                                             {{ macros.definition_row("Lot #", lot.lotNumber) }}
+                                            {{ macros.definition_row("Status", lot.availability.value) }}
                                             {% if substance is not substanceAntibody %}
                                             {{ macros.definition_row_raw("Vendor", macros.vendor_url(lot.vendor, lot.vendorPN)) }}
                                             {% endif %}

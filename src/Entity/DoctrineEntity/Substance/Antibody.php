@@ -10,6 +10,7 @@ use App\Entity\Lot;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
 use App\Genie\Enums\AntibodyType;
+use App\Genie\Enums\Availability;
 use App\Repository\Substance\AntibodyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -81,6 +82,8 @@ class Antibody extends Substance
     #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true)]
     #[Assert\Valid]
     private Collection $vendorDocumentation;
+
+    public ?bool $available = null;
 
     public function __construct()
     {
@@ -256,9 +259,6 @@ class Antibody extends Substance
         return $this;
     }
 
-    /**
-     * @return AntibodyType|null
-     */
     public function getType(): ?AntibodyType
     {
         return $this->type;
@@ -267,6 +267,30 @@ class Antibody extends Substance
     public function setType(?AntibodyType $type): self
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function getAvailable(): ?bool
+    {
+        // If availability is null, we determine it manually by checking all lots.
+        // Can be set manually to prevent auto-checking.
+        if ($this->available === null) {
+            $available = false;
+            /** @var Lot $lot */
+            foreach ($this->getLots() as $lot) {
+                if ($lot->getAvailability() === Availability::Available) {
+                    $available = true;
+                }
+            }
+
+            $this->available = $available;
+        }
+        return $this->available;
+    }
+
+    public function setAvailable(?bool $available): self
+    {
+        $this->available = $available;
         return $this;
     }
 }

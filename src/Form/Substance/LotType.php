@@ -9,8 +9,10 @@ use App\Entity\User;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\SaveableType;
 use App\Form\VendorType;
+use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -42,6 +44,17 @@ class LotType extends SaveableType
                 ->add('lotNumber',TextType::class, options: [
                     "label" => "Lot number",
                     "help" => "Manufactures lot number (for publications)",
+                ])
+                ->add("availability", ChoiceType::class, [
+                    "label" => "Type",
+                    "help" => "Mark if the antibody is primary or secondary",
+                    "required" => true,
+                    "choices" => [
+                        "Available" => Availability::Available,
+                        "Ordered" => Availability::Ordered,
+                        "In preparation" => Availability::InPreparation,
+                        "Empty" => Availability::Empty,
+                    ],
                 ])
                 ->add("boughtOn", DateType::class, options: [
                     "widget" => "single_text",

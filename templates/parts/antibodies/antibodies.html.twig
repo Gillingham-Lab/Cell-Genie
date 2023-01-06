@@ -158,7 +158,7 @@
         <tbody>
         {% for entry in antibodies %}
             {% set antibody = entry %}
-            <tr>
+            <tr class="{{ antibody.available is same as(false) ? "text-muted" : "" }}">
                 <td>
                     {{ _self.antibody_tools(antibody) }}
                 </td>

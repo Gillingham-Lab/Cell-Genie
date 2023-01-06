@@ -6,6 +6,7 @@ namespace App\Entity;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\VendorTrait;
+use App\Genie\Enums\Availability;
 use App\Repository\LotRepository;
 use App\Validator\Constraint\ValidBoxCoordinate;
 use App\Validator\Constraint\WithinBoxBounds;
@@ -77,6 +78,9 @@ class Lot implements \JsonSerializable
     #[Assert\Length(max: 10)]
     #[ValidBoxCoordinate]
     private ?string $boxCoordinate = null;
+
+    #[ORM\Column(type: "string", enumType: Availability::class, options: ["default" => Availability::Available])]
+    private ?Availability $availability;
 
     public function __construct()
     {
@@ -249,6 +253,17 @@ class Lot implements \JsonSerializable
     public function setBoxCoordinate(?string $boxCoordinate): self
     {
         $this->boxCoordinate = $boxCoordinate;
+        return $this;
+    }
+
+    public function getAvailability(): ?Availability
+    {
+        return $this->availability;
+    }
+
+    public function setAvailability(?Availability $availability): self
+    {
+        $this->availability = $availability;
         return $this;
     }
 }

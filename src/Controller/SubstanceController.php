@@ -271,7 +271,15 @@ class SubstanceController extends AbstractController
 
         /** @var Antibody $antibody */
         foreach ($antibodies as $row) {
-            $antibody = $row;
+            $antibody = $row[0];
+            $numberOfLots = $row[1];
+            $numberOfAvailableLots = $row[2];
+
+            if ($numberOfAvailableLots > 0) {
+                $antibody->setAvailable(true);
+            } else {
+                $antibody->setAvailable(false);
+            }
 
             $addPrimary = false;
             $addSecondary = false;
@@ -283,11 +291,11 @@ class SubstanceController extends AbstractController
             }
 
             if ($addPrimary and ($antibodyType === "primaries" or empty($antibodyType))) {
-                $primaryAntibodies[] = $row;
+                $primaryAntibodies[] = $antibody;
             }
 
             if ($addSecondary and ($antibodyType === "secondaries" or empty($antibodyType))) {
-                $secondaryAntibodies[] = $row;
+                $secondaryAntibodies[] = $antibody;
             }
         }
 
@@ -342,14 +350,30 @@ class SubstanceController extends AbstractController
         }
 
         $results =  $antibodyRepository->findBySearchTerm($searchTerm);
+        $antibodies = [];
 
         if (empty($results)) {
             $this->addFlash("info", "No results found.");
             return $this->redirectToRoute("app_antibodies");
         }
 
+        foreach ($results as $row) {
+            /** @var Antibody $antibody */
+            $antibody = $row[0];
+            $numberOfLots = $row[1];
+            $numberOfAvailableLots = $row[2];
+
+            if ($numberOfAvailableLots > 0) {
+                $antibody->setAvailable(true);
+            } else {
+                $antibody->setAvailable(false);
+            }
+
+            $antibodies[] = $antibody;
+        }
+
         return $this->render('parts/antibodies/antibodies.html.twig', [
-            "antibodies" => $results,
+            "antibodies" => $antibodies,
             "primaryAntibodies" => [],
             "secondaryAntibodies" => [],
         ]);
