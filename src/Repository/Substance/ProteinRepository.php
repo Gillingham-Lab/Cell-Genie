@@ -81,7 +81,6 @@ class ProteinRepository extends ServiceEntityRepository
             ->leftJoin("ep.antibodies", "ab", conditionType: Join::ON)
             ->leftJoin("p.children", "pc", conditionType: Join::ON)
             ->groupBy("p.ulid")
-            ->addGroupBy("l.id")
             ->addGroupBy("ep.id")
             ->addGroupBy("ab.ulid")
             ->addGroupBy("pc.ulid")
@@ -105,33 +104,4 @@ class ProteinRepository extends ServiceEntityRepository
             ->getResult()
             ;
     }
-
-    // /**
-    //  * @return Protein[] Returns an array of Protein objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Protein
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -48,7 +48,6 @@ class OligoRepository extends ServiceEntityRepository
             ->addSelect("COUNT(l)")
             ->leftJoin("o.lots", "l")
             ->groupBy("o.ulid")
-            ->addGroupBy("l.id")
             ->addOrderBy("o.shortName", "ASC")
             ->getQuery()
             ->getResult()
