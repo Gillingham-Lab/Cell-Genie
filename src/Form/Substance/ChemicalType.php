@@ -50,6 +50,7 @@ class ChemicalType extends SaveableType
                     "label" => "SMILES",
                     "help" => "The SMILES representation of the structure. Use a tool such as ChemDraw to paste the structure.",
                     "required" => false,
+                    "empty_data" => "",
                 ])
                 ->add("molecularMass", NumberType::class, [
                     "label" => "Molecular mass [Da]",
