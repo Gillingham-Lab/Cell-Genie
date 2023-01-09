@@ -83,7 +83,7 @@ class Antibody extends Substance
     #[Assert\Valid]
     private Collection $vendorDocumentation;
 
-    public ?bool $available = null;
+    protected ?bool $available = null;
 
     public function __construct()
     {

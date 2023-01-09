@@ -100,7 +100,8 @@
                                 </thead>
                                 <tbody>
                                 {% for antibody in epitope.antibodies %}
-                                    <tr>
+                                    {{ antibody.available is same as(false) ? "fakse" : "true"}}
+                                    <tr class="{{ antibody.available is same as(false) ? "text-muted" : "" }}">
                                         <td>
                                             <div class="btn-group btn-group-sm mr-3">
                                                 <a
