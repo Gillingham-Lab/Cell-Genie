@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\ShortNameTrait;
 use App\Repository\EpitopeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -36,6 +37,12 @@ class Epitope
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description;
+
+    public function __construct()
+    {
+        $this->antibodies = new ArrayCollection();
+        $this->substances = new ArrayCollection();
+    }
 
     /**
      * @return Collection<int, Antibody>
