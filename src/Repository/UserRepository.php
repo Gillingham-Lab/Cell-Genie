@@ -39,4 +39,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->persist($user);
         $this->_em->flush();
     }
+
+    public function findAllActives()
+    {
+        $qb = $this->createQueryBuilder("u")
+            ->select("u")
+            ->where("u.isActive = true")
+            ->orderBy("u.fullName", "ASC")
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 }

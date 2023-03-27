@@ -1,0 +1,12 @@
+{% extends 'parts/forms/base_form.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icon %}
+
+{% block title %}
+    {% if new %}
+        Gin :: Instrument :: Add
+    {% else %}
+        Gin :: Instrument :: Edit :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}
+    {% endif %}
+{% endblock %}

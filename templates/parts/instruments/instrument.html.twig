@@ -1,0 +1,186 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% from 'utility/attachments.html.twig' import attachments %}
+
+{% block title %}Gin :: Instrument :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}{% endblock %}
+
+{% macro getInstrumentLevel(instrument, user) %}
+    {% for instrumentUser in instrument.users|filter(e => e.user.id == user.id) %}
+        {{ instrumentUser.role.value|capitalize }}
+    {% else %}
+        {{ instrument.requiresTraining ? "Untrained" : "User" }}
+    {% endfor %}
+{% endmacro %}
+
+{% block body_main %}
+    {% set instrumentRole = "untrained" %}
+    {% if instrument.users|filter(e => e.user.id == app.user.id)|length > 0 %}
+        {% set instrumentRole = (instrument.users|filter(e => e.user.id == app.user.id)|first).role.value %}
+    {% endif %}
+
+    {% set canEdit = false %}
+    {% if is_granted("ROLE_ADMIN") %}
+        {% set canEdit = true %}
+    {% endif %}
+    {% if instrumentRole == "admin" or instrumentRole == "responsible" %}
+        {% set canEdit = true %}
+    {% endif %}
+
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(instrument.instrumentNumber ~ " | " ~ instrument.shortName) }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "up",
+                    "target": url("app_instruments"),
+                    "tooltipText": "Back to all instruments",
+                },
+                {
+                    "type": "edit",
+                    "target": canEdit ? url("app_instruments_edit", {"instrument": instrument.id}) : null,
+                    "disabled": canEdit ? false : true,
+                    "tooltipText": "Edit the instrument",
+                },
+            ]) }}
+
+            <div class="row row-cols-1 row-cols-lg-2">
+                {# General #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("General", "General") }}
+
+                        {{ layout.card_body_collapse_start("General") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            <table class="table table-sm table-borderless table-hover">
+                                <tbody>
+                                {{ macros.definition_row("Number", instrument.id) }}
+                                {{ macros.definition_row("Short name", instrument.shortName) }}
+                                {{ macros.definition_row("Name", instrument.longName) }}
+                                {{ macros.definition_row("Registration number", instrument.registrationNumber ?: "none") }}
+                                {{ macros.definition_row("Location", instrument.location) }}
+                                {{ macros.definition_row("Mandatory training", instrument.requiresTraining ? "yes" : "no") }}
+                                {{ macros.definition_row("Booking required", instrument.requiresReservation ? "yes" : "no") }}
+                                </tbody>
+                            </table>
+
+                            <div>
+                                <h3>Description</h3>
+                                {{ instrument.description|raw }}
+                            </div>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {# Instrument details #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Details", "Details") }}
+
+                        {{ layout.card_body_collapse_start("Details") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            <table class="table table-sm table-borderless table-hover">
+                                <tbody>
+                                {{ macros.definition_row("Model number", instrument.modelNumber) }}
+                                {{ macros.definition_row("Serial number", instrument.serialNumber) }}
+                                {{ macros.definition_row("Contact", instrument.instrumentContact ?: "unknown") }}
+                                {{ macros.definition_row("Acquired on", instrument.acquiredOn ? (instrument.acquiredOn|date("d. m. Y")): "never") }}
+                                {{ macros.definition_row("Last Maintenance", instrument.lastMaintenance ? (instrument.lastMaintenance|date("d. m. Y")): "never") }}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {# Instrument users #}
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Users", "Users") }}
+
+                        {{ layout.card_body_collapse_start("Users") }}
+                        <div class="card-body px-lg-5 mx-0">
+                            {% if instrument.requiresTraining and instrumentRole == "untrained" %}
+                                <p class="alert alert-danger">You have not been trained on this instrument yet. Contact a responsible person for this instrument.</p>
+                            {% elseif instrument.requiresTraining %}
+                                <p class="alert alert-success">You have been trained on this instrument. Contact a responsible person or an advanced user for advice if you have any questions.</p>
+                            {% endif %}
+
+                            <table class="table table-sm table-borderless table-hover">
+                                <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for user in users %}
+                                    <tr {{ user.id is same as(app.user.id) ? 'class="bg-light"' : '' }}>
+                                        <td>{{ user.fullName }}</td>
+                                        <td>{{ _self.getInstrumentLevel(instrument, user) }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No users</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {# Instrument calendar #}
+                {% if instrument.requiresReservation and not instrument.calendarId is null %}
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse("Calendar", "Calendar") }}
+
+                            {{ layout.card_body_collapse_start("Calendar") }}
+                            <div class="card-body px-lg-5 mx-0">
+                                <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Modular or Collective #}
+                {% if instrument.isModular or instrument.isCollective %}
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse(instrument.isModular ? "Modules" : "Instruments", "modules") }}
+
+                            {{ layout.card_body_collapse_start("modules") }}
+                            <div class="card-body px-lg-5 mx-0">
+                                <table class="table table-sm table-borderless table-hover">
+                                    <thead>
+                                        <th scope="col">Number</th>
+                                        <th scope="col">Short name</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for instrumentPart in instrument.children %}
+                                            <tr>
+                                                <td>{{ instrumentPart.instrumentNumber }}</td>
+                                                <td>{{ instrumentPart.shortName }}</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr><td colspan="2">No {{ instrument.isModular ? "modules" : "sub instruments"  }} registered</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Attachments #}
+                {{ attachments(instrument.attachments) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

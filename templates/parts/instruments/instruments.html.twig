@@ -1,0 +1,77 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+
+{% block title %}Gin :: Recipes{% endblock %}
+
+{% macro row_tools(instrument) %}
+    {% if instrument == null %}
+    {% else %}
+        {{ layout.toolbox_column([
+            {
+                "type": "view",
+                "tooltipText": "View instrument",
+                "target": url("app_instruments_view", {"instrument": instrument.id}),
+            },
+            {
+                "type": "edit",
+                "tooltipText": "Edit instrument",
+                "target": url("app_instruments_edit", {"instrument": instrument.id}),
+            },
+        ]) }}
+    {% endif %}
+{% endmacro %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Instruments") }}
+
+            {{ layout.toolbox([
+                {
+                    "type": "add",
+                    "target": url("app_instruments_add"),
+                    "tooltipText": "Add new instrument",
+                },
+            ]) }}
+
+            <div class="row">
+                <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
+                    <table class="table table-hover fancyTable" data-ft-sort-column=2>
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 100px">
+                                </th>
+                                <th scope="col">Number</th>
+                                <th scope="col">Short name</th>
+                                <th scope="col">My Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for instrumentAndRole in instruments %}
+                            {% set instrument = instrumentAndRole.instrument %}
+                            {% set role = instrumentAndRole.role %}
+                            <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
+                                <td class="align-middle">
+                                    {{ _self.row_tools(instrument) }}
+                                </td>
+                                <td>
+                                    {{ instrument.instrumentNumber  }}
+                                </td>
+                                <td>
+                                    <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
+                                </td>
+                                <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5">No instruments registered</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
