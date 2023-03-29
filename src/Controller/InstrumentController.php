@@ -10,7 +10,12 @@ use App\Form\Instrument\InstrumentType;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
 use App\Repository\UserRepository;
+use App\Service\InstrumentBookingService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Google\Client;
+use Google\Service\Calendar;
+use Google\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,6 +47,7 @@ class InstrumentController extends AbstractController
     #[Route("instruments/no/{instrument}", name: "app_instruments_view")]
     public function viewInstrument(
         UserRepository $userRepository,
+        Security $security,
         Instrument $instrument,
     ): Response {
         return $this->render("parts/instruments/instrument.html.twig", [
@@ -132,5 +138,58 @@ class InstrumentController extends AbstractController
             "new" => $new,
             "instrument" => $instrument,
         ]);
+    }
+
+    #[Route("/instrument/book/{instrument}", name: "app_instruments_book")]
+    public function bookInstrument(
+        Request $request,
+        Security $security,
+        InstrumentBookingService $instrumentBookingService,
+        Instrument $instrument,
+    ): Response {
+        // Get the current user
+        $currentUser = $security->getUser();
+        assert($currentUser instanceof User);
+
+        if (!$instrument->isBookable()) {
+            $this->addFlash("error", "This instrument has not been configured to be booked.");
+            return $this->redirectToRoute("app_instruments_view", ["instrument" => $instrument->getId()]);
+        }
+
+        $access = false;
+
+        // Check if the user is admin
+        if ($security->isGranted("ROLE_ADMIN")) {
+            $access = true;
+        }
+
+        // If the instrument requires training, but the user is untrained, deny booking
+        if ($instrument->getRequiresTraining() and $instrument->getUsers()->filter(fn(InstrumentUser $iu) => $iu->getUser() === $currentUser and $iu->getRole() !== InstrumentRole::Untrained)) {
+            $access = true;
+        }
+
+        // Calculate the date and time and stuff
+        $startTime = new DateTime($request->get("start"), new \DateTimeZone("Europe/Zurich"));
+        $endTime = new DateTime($request->get("start"), new \DateTimeZone("Europe/Zurich"));
+        $length = (float)($request->get("length"));
+        if ($length <= 0) {
+            $length = $instrument->getDefaultReservationLength();
+        }
+
+        $hours = (int)floor($length);
+        $minutes = (int)round(($length - $hours)*60);
+
+        $endTime->add(\DateInterval::createFromDateString("+ {$hours} hours + {$minutes} minutes"));
+
+        try {
+            $instrumentBookingService->book($instrument, $currentUser, $startTime, $endTime);
+
+            $this->addFlash("success", "The instrument booking has been set up.");
+        } catch (Service\Exception $exception) {
+            $this->addFlash("error", "The instrument booking has been set up incorrectly.");
+        }
+
+
+        return $this->redirectToRoute("app_instruments_view", ["instrument" => $instrument->getId()]);
     }
 }

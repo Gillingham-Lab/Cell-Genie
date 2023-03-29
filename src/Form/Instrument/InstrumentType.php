@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Form\Instrument;
 
-use App\Entity\Box;
 use App\Entity\DoctrineEntity\Instrument;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
@@ -16,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -68,9 +69,20 @@ class InstrumentType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                 ])
+                ->add("defaultReservationLength", NumberType::class, [
+                    "label" => "Default reservation time, in hours",
+                    "required" => true,
+                    "empty_data" => null,
+                ])
                 ->add("calendarId", EmailType::class, [
                     "label" => "Google calendar ID",
                     "help" => "Google calendar id (format: id@group.calendar.google.com) to embed the specific calendar",
+                    "required" => false,
+                    "empty_data" => null,
+                ])
+                ->add("authString", TextareaType::class, [
+                    "label" => "Google API auth string",
+                    "help" => "A google API auth string for a service account. The calendar must be shared with writing access with the service account given in the auth string.",
                     "required" => false,
                     "empty_data" => null,
                 ])

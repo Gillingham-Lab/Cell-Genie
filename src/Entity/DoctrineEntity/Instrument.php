@@ -100,6 +100,14 @@ class Instrument
     #[Gedmo\Versioned]
     private ?DateTimeInterface $acquiredOn = null;
 
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $authString = null;
+
+    #[ORM\Column(type: "float", options: ["default" => 1])]
+    #[Assert\NotBlank]
+    #[Assert\Range(minMessage: "Minimum reservation time should be 6 minutes; machines that are quicker should not need reservation.", min: 0.1)]
+    private ?float $defaultReservationLength = 1;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -350,6 +358,37 @@ class Instrument
     public function setAcquiredOn(?DateTimeInterface $acquiredOn): self
     {
         $this->acquiredOn = $acquiredOn;
+        return $this;
+    }
+
+    public function isBookable(): bool
+    {
+        if (json_decode($this->authString, true) and $this->getCalendarId()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getAuthString(): ?string
+    {
+        return $this->authString;
+    }
+
+    public function setAuthString(?string $authString): self
+    {
+        $this->authString = $authString;
+        return $this;
+    }
+
+    public function getDefaultReservationLength(): ?float
+    {
+        return $this->defaultReservationLength;
+    }
+
+    public function setDefaultReservationLength(?float $defaultReservationLength): self
+    {
+        $this->defaultReservationLength = $defaultReservationLength;
         return $this;
     }
 }

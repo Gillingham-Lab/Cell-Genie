@@ -32,6 +32,7 @@ final class Version20230327061736 extends AbstractMigration
         $table->addColumn("calendar_id", "string")->setNotnull(false)->setLength(255);
 
         $table->addColumn("description", "text")->setNotnull(false);
+        $table->addColumn("auth_string", "text")->setNotnull(false);
 
         $table->addColumn("requires_training", "boolean")->setNotnull(true)->setDefault(false);
         $table->addColumn("requires_reservation", "boolean")->setNotnull(true)->setDefault(false);
@@ -40,6 +41,7 @@ final class Version20230327061736 extends AbstractMigration
 
         $table->addColumn("last_maintenance", "datetime")->setNotnull(false);
         $table->addColumn("acquired_on", "datetime")->setNotnull(false);
+        $table->addColumn("default_reservation_length", "float")->setNotnull(false)->setDefault(1);
 
         $table->setPrimaryKey(["id"]);
         $table->addUniqueIndex(["short_name"], "UNIQ_3CBF69DD3EE4B093");
@@ -79,7 +81,6 @@ final class Version20230327061736 extends AbstractMigration
     {
         $schema->dropTable("instrument");
         $schema->dropTable("instrument_user");
-        $schema->dropTable("instrument_instrument");
         $schema->dropTable("instrument_file");
     }
 }

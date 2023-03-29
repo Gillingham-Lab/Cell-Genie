@@ -141,6 +141,37 @@
 
                             {{ layout.card_body_collapse_start("Calendar") }}
                             <div class="card-body px-lg-5 mx-0">
+                                {% if instrument.bookable %}
+                                <div class="pb-3">
+                                    Quick booking:
+                                    <form method="post" action="{{ url("app_instruments_book", {"instrument": instrument.id}) }}" class="row row-cols-lg-auto g-3">
+                                        <div class="col-5">
+                                            <legend class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">At</div>
+                                                </div>
+
+                                                <input type="datetime-local" class="form-control gin-datetime-autofill" name="start">
+                                            </legend>
+                                        </div>
+
+                                        <div class="col-5">
+                                            <legend class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">For (in hours)</div>
+                                                </div>
+
+                                                <input type="text" class="form-control" name="length" value="{{ instrument.defaultReservationLength }}">
+                                            </legend>
+                                        </div>
+
+                                        <div class="col-2">
+                                            <button type="submit" class="btn btn-primary">Book!</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                {% endif %}
+
                                 <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
                             </div>
                             {{ layout.card_body_collapse_end() }}

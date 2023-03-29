@@ -249,6 +249,17 @@
                         }
                     }
                 }
+
+                $("input.gin-datetime-autofill[type^=datetime-local]").each(function (i, e) {
+                    now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    now.setMilliseconds(null)
+                    now.setSeconds(null)
+
+                    e.valueAsDate = now;
+                    //e.value = e.value.slice(0,16);
+                    //console.log(e.value.slice(0, 16));
+                })
             });
         </script>
 

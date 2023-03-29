@@ -17,6 +17,7 @@
         "easycorp/easyadmin-bundle": "^4.0",
         "friendsofsymfony/ckeditor-bundle": "^2.4",
         "gedmo/doctrine-extensions": "^3.7",
+        "google/apiclient": "^2.12.1",
         "sensio/framework-extra-bundle": "^6.0",
         "symfony/console": "*",
         "symfony/dotenv": "*",
@@ -71,6 +72,9 @@
             "ckeditor:install": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
+        "pre-autoload-dump": [
+            "Google\\Task\\Composer::cleanup"
+        ],
         "post-install-cmd": [
             "@auto-scripts"
         ],
@@ -82,6 +86,9 @@
         "symfony/symfony": "*"
     },
     "extra": {
+        "google/apiclient-services": [
+            "Calendar"
+        ],
         "symfony": {
             "allow-contrib": false,
             "require": "^6.1"
