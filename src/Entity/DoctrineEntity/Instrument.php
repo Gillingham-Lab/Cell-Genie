@@ -115,6 +115,11 @@ class Instrument
         $this->attachments = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return "{$this->instrumentNumber} {$this->shortName}";
+    }
+
     public function getInstrumentNumber(): ?string
     {
         return $this->instrumentNumber;

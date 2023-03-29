@@ -30,6 +30,11 @@ class InstrumentUser
     #[Assert\NotBlank]
     private ?InstrumentRole $role;
 
+    public function __toString(): string
+    {
+        return "{$this->user->getFullName()}: {$this->role->value}";
+    }
+
     public function getInstrument(): Instrument
     {
         return $this->instrument;
