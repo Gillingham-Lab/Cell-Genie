@@ -97,7 +97,6 @@ class InstrumentController extends AbstractController
             $new = true;
 
             $instrument = new Instrument();
-            $instrument->setUserRole($currentUser, InstrumentRole::Admin);
         }
 
         $formOptions = [
@@ -109,6 +108,11 @@ class InstrumentController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             try {
+                // Add current user if new
+                if ($new) {
+                    $instrument->setUserRole($currentUser, InstrumentRole::Admin);
+                }
+
                 $entityManager->persist($instrument);
                 $entityManager->flush();
 
