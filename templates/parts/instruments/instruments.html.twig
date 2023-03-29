@@ -36,19 +36,22 @@
 
             <div class="row">
                 <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
-                    <table class="table table-hover fancyTable" data-ft-sort-column=2>
+                    <table class="table table-hover fancyTable" data-ft-sort-column=1>
                         <thead>
                             <tr>
                                 <th scope="col" style="width: 100px">
                                 </th>
                                 <th scope="col">Number</th>
                                 <th scope="col">Short name</th>
+                                <th scope="col">Room</th>
+                                <th scope="col">Booking?</th>
+                                <th scope="col">Training?</th>
                                 <th scope="col">My Status</th>
                             </tr>
                         </thead>
                         <tbody>
 
-                        {% for instrumentAndRole in instruments %}
+                        {% for instrumentAndRole in instruments|filter(e => e.instrument.parent is same as (null)) %}
                             {% set instrument = instrumentAndRole.instrument %}
                             {% set role = instrumentAndRole.role %}
                             <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
@@ -61,6 +64,9 @@
                                 <td>
                                     <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
                                 </td>
+                                <td>{{ instrument.location }}</td>
+                                <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
+                                <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
                                 <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
                             </tr>
                         {% else %}

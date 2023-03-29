@@ -111,7 +111,7 @@ class InstrumentType extends SaveableType
                     "query_builder" => function (EntityRepository $er) use ($entity) {
                         $qb = $er->createQueryBuilder("i")
                             ->addOrderBy("i.instrumentNumber", "ASC")
-                            ->where("(i.collective = true or i.collective = true)")
+                            ->where("(i.collective = true or i.modular = true)")
                             ;
 
                         if ($entity->getId()) {
