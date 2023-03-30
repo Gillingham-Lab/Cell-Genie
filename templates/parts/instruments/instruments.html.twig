@@ -4,6 +4,8 @@
 {% block title %}Gin :: Recipes{% endblock %}
 
 {% macro row_tools(instrument) %}
+    {% import 'layout.html.twig' as layout %}
+
     {% if instrument == null %}
     {% else %}
         {{ layout.toolbox_column([

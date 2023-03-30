@@ -2,6 +2,7 @@
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
 {% from 'utility/attachments.html.twig' import attachments %}
+{% from 'parts/instruments/instruments.html.twig' import row_tools %}
 
 {% block title %}Gin :: Instrument :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}{% endblock %}
 
@@ -31,21 +32,35 @@
         <div class="container container-fluid w-100 p-0 m-0">
             {{ layout.header(instrument.instrumentNumber ~ " | " ~ instrument.shortName) }}
 
-            {{ layout.toolbox([
+            {% set tools = [
                 {
                     "type": "up",
                     "target": url("app_instruments"),
                     "tooltipText": "Back to all instruments",
                 },
+            ] %}
+
+            {% if instrument.parent is not same as(null) %}
+                {% set tools = tools|merge([
+                    {
+                        "type": "back",
+                        "target": url("app_instruments_view", {"instrument": instrument.parent.id}),
+                        "tooltipText": "Back to parent instrument",
+                    },
+                ]) %}
+            {% endif %}
+
+            {% set tools = tools|merge([
                 {
                     "type": "edit",
                     "target": canEdit ? url("app_instruments_edit", {"instrument": instrument.id}) : null,
                     "disabled": canEdit ? false : true,
                     "tooltipText": "Edit the instrument",
                 },
-            ]) }}
+            ]) %}
+            {{ layout.toolbox(tools) }}
 
-            <div class="row row-cols-1 row-cols-lg-2">
+            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                 {# General #}
                 <div class="col p-0 m-0 mb-3">
                     <div class="card mx-3 h-100">
@@ -189,12 +204,14 @@
                             <div class="card-body px-lg-5 mx-0">
                                 <table class="table table-sm table-borderless table-hover">
                                     <thead>
+                                        <th scope="col" style="width: 50px;"></th>
                                         <th scope="col">Number</th>
                                         <th scope="col">Short name</th>
                                     </thead>
                                     <tbody>
                                         {% for instrumentPart in instrument.children %}
                                             <tr>
+                                                <td>{{ row_tools(instrumentPart) }}</td>
                                                 <td>{{ instrumentPart.instrumentNumber }}</td>
                                                 <td>{{ instrumentPart.shortName }}</td>
                                             </tr>
