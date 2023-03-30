@@ -368,7 +368,7 @@ class Instrument
 
     public function isBookable(): bool
     {
-        if (json_decode($this->authString, true) and $this->getCalendarId()) {
+        if ($this->authString !== null and json_decode($this->authString, true) and $this->getCalendarId()) {
             return true;
         } else {
             return false;
