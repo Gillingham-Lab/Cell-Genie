@@ -87,6 +87,7 @@ class Instrument
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Instrument::class)]
+    #[ORM\OrderBy(["instrumentNumber" => "ASC"])]
     private Collection $children;
 
     #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"])]
