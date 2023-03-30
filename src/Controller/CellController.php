@@ -32,27 +32,26 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 class CellController extends AbstractController
 {
     public function __construct(
-        private Security $security,
-        private CellRepository $cellRepository,
-        private BoxRepository $boxRepository,
-        private CellAliquotRepository $cellAliquoteRepository,
-        private ChemicalRepository $chemicalRepository,
-        private ProteinRepository $proteinRepository,
-        private ExperimentTypeRepository $experimentTypeRepository,
-        private EntityManagerInterface $entityManager,
-        private CellCultureRepository $cellCultureRepository,
+        readonly private Security $security,
+        readonly private CellRepository $cellRepository,
+        readonly private BoxRepository $boxRepository,
+        readonly private CellAliquotRepository $cellAliquoteRepository,
+        readonly private ChemicalRepository $chemicalRepository,
+        readonly private ProteinRepository $proteinRepository,
+        readonly private ExperimentTypeRepository $experimentTypeRepository,
+        readonly private EntityManagerInterface $entityManager,
+        readonly private CellCultureRepository $cellCultureRepository,
     ) {
 
     }

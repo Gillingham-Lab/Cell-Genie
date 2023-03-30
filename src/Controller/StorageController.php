@@ -10,7 +10,6 @@ use App\Form\Storage\BoxType;
 use App\Form\Storage\RackType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
-use App\Repository\LotRepository;
 use App\Repository\RackRepository;
 use App\Repository\Substance\SubstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;

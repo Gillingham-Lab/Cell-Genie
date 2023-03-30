@@ -20,19 +20,19 @@ use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 class ExperimentController extends AbstractController
 {
     public function __construct(
-        private ExperimentTypeRepository $experimentTypeRepository,
-        private ChemicalRepository $chemicalRepository,
-        private ProteinRepository $proteinRepository,
-        private SubstanceRepository $substanceRepository,
-        private LotRepository $lotRepository,
+        readonly private ExperimentTypeRepository $experimentTypeRepository,
+        readonly private ChemicalRepository $chemicalRepository,
+        readonly private ProteinRepository $proteinRepository,
+        readonly private SubstanceRepository $substanceRepository,
+        readonly private LotRepository $lotRepository,
     ) {
     }
 

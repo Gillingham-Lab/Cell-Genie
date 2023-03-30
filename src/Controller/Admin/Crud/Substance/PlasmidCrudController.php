@@ -16,16 +16,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class PlasmidCrudController extends AbstractCrudController
 {
     use VocabularyTrait;
 
     public function __construct(
-        private Security $security,
-        private VocabularyRepository $vocabularyRepository,
+        readonly private Security $security,
+        readonly private VocabularyRepository $vocabularyRepository,
     ) {
     }
 

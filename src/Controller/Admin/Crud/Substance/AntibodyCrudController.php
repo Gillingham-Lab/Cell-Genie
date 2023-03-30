@@ -22,16 +22,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Security\Core\Security;
 
 class AntibodyCrudController extends ExtendedAbstractCrudController
 {
     use VocabularyTrait;
 
     public function __construct(
-        private Security $security,
-        private VocabularyRepository $vocabularyRepository,
+        readonly private Security $security,
+        readonly private VocabularyRepository $vocabularyRepository,
     ) {
     }
 

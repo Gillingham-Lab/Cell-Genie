@@ -8,7 +8,7 @@ use Twig\TwigFilter;
 
 class GinPathFilter extends AbstractExtension
 {
-    function getFilters()
+    function getFilters(): array
     {
         return [
             new TwigFilter("GinPathQRCode", function (string $s) {

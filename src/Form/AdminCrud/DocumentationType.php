@@ -4,18 +4,15 @@ declare(strict_types=1);
 namespace App\Form\AdminCrud;
 
 use App\Entity\File;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class DocumentationType extends AbstractType
 {
-    public function __construct(
-        private Security $security
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -38,13 +35,13 @@ class DocumentationType extends AbstractType
                 "label" => "Size (in bytes)",
                 "disabled" => true,
             ])
-            ->add("uploadedFile", \Symfony\Component\Form\Extension\Core\Type\FileType::class, options: [
+            ->add("uploadedFile", FileType::class, options: [
                 "label" => "Upload or replace file",
                 "help" => "Maximum file size is 20 MiB",
                 "mapped" => false,
                 "required" => true,
                 "constraints" => [
-                    new \Symfony\Component\Validator\Constraints\File(maxSize: "20480k")
+                    new Assert\File(maxSize: "20480k")
                 ]
             ])
         ;

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 class MainController extends AbstractController
 {
     public function __construct(
-        private MessageRepository $messageRepository,
+        readonly private MessageRepository $messageRepository,
     ) {
 
     }

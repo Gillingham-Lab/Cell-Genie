@@ -18,12 +18,12 @@ class ValidBoxCoordinate extends Constraint
         parent::__construct([], $groups, $payload);
     }
 
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::PROPERTY_CONSTRAINT;
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return ValidBoxCoordinateValidator::class;
     }

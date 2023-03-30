@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace App\Genie;
 
+use IteratorAggregate;
 use Traversable;
 
-class SequenceIterator implements \IteratorAggregate
+class SequenceIterator implements IteratorAggregate
 {
     public function __construct(
         private string $sequence,
@@ -13,7 +14,7 @@ class SequenceIterator implements \IteratorAggregate
 
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         $inComplex = false;
         $buffer = "";

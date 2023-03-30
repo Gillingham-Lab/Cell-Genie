@@ -19,16 +19,14 @@ use App\Service\BarcodeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Ulid;
 
 class BarcodeController extends AbstractController
 {
     public function __construct(
-        private BarcodeRepository $barcodeRepository,
-        private CellCultureRepository $cellCultureRepository,
-        private CellRepository $cellRepository,
-        private SubstanceRepository $substanceRepository,
+        readonly private BarcodeRepository $barcodeRepository,
     ) {
 
     }
@@ -37,7 +35,7 @@ class BarcodeController extends AbstractController
     public function redirectBarcode(
         BarcodeService $barcodeService,
         string $barcode
-    ) {
+    ): Response {
         $barcodeEntity = $this->barcodeRepository->findOneBy(["barcode" => $barcode]);
 
         if ($barcodeEntity) {
@@ -84,7 +82,7 @@ class BarcodeController extends AbstractController
         EntityManagerInterface $em,
         BarcodeService $barcodeService,
         string $barcode
-    ) {
+    ): Response {
         $barcodeEntity = $this->barcodeRepository->findOneBy(["barcode" => $barcode]);
 
         if ($barcodeEntity === null) {

@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DownloadController extends AbstractController
 {
     public function __construct(
-        private FileRepository $fileRepository,
+        readonly private FileRepository $fileRepository,
     ) {
     }
 

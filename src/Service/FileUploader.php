@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Form\DocumentationType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class FileUploader
 {

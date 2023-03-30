@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RecipeController extends AbstractController
 {
     public function __construct(
-        private RecipeRepository $recipeRepository,
+        readonly private RecipeRepository $recipeRepository,
     ) {
 
     }

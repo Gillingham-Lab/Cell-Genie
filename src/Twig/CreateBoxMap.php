@@ -10,7 +10,7 @@ use Twig\TwigFunction;
 
 class CreateBoxMap extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction("initBoxMap", fn (Box $box) => BoxMap::fromBox($box))
