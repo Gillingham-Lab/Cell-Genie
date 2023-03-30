@@ -90,6 +90,7 @@ class Instrument
     private Collection $children;
 
     #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"])]
+    #[Assert\Valid]
     private Collection $users;
 
     #[ORM\Column(type: "datetime", nullable: true)]
