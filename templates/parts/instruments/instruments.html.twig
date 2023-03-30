@@ -38,7 +38,9 @@
 
             <div class="row">
                 <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
-                    <table class="table table-hover fancyTable" data-ft-sort-column=1>
+                    <h3>Accessible</h3>
+
+                    <table class="table table-hover fancyTable mb-5" data-ft-sort-column=1>
                         <thead>
                             <tr>
                                 <th scope="col" style="width: 100px">
@@ -53,7 +55,50 @@
                         </thead>
                         <tbody>
 
-                        {% for instrumentAndRole in instruments|filter(e => e.instrument.parent is same as (null)) %}
+                        {% for instrumentAndRole in instruments|filter(e => e.instrument.parent is same as (null) and e.role != "untrained") %}
+                            {% set instrument = instrumentAndRole.instrument %}
+                            {% set role = instrumentAndRole.role %}
+                            <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
+                                <td class="align-middle">
+                                    {{ _self.row_tools(instrument) }}
+                                </td>
+                                <td>
+                                    {{ instrument.instrumentNumber  }}
+                                </td>
+                                <td>
+                                    <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
+                                </td>
+                                <td>{{ instrument.location }}</td>
+                                <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
+                                <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
+                                <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5">No instruments registered</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <h3>Training lacking</h3>
+
+                    <table class="table table-hover fancyTable" data-ft-sort-column=1>
+                        <thead>
+                        <tr>
+                            <th scope="col" style="width: 100px">
+                            </th>
+                            <th scope="col">Number</th>
+                            <th scope="col">Short name</th>
+                            <th scope="col">Room</th>
+                            <th scope="col">Booking?</th>
+                            <th scope="col">Training?</th>
+                            <th scope="col">My Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for instrumentAndRole in instruments|filter(e => e.instrument.parent is same as (null) and e.role == "untrained") %}
                             {% set instrument = instrumentAndRole.instrument %}
                             {% set role = instrumentAndRole.role %}
                             <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
