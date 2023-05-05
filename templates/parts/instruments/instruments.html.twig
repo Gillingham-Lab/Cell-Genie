@@ -18,6 +18,7 @@
                 "type": "edit",
                 "tooltipText": "Edit instrument",
                 "target": url("app_instruments_edit", {"instrument": instrument.id}),
+                "disabled": not is_granted("edit", instrument)
             },
         ]) }}
     {% endif %}
@@ -33,96 +34,129 @@
                     "type": "add",
                     "target": url("app_instruments_add"),
                     "tooltipText": "Add new instrument",
+                    "disabled": not is_granted("new", createEmptyInstrument()),
                 },
             ]) }}
 
+
+            {% set accessible_instruments = instruments|filter(e => e.instrument.parent is same as (null) and e.role != "untrained") %}
+            {% set untrained_instruments = instruments|filter(e => e.instrument.parent is same as (null) and e.role == "untrained") %}
+
             <div class="row">
-                <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
-                    <h3>Accessible</h3>
+                <div class="col col-12 p-0 m-0 mb-3 overflow-auto">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Accessible Instruments", "Accessible") }}
 
-                    <table class="table table-hover fancyTable mb-5" data-ft-sort-column=1>
-                        <thead>
-                            <tr>
-                                <th scope="col" style="width: 100px">
-                                </th>
-                                <th scope="col">Number</th>
-                                <th scope="col">Short name</th>
-                                <th scope="col">Room</th>
-                                <th scope="col">Booking?</th>
-                                <th scope="col">Training?</th>
-                                <th scope="col">My Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                        {{ layout.card_body_collapse_start("Accessible") }}
+                        <div class="card-body px-lg-5">
+                            {% if accessible_instruments|length > 0 %}
+                                <table class="table table-hover fancyTable mb-5" data-ft-sort-column=1>
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 100px">
+                                        </th>
+                                        <th scope="col">Number</th>
+                                        <th scope="col">Short name</th>
+                                        <th scope="col">Room</th>
+                                        <th scope="col">Group</th>
+                                        <th scope="col">Booking?</th>
+                                        <th scope="col">Training?</th>
+                                        <th scope="col">My Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
 
-                        {% for instrumentAndRole in instruments|filter(e => e.instrument.parent is same as (null) and e.role != "untrained") %}
-                            {% set instrument = instrumentAndRole.instrument %}
-                            {% set role = instrumentAndRole.role %}
-                            <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
-                                <td class="align-middle">
-                                    {{ _self.row_tools(instrument) }}
-                                </td>
-                                <td>
-                                    {{ instrument.instrumentNumber  }}
-                                </td>
-                                <td>
-                                    <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
-                                </td>
-                                <td>{{ instrument.location }}</td>
-                                <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
-                                <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
-                                <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5">No instruments registered</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                                    {% for instrumentAndRole in accessible_instruments %}
+                                        {% set instrument = instrumentAndRole.instrument %}
+                                        {% set role = instrumentAndRole.role %}
+                                        <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
+                                            <td class="align-middle">
+                                                {{ _self.row_tools(instrument) }}
+                                            </td>
+                                            <td>
+                                                <strong>{{ instrument.instrumentNumber }}</strong>
+                                            </td>
+                                            <td>
+                                                <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
+                                            </td>
+                                            <td>{{ instrument.location }}</td>
+                                            <td>{{ instrument.group ?? "unknown" }}</td>
+                                            <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
+                                            <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
+                                            <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5">No instruments registered</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No accessible instruments</p>
+                            {% endif %}
+                        </div>
 
-                    <h3>Training lacking</h3>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
 
-                    <table class="table table-hover fancyTable" data-ft-sort-column=1>
-                        <thead>
-                        <tr>
-                            <th scope="col" style="width: 100px">
-                            </th>
-                            <th scope="col">Number</th>
-                            <th scope="col">Short name</th>
-                            <th scope="col">Room</th>
-                            <th scope="col">Booking?</th>
-                            <th scope="col">Training?</th>
-                            <th scope="col">My Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Training required", "Training") }}
 
-                        {% for instrumentAndRole in instruments|filter(e => e.instrument.parent is same as (null) and e.role == "untrained") %}
-                            {% set instrument = instrumentAndRole.instrument %}
-                            {% set role = instrumentAndRole.role %}
-                            <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
-                                <td class="align-middle">
-                                    {{ _self.row_tools(instrument) }}
-                                </td>
-                                <td>
-                                    {{ instrument.instrumentNumber  }}
-                                </td>
-                                <td>
-                                    <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
-                                </td>
-                                <td>{{ instrument.location }}</td>
-                                <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
-                                <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
-                                <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5">No instruments registered</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                        {{ layout.card_body_collapse_start("Training") }}
+                        <div class="card-body px-lg-5">
+                            {% if untrained_instruments|length > 0 %}
+                                <table class="table table-hover fancyTable" data-ft-sort-column=1>
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 100px">
+                                        </th>
+                                        <th scope="col">Number</th>
+                                        <th scope="col">Short name</th>
+                                        <th scope="col">Room</th>
+                                        <th scope="col">Group</th>
+                                        <th scope="col">Booking?</th>
+                                        <th scope="col">Training?</th>
+                                        <th scope="col">My Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for instrumentAndRole in untrained_instruments %}
+                                        {% set instrument = instrumentAndRole.instrument %}
+                                        {% set role = instrumentAndRole.role %}
+                                        <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
+                                            <td class="align-middle">
+                                               {{ _self.row_tools(instrument) }}
+                                            </td>
+                                            <td>
+                                                <strong>{{ instrument.instrumentNumber }}</strong>
+                                            </td>
+                                            <td>
+                                                <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
+                                            </td>
+                                            <td>{{ instrument.location }}</td>
+                                            <td>{{ instrument.group ?? "unknown" }}</td>
+                                            <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
+                                            <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
+                                            <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5">No instruments registered</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                No instruments with open training
+                            {% endif %}
+                        </div>
+
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
                 </div>
             </div>
         </div>

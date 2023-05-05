@@ -137,7 +137,7 @@ class InstrumentType extends SaveableType
                     "class" => Instrument::class,
                     "query_builder" => function (EntityRepository $er) use ($entity) {
                         $qb = $er->createQueryBuilder("i")
-                            ->where("i.parent = null")
+                            ->where("i.parent is null")
                             ->andWhere("(i.collective = false and i.modular = false)")
                             ->addOrderBy("i.instrumentNumber", "ASC")
                         ;

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\File;
-use App\Entity\User;
 use App\Form\AdminCrud\DocumentationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;

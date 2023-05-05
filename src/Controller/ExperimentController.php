@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Experiment;
 use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
-use App\Entity\User;
 use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
 use App\Repository\ExperimentalRunRepository;

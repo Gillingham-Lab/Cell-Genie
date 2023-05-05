@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Cell;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\NumberTrait;
-use App\Entity\User;
 use App\Repository\Cell\CellCultureRepository;
 use DateTime;
 use DateTimeInterface;

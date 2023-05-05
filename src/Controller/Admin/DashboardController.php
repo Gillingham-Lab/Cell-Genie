@@ -16,6 +16,8 @@ use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\User\User;
+use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\Epitope;
 use App\Entity\EpitopeHost;
 use App\Entity\EpitopeProtein;
@@ -28,7 +30,6 @@ use App\Entity\Organism;
 use App\Entity\Rack;
 use App\Entity\Recipe;
 use App\Entity\Tissue;
-use App\Entity\User;
 use App\Entity\Vendor;
 use App\Entity\Vocabulary;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -105,6 +106,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Messages", 'fas fa-envelope', Message::class),
             MenuItem::linkToCrud("Vocabulary", 'fas fa-list', Vocabulary::class),
             MenuItem::linkToCrud("Users", 'fas fa-user', User::class)->setPermission("ROLE_ADMIN"),
+            MenuItem::linkToCrud("Groups", 'fas fa-user', UserGroup::class)->setPermission("ROLE_ADMIN"),
 
             #MenuItem::linkToExitImpersonation('Stop impersonation', 'fa fa-exit'),
         ];

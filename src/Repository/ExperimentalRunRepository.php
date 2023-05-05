@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\ExperimentalRun;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

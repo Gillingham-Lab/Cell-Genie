@@ -6,7 +6,7 @@
 {% macro cell_tools(cell=null) %}
     {% if cell is null %}
     {% else %}
-        {{ layout.toolbox_column([
+        {% set tools =  [
             {
                 "type": "view",
                 "tooltipText": "View cell",
@@ -17,20 +17,42 @@
                 "tooltipText": "Copy information",
                 "clipboardText": ( cell.name ~ " (" ~ (cell.rrid ? "RRID:" ~ cell.rrid : "") ~ ")"),
                 "disabled": cell.rrid ? false : true,
-            },
-            {
-                "type": "edit",
-                "tooltipText": "Edit cell",
-                "display": "lg",
-                "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id }),
-            },
-            {
-                "type": "add",
-                "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
-                "tooltipText": "Add aliquot",
-                "display": "lg",
             }
-        ]) }}
+        ] %}
+
+        {% if is_granted("ROLE_USER") %}
+            {% set tools = tools|merge([
+                {
+                    "type": "edit",
+                    "tooltipText": "Edit cell",
+                    "display": "lg",
+                    "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id }),
+                    "disabled": is_granted("edit", cell) ? false : true,
+                },
+                {
+                    "type": "add",
+                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
+                    "tooltipText": "Add aliquot",
+                    "display": "lg",
+                    "disabled": is_granted("add_aliquot", cell) ? false : true,
+                }
+            ]) %}
+        {% endif %}
+
+        {{ layout.toolbox_column(tools) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro childlist(cell) %}
+    {% if cell.children %}
+        <ul>
+            {% for childcell in cell.children %}
+                <li>
+                    {{ macros.pillify([childcell]) }}
+                    {{ _self.childlist(childcell) }}
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endmacro %}
 
@@ -42,39 +64,44 @@
         <div class="container container-fluid w-100 p-0 m-0">
             {{ layout.header("Cells", false, true, icon.cell()) }}
 
+            {% if is_granted("ROLE_USER") %}
             {{
                 layout.toolbox([
                     {
                         "type": "add",
                         "tooltipText": "Add new cell",
                         "target": url("app_cell_add"),
+                        "disabled": is_granted("new", createEmptyCell()) ? false : true,
                     },
                 ])
             }}
+            {% endif %}
+
+            {# Rearrange cell lines by #}
+            {% set native_cells = cells|filter(e => not e.isEngineered()) %}
+            {% set cell_groups = native_cells|filter(e => e.parent is same as(null)) %}
 
             <div class="row">
                 <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
                     <table class="table table-hover fancyTable">
                         <thead>
-                        <tr>
-                            <th style="width: 50px">
-                            </th>
-                            <th scope="col">
-                                Nr
-                            </th>
-                            <th scope="col">Name</th>
-                            <th class="d-none d-lg-table-cell" scope="col">Organism</th>
-                            <th class="d-none d-lg-table-cell" scope="col">Tissue</th>
-                            <th class="d-none d-lg-table-cell" scope="col">Morphology</th>
-                            <th class="d-none d-lg-table-cell" scope="col">Aliquotes (Unique)</th>
-                            <th class="d-none d-lg-table-cell" scope="col">Cancer</th>
-                            <th class="d-none d-lg-table-cell" scope="col">Engineered</th>
-                            <th class="d-none d-lg-table-cell" scope="col">RRID</th>
-                        </tr>
+                            <tr>
+                                <th style="width: 50px">
+                                </th>
+                                <th scope="col">Nr</th>
+                                <th scope="col">Name</th>
+                                <th class="d-none d-lg-table-cell" scope="col">Organism</th>
+                                <th class="d-none d-lg-table-cell" scope="col">Tissue</th>
+                                <th class="d-none d-lg-table-cell" scope="col">Morphology</th>
+                                <th class="d-none d-lg-table-cell" scope="col">Aliquotes (Unique)</th>
+                                <th class="d-none d-lg-table-cell" scope="col">Cancer</th>
+                                <th class="d-none d-lg-table-cell" scope="col">Engineered</th>
+                                <th class="d-none d-lg-table-cell" scope="col">RRID</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for cell in cells %}
-                            <tr>
+                        {% for cell in cell_groups %}
+                            <tr class="{{ cell.cellALiquotes|length>0?:"text-muted" }}">
                                 <td>
                                     {{ _self.cell_tools(cell) }}
                                 </td>
@@ -85,7 +112,9 @@
                                 <td class="d-none d-lg-table-cell">{{ cell.organism ? cell.organism.name : "undefined" }}</td>
                                 <td class="d-none d-lg-table-cell">{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
                                 <td class="d-none d-lg-table-cell">{{ cell.morphology ? cell.morphology.name : "undefined" }}</td>
-                                <td class="d-none d-lg-table-cell">{% if cell.cellAliquotes|length > 0 %}
+                                <td class="d-none d-lg-table-cell">
+                                    {{ _self.childlist(cell) }}
+                                    {# {% if cell.cellAliquotes|length > 0 %}
                                         {% set aliquoteCount = 0 %}
                                         {% for aliquote in cell.cellAliquotes %}
                                             {% set aliquoteCount = aliquoteCount + aliquote.vials %}
@@ -93,7 +122,8 @@
                                         {{ aliquoteCount }} ({{ cell.cellAliquotes|length }})
                                     {% else %}
                                         0
-                                    {% endif %}</td>
+                                    {% endif %} #}
+                                </td>
                                 <td class="d-none d-lg-table-cell">{{ cell.isCancer ? "Yes" : "No" }}</td>
                                 <td class="d-none d-lg-table-cell">{{ cell.isEngineered ? "Yes" : "No" }}</td>
                                 <td class="d-none d-lg-table-cell">{{ cell.rrid ? macros.rrid_resolver(cell.rrid) : "-" }}</td>

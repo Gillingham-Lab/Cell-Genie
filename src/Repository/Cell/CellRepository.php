@@ -5,6 +5,7 @@ namespace App\Repository\Cell;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\User\UserGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,7 +64,7 @@ class CellRepository extends ServiceEntityRepository
 
         if ($orderBy) {
             foreach ($orderBy as $col => $order) {
-                $qb->addOrderBy("c.".$col, $order);
+                $qb = $qb->addOrderBy("c.".$col, $order);
             }
         }
 

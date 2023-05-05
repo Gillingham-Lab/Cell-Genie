@@ -3,10 +3,15 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity;
 
+use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Interface\GroupAwareInterface;
+use App\Entity\Interface\PrivacyAwareInterface;
+use App\Entity\Traits\GroupOwnerTrait;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\NameTrait;
-use App\Entity\User;
+use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\PrivacyLevelTrait;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
 use DateTimeInterface;
@@ -19,8 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InstrumentRepository::class)]
 #[ORM\UniqueConstraint(fields: ["instrumentNumber"])]
+#[ORM\UniqueConstraint(fields: ["group", "shortName"])]
 #[UniqueEntity(fields: ["instrumentNumber"])]
-#[UniqueEntity(fields: ["shortName"])]
+#[UniqueEntity(fields: ["group", "shortName"])]
 #[Gedmo\Loggable]
 #[Assert\Expression(
     "!(this.isModular() and this.isCollective())",
@@ -34,11 +40,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     "!(this.getParent() and this.getChildren().count() > 0)",
     message: 'A instrument can either have children, or be a parent, but not both.',
 )]
-class Instrument
+class Instrument implements PrivacyAwareInterface
 {
     use IdTrait;
     use HasAttachmentsTrait;
     use NameTrait;
+    use GroupOwnerTrait;
+    use OwnerTrait;
+    use PrivacyLevelTrait;
 
     #[ORM\Column(length: 20)]
     #[Assert\NotNull]
@@ -90,7 +99,7 @@ class Instrument
     #[ORM\OrderBy(["instrumentNumber" => "ASC"])]
     private Collection $children;
 
-    #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"], fetch: "EAGER")]
     #[Assert\Valid]
     private Collection $users;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\DoctrineEntity\Instrument;
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use DateTime;
 use Google\Client;
 use Google\Service\Calendar;

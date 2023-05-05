@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\AnnotateableInterface;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\File;
 use App\Entity\Organism;
 use App\Entity\Traits\CommentTrait;
@@ -12,7 +13,6 @@ use App\Entity\Traits\LabJournalTrait;
 use App\Entity\Traits\NumberTrait;
 use App\Entity\Traits\SequenceAnnotationTrait;
 use App\Entity\Traits\SequenceTrait;
-use App\Entity\User;
 use App\Repository\Substance\PlasmidRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

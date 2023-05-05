@@ -53,8 +53,8 @@
             {% set tools = tools|merge([
                 {
                     "type": "edit",
-                    "target": canEdit ? url("app_instruments_edit", {"instrument": instrument.id}) : null,
-                    "disabled": canEdit ? false : true,
+                    "target": is_granted("edit", instrument) ? url("app_instruments_edit", {"instrument": instrument.id}) : null,
+                    "disabled": not is_granted("edit", instrument),
                     "tooltipText": "Edit the instrument",
                 },
             ]) %}
@@ -74,6 +74,7 @@
                                 {{ macros.definition_row("Short name", instrument.shortName) }}
                                 {{ macros.definition_row("Name", instrument.longName) }}
                                 {{ macros.definition_row("Registration number", instrument.registrationNumber ?: "none") }}
+                                {{ macros.definition_row("Group", instrument.group ?? "unknown") }}
                                 {{ macros.definition_row("Location", instrument.location) }}
                                 {{ macros.definition_row("Mandatory training", instrument.requiresTraining ? "yes" : "no") }}
                                 {{ macros.definition_row("Booking required", instrument.requiresReservation ? "yes" : "no") }}
@@ -126,15 +127,18 @@
                             <table class="table table-sm table-borderless table-hover">
                                 <thead>
                                 <tr>
-                                    <th>User</th>
-                                    <th>Role</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Group</th>
+                                    <th scope="col">Role</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for user in users %}
+                                {% for instrumentUser in instrumentUsers %}
+                                    {% set user = instrumentUser.user %}
                                     <tr {{ user.id is same as(app.user.id) ? 'class="bg-light"' : '' }}>
                                         <td>{{ user.fullName }}</td>
-                                        <td>{{ _self.getInstrumentLevel(instrument, user) }}</td>
+                                        <td>{{ user.group ?? "unknown" }}</td>
+                                        <td>{{ instrumentUser.role.value|capitalize }}</td>
                                     </tr>
                                 {% else %}
                                     <tr>

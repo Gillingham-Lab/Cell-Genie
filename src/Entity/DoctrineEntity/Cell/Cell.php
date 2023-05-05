@@ -4,14 +4,18 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\Substance\Plasmid;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Experiment;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
+use App\Entity\Traits\GroupOwnerTrait;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasRRID;
+use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\PrivacyLevelTrait;
 use App\Entity\Traits\VendorTrait;
-use App\Entity\User;
 use App\Repository\Cell\CellRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,11 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CellRepository::class)]
 #[UniqueEntity(fields: "cellNumber")]
 #[Gedmo\Loggable]
-class Cell
+class Cell implements PrivacyAwareInterface
 {
     use VendorTrait;
     use HasAttachmentsTrait;
     use HasRRID;
+    use PrivacyLevelTrait;
+    use OwnerTrait;
+    use GroupOwnerTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

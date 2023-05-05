@@ -3,8 +3,13 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Cell;
 
+use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Interface\GroupAwareInterface;
+use App\Entity\Interface\PrivacyAwareInterface;
+use App\Entity\Traits\GroupOwnerTrait;
 use App\Entity\Traits\HasBoxTrait;
-use App\Entity\User;
+use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\PrivacyLevelTrait;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Validator\Constraint\ValidBoxCoordinate;
 use DateTimeInterface;
@@ -17,9 +22,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CellAliquotRepository::class)]
 #[ORM\Table("cell_aliquote")]
 #[Gedmo\Loggable]
-class CellAliquot implements \JsonSerializable
+class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
 {
     use HasBoxTrait;
+    use OwnerTrait;
+    use GroupOwnerTrait;
+    use PrivacyLevelTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -47,7 +55,7 @@ class CellAliquot implements \JsonSerializable
     private ?int $vials = 1;
 
     #[ORM\Column(type: "integer", nullable: true, options: ["default" => 0])]
-    #[Assert\Ramge(min: 1)]
+    #[Assert\Range(min: 1)]
     #[Gedmo\Versioned]
     private ?int $maxVials = 1;
 

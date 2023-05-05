@@ -57,6 +57,10 @@ class CellType extends SaveableType
                 "required" => false,
                 "help" => "Expasy has a cell database with many previously described cell lines, including many more information on them. If its not a custom cell line, try to find the corresponding entry there.",
             ])
+            ->add("rrid", TextType::class, [
+                "label" => "RRID",
+                "required" => false,
+            ])
             ->add("age", TextType::class, [
                 "label" => "Age",
                 "required" => false,

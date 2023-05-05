@@ -5,20 +5,21 @@ namespace App\Controller;
 
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\InstrumentUser;
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use App\Form\Instrument\InstrumentType;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
+use App\Repository\Instrument\InstrumentUserRepository;
 use App\Repository\UserRepository;
 use App\Service\InstrumentBookingService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Google\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class InstrumentController extends AbstractController
 {
@@ -44,58 +45,56 @@ class InstrumentController extends AbstractController
 
     #[Route("instruments/no/{instrument}", name: "app_instruments_view")]
     public function viewInstrument(
-        UserRepository $userRepository,
-        Security $security,
+        InstrumentUserRepository $instrumentUserRepository,
         Instrument $instrument,
     ): Response {
+        $this->denyAccessUnlessGranted("view", $instrument);
+
         return $this->render("parts/instruments/instrument.html.twig", [
             "instrument" => $instrument,
-            "users" => $userRepository->findAllActives(),
+            "instrumentUsers" => $instrumentUserRepository->findAllInstrumentUsers($instrument),
         ]);
     }
 
     #[Route("/instruments/add", name: "app_instruments_add")]
     public function addInstrument(
         Request $request,
-        Security $security,
         EntityManagerInterface $entityManager,
     ) {
-        return $this->addOrEditInstruments($request, $security, $entityManager);
+        return $this->addOrEditInstruments($request, $entityManager);
     }
 
     #[Route("/instruments/edit/{instrument}", name: "app_instruments_edit")]
     public function editInstrument(
         Request $request,
-        Security $security,
         EntityManagerInterface $entityManager,
         Instrument $instrument,
     ) {
-        $instrumentUsers = $instrument->getUsers()->filter(fn ($e) => $e->getUser() === $security->getUser() and $e->getRole() === InstrumentRole::Admin or $e->getRole() === InstrumentRole::Responsible);
+        $this->denyAccessUnlessGranted("edit", $instrument);
 
-        if ($instrumentUsers->count() > 0 or $security->isGranted("ROLE_ADMIN")) {
-            return $this->addOrEditInstruments($request, $security, $entityManager, $instrument);
-        } else {
-            return $this->createAccessDeniedException("You must be responsible for this machine or an admin to change this instrument.");
-        }
+        return $this->addOrEditInstruments($request, $entityManager, $instrument);
     }
 
     public function addOrEditInstruments(
         Request $request,
-        Security $security,
         EntityManagerInterface $entityManager,
         Instrument $instrument = null,
     ): Response {
         $routeName = $request->attributes->get("_route");
-        $currentUser = $security->getUser();
+        $currentUser = $this->getUser();
         assert($currentUser instanceof User);
         $new = false;
         $formType = InstrumentType::class;
+
+
 
         if ($routeName === "app_instruments_add") {
             $new = true;
 
             $instrument = new Instrument();
             $instrument->setUserRole($currentUser, InstrumentRole::Admin);
+            $instrument->setOwner($currentUser);
+            $instrument->setGroup($currentUser->getGroup());
         }
 
         $formOptions = [
@@ -131,7 +130,7 @@ class InstrumentController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_or_edit_instrument.html.twig", [
+        return $this->render("parts/forms/add_or_edit_instrument.html.twig", [
             "form" => $form,
             "new" => $new,
             "instrument" => $instrument,
@@ -154,17 +153,7 @@ class InstrumentController extends AbstractController
             return $this->redirectToRoute("app_instruments_view", ["instrument" => $instrument->getId()]);
         }
 
-        $access = false;
-
-        // Check if the user is admin
-        if ($security->isGranted("ROLE_ADMIN")) {
-            $access = true;
-        }
-
-        // If the instrument requires training, but the user is untrained, deny booking
-        if ($instrument->getRequiresTraining() and $instrument->getUsers()->filter(fn(InstrumentUser $iu) => $iu->getUser() === $currentUser and $iu->getRole() !== InstrumentRole::Untrained)) {
-            $access = true;
-        }
+        $this->denyAccessUnlessGranted("book", $instrument);
 
         // Calculate the date and time and stuff
         $startTime = new DateTime($request->get("start"), new \DateTimeZone("Europe/Zurich"));

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Form\Instrument;
 
 use App\Entity\DoctrineEntity\InstrumentUser;
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\InstrumentRole;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -12,7 +12,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
 class InstrumentUserType extends AbstractType
 {

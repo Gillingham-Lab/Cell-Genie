@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Repository\MessageRepository;
 use DateTime;
 use DateTimeInterface;

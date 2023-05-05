@@ -6,7 +6,6 @@ namespace App\Form\Cell;
 use App\Entity\Box;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
-use App\Entity\User;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\UserEntityType;

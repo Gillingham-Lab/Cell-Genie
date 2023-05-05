@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\VendorTrait;

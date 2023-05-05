@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\File;
-use App\Entity\User;
 use App\Form\DocumentationType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class FileUploader
 {

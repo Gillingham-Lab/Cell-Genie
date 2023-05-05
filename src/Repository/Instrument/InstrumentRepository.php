@@ -4,10 +4,9 @@ declare(strict_types=1);
 namespace App\Repository\Instrument;
 
 use App\Entity\DoctrineEntity\Instrument;
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bridge\Doctrine\Types\UlidType;
 
 /**
  * @method Instrument|null find($id, $lockMode = null, $lockVersion = null)
@@ -27,7 +26,9 @@ class InstrumentRepository extends ServiceEntityRepository
         $instruments = $this->createQueryBuilder("i")
             ->select("i as instrument")
             ->addSelect("CASE WHEN(iu.role is null) THEN 'untrained' ELSE iu.role END AS role")
+            ->addSelect("iu2")
             ->leftJoin("i.users", "iu", conditionType: "WITH", condition: "iu.user = :user")
+            ->leftJoin("i.users", "iu2")
             ->setParameter("user", $user->getId()->toRfc4122())
         ;
 

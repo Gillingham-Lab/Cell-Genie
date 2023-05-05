@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait OwnerTrait
 {
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    #[Assert\NotNull]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?User $owner = null;
 
     public function getOwner(): ?User

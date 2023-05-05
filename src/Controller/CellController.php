@@ -11,7 +11,7 @@ use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use App\Form\Cell\CellAliquotType;
 use App\Form\CellCultureEventTestType;
 use App\Form\CellCultureOtherType;
@@ -25,6 +25,8 @@ use App\Repository\Cell\CellRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
+use App\Security\Voter\CellAliquotVoter;
+use App\Security\Voter\CellVoter;
 use App\Service\FileUploader;
 use DateInterval;
 use DateTime;
@@ -39,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CellController extends AbstractController
 {
@@ -60,7 +63,7 @@ class CellController extends AbstractController
     public function cells(): Response
     {
         $cells = $this->cellRepository->getCellsWithAliquotes(
-            orderBy: ["cellNumber" => "ASC"]
+            orderBy: ["cellNumber" => "ASC"],
         );
 
         return $this->render('parts/cells/cells.html.twig', [
@@ -119,17 +122,20 @@ class CellController extends AbstractController
             $numberOfAliquots = $aliquote->getVials();
             $lotCoordinate = $aliquote->getBoxCoordinate();
 
-            $boxMaps[$boxId]->add($aliquote, $numberOfAliquots, $lotCoordinate);
-
-            /*if (empty($boxAliquotes[$boxId])) {
-                $boxAliquotes[$boxId] = [];
+            // Only add to the box map if the aliquot can be consumed
+            // Otherwise, the storage information must be hidden.
+            if ($this->isGranted("consume", $aliquote)) {
+                $boxMaps[$boxId]->add($aliquote, $numberOfAliquots, $lotCoordinate);
             }
-
-            $boxAliquotes[$boxId][] = $aliquote;*/
         }
 
         if ($aliquoteId) {
             $aliquote = $this->cellAliquoteRepository->find($aliquoteId);
+
+            if (!$aliquote) {
+                $this->addFlash("error", "Cell aliquot was not found");
+                return $this->redirectToRoute("app_cell_view_number", ["cellNumber" => $cellNumber]);
+            }
         } else {
             $aliquote = null;
         }
@@ -154,16 +160,20 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/add", name: "app_cell_add")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addCell(
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
     ): Response {
+        $this->denyAccessUnlessGranted(CellVoter::NEW, new Cell());
+
         return $this->addNewOrEditCell($request, $entityManager, $fileUploader);
     }
 
     #[Route("/cells/edit/{cell}", name: "app_cell_edit")]
     #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewOrEditCell(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -177,6 +187,8 @@ class CellController extends AbstractController
             throw $this->createNotFoundException("Cell has not been found");
         } else {
             $new = false;
+
+            $this->denyAccessUnlessGranted(CellVoter::EDIT, $cell);
         }
 
         $formType = CellType::class;
@@ -225,17 +237,21 @@ class CellController extends AbstractController
 
     #[Route("/cells/addAliquot/{cell}", name: "app_cell_aliquot_add")]
     #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewCellAliquot(
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         Cell $cell,
     ): Response {
+        $this->denyAccessUnlessGranted(CellVoter::ADD_ALIQUOT, $cell);
+
         return $this->addNewOrEditCellAliquot($request, $entityManager, $fileUploader, $cell, null);
     }
 
     #[Route("/cells/editAliquot/{cell}/{cellAliquot}", name: "app_cell_aliquot_edit")]
     #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewOrEditCellAliquot(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -255,6 +271,8 @@ class CellController extends AbstractController
             if ($cellAliquot->getCell() !== $cell) {
                 throw $this->createNotFoundException("No aliquot with the id '{$cellAliquot->getId()}' has been found for the given cell line.");
             }
+
+            $this->denyAccessUnlessGranted(CellAliquotVoter::EDIT, $cellAliquot);
         }
 
         $formType = CellAliquotType::class;
@@ -266,6 +284,11 @@ class CellController extends AbstractController
 
         $form = $this->createForm($formType, $cellAliquot, $formOptions);
         $form->handleRequest($request);
+
+        if ($new) {
+            $cellAliquot->setGroup($this->getUser()->getGroup());
+            $cellAliquot->setOwner($this->getUser());
+        }
 
         if ($form->isSubmitted() and $form->isValid()) {
             // @ToDo: Add attachments to CellAliquots.
@@ -301,9 +324,12 @@ class CellController extends AbstractController
 
     #[Route("/cells/consume/{aliquoteId}", name: "app_cell_consume_aliquote")]
     #[ParamConverter("aliquot", options: ["mapping" => ["aliquoteId"  => "id"]])]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     // #ToDo: Change this so that a form to create the cell culture is shown instead of silently adding a culture.
     public function consumeAliquot(CellAliquot $aliquot): Response
     {
+        $this->denyAccessUnlessGranted("consume", $aliquot);
+
         if ($aliquot->getVials() <= 0) {
             $this->addFlash("error", "There are no aliquote left to consume.");
         } else {
@@ -330,7 +356,7 @@ class CellController extends AbstractController
             // Flush changes
             $this->entityManager->flush();
 
-            $this->addFlash("success", "Aliquote was consumed and a new cell culture has been created. Check out the current cell cultures!");
+            $this->addFlash("success", "Aliquot was consumed and a new cell culture has been created. Check out the current cell cultures!");
         }
 
         return $this->redirectToRoute("app_cell_aliquote_view", [
@@ -340,6 +366,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/cultures", name: "app_cell_cultures")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function cellCultures(Request $request): Response
     {
         $startDate = DateTimeImmutable::createFromFormat("Y-m-d", $request->get("startDate") ?? "");
@@ -387,6 +414,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/cultures/trash/{cellCulture}", name: "app_cell_culture_trash")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function trashCellCulture(Request $request, CellCulture $cellCulture): Response
     {
         try {
@@ -406,6 +434,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/cultures/restore/{cellCulture}", name: "app_cell_culture_restore")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function restoreCellCulture(Request $request, CellCulture $cellCulture): Response
     {
         try {
@@ -426,6 +455,7 @@ class CellController extends AbstractController
 
     #[Route("/cells/cultures/create/{cellCulture}/event/{eventType}", name: "app_cell_culture_create_event", requirements: ["eventType" => "test|split|other"])]
     #[Route("/cells/cultures/edit/{cellCulture}/event/{cellCultureEvent}", name: "app_cell_culture_edit_event")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addCellCultureEvent(
         Request $request,
         CellCulture $cellCulture,
@@ -538,6 +568,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/cultures/trash/{cellCulture}/{cellCultureEvent}", name: "app_cell_culture_trash_event")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function trashCellCultureEvent(
         Request $request,
         CellCulture $cellCulture,
@@ -560,6 +591,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/cultures/view/{cellCulture}", name: "app_cell_culture_view")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function viewCellCulture(Request $request, CellCulture $cellCulture): Response
     {
         return $this->render("parts/cells/cell_culture.html.twig", [
@@ -570,6 +602,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/cultures/edit/{cellCulture}", name: "app_cell_culture_edit")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function editCellCulture(Request $request, CellCulture $cellCulture): Response
     {
         $form = $this->createForm(CellCultureType::class, $cellCulture, ["save_button" => true]);

@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity;
 
-use App\Entity\User;
+use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\InstrumentRole;
+use App\Repository\Instrument\InstrumentUserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation\Loggable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: InstrumentUserRepository::class)]
 #[UniqueEntity(fields: ["instrument", "user"])]
 class InstrumentUser
 {

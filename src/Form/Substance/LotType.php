@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Form\Substance;
 
 use App\Entity\Box;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Lot;
-use App\Entity\User;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\SaveableType;
 use App\Form\VendorType;
