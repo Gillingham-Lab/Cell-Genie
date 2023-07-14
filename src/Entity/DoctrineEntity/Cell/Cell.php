@@ -28,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CellRepository::class)]
 #[UniqueEntity(fields: "cellNumber")]
 #[Gedmo\Loggable]
+#[ORM\Index(fields: ["name"])]
 class Cell implements PrivacyAwareInterface
 {
     use VendorTrait;
@@ -46,7 +47,7 @@ class Cell implements PrivacyAwareInterface
     #[Assert\NotBlank]
     private ?CellGroup $cellGroup = null;
 
-    #[ORM\Column(type: "string", length: 255, unique: True)]
+    #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
