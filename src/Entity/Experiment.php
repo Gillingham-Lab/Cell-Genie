@@ -7,7 +7,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\Privacy\OwnerTrait;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\ExperimentRepository;
 use Doctrine\Common\Collections\ArrayCollection;

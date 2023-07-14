@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\NumberTrait;
+use App\Entity\Traits\Privacy\GroupOwnerTrait;
+use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Repository\Cell\CellCultureRepository;
 use DateTime;
 use DateTimeInterface;
@@ -14,10 +17,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CellCultureRepository::class)]
-class CellCulture
+class CellCulture implements PrivacyAwareInterface
 {
     use IdTrait;
     use NumberTrait;
+    use GroupOwnerTrait;
+    use PrivacyLevelTrait;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'cellCultures')]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]

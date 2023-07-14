@@ -149,6 +149,14 @@ class CellGroup
         return $this->children;
     }
 
+    public function getAllChildren(): \Generator
+    {
+        foreach ($this->children as $child) {
+            yield $child;
+            yield from $child->getAllChildren();
+        }
+    }
+
     public function addChild(CellGroup $child): self
     {
         if (!$this->children->contains($child)) {

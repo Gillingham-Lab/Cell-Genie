@@ -79,7 +79,7 @@ final class Version20230505083027 extends AbstractMigration
         $table->addIndex(["morphology_id"], "IDX_52C68971B38B33AD");
         $table->addIndex(["organism_id"], "IDX_52C6897164180A36");
         $table->addIndex(["tissue_id"], "IDX_52C68971701EFC92");
-        $table->addIndex(["parent_id"], "FK_52C68971727ACA70");
+        $table->addIndex(["parent_id"], "IDX_52C68971727ACA70");
 
         $table->addForeignKeyConstraint("morphology", ["morphology_id"], ["id"], ["onDelete" => "SET NULL"], "FK_52C68971B38B33AD");
         $table->addForeignKeyConstraint("organism", ["organism_id"], ["id"], ["onDelete" => "SET NULL"], "FK_52C6897164180A36");

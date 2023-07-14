@@ -6,17 +6,11 @@ namespace App\Form\Cell;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
-use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Morphology;
-use App\Entity\Organism;
-use App\Entity\Tissue;
 use App\Form\CellularProteinCollectionType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\SaveableType;
-use App\Form\Traits\GroupOwnerTrait;
-use App\Form\Traits\OwnerTrait;
-use App\Form\Traits\PrivacyLevelTrait;
 use App\Form\Traits\VocabularyTrait;
+use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
 use App\Form\VendorType;
 use App\Repository\Cell\CellRepository;
@@ -38,9 +32,6 @@ use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 class CellType extends SaveableType
 {
     use VocabularyTrait;
-    use OwnerTrait;
-    use GroupOwnerTrait;
-    use PrivacyLevelTrait;
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository,
@@ -166,11 +157,11 @@ class CellType extends SaveableType
                     "data-allow-empty" => "true",
                 ],
             ])
+            ->add("_privacy", PrivacyAwareType::class, [
+                "inherit_data" => true,
+                "label" => "Ownership",
+            ])
         ;
-
-        $this->addOwnerField($builder, $this->security);
-        $this->addGroupOwnerField($builder, $this->security);
-        $this->addPrivacyLevelField($builder, $this->security);
 
         return $builder;
     }

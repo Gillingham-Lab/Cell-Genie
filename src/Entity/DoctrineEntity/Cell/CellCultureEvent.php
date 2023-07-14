@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Privacy\GroupOwnerTrait;
+use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Entity\Traits\UnversionedShortNameTrait;
 use App\Repository\Cell\CellCultureEventRepository;
 use DateTime;
@@ -15,10 +18,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CellCultureEventRepository::class)]
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name: "event_type", type: "string")]
-class CellCultureEvent
+class CellCultureEvent implements PrivacyAwareInterface
 {
     use IdTrait;
     use UnversionedShortNameTrait;
+    use GroupOwnerTrait;
+    use PrivacyLevelTrait;
 
     #[ORM\ManyToOne(targetEntity: CellCulture::class, inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]

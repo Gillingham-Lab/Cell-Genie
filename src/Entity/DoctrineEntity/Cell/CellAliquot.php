@@ -4,12 +4,11 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Interface\GroupAwareInterface;
 use App\Entity\Interface\PrivacyAwareInterface;
-use App\Entity\Traits\GroupOwnerTrait;
 use App\Entity\Traits\HasBoxTrait;
-use App\Entity\Traits\OwnerTrait;
-use App\Entity\Traits\PrivacyLevelTrait;
+use App\Entity\Traits\Privacy\GroupOwnerTrait;
+use App\Entity\Traits\Privacy\OwnerTrait;
+use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Validator\Constraint\ValidBoxCoordinate;
 use DateTimeInterface;
@@ -134,7 +133,7 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
         return [
             "vialColor" => $this->getVialColor(),
             "numberOfAliquots" => $this->getVials(),
-            "maxNumberOfAliquots" => $this->getMaxVials(),
+            "maxNumberOfAliquots" => $this->getMaxVials() ?? $this->getVials(),
             "number" => $this->getId(),
             "passage" => $this->getPassage(),
             "mycoplasmaResult" => $this->getMycoplasmaResult(),
@@ -206,7 +205,7 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
 
     public function getMaxVials(): ?int
     {
-        return $this->maxVials ?? $this->vials;
+        return $this->maxVials;
     }
 
     public function setMaxVials(?int $maxVials): self

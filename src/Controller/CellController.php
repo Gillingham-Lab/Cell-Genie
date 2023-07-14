@@ -14,12 +14,12 @@ use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\Cell\CellAliquotType;
+use App\Form\Cell\CellCultureEvents\CellCultureEventTestType;
+use App\Form\Cell\CellCultureEvents\CellCultureOtherType;
+use App\Form\Cell\CellCultureEvents\CellCultureSplittingType;
+use App\Form\Cell\CellCultureType;
 use App\Form\Cell\CellGroupType;
 use App\Form\Cell\CellType;
-use App\Form\CellCultureEventTestType;
-use App\Form\CellCultureOtherType;
-use App\Form\CellCultureSplittingType;
-use App\Form\CellCultureType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellCultureRepository;
@@ -28,9 +28,10 @@ use App\Repository\Cell\CellRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
-use App\Security\Voter\CellAliquotVoter;
-use App\Security\Voter\CellGroupVoter;
-use App\Security\Voter\CellVoter;
+use App\Security\Voter\Cell\CellAliquotVoter;
+use App\Security\Voter\Cell\CellCultureVoter;
+use App\Security\Voter\Cell\CellGroupVoter;
+use App\Security\Voter\Cell\CellVoter;
 use App\Service\FileUploader;
 use DateInterval;
 use DateTime;
@@ -337,7 +338,7 @@ class CellController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_or_edit_cell.html.twig", [
+        return $this->render("parts/forms/add_or_edit_cell.html.twig", [
             "cell" => ($new ? null : $cell),
             "form" => $form,
             "returnTo" => $new
@@ -373,6 +374,8 @@ class CellController extends AbstractController
         if (!$cellAliquot and $request->get("_route") === "app_cell_aliquot_add") {
             $cellAliquot = new CellAliquot();
             $cellAliquot->setCell($cell);
+            $cellAliquot->setOwner($this->user);
+            $cellAliquot->setGroup($this->user?->getGroup());
             $new = true;
         } elseif (!$cellAliquot) {
             throw $this->createNotFoundException("Cell aliquot has not been found.");
@@ -422,7 +425,7 @@ class CellController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_or_edit_cell_aliquot.html.twig", [
+        return $this->render("parts/forms/add_or_edit_cell_aliquot.html.twig", [
             "cell" => $cell,
             "aliquot" => $new ? null : $cellAliquot,
             "form" => $form,
@@ -444,6 +447,11 @@ class CellController extends AbstractController
         if ($aliquot->getVials() <= 0) {
             $this->addFlash("error", "There are no aliquote left to consume.");
         } else {
+            // For updating legacy vials.
+            if ($aliquot->getMaxVials() === null) {
+                $aliquot->setMaxVials($aliquot->getVials());
+            }
+
             // Reduce aliquot numbers by 1
             $aliquot->setVials($aliquot->getVials() - 1);
 
@@ -468,6 +476,10 @@ class CellController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash("success", "Aliquot was consumed and a new cell culture has been created. Check out the current cell cultures!");
+
+            return $this->redirectToRoute("app_cell_culture_edit", [
+                "cellCulture" => $cellCulture->getId(),
+            ]);
         }
 
         return $this->redirectToRoute("app_cell_aliquote_view", [
@@ -528,6 +540,8 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function trashCellCulture(Request $request, CellCulture $cellCulture): Response
     {
+        $this->denyAccessUnlessGranted(CellCultureVoter::TRASH, $cellCulture);
+
         try {
             $cellCulture->setTrashedOn(new DateTime("today"));
 
@@ -548,6 +562,8 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function restoreCellCulture(Request $request, CellCulture $cellCulture): Response
     {
+        $this->denyAccessUnlessGranted(CellCultureVoter::TRASH, $cellCulture);
+
         try {
             $cellCulture->setTrashedOn(null);
 
@@ -573,6 +589,8 @@ class CellController extends AbstractController
         ?string $eventType = null,
         ?CellCultureEvent $cellCultureEvent = null
     ): Response {
+        $this->denyAccessUnlessGranted(CellCultureVoter::ADD_EVENT, $cellCulture);
+
         if ($cellCulture->getTrashedOn()) {
             $this->addFlash("error", "Cannot add events for trashed cell cultures.");
             return $this->redirectToRoute("app_cell_cultures");
@@ -672,7 +690,7 @@ class CellController extends AbstractController
             return $this->redirectToRoute("app_cell_cultures");
         }
 
-        return $this->renderForm("parts/cells/cell_cultures_new_event.html.twig", [
+        return $this->render("parts/cells/cell_cultures_new_event.html.twig", [
             "culture" => $cellCulture,
             "form" => $form,
         ]);
@@ -685,6 +703,7 @@ class CellController extends AbstractController
         CellCulture $cellCulture,
         CellCultureEvent $cellCultureEvent,
     ): Response {
+        $this->denyAccessUnlessGranted(CellCultureVoter::REMOVE, $cellCultureEvent);
         $this->entityManager->remove($cellCultureEvent);
 
         try {
@@ -705,6 +724,8 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function viewCellCulture(Request $request, CellCulture $cellCulture): Response
     {
+        $this->denyAccessUnlessGranted(CellCultureVoter::VIEW, $cellCulture);
+
         return $this->render("parts/cells/cell_culture.html.twig", [
             "culture" => $cellCulture,
             "startDate" => $cellCulture->getUnfrozenOn(),
@@ -716,6 +737,8 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function editCellCulture(Request $request, CellCulture $cellCulture): Response
     {
+        $this->denyAccessUnlessGranted(CellCultureVoter::EDIT, $cellCulture);
+
         $form = $this->createForm(CellCultureType::class, $cellCulture, ["save_button" => true]);
         $form->handleRequest($request);
 
@@ -737,7 +760,7 @@ class CellController extends AbstractController
             return $this->redirectToRoute("app_cell_cultures");
         }
 
-        return $this->renderForm("parts/cells/cell_culture_edit.html.twig", [
+        return $this->render("parts/cells/cell_culture_edit.html.twig", [
             "culture" => $cellCulture,
             "form" => $form,
         ]);

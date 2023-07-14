@@ -56,7 +56,7 @@ final class Version20230502111554 extends AbstractMigration
         $table->addForeignKeyConstraint("user_accounts", ["owner_id"], ["id"], ["onDelete" => "SET NULL"], "FK_3CBF69DD7E3C61F9");
         $table->addForeignKeyConstraint("user_group", ["group_id"], ["id"], ["onDelete" => "SET NULL"], "FK_3CBF69DDFE54D947");
 
-        $table->addIndex(["owner_id"], "FK_3CBF69DD7E3C61F9");
+        $table->addIndex(["owner_id"], "IDX_3CBF69DD7E3C61F9");
         $table->addIndex(["group_id"], "IDX_3CBF69DDFE54D947");
 
         $table->addUniqueIndex(["group_id", "short_name"], "UNIQ_3CBF69DDFE54D9473EE4B093");

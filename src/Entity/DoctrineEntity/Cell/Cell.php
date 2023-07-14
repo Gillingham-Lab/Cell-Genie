@@ -10,11 +10,11 @@ use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
-use App\Entity\Traits\GroupOwnerTrait;
 use App\Entity\Traits\HasAttachmentsTrait;
-use App\Entity\Traits\HasRRID;
-use App\Entity\Traits\OwnerTrait;
-use App\Entity\Traits\PrivacyLevelTrait;
+use App\Entity\Traits\Privacy\GroupOwnerTrait;
+use App\Entity\Traits\Privacy\OwnerTrait;
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
+use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\Cell\CellRepository;
 use DateTimeInterface;
@@ -32,9 +32,7 @@ class Cell implements PrivacyAwareInterface
 {
     use VendorTrait;
     use HasAttachmentsTrait;
-    use PrivacyLevelTrait;
-    use OwnerTrait;
-    use GroupOwnerTrait;
+    use PrivacyAwareTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

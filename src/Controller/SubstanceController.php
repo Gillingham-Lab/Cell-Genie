@@ -10,6 +10,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Epitope;
 use App\Entity\Lot;
 use App\Form\Substance\AntibodyType;
@@ -29,11 +30,14 @@ use App\Repository\Substance\OligoRepository;
 use App\Repository\Substance\PlasmidRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
+use App\Security\Voter\Substance\LotVoter;
+use App\Security\Voter\Substance\SubstanceVoter;
 use App\Service\FileUploader;
 use App\Service\GeneBankImporter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,11 +45,22 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SubstanceController extends AbstractController
 {
+    private ?User $user;
+
+    public function __construct(
+        private Security $security
+    ) {
+        if ($this->security->getUser() instanceof User) {
+            $this->user = $this->security->getUser();
+        }
+    }
 
     #[Route("/substance/view/{substance}", name: "app_substance_view")]
     public function viewSubstance(
         Substance $substance
     ): Response {
+        $this->denyAccessUnlessGranted("view", $substance);
+
         return match($substance::class) {
             Antibody::class => $this->redirectToRoute("app_antibody_view", ["antibodyId" => $substance->getUlid()]),
             Chemical::class => $this->redirectToRoute("app_compound_view", ["compoundId" => $substance->getUlid()]),
@@ -61,11 +76,14 @@ class SubstanceController extends AbstractController
         SubstanceRepository $substanceRepository,
         Lot $lot
     ): Response {
+        $this->denyAccessUnlessGranted("view", $lot);
         $substance = $substanceRepository->findOneByLot($lot);
 
         if ($substance === null) {
             throw $this->createNotFoundException("A lot with the ID Number '{$lot->getNumber()}' and the id '{$lot->getId()}' was not found.");
         }
+
+        $this->denyAccessUnlessGranted("view", $substance);
 
         // TODO: Show a real 'lot' information page.
         return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
@@ -89,6 +107,8 @@ class SubstanceController extends AbstractController
         }
 
         if ($new) {
+            $this->denyAccessUnlessGranted("new", "Substance");
+
             $substance = match($type) {
                 "antibody" => new Antibody(),
                 "chemical" => new Chemical(),
@@ -97,6 +117,11 @@ class SubstanceController extends AbstractController
                 "plasmid" => new Plasmid(),
                 default => null,
             };
+
+            $substance->setOwner($this->user);
+            $substance->setGroup($this->user?->getGroup());
+        } else {
+            $this->denyAccessUnlessGranted("edit", $substance);
         }
 
         if ($substance === null) {
@@ -197,8 +222,14 @@ class SubstanceController extends AbstractController
         };
 
         if (!$lot) {
+            $this->denyAccessUnlessGranted(SubstanceVoter::ADD_LOT, $substance);
+
             $lot = new Lot();
-            $lot->setBoughtBy($securityController->getUser());
+            $lot->setBoughtBy($this->user);
+            $lot->setOwner($this->user);
+            $lot->setGroup($this->user?->getGroup());
+        } else {
+            $this->denyAccessUnlessGranted(LotVoter::EDIT, $lot);
         }
 
         $formOptions = [
@@ -329,6 +360,8 @@ class SubstanceController extends AbstractController
             $antibody = $antibodyId;
         }
 
+        $this->denyAccessUnlessGranted("view", $antibody);
+
         return $this->render("parts/antibodies/antibody.html.twig", [
             "antibody" => $antibody,
         ]);
@@ -395,6 +428,8 @@ class SubstanceController extends AbstractController
     public function viewCompound(
         Chemical $chemical
     ): Response {
+        $this->denyAccessUnlessGranted("view", $chemical);
+
         return $this->render("parts/compounds/compound.html.twig", [
             "chemical" => $chemical,
         ]);
@@ -416,6 +451,8 @@ class SubstanceController extends AbstractController
     public function viewOligo(
         Oligo $oligo,
     ): Response {
+        $this->denyAccessUnlessGranted("view", $oligo);
+
         return $this->render("parts/oligos/oligo.html.twig", [
             "oligo" => $oligo,
         ]);
@@ -440,6 +477,8 @@ class SubstanceController extends AbstractController
         CellRepository $cellRepository,
         Protein $protein
     ): Response {
+        $this->denyAccessUnlessGranted("view", $protein);
+
         $associatedCells = $cellRepository->fetchByProtein($protein);
 
         return $this->render("parts/proteins/protein.html.twig", [
@@ -464,6 +503,8 @@ class SubstanceController extends AbstractController
     public function viewPlasmid(
         Plasmid $plasmid
     ): Response {
+        $this->denyAccessUnlessGranted("view", $plasmid);
+
         return $this->render("parts/plasmids/plasmid.html.twig", [
             "plasmid" => $plasmid,
         ]);
@@ -534,7 +575,7 @@ class SubstanceController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_substance.html.twig", [
+        return $this->render("parts/forms/add_substance.html.twig", [
             "title" => $new ? "Epitope :: New" : "Epitope :: {$epitope->getShortName()} :: Edit",
             "substance" => ($new ? null : $epitope),
             "form" => $form,

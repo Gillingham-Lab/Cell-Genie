@@ -117,7 +117,7 @@
 
 {% macro display_cells(cells) %}
     {% for cell in cells %}
-        <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div class="list-group-item d-flex justify-content-between align-items-center {{ cell.cellAliquotes|length == 0 ? "text-muted" : "" }}">
             <span>
                 <span class="me-3">
                     {{ _self.cell_tools(cell) }}
@@ -214,10 +214,31 @@
                                 </table>
 
 
-                                <div class="list-group list-group-root well border-1 border">
-                                    {{ _self.display_cells(currentGroup.cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
-                                    {{ _self.display_cells(currentGroup.cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
-                                </div>
+                                <h4>Cells</h4>
+                                {% if currentGroup.cells|length > 0 %}
+                                    <div class="list-group list-group-root well border-1 border">
+                                        {{ _self.display_cells(currentGroup.cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
+                                        {{ _self.display_cells(currentGroup.cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                    </div>
+                                {% else %}
+                                    <p>This group contains no cells.</p>
+                                {% endif %}
+
+                                {% if currentGroup.children|length > 0 %}
+                                    <h4>Cells in sub groups</h4>
+                                    <div class="list-group list-group-root well border-1 border mt-3">
+                                        {% set otherCells = [] %}
+
+                                        {% for subGroup in currentGroup.allChildren %}
+                                            {% set otherCells = otherCells|merge(subGroup.cells) %}
+                                        {% endfor %}
+
+                                        {% set otherCells = otherCells|sort((a, b) => a.cellNumber <=> b.cellNumber) %}
+
+                                        {{ _self.display_cells(otherCells|filter(e => e.group and e.group.id == app.user.group.id)) }}
+                                        {{ _self.display_cells(otherCells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                         {{ layout.card_body_collapse_end() }}

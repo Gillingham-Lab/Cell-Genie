@@ -1,17 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
-use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Form\Traits\VocabularyTrait;
+use App\Form\User\PrivacyAwareType;
 use App\Repository\VocabularyRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,6 +31,10 @@ class CellCultureType extends AbstractType
                 "label" => "Culture number",
                 "help" => "A short (max 10) identifier of the cell culture, like FLC001 (First name, Last name, Cell).",
                 "required" => true,
+            ])
+            ->add("_privacy", PrivacyAwareType::class, [
+                "inherit_data" => true,
+                "label" => "Ownership",
             ])
             ->add("unfrozenOn", DateType::class, [
                 "label" => "Culture start",

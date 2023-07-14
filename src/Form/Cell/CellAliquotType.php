@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
+use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellRepository;
@@ -15,6 +16,7 @@ use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -32,6 +34,7 @@ class CellAliquotType extends SaveableType
         private VocabularyRepository $vocabularyRepository,
         private CellRepository $cellRepository,
         private CellAliquotRepository $cellAliquotRepository,
+        private Security $security,
     ) {
     }
 
@@ -75,6 +78,10 @@ class CellAliquotType extends SaveableType
                 "help" => "Leave empty if not known.",
                 "empty_data" => null,
                 "required" => false,
+            ])
+            ->add("_privacy", PrivacyAwareType::class, [
+                "inherit_data" => true,
+                "label" => "Ownership",
             ])
         ;
 

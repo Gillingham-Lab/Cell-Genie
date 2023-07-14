@@ -12,9 +12,9 @@ use Doctrine\ORM\Query\Filter\SQLFilter;
 
 class PrivacyFilter extends SQLFilter
 {
-    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias)
+    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias): string
     {
-        // Check if the entity implements the LocalAware interface
+        // Check if the entity implements the PrivacyAwareInterface interface
         if (!$targetEntity->reflClass->implementsInterface(PrivacyAwareInterface::class)) {
             return "";
         }

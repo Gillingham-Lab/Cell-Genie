@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\Epitope;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\SaveableType;
+use App\Form\User\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -38,6 +39,10 @@ class OligoType extends SaveableType
                     "label" => "Comment",
                     "help" => "A short comment of the purpose of this oligo, or any other information.",
                     "required" => false,
+                ])
+                ->add("_privacy", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership",
                 ])
             )
             ->add(

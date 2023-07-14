@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\HasBoxTrait;
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Genie\Enums\Availability;
 use App\Repository\LotRepository;
@@ -20,11 +22,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 #[WithinBoxBounds("boxCoordinate", "box")]
-class Lot implements \JsonSerializable
+class Lot implements \JsonSerializable, PrivacyAwareInterface
 {
     use HasBoxTrait;
     use VendorTrait;
     use HasAttachmentsTrait;
+    use PrivacyAwareTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]

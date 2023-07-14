@@ -8,6 +8,7 @@ use App\Entity\Epitope;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
+use App\Form\User\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -39,6 +40,10 @@ class ChemicalType extends SaveableType
                     "label" => "Lab journal",
                     "help" => "A link to a lab journal entry, for synthesis reference.",
                     "required" => false,
+                ])
+                ->add("_privacy", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership",
                 ])
             )
             ->add(

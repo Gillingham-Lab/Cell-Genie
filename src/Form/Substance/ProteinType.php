@@ -10,6 +10,7 @@ use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
+use App\Form\User\PrivacyAwareType;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -60,6 +61,10 @@ class ProteinType extends SaveableType
                         "class" => "gin-fancy-select",
                         "data-allow-empty" => "true",
                     ],
+                ])
+                ->add("_privacy", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership",
                 ])
             )
             ->add(

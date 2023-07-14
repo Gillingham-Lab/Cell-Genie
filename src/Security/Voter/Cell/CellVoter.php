@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Security\Voter;
+namespace App\Security\Voter\Cell;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\User\User;
+use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -42,9 +43,8 @@ class CellVoter extends Voter
             return match ($attribute) {
                 self::VIEW => true, // Cells can always be viewed
                 self::NEW => $this->canCreate($user),
-                self::EDIT => $this->canEdit($subject, $user),
+                self::EDIT, self::ADD_ALIQUOT => $this->canEdit($subject, $user),
                 self::REMOVE => $this->canRemove($subject, $user),
-                self::ADD_ALIQUOT => $this->canAddAliquot($subject, $user),
                 self::OWNS => $subject->getOwner() === $user,
             };
         } else {
@@ -65,19 +65,26 @@ class CellVoter extends Voter
 
     private function canEdit(Cell $cell, User $user): bool
     {
-        // Currently, there are no restrictions on editing
-        return true;
+        if ($cell->getGroup() === null) {
+            return true;
+        }
+
+        if ($cell->getOwner() === $user) {
+            return true;
+        }
+
+        return match($cell->getPrivacyLevel()) {
+            PrivacyLevel::Public, PrivacyLevel::Group => $cell->getGroup() === $user->getGroup(),
+            PrivacyLevel::Private => false,
+        };
     }
 
     private function canCreate(User $user): bool
     {
-        // Currently, there are no restrictions on creating
-        return true;
-    }
-
-    private function canAddAliquot(Cell $cell, User $user): bool
-    {
-        // Currently, there are no restrictions on adding aliquots
-        return true;
+        if ($user->getIsActive()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

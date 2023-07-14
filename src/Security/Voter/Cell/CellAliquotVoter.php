@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Security\Voter;
+namespace App\Security\Voter\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\User\User;
@@ -15,10 +15,12 @@ class CellAliquotVoter extends Voter
     const EDIT = "edit";
     const REMOVE = "remove";
     const CONSUME = "consume";
+    const OWNS = "owns";
+    const ADD_CULTURE = "add_culture";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::CONSUME])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::CONSUME, self::REMOVE, self::OWNS, self::ADD_CULTURE])) {
             return false;
         }
 
@@ -47,8 +49,9 @@ class CellAliquotVoter extends Voter
 
         return match ($attribute) {
             self::VIEW => $this->canView($aliquot, $user),
-            self::EDIT, self::CONSUME => $this->canEdit($aliquot, $user),
+            self::EDIT, self::CONSUME, self::ADD_CULTURE => $this->canEdit($aliquot, $user),
             self::REMOVE => $this->canRemove($aliquot, $user),
+            self::OWNS => $aliquot->getOwner() === $user,
         };
     }
 

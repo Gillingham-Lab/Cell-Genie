@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity\Traits;
+namespace App\Entity\Traits\Privacy;
 
 
 use App\Entity\DoctrineEntity\User\UserGroup;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 trait GroupOwnerTrait
 {

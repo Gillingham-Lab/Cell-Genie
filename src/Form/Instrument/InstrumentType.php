@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Instrument;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
+use App\Form\User\PrivacyAwareType;
 use App\Repository\Instrument\InstrumentRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -40,6 +41,10 @@ class InstrumentType extends SaveableType
                 $builder->create("general", NameType::class, [
                     "inherit_data" => true,
                     "label" => "General information",
+                ])
+                ->add("_privacy", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership",
                 ])
                 ->add("instrumentNumber", TextType::class, [
                     "label" => "Instrument Number",

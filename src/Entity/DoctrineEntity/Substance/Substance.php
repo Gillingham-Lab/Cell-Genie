@@ -5,10 +5,12 @@ namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Epitope;
 use App\Entity\EpitopeProtein;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Lot;
 use App\Entity\Traits\HasUlidAttachmentsTrait;
 use App\Entity\Traits\NameTrait;
 use App\Entity\Traits\NewIdTrait;
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\Substance\SubstanceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,11 +24,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\DiscriminatorColumn(name: "substance_type", type: "string")]
 #[Gedmo\Loggable]
 #[UniqueEntity("shortName")]
-class Substance implements \JsonSerializable
+class Substance implements \JsonSerializable, PrivacyAwareInterface
 {
     use NewIdTrait;
     use NameTrait;
     use HasUlidAttachmentsTrait;
+    use PrivacyAwareTrait;
 
     #[ORM\ManyToMany(targetEntity: Lot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "substance_lots")]

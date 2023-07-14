@@ -5,14 +5,11 @@ namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Interface\GroupAwareInterface;
 use App\Entity\Lot;
-use App\Entity\Traits\GroupOwnerTrait;
-use App\Entity\Traits\OwnerTrait;
+use App\Entity\Traits\Privacy\GroupOwnerTrait;
+use App\Entity\Traits\Privacy\OwnerTrait;
 
-class SubstanceLot implements \JsonSerializable, GroupAwareInterface
+class SubstanceLot implements \JsonSerializable
 {
-    use OwnerTrait;
-    use GroupOwnerTrait;
-
     public function __construct(
         private readonly Substance $substance,
         private readonly Lot $lot,

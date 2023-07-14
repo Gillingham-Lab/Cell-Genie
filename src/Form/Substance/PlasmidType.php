@@ -10,6 +10,7 @@ use App\Form\Collection\AttachmentCollectionType;
 use App\Form\Collection\SequenceAnnotationCollectionType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
+use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
@@ -64,6 +65,10 @@ class PlasmidType extends SaveableType
                     "label" => "Comment",
                     "help" => "A short comment of the purpose of this plasmid, or any other information.",
                     "required" => false,
+                ])
+                ->add("_privacy", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership",
                 ])
             )
             ->add(

@@ -4,14 +4,13 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity;
 
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Interface\GroupAwareInterface;
 use App\Entity\Interface\PrivacyAwareInterface;
-use App\Entity\Traits\GroupOwnerTrait;
 use App\Entity\Traits\HasAttachmentsTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\NameTrait;
-use App\Entity\Traits\OwnerTrait;
-use App\Entity\Traits\PrivacyLevelTrait;
+use App\Entity\Traits\Privacy\GroupOwnerTrait;
+use App\Entity\Traits\Privacy\OwnerTrait;
+use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
 use DateTimeInterface;

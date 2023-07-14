@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Cell\CellCultureEvents;
 
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Form\Traits\VocabularyTrait;
