@@ -11,21 +11,25 @@ use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
+use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\Cell\CellAliquotType;
+use App\Form\Cell\CellGroupType;
+use App\Form\Cell\CellType;
 use App\Form\CellCultureEventTestType;
 use App\Form\CellCultureOtherType;
 use App\Form\CellCultureSplittingType;
 use App\Form\CellCultureType;
-use App\Form\CellType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellCultureRepository;
+use App\Repository\Cell\CellGroupRepository;
 use App\Repository\Cell\CellRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Security\Voter\CellAliquotVoter;
+use App\Security\Voter\CellGroupVoter;
 use App\Security\Voter\CellVoter;
 use App\Service\FileUploader;
 use DateInterval;
@@ -45,6 +49,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CellController extends AbstractController
 {
+    private ?User $user = null;
+
     public function __construct(
         readonly private Security $security,
         readonly private CellRepository $cellRepository,
@@ -56,18 +62,119 @@ class CellController extends AbstractController
         readonly private EntityManagerInterface $entityManager,
         readonly private CellCultureRepository $cellCultureRepository,
     ) {
+        $user = $this->security->getUser();
 
+        if ($user instanceof User) {
+            $this->user = $user;
+        }
     }
 
     #[Route("/cells", name: "app_cells")]
-    public function cells(): Response
-    {
+    #[Route("/cells/group/view/{cellGroup}", name: "app_cells_group")]
+    public function cells(
+        CellGroupRepository $cellGroupRepository,
+        CellGroup $cellGroup = null,
+    ): Response {
+        return $this->render('parts/cells/cells.html.twig', [
+            "cellGroups" => $cellGroupRepository->getGroupsWithCellsAndAliquots(["name" => "ASC"]),
+            "currentGroup" => $cellGroup,
+        ]);
+    }
+
+    #[Route("/cells/all", name: "app_cells_all")]
+    public function allCells(
+        CellRepository $cellRepository
+    ) {
         $cells = $this->cellRepository->getCellsWithAliquotes(
             orderBy: ["cellNumber" => "ASC"],
         );
 
-        return $this->render('parts/cells/cells.html.twig', [
-            "cells" => $cells,
+        return $this->render("parts/cells/cells_list.html.twig", [
+           "cells" => $cells,
+       ]) ;
+    }
+
+    #[Route("/cells/group/remove/{cellGroup}", name: "app_cells_group_remove")]
+    public function removeCellGroup(
+        EntityManagerInterface $entityManager,
+        CellGroup $cellGroup = null,
+    ): Response {
+        $this->denyAccessUnlessGranted(CellGroupVoter::REMOVE, $cellGroup);
+
+        if ($cellGroup) {
+            try {
+                $entityManager->remove($cellGroup);
+                $entityManager->flush();
+
+                $this->addFlash("success", "Cell group was successfully removed.");
+            } catch (\Exception $e) {
+                $this->addFlash("error", "Cell group was not removed due to an error: {$e->getMessage()}");
+            }
+        }
+
+        return $this->redirectToRoute("app_cells");
+    }
+
+    #[Route("/cells/group/add", name: "app_cells_group_add")]
+    public function addCellGroup(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CellGroupRepository $cellGroupRepository,
+    ): Response {
+        $this->denyAccessUnlessGranted(CellGroupVoter::NEW, "CellGroup");
+
+        return $this->addNewOrEditCellGroup($request, $entityManager, $cellGroupRepository);
+    }
+
+    #[Route("/cells/group/edit/{cellGroup}", name: "app_cells_group_edit")]
+    public function addNewOrEditCellGroup(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CellGroupRepository $cellGroupRepository,
+        CellGroup $cellGroup = null,
+    ): Response {
+        if ($cellGroup === null and $request->get("_route") === "app_cells_group_add") {
+            $new = true;
+            $cellGroup = new CellGroup();
+        } elseif ($cellGroup === null) {
+            throw $this->createNotFoundException();
+        } else {
+            $new = false;
+
+            $this->denyAccessUnlessGranted(CellGroupVoter::EDIT, $cellGroup);
+        }
+
+        $formType = CellGroupType::class;
+        $formOptions = [
+            "save_button" => true,
+        ];
+
+        $form = $this->createForm($formType, $cellGroup, $formOptions);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            try {
+                $entityManager->persist($cellGroup);
+                $entityManager->flush();
+
+                if ($new) {
+                    $this->addFlash("success", "Cell group has been created.");
+                } else {
+                    $this->addFlash("success", "Cell group has been edited.");
+                }
+
+                return $this->redirectToRoute("app_cells_group", ["cellGroup" => $cellGroup->getId()]);
+            } catch (\Exception $e) {
+                $this->addFlash("error", "Something went wrong: {$e->getMessage()}");
+            }
+        }
+
+        return $this->render("parts/forms/add_or_edit_cell_group.html.twig", [
+            "cellGroup" => $cellGroup,
+            "form" => $form,
+            "returnTo" => $new
+                ? $this->generateUrl("app_cells")
+                : $this->generateUrl("app_cells_group", ["cellGroup" => $cellGroup->getId()->toBase32()]),
         ]);
     }
 
@@ -166,7 +273,7 @@ class CellController extends AbstractController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
     ): Response {
-        $this->denyAccessUnlessGranted(CellVoter::NEW, new Cell());
+        $this->denyAccessUnlessGranted(CellVoter::NEW, "Cell");
 
         return $this->addNewOrEditCell($request, $entityManager, $fileUploader);
     }
@@ -183,6 +290,10 @@ class CellController extends AbstractController
         if (!$cell and $request->get("_route") === "app_cell_add") {
             $cell = new Cell();
             $new = true;
+
+            // Set owner and owner group
+            $cell->setOwner($this->user);
+            $cell->setGroup($this->user?->getGroup());
         } elseif (!$cell) {
             throw $this->createNotFoundException("Cell has not been found");
         } else {

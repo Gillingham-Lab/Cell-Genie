@@ -24,15 +24,6 @@
     </div>
 {% endmacro %}
 
-{% macro cellosauros_url(cell) %}
-    {% if cell.cellosaurusId %}
-        {% set database = "https://web.expasy.org/cellosaurus/" ~ cell.cellosaurusId %}
-        <a href="{{ database }}">{{ cell.name }} ({{ cell.cellosaurusId }}) <span class="fa fa-external-link-alt"></span></a>
-    {% else %}
-        -
-    {% endif %}
-{% endmacro %}
-
 {% macro aliquot_list(cell) %}
     <div class="card-body px-lg-5">
         <table class="table table-sm table-borderless table-hover">
@@ -87,8 +78,8 @@
             {{ layout.toolbox([
                 {
                     "type": "up",
-                    "target": url("app_cells"),
-                    "tooltipText": "Back to all cells",
+                    "target": cell.cellGroup ? url("app_cells_group", {"cellGroup": cell.cellGroup.id}) : url("app_cells"),
+                    "tooltipText": "Back to cell overview",
                 },
                 {
                     "type": "clipboard",
@@ -120,8 +111,9 @@
                             <table class="table w-100 table-borderless table-sm table-hover">
                                 <tbody>
                                 {{ macros.definition_row("ID", cell.id) }}
+                                {{ macros.definition_row("Group", cell.cellGroup) }}
                                 {{ macros.definition_row("RRID", macros.rrid_resolver(cell.rrid)) }}
-                                {{ macros.definition_row_raw("Cellosaurus", _self.cellosauros_url(cell)) }}
+                                {{ macros.definition_row_raw("Cellosaurus", cell_macros.cellosauros_url(cell)) }}
 
                                 {% if cell.parent %}
                                     {{ macros.definition_row("Parent", cell.parent.name, cell_macros.url_cell(cell.parent)) }}

@@ -1,0 +1,18 @@
+{% extends 'parts/forms/base_form.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icon %}
+
+{% block title %}Gin :: {{ cellGroup.id is not null ? cellGroup.number ~ " :: Edit" : "New" }}{% endblock %}
+
+{% block form_header %}
+    {{ layout.header(cellGroup.id is not null ? "Edit" : "New", cellGroup.id ? cellGroup : "Cell group", false, icon.any(cellGroup)) }}
+
+    {{ layout.toolbox([
+        {
+            "type": "up",
+            "target": returnTo,
+            "tooltipText": "Back",
+        },
+    ]) }}
+{% endblock %}

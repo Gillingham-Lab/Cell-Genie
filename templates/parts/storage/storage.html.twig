@@ -3,49 +3,6 @@
 
 {% block title %}Gin :: Storage{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <style rel="stylesheet">
-        .list-group.list-group-root {
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .list-group.list-group-root .list-group {
-            margin-bottom: 0;
-        }
-
-        .list-group.list-group-root .list-group-item {
-            border-radius: 0;
-            border-width: 1px 0 0 0;
-        }
-
-        .list-group.list-group-root > .list-group-item:first-child {
-            border-top-width: 0;
-        }
-
-        .list-group.list-group-root > .list-group > .list-group-item {
-            padding-left: 40px;
-        }
-
-        .list-group.list-group-root > .list-group > .list-group > .list-group-item {
-            padding-left: 80px;
-        }
-
-        .list-group.list-group-root > .list-group > .list-group > .list-group > .list-group-item {
-            padding-left: 120px;
-        }
-
-        .list-group.list-group-root > .list-group > .list-group > .list-group > .list-group .list-group-item {
-            padding-left: 160px;
-        }
-
-        .list-group.list-group-root > .list-group > .list-group > .list-group > .list-group > .list-group .list-group-item {
-            padding-left: 200px;
-        }
-    </style>
-{% endblock %}
-
 {% macro display_boxes(boxes, currentBox=null) %}
     {% for box in boxes %}
         <div class="list-group-item d-flex justify-content-between align-items-center {% if currentBox is same as(box) %}bg-primary text-white{% endif %}">
@@ -181,26 +138,3 @@
     </div>
 {% endblock %}
 
-{% block script_bottom %}
-    <script type="application/javascript">
-        $(function() {
-            $('.list-group').on('shown.bs.collapse', function(e) {
-                let id = this.id;
-
-                if (e.target === this) {
-                    $(`#anchor-for-${id} > .collapse-icon`, this.parentElement)
-                        .toggleClass('fa-plus-square')
-                        .toggleClass('fa-minus-square');
-                }
-            }).on('hidden.bs.collapse', function(e) {
-                let id = this.id;
-
-                if (e.target === this) {
-                    $(`#anchor-for-${id} > .collapse-icon`, this.parentElement)
-                        .toggleClass('fa-plus-square')
-                        .toggleClass('fa-minus-square');
-                }
-            });
-        });
-    </script>
-{% endblock %}

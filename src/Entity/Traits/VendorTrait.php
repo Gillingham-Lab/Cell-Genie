@@ -49,7 +49,10 @@ trait VendorTrait
         return [
             FormField::addPanel("Vendor"),
             AssociationField::new("vendor", "Vendor")
-                ->hideOnIndex()->autocomplete()->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.isPreferred", "DESC")->orderBy("entity.name", "ASC")),
+                ->setRequired(false)
+                ->hideOnIndex()
+                ->autocomplete()
+                ->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.isPreferred", "DESC")->orderBy("entity.name", "ASC")),
             TextField::new("vendorPN", "Vendor PN")
                 ->hideOnIndex()
                 ->setHelp("Product number of the vendor."),

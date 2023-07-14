@@ -48,34 +48,12 @@ class CellCrudController extends ExtendedAbstractCrudController
                 ->hideOnForm(),
             TextField::new('cellNumber'),
             TextField::new('name'),
-            ... HasRRID::rridCrudFields(),
-            TextField::new('cellosaurusId')
-                ->setLabel("Cellosaurus ID")
-                ->setRequired(false)
-                ->hideOnIndex(),
-            TextField::new('age')
-                ->hideOnIndex()
+            AssociationField::new("cellGroup"),
+            AssociationField::new("owner")
                 ->setRequired(false),
-            $this->textFieldOrChoices("sex")
-                ->hideOnIndex()
+            AssociationField::new("group")
                 ->setRequired(false),
-            $this->textFieldOrChoices("ethnicity")
-                ->setRequired(false)
-                ->hideOnIndex()
-                ->setHelp("According to cellosaurus genome origin"),
-            TextField::new('disease')
-                ->hideOnIndex()
-                ->setRequired(false),
-            AssociationField::new("morphology")
-                ->setRequired(true)
-                ->hideOnIndex(),
-            AssociationField::new("organism")
-                ->setRequired(true),
-            AssociationField::new("tissue")
-                ->setRequired(false),
-            $this->textFieldOrChoices("cultureType")
-                ->setRequired(true),
-            BooleanField::new("isCancer"),
+
 
             FormField::addTab("Origins"),
             TextEditorField::new("origin")

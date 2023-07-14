@@ -2,6 +2,7 @@
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
 {% import 'utility/icons.html.twig' as icon %}
+{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
 
 {% macro cell_tools(cell=null) %}
     {% if cell is null %}
@@ -39,7 +40,7 @@
             ]) %}
         {% endif %}
 
-        {{ layout.toolbox_column(tools) }}
+        {{ layout.toolbox_column(tools, "sm") }}
     {% endif %}
 {% endmacro %}
 
@@ -56,6 +57,83 @@
     {% endif %}
 {% endmacro %}
 
+{% macro display_groups(groups, currentGroup, namePrefix="") %}
+    {% for group in groups %}
+        {% set groupId = "gin-cellgroup-" ~ group.id %}
+
+        <div class="list-group-item d-flex justify-content-between align-items-center {% if currentGroup is same as(group) %}bg-primary text-white{% endif %}">
+            <span>
+                {% if group.children|length > 0 %}
+                    <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
+                        <span class="collapse-icon far fa-plus-square fa-fw"></span>
+                    </a>
+                {% else %}
+                    <span class="collapse-icon far fa-plus-square fa-fw invisible"></span>
+                {% endif %}
+
+                {% if is_granted("edit", group) %}
+                    <span href="me-2">
+                        {{ layout.toolbox_column([
+                            {
+                                "type": "edit",
+                                "tooltipText": "Edit cell group",
+                                "display": "lg",
+                                "target": url("app_cells_group_edit", {"cellGroup": group.id }),
+                            },
+                            {
+                                "type": "trash",
+                                "tooltipText": "Trash cell group",
+                                "display": "lg",
+                                "target": url("app_cells_group_remove", {"cellGroup": group.id }),
+                                "disabled": not is_granted("remove", group),
+                            }
+                        ], "sm") }}
+                    </span>
+                {% endif %}
+
+                <a class="text-decoration-none text-black text-reset" href="{{ url("app_cells_group", {"cellGroup": group.id}) }}">
+                    <span class="fas fa-box fa-fw"></span>
+                    {{ namePrefix }} {{ group.name }} ({{ group.number }})
+                </a>
+
+                {# { _self.tools(rack) }} #}
+            </span>
+            <span>
+                <span class="badge bg-secondary rounded-pill" style="width: 30px;">{{ group.children|length }}</span>
+                <span class="badge bg-primary rounded-pill" style="width: 30px;">{{ group.cells|length }}</span>
+            </span>
+        </div>
+
+        <div class="list-group collapse" id="{{ groupId }}">
+            {# Display boxes #}
+            {% if group.children|length > 0 %}
+                {{ _self.display_groups(group.children, currentGroup)  }}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="m-3">There have not been any registered cell groups.</div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro display_cells(cells) %}
+    {% for cell in cells %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+                <span class="me-3">
+                    {{ _self.cell_tools(cell) }}
+                </span>
+                <a href="{{ url("app_cell_view_number", {"cellNumber": cell.cellNumber}) }}"  class="text-decoration-none text-black text-reset">
+                    {{ icon.cell() }}
+                    {{ cell.cellNumber }} | {{ cell.name }}
+                </a>
+            </span>
+            <span>
+                {{ cell.group ?? "unknown" }}
+            </span>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
 
 {% block title %}Gin :: Cells{% endblock %}
 
@@ -64,73 +142,86 @@
         <div class="container container-fluid w-100 p-0 m-0">
             {{ layout.header("Cells", false, true, icon.cell()) }}
 
-            {% if is_granted("ROLE_USER") %}
-            {{
-                layout.toolbox([
-                    {
-                        "type": "add",
-                        "tooltipText": "Add new cell",
-                        "target": url("app_cell_add"),
-                        "disabled": is_granted("new", createEmptyCell()) ? false : true,
-                    },
-                ])
-            }}
-            {% endif %}
+            <div class="row row-cols-1 row-cols-lg-2">
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Cell groups", "CellGroups") }}
 
-            {# Rearrange cell lines by #}
-            {% set native_cells = cells|filter(e => not e.isEngineered()) %}
-            {% set cell_groups = native_cells|filter(e => e.parent is same as(null)) %}
+                        {{ layout.card_body_collapse_start("CellGroups") }}
 
-            <div class="row">
-                <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
-                    <table class="table table-hover fancyTable">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px">
-                                </th>
-                                <th scope="col">Nr</th>
-                                <th scope="col">Name</th>
-                                <th class="d-none d-lg-table-cell" scope="col">Organism</th>
-                                <th class="d-none d-lg-table-cell" scope="col">Tissue</th>
-                                <th class="d-none d-lg-table-cell" scope="col">Morphology</th>
-                                <th class="d-none d-lg-table-cell" scope="col">Aliquotes (Unique)</th>
-                                <th class="d-none d-lg-table-cell" scope="col">Cancer</th>
-                                <th class="d-none d-lg-table-cell" scope="col">Engineered</th>
-                                <th class="d-none d-lg-table-cell" scope="col">RRID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for cell in cell_groups %}
-                            <tr class="{{ cell.cellALiquotes|length>0?:"text-muted" }}">
-                                <td>
-                                    {{ _self.cell_tools(cell) }}
-                                </td>
-                                <td>
-                                    <strong>{{ cell.cellNumber }}</strong>
-                                </td>
-                                <td>{{ cell.name }}</td>
-                                <td class="d-none d-lg-table-cell">{{ cell.organism ? cell.organism.name : "undefined" }}</td>
-                                <td class="d-none d-lg-table-cell">{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
-                                <td class="d-none d-lg-table-cell">{{ cell.morphology ? cell.morphology.name : "undefined" }}</td>
-                                <td class="d-none d-lg-table-cell">
-                                    {{ _self.childlist(cell) }}
-                                    {# {% if cell.cellAliquotes|length > 0 %}
-                                        {% set aliquoteCount = 0 %}
-                                        {% for aliquote in cell.cellAliquotes %}
-                                            {% set aliquoteCount = aliquoteCount + aliquote.vials %}
-                                        {% endfor %}
-                                        {{ aliquoteCount }} ({{ cell.cellAliquotes|length }})
-                                    {% else %}
-                                        0
-                                    {% endif %} #}
-                                </td>
-                                <td class="d-none d-lg-table-cell">{{ cell.isCancer ? "Yes" : "No" }}</td>
-                                <td class="d-none d-lg-table-cell">{{ cell.isEngineered ? "Yes" : "No" }}</td>
-                                <td class="d-none d-lg-table-cell">{{ cell.rrid ? macros.rrid_resolver(cell.rrid) : "-" }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                        {% if is_granted("new", "CellGroup") %}
+                            {{
+                                layout.toolbox_card([
+                                    {
+                                        "type": "add",
+                                        "tooltipText": "Add new cell group",
+                                        "target": url("app_cells_group_add"),
+                                    },
+                                ])
+                            }}
+                        {% endif %}
+
+                        <div class="card-body px-lg-5">
+                            <div class="list-group list-group-root well border-1 border">
+                                {{ _self.display_groups(cellGroups|filter(g => not g.parent), currentGroup) }}
+                            </div>
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Cells", "Cells") }}
+
+                        {{ layout.card_body_collapse_start("Cells") }}
+
+                        {% if is_granted("ROLE_USER") and currentGroup %}
+                            {{
+                                layout.toolbox_card([
+                                    {
+                                        "type": "add",
+                                        "tooltipText": "Add new cell",
+                                        "target": url("app_cell_add"),
+                                        "disabled": is_granted("new", "Cell") ? false : true,
+                                    },
+                                ])
+                            }}
+                        {% endif %}
+
+                        <div class="card-body px-lg-5">
+                            {% if not currentGroup %}
+                                No cell group has been selected.
+                            {% else %}
+                                <h3>{{ currentGroup.name }}</h3>
+
+                                <table class="table w-100 table-borderless table-sm table-hover">
+                                    <tbody>
+                                        {{ macros.definition_row("ID", currentGroup.id) }}
+                                        {{ macros.definition_row("RRID", macros.rrid_resolver(currentGroup.rrid)) }}
+                                        {{ macros.definition_row_raw("Cellosaurus", cell_macros.cellosauros_url(currentGroup)) }}
+                                        {{ macros.definition_row("Culture type", currentGroup.cultureType) }}
+
+                                        {{ macros.definition_row("Organism", currentGroup.organism ? currentGroup.organism.fullName : "undefined") }}
+                                        {{ macros.definition_row("Morphology", currentGroup.morphology ? currentGroup.morphology.name : "undefined") }}
+                                        {{ macros.definition_row("Tissue", currentGroup.tissue ? currentGroup.tissue.name : "undefined") }}
+                                        {{ macros.definition_row("Cancer", currentGroup.isCancer ? "Yes" : "No") }}
+                                        {{ macros.definition_row("Age", currentGroup.age) }}
+                                        {{ macros.definition_row("Sex", currentGroup.sex ?: "-") }}
+                                        {{ macros.definition_row("Ethnicity", currentGroup.ethnicity ?: "-") }}
+                                        {{ macros.definition_row("Disease", currentGroup.disease ?: "-") }}
+                                    </tbody>
+                                </table>
+
+
+                                <div class="list-group list-group-root well border-1 border">
+                                    {{ _self.display_cells(currentGroup.cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
+                                    {{ _self.display_cells(currentGroup.cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
                 </div>
             </div>
         </div>

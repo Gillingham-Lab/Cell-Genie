@@ -120,6 +120,18 @@
             "./config/packages/fos_ckeditor.yaml"
         ]
     },
+    "google/apiclient": {
+        "version": "2.13",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.10",
+            "ref": "07a97ec434d43b7903c78069a04c92adb6442e52"
+        },
+        "files": [
+            "./config/packages/google_apiclient.yaml"
+        ]
+    },
     "laminas/laminas-code": {
         "version": "4.0.0"
     },
@@ -573,6 +585,9 @@
     },
     "tienvx/ux-collection-js": {
         "version": "v1.0.0"
+    },
+    "twig/extra-bundle": {
+        "version": "v3.6.0"
     },
     "twig/twig": {
         "version": "v3.3.0"

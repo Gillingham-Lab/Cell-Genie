@@ -47,19 +47,22 @@ class CellRepository extends ServiceEntityRepository
 
         $qb = $qb
             ->select("c")
+            ->addSelect("cg")
             ->addSelect("ca")
             ->addSelect("m")
             ->addSelect("o")
             ->addSelect("t")
+            ->leftJoin("c.cellGroup", "cg", conditionType: Join::ON)
             ->leftJoin("c.cellAliquotes", "ca", conditionType: Join::ON)
-            ->leftJoin("c.morphology", "m", conditionType: Join::ON)
-            ->leftJoin("c.organism", "o", conditionType: Join::ON)
-            ->leftJoin("c.tissue", "t", conditionType: Join::ON)
+            ->leftJoin("cg.morphology", "m", conditionType: Join::ON)
+            ->leftJoin("cg.organism", "o", conditionType: Join::ON)
+            ->leftJoin("cg.tissue", "t", conditionType: Join::ON)
             ->groupBy("c.id")
             ->addGroupBy("ca.id")
             ->addGroupBy("m.id")
             ->addGroupBy("o.id")
             ->addGroupBy("t.id")
+            ->addGroupBy("cg.id")
         ;
 
         if ($orderBy) {

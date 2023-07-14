@@ -5,3 +5,55 @@
         {{ url("app_cell_view", {"cellId": cell.id}) }}
     {% endif %}
 {% endmacro %}
+
+{% macro cellosauros_url(cell) %}
+    {% if cell.cellosaurusId %}
+        {% set database = "https://web.expasy.org/cellosaurus/" ~ cell.cellosaurusId %}
+        <a href="{{ database }}">{{ cell.name }} ({{ cell.cellosaurusId }}) <span class="fa fa-external-link-alt"></span></a>
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
+{% macro cell_tools(cell=null) %}
+    {% import 'macros.html.twig' as macros %}
+    {% import 'layout.html.twig' as layout %}
+
+    {% if cell is null %}
+    {% else %}
+        {% set tools =  [
+            {
+                "type": "view",
+                "tooltipText": "View cell",
+                "target": macros.cell_resolver(cell),
+            },
+            {
+                "type": "clipboard",
+                "tooltipText": "Copy information",
+                "clipboardText": ( cell.name ~ " (" ~ (cell.rrid ? "RRID:" ~ cell.rrid : "") ~ ")"),
+                "disabled": cell.rrid ? false : true,
+            }
+        ] %}
+
+        {% if is_granted("ROLE_USER") %}
+            {% set tools = tools|merge([
+                {
+                    "type": "edit",
+                    "tooltipText": "Edit cell",
+                    "display": "lg",
+                    "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id }),
+                    "disabled": is_granted("edit", cell) ? false : true,
+                },
+                {
+                    "type": "add",
+                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
+                    "tooltipText": "Add aliquot",
+                    "display": "lg",
+                    "disabled": is_granted("add_aliquot", cell) ? false : true,
+                }
+            ]) %}
+        {% endif %}
+
+        {{ layout.toolbox_column(tools, "sm") }}
+    {% endif %}
+{% endmacro %}

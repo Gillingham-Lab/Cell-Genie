@@ -32,7 +32,6 @@ class Cell implements PrivacyAwareInterface
 {
     use VendorTrait;
     use HasAttachmentsTrait;
-    use HasRRID;
     use PrivacyLevelTrait;
     use OwnerTrait;
     use GroupOwnerTrait;
@@ -42,44 +41,18 @@ class Cell implements PrivacyAwareInterface
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(targetEntity: CellGroup::class, cascade: ["persist"], fetch: "LAZY", inversedBy: "cells")]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    #[ORM\OrderBy(["cellNumber" => "ASC"])]
+    #[Gedmo\Versioned]
+    #[Assert\NotBlank]
+    private ?CellGroup $cellGroup = null;
+
     #[ORM\Column(type: "string", length: 255, unique: True)]
     #[Assert\Length(max: 250)]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
     private string $name = "";
-
-    #[ORM\Column(type: "string", length: 20, nullable: true)]
-    #[Gedmo\Versioned]
-    private ?string $cellosaurusId = null;
-
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Assert\Length(max: 250)]
-    #[Gedmo\Versioned]
-    private ?string $age = "";
-
-    #[ORM\Column(type: "string", length: 50, nullable: true)]
-    #[Assert\Length(max: 50)]
-    #[Gedmo\Versioned]
-    private ?string $sex;
-
-    #[ORM\Column(type: "string", length: 50, nullable: true)]
-    #[Assert\Length(max: 50)]
-    #[Gedmo\Versioned]
-    private ?string $ethnicity;
-
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
-    #[Gedmo\Versioned]
-    private ?string $disease;
-
-    #[ORM\Column(type: "string", length: 255)]
-    #[Assert\Length(max: 250)]
-    #[Gedmo\Versioned]
-    private string $cultureType = "";
-
-    #[ORM\Column(type: "boolean")]
-    #[Gedmo\Versioned]
-    private bool $isCancer = true;
 
     #[ORM\Column(type: "boolean")]
     #[Gedmo\Versioned]
@@ -106,21 +79,6 @@ class Cell implements PrivacyAwareInterface
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
     private ?Cell $parent = null;
-
-    #[ORM\ManyToOne(targetEntity: Morphology::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
-    #[Gedmo\Versioned]
-    private ?Morphology $morphology = null;
-
-    #[ORM\ManyToOne(targetEntity: Organism::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
-    #[Gedmo\Versioned]
-    private ?Organism $organism = null;
-
-    #[ORM\ManyToOne(targetEntity: Tissue::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
-    #[Gedmo\Versioned]
-    private ?Tissue $tissue = null;
 
     #[ORM\OneToMany(mappedBy: "cell", targetEntity: CellAliquot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $cellAliquotes;
@@ -208,7 +166,7 @@ class Cell implements PrivacyAwareInterface
 
     public function __toString()
     {
-        return "{$this->cellNumber} | {$this->name}";
+        return "{$this->cellNumber} | {$this->getName()}";
     }
 
     public function getId(): ?int
@@ -224,85 +182,6 @@ class Cell implements PrivacyAwareInterface
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getCellosaurusId(): ?string
-    {
-        return $this->cellosaurusId;
-    }
-
-    public function setCellosaurusId(?string $cellosaurusId): self
-    {
-        $this->cellosaurusId = $cellosaurusId;
-        return $this;
-    }
-
-    public function getAge(): ?string
-    {
-        return $this->age;
-    }
-
-    public function setAge(?string $age): self
-    {
-        $this->age = $age;
-        return $this;
-    }
-
-    public function getSex(): string
-    {
-        return $this->sex ?? "";
-    }
-
-    public function setSex(?string $sex): self
-    {
-        $this->sex = $sex;
-        return $this;
-    }
-
-    public function getEthnicity(): string
-    {
-        return $this->ethnicity ?? "";
-    }
-
-    public function setEthnicity(?string $ethnicity): self
-    {
-        $this->ethnicity = $ethnicity;
-        return $this;
-    }
-
-    public function getDisease(): string
-    {
-        return $this->disease ?? "";
-    }
-
-    public function setDisease(?string $disease): self
-    {
-        $this->disease = $disease;
-        return $this;
-    }
-
-    public function getCultureType(): string
-    {
-        return $this->cultureType;
-    }
-
-    public function setCultureType(?string $cultureType): self
-    {
-        $this->cultureType = $cultureType ?? "";
-
-        return $this;
-    }
-
-    public function getIsCancer(): bool
-    {
-        return $this->isCancer;
-    }
-
-    public function setIsCancer(bool $isCancer): self
-    {
-        $this->isCancer = $isCancer;
 
         return $this;
     }
@@ -327,42 +206,6 @@ class Cell implements PrivacyAwareInterface
     public function setEngineeringDescription(?string $description): self
     {
         $this->engineeringDescription = $description;
-        return $this;
-    }
-
-    public function getMorphology(): ?Morphology
-    {
-        return $this->morphology;
-    }
-
-    public function setMorphology(?Morphology $morphology): self
-    {
-        $this->morphology = $morphology;
-
-        return $this;
-    }
-
-    public function getTissue(): ?Tissue
-    {
-        return $this->tissue;
-    }
-
-    public function setTissue(?Tissue $tissue): self
-    {
-        $this->tissue = $tissue;
-
-        return $this;
-    }
-
-    public function getOrganism(): ?Organism
-    {
-        return $this->organism;
-    }
-
-    public function setOrganism(?Organism $organism): self
-    {
-        $this->organism = $organism;
-
         return $this;
     }
 
@@ -695,6 +538,73 @@ class Cell implements PrivacyAwareInterface
             }
         }
 
+        return $this;
+    }
+
+    // Virtual properties for old systems
+    public function getCellosaurusId(): ?string
+    {
+        return $this->cellGroup->getCellosaurusId();
+    }
+
+    public function getAge(): ?string
+    {
+        return $this->cellGroup->getAge();
+    }
+
+    public function getSex(): string
+    {
+        return $this->cellGroup->getSex();
+    }
+
+    public function getEthnicity(): string
+    {
+        return $this->cellGroup->getEthnicity();
+    }
+
+    public function getDisease(): string
+    {
+        return $this->cellGroup->getDisease();
+    }
+
+    public function getCultureType(): string
+    {
+        return $this->cellGroup->getCultureType();
+    }
+
+    public function getIsCancer(): bool
+    {
+        return $this->cellGroup->getIsCancer();
+    }
+
+    public function getMorphology(): ?Morphology
+    {
+        return $this->cellGroup->getMorphology();
+    }
+
+    public function getTissue(): ?Tissue
+    {
+        return $this->cellGroup->getTissue();
+    }
+
+    public function getOrganism(): ?Organism
+    {
+        return $this->cellGroup->getOrganism();
+    }
+
+    public function getRrid(): ?string
+    {
+        return $this->cellGroup->getRrid();
+    }
+
+    public function getCellGroup(): ?CellGroup
+    {
+        return $this->cellGroup;
+    }
+
+    public function setCellGroup(?CellGroup $cellGroup): self
+    {
+        $this->cellGroup = $cellGroup;
         return $this;
     }
 }

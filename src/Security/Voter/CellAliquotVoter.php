@@ -13,6 +13,7 @@ class CellAliquotVoter extends Voter
 {
     const VIEW = "view";
     const EDIT = "edit";
+    const REMOVE = "remove";
     const CONSUME = "consume";
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -47,6 +48,7 @@ class CellAliquotVoter extends Voter
         return match ($attribute) {
             self::VIEW => $this->canView($aliquot, $user),
             self::EDIT, self::CONSUME => $this->canEdit($aliquot, $user),
+            self::REMOVE => $this->canRemove($aliquot, $user),
         };
     }
 
@@ -87,5 +89,16 @@ class CellAliquotVoter extends Voter
             PrivacyLevel::Public, PrivacyLevel::Group => $aliquot->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
         };
+    }
+
+    private function canRemove(CellAliquot $aliquot, User $user): bool
+    {
+        // Removal is only possible by admins
+        if (in_array("ROLE_ADMIN", $user->getRoles())) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

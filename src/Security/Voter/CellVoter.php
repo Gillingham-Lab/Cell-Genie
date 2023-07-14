@@ -13,15 +13,17 @@ class CellVoter extends Voter
     const VIEW = "view";
     const EDIT = "edit";
     const NEW = "new";
+    const REMOVE = "remove";
     const ADD_ALIQUOT = "add_aliquot";
+    const OWNS = "owns";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::ADD_ALIQUOT])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::ADD_ALIQUOT, self::REMOVE, self::OWNS])) {
             return false;
         }
 
-        if (!$subject instanceof Cell) {
+        if (!$subject instanceof Cell and $subject !== "Cell") {
             return false;
         }
 
@@ -36,15 +38,29 @@ class CellVoter extends Voter
             return false;
         }
 
-        /** @var Cell $cell */
-        $cell = $subject;
+        if ($subject instanceof Cell) {
+            return match ($attribute) {
+                self::VIEW => true, // Cells can always be viewed
+                self::NEW => $this->canCreate($user),
+                self::EDIT => $this->canEdit($subject, $user),
+                self::REMOVE => $this->canRemove($subject, $user),
+                self::ADD_ALIQUOT => $this->canAddAliquot($subject, $user),
+                self::OWNS => $subject->getOwner() === $user,
+            };
+        } else {
+            return match($attribute) {
+                self::NEW => $this->canCreate($user),
+            };
+        }
+    }
 
-        return match ($attribute) {
-            self::VIEW => true, // Cells can always be viewed
-            self::EDIT => $this->canEdit($cell, $user),
-            self::NEW => $this->canCreate($cell, $user),
-            self::ADD_ALIQUOT => $this->canAddAliquot($cell, $user),
-        };
+    public function canRemove(Cell $cell, User $user): bool
+    {
+        if (in_array("ROLE_ADMIN", $user->getRoles())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function canEdit(Cell $cell, User $user): bool
@@ -53,7 +69,7 @@ class CellVoter extends Voter
         return true;
     }
 
-    private function canCreate(Cell $cell, User $user): bool
+    private function canCreate(User $user): bool
     {
         // Currently, there are no restrictions on creating
         return true;

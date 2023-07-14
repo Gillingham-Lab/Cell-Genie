@@ -1,0 +1,66 @@
+{% extends 'homepage.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icon %}
+{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
+
+{% block title %}Gin :: Cells{% endblock %}
+
+{% block body_main %}
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0">
+        {{ layout.header("Cells", false, true, icon.cell()) }}
+
+        <div class="row">
+            <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
+                <table class="table table-hover fancyTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px"></th>
+                            <th scope="col">Nr</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Group</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Organism</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Tissue</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Aliquotes (Unique)</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Cancer</th>
+                            <th class="d-none d-lg-table-cell" scope="col">Engineered</th>
+                            <th class="d-none d-lg-table-cell" scope="col">RRID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for cell in cells %}
+                        <tr class="{{ cell.cellALiquotes|length>0?:"text-muted" }}">
+                            <td>
+                                {{ cell_macros.cell_tools(cell) }}
+                            </td>
+                            <td>
+                                <strong>{{ cell.cellNumber }}</strong>
+                            </td>
+                            <td>{{ cell.name }}</td>
+                            <td>{{ cell.group ?? "Unknown" }}</td>
+                            <td class="d-none d-lg-table-cell">{{ cell.organism ? cell.organism.name : "undefined" }}</td>
+                            <td class="d-none d-lg-table-cell">{{ cell.tissue ? cell.tissue.name : "undefined" }}</td>
+                            <td class="d-none d-lg-table-cell">
+                                {% if cell.cellAliquotes|length > 0 %}
+                                    {% set aliquoteCount = 0 %}
+                                    {% for aliquote in cell.cellAliquotes %}
+                                        {% set aliquoteCount = aliquoteCount + aliquote.vials %}
+                                    {% endfor %}
+                                    {{ aliquoteCount }} ({{ cell.cellAliquotes|length }})
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </td>
+                            <td class="d-none d-lg-table-cell">{{ cell.isCancer ? "Yes" : "No" }}</td>
+                            <td class="d-none d-lg-table-cell">{{ cell.isEngineered ? "Yes" : "No" }}</td>
+                            <td class="d-none d-lg-table-cell">{{ cell.rrid ? macros.rrid_resolver(cell.rrid) : "-" }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

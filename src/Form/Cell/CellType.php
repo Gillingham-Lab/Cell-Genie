@@ -1,20 +1,30 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Cell;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
+use App\Form\CellularProteinCollectionType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\SaveableType;
+use App\Form\Traits\GroupOwnerTrait;
+use App\Form\Traits\OwnerTrait;
+use App\Form\Traits\PrivacyLevelTrait;
 use App\Form\Traits\VocabularyTrait;
+use App\Form\UserEntityType;
+use App\Form\VendorType;
 use App\Repository\Cell\CellRepository;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -28,16 +38,103 @@ use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 class CellType extends SaveableType
 {
     use VocabularyTrait;
+    use OwnerTrait;
+    use GroupOwnerTrait;
+    use PrivacyLevelTrait;
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository,
         private CellRepository $cellRepository,
+        private Security $security,
     ) {
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add($this->createGeneralForm($builder, $options))
+            ->add($this->createOriginForm($builder, $options))
+            ->add($this->createEngineeringForm($builder, $options))
+            ->add($this->createConditionForm($builder, $options))
+
+            ->add(
+                $builder->create("__experimentalGroup", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Experimental hints",
+                ])
+                    ->add("seeding", CKEditorType::class, [
+                        "label" => "Seeding conditions",
+                        "help" => "Detailed hints on cell seeding (cell amount, medium volume, time until confluency, wellplate). Also recommend a specific well-plate",
+                        "sanitize_html" => true,
+                        "required" => false,
+                        "empty_data" => null,
+                        "config" => ["toolbar" => "basic"],
+                    ])
+                    ->add("countOnConfluence", IntegerType::class, [
+                        "label" => "Cell count at confluence",
+                        "help" => "Try to keep the well-plate format consistent between seeding and cell seeding conditions. If you give multiple recommendations, highlight the one used for this field.",
+                        "required" => false,
+                    ])
+                    ->add("lysing", CKEditorType::class, [
+                        "label" => "Lysing conditions",
+                        "help" => "If the cells need to be lysed with anything but RIPA, mention it here.",
+                        "sanitize_html" => true,
+                        "required" => false,
+                        "empty_data" => null,
+                        "config" => ["toolbar" => "basic"],
+                    ])
+            )
+            ->add(
+                $builder->create("expression", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Expressed proteins",
+                ])
+                    ->add("cellProteins", CollectionJsType::class, [
+                        "label" => "Expressed proteins in this cell",
+                        "required" => false,
+                        "entry_type" => CellularProteinCollectionType::class,
+                        "by_reference" => false,
+                        "allow_add" => true,
+                        "allow_delete" => true,
+                        "allow_move_up" => true,
+                        "allow_move_down" => true,
+                        "call_post_add_on_init" => true,
+                        "attr" => array(
+                            "class" => "collection",
+                        ),
+                    ])
+            )
+            ->add(
+                $builder->create("_attachments", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Attachments",
+                ])
+                    ->add("attachments", AttachmentCollectionType::class, [
+                        "label" => "Attachments",
+                    ])
+            )
+        ;
+
+        parent::buildForm($builder, $options);
+
+        return $builder;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            "data_class" => Cell::class,
+            "current_cell" => null,
+        ]);
+
+        $resolver->setAllowedTypes("current_cell", ['null', Cell::class]);
+
+        parent::configureOptions($resolver);
     }
 
     private function createGeneralForm(FormBuilderInterface $builder, array $options): FormBuilderInterface
     {
-        return $builder
+        $builder = $builder
             ->create("general", FormType::class, [
                 "inherit_data" => true,
                 "label" => "General information",
@@ -52,99 +149,30 @@ class CellType extends SaveableType
                 "required" => true,
                 "help" => "(Official) name of the cell line if commercially available (like 'HCT 116') or a descriptive name if the cell has been engineered ('HEK293T, MGMT-GFP, mCherry')"
             ])
-            ->add("cellosaurusId", TextType::class, [
-                "label" => "Cellosaurus ID",
-                "required" => false,
-                "help" => "Expasy has a cell database with many previously described cell lines, including many more information on them. If its not a custom cell line, try to find the corresponding entry there.",
-            ])
-            ->add("rrid", TextType::class, [
-                "label" => "RRID",
-                "required" => false,
-            ])
-            ->add("age", TextType::class, [
-                "label" => "Age",
-                "required" => false,
-                "help" => "Age of the cell donor. Can also be something like 'adult', 'embryo', or more specifically '6 months', '44 years'",
-            ])
-            ->add("sex", ... $this->getTextOrChoiceOptions("sex", [
-                "label" => "Sex",
-                "required" => false,
-                "help" => "Genotype (not the phenotypical gender) of the cell. Mainly used to describe the chromosomal configuration. XXY is a different genotype than XX.",
-            ]))
-            ->add("ethnicity", ... $this->getTextOrChoiceOptions("ethnicity", [
-                "label" => "Ethnicity",
-                "required" => false,
-                "help" => "Ethnicity, can be interesting as some genotypical features are more common among some ethnicities.",
-            ]))
-            ->add("disease", TextType::class, [
-                "label" => "Disease",
-                "required" => false,
-                "help" => "Disease the cell originates from, if any.",
-            ])
-            ->add("morphology", EntityType::class, [
-                "label" => "Morphology",
+            ->add("cellGroup", EntityType::class, [
+                "label" => "Cell group",
+                "help" => "A cell group is for collection cell lines from different origins under the same label.",
                 "required" => true,
-                "class" => Morphology::class,
+                "class" => CellGroup::class,
                 "query_builder" => function (EntityRepository $er) {
-                    return $er->createQueryBuilder("e")
-                        ->addOrderBy("e.name", "ASC")
-                        ;
+                    return $er->createQueryBuilder("cg")
+                        ->addOrderBy("cg.name", "ASC");
                 },
                 "empty_data" => null,
-                "placeholder" => "Select a morphology",
+                "placeholder" => "Select a cell group",
                 "multiple" => false,
                 "attr"  => [
                     "class" => "gin-fancy-select",
                     "data-allow-empty" => "true",
                 ],
-            ])
-            ->add("organism", EntityType::class, [
-                "label" => "Organism",
-                "required" => true,
-                "class" => Organism::class,
-                "query_builder" => function (EntityRepository $er) {
-                    return $er->createQueryBuilder("e")
-                        ->addOrderBy("e.name", "ASC")
-                        ;
-                },
-                "empty_data" => null,
-                "placeholder" => "Select an organism",
-                "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
-            ])
-            ->add("tissue", EntityType::class, [
-                "label" => "Tissue type",
-                "required" => false,
-                "class" => Tissue::class,
-                "query_builder" => function (EntityRepository $er) {
-                    return $er->createQueryBuilder("e")
-                        ->addOrderBy("e.name", "ASC")
-                        ;
-                },
-                "empty_data" => null,
-                "placeholder" => "Select a tissue type",
-                "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
-            ])
-            ->add("cultureType", ... $this->getTextOrChoiceOptions("cultureType", [
-                "label" => "Culture type",
-                "required" => false,
-                "empty_data" => "",
-                "help" => "Set the culture type (if known). Are the cells adherent or suspension? In clusters? Both?",
-            ]))
-            ->add("isCancer", CheckboxType::class, [
-                "label" => "Cancer?",
-                "help" => "Check if the cell is a cancer cell line (or based on one).",
-                "required" => false,
-                "empty_data" => null,
             ])
         ;
+
+        $this->addOwnerField($builder, $this->security);
+        $this->addGroupOwnerField($builder, $this->security);
+        $this->addPrivacyLevelField($builder, $this->security);
+
+        return $builder;
     }
 
     private function createOriginForm(FormBuilderInterface $builder, array $options): FormBuilderInterface
@@ -324,88 +352,5 @@ class CellType extends SaveableType
                 "config" => ["toolbar" => "basic"],
             ])
         ;
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->add($this->createGeneralForm($builder, $options))
-            ->add($this->createOriginForm($builder, $options))
-            ->add($this->createEngineeringForm($builder, $options))
-            ->add($this->createConditionForm($builder, $options))
-
-            ->add(
-                $builder->create("__experimentalGroup", FormType::class, [
-                    "inherit_data" => true,
-                    "label" => "Experimental hints",
-                ])
-                ->add("seeding", CKEditorType::class, [
-                    "label" => "Seeding conditions",
-                    "help" => "Detailed hints on cell seeding (cell amount, medium volume, time until confluency, wellplate). Also recommend a specific well-plate",
-                    "sanitize_html" => true,
-                    "required" => false,
-                    "empty_data" => null,
-                    "config" => ["toolbar" => "basic"],
-                ])
-                ->add("countOnConfluence", IntegerType::class, [
-                    "label" => "Cell count at confluence",
-                    "help" => "Try to keep the well-plate format consistent between seeding and cell seeding conditions. If you give multiple recommendations, highlight the one used for this field.",
-                    "required" => false,
-                ])
-                ->add("lysing", CKEditorType::class, [
-                    "label" => "Lysing conditions",
-                    "help" => "If the cells need to be lysed with anything but RIPA, mention it here.",
-                    "sanitize_html" => true,
-                    "required" => false,
-                    "empty_data" => null,
-                    "config" => ["toolbar" => "basic"],
-                ])
-            )
-            ->add(
-                $builder->create("expression", FormType::class, [
-                    "inherit_data" => true,
-                    "label" => "Expressed proteins",
-                ])
-                ->add("cellProteins", CollectionJsType::class, [
-                    "label" => "Expressed proteins in this cell",
-                    "required" => false,
-                    "entry_type" => CellularProteinCollectionType::class,
-                    "by_reference" => false,
-                    "allow_add" => true,
-                    "allow_delete" => true,
-                    "allow_move_up" => true,
-                    "allow_move_down" => true,
-                    "call_post_add_on_init" => true,
-                    "attr" => array(
-                        "class" => "collection",
-                    ),
-                ])
-            )
-            ->add(
-                $builder->create("_attachments", FormType::class, [
-                    "inherit_data" => true,
-                    "label" => "Attachments",
-                ])
-                ->add("attachments", AttachmentCollectionType::class, [
-                    "label" => "Attachments",
-                ])
-            )
-        ;
-
-        parent::buildForm($builder, $options);
-
-        return $builder;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            "data_class" => Cell::class,
-            "current_cell" => null,
-        ]);
-
-        $resolver->setAllowedTypes("current_cell", ['null', Cell::class]);
-
-        parent::configureOptions($resolver);
     }
 }

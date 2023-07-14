@@ -274,6 +274,10 @@
     >{{ entity.shortName }}</a>
 {% endmacro %}
 
+{% macro truncate_string(string, length=30) %}
+    <span data-toggle="tooltip" data-placement="bottom" title="{{ string }}">{{ string|u.truncate(30, "…") }}</span>
+{% endmacro %}
+
 {% macro chemlink(chem) %}
     {{ _self.detail_link(chem, "app_compound_view", "compoundId") }}
 {% endmacro %}
