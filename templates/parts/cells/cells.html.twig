@@ -58,7 +58,7 @@
 {% endmacro %}
 
 {% macro display_groups(groups, currentGroup, namePrefix="") %}
-    {% for group in groups %}
+    {% for group in groups|sort((a, b) => a.name <=> b.name) %}
         {% set groupId = "gin-cellgroup-" ~ group.id %}
 
         <div class="list-group-item d-flex justify-content-between align-items-center {% if currentGroup is same as(group) %}bg-primary text-white{% endif %}">
