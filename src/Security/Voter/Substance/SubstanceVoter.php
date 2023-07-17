@@ -28,7 +28,7 @@ class SubstanceVoter extends AbstractPrivacyAwareVoter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if(!in_array($attribute, [self::ATTRIBUTES])) {
+        if(!in_array($attribute, self::ATTRIBUTES)) {
             return false;
         }
 

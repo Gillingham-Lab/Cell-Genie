@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SubstanceController extends AbstractController
 {
@@ -340,6 +341,7 @@ class SubstanceController extends AbstractController
     #[Route("/antibodies/view/id/{antibodyId}", name: "app_antibody_view")]
     #[ParamConverter("antibodyId", options: ["mapping" => ["antibodyId"  => "ulid"]])]
     #[Route("/antibodies/view/{antibodyNr}", name: "app_antibody_view_number")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function viewAntibody(
         AntibodyRepository $antibodyRepository,
         Antibody $antibodyId = null,
