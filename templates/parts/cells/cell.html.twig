@@ -457,7 +457,11 @@
 
                             {{ layout.card_body_collapse_start("Engineered") }}
                             <div class="card-body">
-                                <p>Cells have been engineered by {{ cell.engineer ? cell.engineer.fullName : "whoever" }}.</p>
+                                {% if cell.engineer %}
+                                    <p>Cells have been engineered by {{ cell.engineer ? cell.engineer.fullName : "whoever" }}.</p>
+                                {% else %}
+                                    <p>Cells have been engineered.</p>
+                                {% endif %}
 
                                 {% if cell.engineeringPlasmid %}
                                     <p><em>Engineered with</em> {{ macros.pillify([cell.engineeringPlasmid]) }}</p>
@@ -465,7 +469,7 @@
 
                                 {% if cell.engineeringDescription %}
                                     <div>
-                                        {{ cell.engineeringDescription }}
+                                        {{ cell.engineeringDescription|raw }}
                                     </div>
                                 {% else %}
                                     <div class="text-muted">
