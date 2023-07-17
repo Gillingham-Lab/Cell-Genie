@@ -95,6 +95,33 @@ class CellController extends AbstractController
        ]) ;
     }
 
+    #[Route("/cells/search", name: "app_cells_search")]
+    public function searchCell(
+        CellGroupRepository $cellGroupRepository,
+        CellRepository $cellRepository,
+        Request $request,
+    ): Response {
+        $searchTerm = $request->request->get("search", null);
+
+        if (!$searchTerm) {
+            $this->addFlash("error", "Search term was empty.");
+            return $this->redirectToRoute("app_cells");
+        } elseif (strlen($searchTerm) < 3) {
+            $this->addFlash("error", "Search term must contain at least 3 characters");
+            return $this->redirectToRoute("app_cells");
+        }
+
+        $cellGroups = $cellGroupRepository->searchGroupsWithCellsAndAliquots($searchTerm, ["name" => "ASC"]);
+        $cells = $cellRepository->searchCellsWithAliquots($searchTerm, ["cellNumber" => "ASC"]);
+
+        return $this->render("parts/cells/cells.html.twig", [
+            "cellGroups" => $cellGroups,
+            "cells" => $cells,
+            "currentGroup" => null,
+            "searchTerm" => $searchTerm,
+        ]);
+    }
+
     #[Route("/cells/group/remove/{cellGroup}", name: "app_cells_group_remove")]
     public function removeCellGroup(
         EntityManagerInterface $entityManager,

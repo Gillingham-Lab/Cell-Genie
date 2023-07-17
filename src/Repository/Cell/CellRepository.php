@@ -6,8 +6,10 @@ namespace App\Repository\Cell;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\User\UserGroup;
+use App\Repository\Traits\SearchTermTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
 
@@ -19,6 +21,8 @@ use Symfony\Component\Uid\Ulid;
  */
 class CellRepository extends ServiceEntityRepository
 {
+    use SearchTermTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Cell::class);
@@ -42,6 +46,47 @@ class CellRepository extends ServiceEntityRepository
     }
 
     public function getCellsWithAliquotes(?array $orderBy = null)
+    {
+        return $this->getBaseQuery()->getQuery()->getResult();
+    }
+
+    public function searchCellsWithAliquots(string $searchTerm, ?array $orderBy = null)
+    {
+        $searchTerm = $this->prepareSearchTerm($searchTerm);
+
+        $qb = $this->getBaseQuery($orderBy)
+            ->orWhere("LOWER(cg.number) LIKE :searchTerm")
+            ->orWhere("LOWER(cg.rrid) LIKE :searchTerm")
+            ->orWhere("LOWER(cg.cellosaurusId) LIKE :searchTerm")
+            ->orWhere("LOWER(cg.name) LIKE :searchTerm")
+            ->orWhere("LOWER(c.name) LIKE :searchTerm")
+            ->orWhere("LOWER(c.cellNumber) LIKE :searchTerm")
+            ->setParameter("searchTerm", mb_strtolower($searchTerm))
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+    public function fetchByProtein(Protein $protein)
+    {
+        $qb = $this->createQueryBuilder("c");
+
+        $qb = $qb
+            ->select("c")
+            ->addSelect("cp")
+            ->leftJoin("c.cellProteins", "cp", conditionType: Join::ON)
+            ->groupBy("c.id")
+            ->addGroupBy("cp.id")
+            ->orderBy("c.cellNumber")
+            ->where("cp.associatedProtein = :protein")
+            ->setParameter("protein", $protein->getUlid(), "ulid")
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private function getBaseQuery(?array $orderBy = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder("c");
 
@@ -71,53 +116,6 @@ class CellRepository extends ServiceEntityRepository
             }
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
-
-    public function fetchByProtein(Protein $protein)
-    {
-        $qb = $this->createQueryBuilder("c");
-
-        $qb = $qb
-            ->select("c")
-            ->addSelect("cp")
-            ->leftJoin("c.cellProteins", "cp", conditionType: Join::ON)
-            ->groupBy("c.id")
-            ->addGroupBy("cp.id")
-            ->orderBy("c.cellNumber")
-            ->where("cp.associatedProtein = :protein")
-            ->setParameter("protein", $protein->getUlid(), "ulid")
-        ;
-
-        return $qb->getQuery()->getResult();
-    }
-
-    // /**
-    //  * @return Cell[] Returns an array of Cell objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Cell
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

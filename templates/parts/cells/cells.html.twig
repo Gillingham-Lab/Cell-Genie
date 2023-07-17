@@ -57,13 +57,13 @@
     {% endif %}
 {% endmacro %}
 
-{% macro display_groups(groups, currentGroup, namePrefix="") %}
+{% macro display_groups(groups, currentGroup, nesting=true) %}
     {% for group in groups|sort((a, b) => a.name <=> b.name) %}
         {% set groupId = "gin-cellgroup-" ~ group.id %}
 
         <div class="list-group-item d-flex justify-content-between align-items-center {% if currentGroup is same as(group) %}bg-primary text-white{% endif %}">
             <span>
-                {% if group.children|length > 0 %}
+                {% if group.children|length > 0 and nesting is same as(true) %}
                     <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
                         <span class="collapse-icon far fa-plus-square fa-fw"></span>
                     </a>
@@ -93,7 +93,7 @@
 
                 <a class="text-decoration-none text-black text-reset" href="{{ url("app_cells_group", {"cellGroup": group.id}) }}">
                     <span class="fas fa-box fa-fw"></span>
-                    {{ namePrefix }} {{ group.name }} ({{ group.number }})
+                    {{ group.name }} ({{ group.number }})
                 </a>
 
                 {# { _self.tools(rack) }} #}
@@ -106,7 +106,7 @@
 
         <div class="list-group collapse" id="{{ groupId }}">
             {# Display boxes #}
-            {% if group.children|length > 0 %}
+            {% if group.children|length > 0 and nesting is same as(true) %}
                 {{ _self.display_groups(group.children, currentGroup)  }}
             {% endif %}
         </div>
@@ -134,13 +134,27 @@
     {% endfor %}
 {% endmacro %}
 
-
 {% block title %}Gin :: Cells{% endblock %}
+
+{% block search %}
+    <form class="form-inline my-2 my-lg-0" action="{{ url("app_cells_search") }}" method="post">
+        <div class="input-group">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="search" minlength="3">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit"><span class="fa fa-search"></span></button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header("Cells", false, true, icon.cell()) }}
+            {% if app.request.get("_route") == "app_cells_search" %}
+                {{ layout.header("Cells", "Search results for: " ~ searchTerm ~ ", found " ~ cellGroups|length ~ " groups and " ~ cells|length ~ " cells", true, icon.cell()) }}
+            {% else %}
+                {{ layout.header("Cells", false, true, icon.cell()) }}
+            {% endif %}
 
             <div class="row row-cols-1 row-cols-lg-2">
                 <div class="col p-0 m-0 mb-3">
@@ -162,9 +176,13 @@
                         {% endif %}
 
                         <div class="card-body px-lg-5">
-                            <div class="list-group list-group-root well border-1 border">
-                                {{ _self.display_groups(cellGroups|filter(g => not g.parent), currentGroup) }}
-                            </div>
+                            {% if app.request.get("_route") == "app_cells_search" %}
+                                {{ _self.display_groups(cellGroups, null, false) }}
+                            {% else %}
+                                <div class="list-group list-group-root well border-1 border">
+                                    {{ _self.display_groups(cellGroups|filter(g => not g.parent), currentGroup) }}
+                                </div>
+                            {% endif %}
                         </div>
                         {{ layout.card_body_collapse_end() }}
                     </div>
@@ -190,7 +208,17 @@
                         {% endif %}
 
                         <div class="card-body px-lg-5">
-                            {% if not currentGroup %}
+                            {% if app.request.get("_route") == "app_cells_search" %}
+                                <h3>Cell search results</h3>
+                                {% if cells|length > 0 %}
+                                    <div class="list-group list-group-root well border-1 border">
+                                        {{ _self.display_cells(cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
+                                        {{ _self.display_cells(cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                    </div>
+                                {% else %}
+                                    <p>No cells match your criteria</p>
+                                {% endif %}
+                            {% elseif not currentGroup %}
                                 No cell group has been selected.
                             {% else %}
                                 <h3>{{ currentGroup.name }}</h3>
