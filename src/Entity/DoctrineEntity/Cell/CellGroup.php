@@ -17,7 +17,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellGroupRepository::class)]
-#[UniqueEntity(fields: "number")]
+#[UniqueEntity(fields: "number", message: "This cell line number is already in use.")]
+#[UniqueEntity(fields: "name", message: "This cell line group has already been made")]
 #[Gedmo\Loggable]
 class CellGroup
 {
