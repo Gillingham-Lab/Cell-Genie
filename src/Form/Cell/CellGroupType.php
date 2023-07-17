@@ -29,7 +29,7 @@ class CellGroupType extends SaveableType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entity = $builder->getData();
 
@@ -204,11 +204,9 @@ class CellGroupType extends SaveableType
         ;
 
         parent::buildForm($builder, $options);
-
-        return $builder;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "data_class" => CellGroup::class,

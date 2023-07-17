@@ -20,7 +20,7 @@ class NotLoopedValidator extends ConstraintValidator
     ) {
     }
 
-    public function validate(mixed $entity, Constraint $constraint)
+    public function validate(mixed $entity, Constraint $constraint): void
     {
         if (!$constraint instanceof NotLooped) {
             throw new UnexpectedTypeException($constraint, NotLooped::class);

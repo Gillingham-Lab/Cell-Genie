@@ -32,7 +32,7 @@ class InstrumentType extends SaveableType
 
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entity = $builder->getData();
 
@@ -227,7 +227,7 @@ class InstrumentType extends SaveableType
         parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "data_class" => Instrument::class,

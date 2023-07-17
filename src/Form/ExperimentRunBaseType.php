@@ -32,7 +32,7 @@ class ExperimentRunBaseType extends AbstractType
     ) {
     }
 
-    protected function addInputTypeToForm(FormBuilderInterface $formBuilder, InputType $inputType)
+    protected function addInputTypeToForm(FormBuilderInterface $formBuilder, InputType $inputType): void
     {
         $type = match ($inputType->getType()) {
             InputType::INTEGER_TYPE => IntegerType::class,

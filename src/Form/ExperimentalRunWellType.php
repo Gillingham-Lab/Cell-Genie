@@ -29,7 +29,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ExperimentalRunWellType extends ExperimentRunBaseType
 {
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Experiment $experiment */
         $experiment = $options["experiment"];
@@ -92,7 +92,7 @@ class ExperimentalRunWellType extends ExperimentRunBaseType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "data_class" => ExperimentalRunWellFormEntity::class,

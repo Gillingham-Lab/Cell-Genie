@@ -20,7 +20,7 @@ class ValidBoxCoordinateValidator extends ConstraintValidator
 
     }
 
-    public function validate(mixed $value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidBoxCoordinate) {
             throw new UnexpectedTypeException($constraint, ValidBoxCoordinate::class);

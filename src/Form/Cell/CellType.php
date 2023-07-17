@@ -40,7 +40,7 @@ class CellType extends SaveableType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add($this->createGeneralForm($builder, $options))
@@ -107,11 +107,9 @@ class CellType extends SaveableType
         ;
 
         parent::buildForm($builder, $options);
-
-        return $builder;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "data_class" => Cell::class,

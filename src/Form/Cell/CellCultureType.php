@@ -24,7 +24,7 @@ class CellCultureType extends AbstractType
 
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add("number", TextType::class, [
@@ -66,7 +66,7 @@ class CellCultureType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "data_class" => CellCulture::class,

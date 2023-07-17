@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class BarcodeHasValidTarget
 {
-    public static function validate($object, ExecutionContextInterface $context, $payload)
+    public static function validate($object, ExecutionContextInterface $context, $payload): void
     {
         /** @var BarcodeEntry $object */
         $substance = !is_null($object->getSubstance());

@@ -21,7 +21,7 @@ class WithinBoxBoundsValidator extends ConstraintValidator
 
     }
 
-    public function validate(mixed $entity, Constraint $constraint)
+    public function validate(mixed $entity, Constraint $constraint): void
     {
         if (!$constraint instanceof WithinBoxBounds) {
             throw new UnexpectedTypeException($constraint, WithinBoxBounds::class);
