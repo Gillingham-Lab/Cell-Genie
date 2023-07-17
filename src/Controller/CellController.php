@@ -155,6 +155,22 @@ class CellController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             try {
+                // Change data if left empty, but parent has the information
+                $groupParent = $cellGroup->getParent();
+
+                if ($groupParent !== null) {
+                    $fields = ["organism", "morphology", "tissue", "isCancer", "age", "sex", "ethnicity", "disease"];
+
+                    foreach ($fields as $field) {
+                        $setter = "set$field";
+                        $getter = "get$field";
+
+                        if ($cellGroup->$getter() === null or $cellGroup->$getter() === "") {
+                            $cellGroup->$setter($groupParent->$getter());
+                        }
+                    }
+                }
+
                 $entityManager->persist($cellGroup);
                 $entityManager->flush();
 
