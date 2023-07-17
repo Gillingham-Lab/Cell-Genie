@@ -100,136 +100,138 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                {% if app.user %}
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="{{ url("app_cells") }}" id="navbar-dropdown-cell-link" role="button" data-toggle="dropdown" aria-haspopup="true">
-                                    {{ icon.cell() }}
-                                    Cells
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ url("app_cells") }}" id="navbar-dropdown-cell-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                {{ icon.cell() }}
+                                Cells
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-cell-link">
+                                <a class="dropdown-item" href="{{ url("app_cells") }}">{{ icon.cell() }}Overview</a>
+                                <a class="dropdown-item" href="{{ url("app_cells_all") }}">{{ icon.cell() }}All cells</a>
+                                {% if app.user %}<a class="dropdown-item" href="{{ url("app_cell_add") }}"><span class="fas fa-fw fa-plus"></span>Add cell</a>{% endif %}
+
+                                {% if app.user %}
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url("app_cell_cultures") }}"><span class="fas fa-fw fa-flask"></span>Cell Cultures</a>
+                                {% endif %}
+                            </div>
+                        </li>
+
+                        {% if app.user %}
+                        <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ url("app_antibodies") }}" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                {{ icon.antibody() }}
+                                Antibodies
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-antibody-link">
+                                <a class="dropdown-item" href="{{ url("app_antibodies") }}"><span class="fas fa-fw"></span>All</a>
+                                <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}">{{ icon.antibody_primary() }} Primaries</a>
+                                <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}">{{ icon.antibody_secondary() }} Secondaries</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url("app_substance_new", {"type": "antibody"}) }}"><span class="fas fa-fw fa-plus"></span>New Antibody</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url("app_epitopes") }}">{{ icon.epitope() }}Epitopes</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_compounds") }}">
+                                {{ icon.chemical() }}
+                                Chemicals
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_oligos") }}">
+                                {{ icon.oligo() }}
+                                Oligos
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_plasmids") }}">
+                                {{ icon.plasmid() }}
+                                Plasmids
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_proteins") }}">
+                                {{ icon.protein() }}
+                                Proteins
+                            </a>
+                        </li>
+
+                        <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ url("app_storage") }}"  id="navbar-dropdown-storage-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                {{ icon.rack() }}
+                                Storage
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-storage-link">
+                                <a class="dropdown-item" href="{{ url("app_storage_add_rack") }}">
+                                    {{ icon.add(false) }}
+                                    {{ icon.rack(false) }}
+                                    New Location
                                 </a>
-
-                                <div class="dropdown-menu" aria-labelledby="navbar-dropdown-cell-link">
-                                    <a class="dropdown-item" href="{{ url("app_cells") }}">{{ icon.cell() }}Overview</a>
-                                    <a class="dropdown-item" href="{{ url("app_cells_all") }}">{{ icon.cell() }}All cells</a>
-                                    <a class="dropdown-item" href="{{ url("app_cell_add") }}"><span class="fas fa-fw fa-plus"></span>Add cell</a>
-
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url("app_cell_cultures") }}"><span class="fas fa-fw fa-flask"></span>Cell Cultures</a>
-                                </div>
-                            </li>
-
-                            <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="{{ url("app_antibodies") }}" id="navbar-dropdown-antibody-link" role="button" data-toggle="dropdown" aria-haspopup="true">
-                                    {{ icon.antibody() }}
-                                    Antibodies
+                                <a class="dropdown-item" href="{{ url("app_storage_add_box") }}">
+                                    {{ icon.add() }}
+                                    {{ icon.box() }}
+                                    New Box
                                 </a>
+                            </div>
+                        </li>
 
-                                <div class="dropdown-menu" aria-labelledby="navbar-dropdown-antibody-link">
-                                    <a class="dropdown-item" href="{{ url("app_antibodies") }}"><span class="fas fa-fw"></span>All</a>
-                                    <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}">{{ icon.antibody_primary() }} Primaries</a>
-                                    <a class="dropdown-item" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}">{{ icon.antibody_secondary() }} Secondaries</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url("app_substance_new", {"type": "antibody"}) }}"><span class="fas fa-fw fa-plus"></span>New Antibody</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url("app_epitopes") }}">{{ icon.epitope() }}Epitopes</a>
-                                </div>
-                            </li>
+                        <li class="nav-item">
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_compounds") }}">
-                                    {{ icon.chemical() }}
-                                    Chemicals
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_instruments") }}">
+                                <span class="fas fa-fw fa-hdd"></span>
+                                Instruments
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_oligos") }}">
-                                    {{ icon.oligo() }}
-                                    Oligos
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_experiments") }}">
+                                <span class="fas fa-fw fa-flask"></span>
+                                Experiments
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_plasmids") }}">
-                                    {{ icon.plasmid() }}
-                                    Plasmids
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_recipes") }}">
+                                <span class="fas fa-fw fa-list-alt"></span>
+                                Recipes
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_proteins") }}">
-                                    {{ icon.protein() }}
-                                    Proteins
-                                </a>
-                            </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-user-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                <span class="fas fa-fw fa-user"></span>
+                                User
+                            </a>
 
-                            <li class="border-end border-1 my-2" style="border-color: rgb(255, 255, 255, 0.55) !important;"></li>
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-user-link">
+                                <a class="dropdown-item" href="{{ url("admin") }}"><span class="fas fa-fw fa-tools"></span> Administration</a>
+                                <a class="dropdown-item" href="{{ logout_url(key = null) }}"><span class="fas fa-sign-out-alt fa-fw"></span> Logout</a>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="{{ url("app_storage") }}"  id="navbar-dropdown-storage-link" role="button" data-toggle="dropdown" aria-haspopup="true">
-                                    {{ icon.rack() }}
-                                    Storage
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="navbar-dropdown-storage-link">
-                                    <a class="dropdown-item" href="{{ url("app_storage_add_rack") }}">
-                                        {{ icon.add(false) }}
-                                        {{ icon.rack(false) }}
-                                        New Location
-                                    </a>
-                                    <a class="dropdown-item" href="{{ url("app_storage_add_box") }}">
-                                        {{ icon.add() }}
-                                        {{ icon.box() }}
-                                        New Box
-                                    </a>
-                                </div>
-                            </li>
-
-                            <li class="nav-item">
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_instruments") }}">
-                                    <span class="fas fa-fw fa-hdd"></span>
-                                    Instruments
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_experiments") }}">
-                                    <span class="fas fa-fw fa-flask"></span>
-                                    Experiments
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url("app_recipes") }}">
-                                    <span class="fas fa-fw fa-list-alt"></span>
-                                    Recipes
-                                </a>
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbar-dropdown-user-link" role="button" data-toggle="dropdown" aria-haspopup="true">
-                                    <span class="fas fa-fw fa-user"></span>
-                                    User
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="navbar-dropdown-user-link">
-                                    <a class="dropdown-item" href="{{ url("admin") }}"><span class="fas fa-fw fa-tools"></span> Administration</a>
-                                    <a class="dropdown-item" href="{{ logout_url(key = null) }}"><span class="fas fa-sign-out-alt fa-fw"></span> Logout</a>
-                                </div>
-                            </li>
-                        </ul>
-
-                        {% block search %}{% endblock %}
-                    </div>
-                {% endif %}
+                    {% block search %}{% endblock %}
+                </div>
             </div>
         </nav>
 
