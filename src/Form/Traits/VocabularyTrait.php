@@ -20,7 +20,7 @@ trait VocabularyTrait
     {
         $vocabEntries = $this->getVocabularyChoices($vocabularyName);
 
-        $options = array_merge([
+        $options = array_merge_recursive([
             "attr"  => [
                 "class" => "gin-fancy-select",
                 "data-allow-empty" => "true",
@@ -55,6 +55,6 @@ trait VocabularyTrait
             $choiceOptions["placeholder"] = "Choose an option";
         }
 
-        $builder->add($field, $vocab ? ChoiceType::class : TextType::class, options: array_merge($options, $choiceOptions));
+        $builder->add($field, $vocab ? ChoiceType::class : TextType::class, options: array_merge_recursive($options, $choiceOptions));
     }
 }
