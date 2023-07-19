@@ -169,6 +169,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro orcid_resolver(orcid) %}
+    {%- if orcid -%}
+        <a href="https://orcid.org/{{ orcid }}"><span class="fab fa-orcid"></span>{{ orcid }}</a>
+    {%- else -%}
+        -
+    {%- endif -%}
+{% endmacro %}
+
 {% macro pillify(objects) %}
     {% for object in objects %}
         {% if object is substance %}

@@ -18,24 +18,24 @@ class InstrumentUser
     #[ORM\ManyToOne(targetEntity: Instrument::class, cascade: ["persist", "remove"], inversedBy: "users")]
     #[ORM\JoinColumn(name: "instrument_id", referencedColumnName: "id", onDelete: "CASCADE")]
     #[Assert\NotBlank]
-    private ?Instrument $instrument;
+    private ?Instrument $instrument = null;
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", onDelete: "CASCADE")]
     #[Assert\NotBlank]
-    private ?User $user;
+    private ?User $user = null;
 
     #[ORM\Column(type: "string", enumType: InstrumentRole::class, options: ["default" => InstrumentRole::Untrained])]
     #[Assert\NotBlank]
-    private ?InstrumentRole $role;
+    private ?InstrumentRole $role = null;
 
     public function __toString(): string
     {
         return "{$this->user->getFullName()}: {$this->role->value}";
     }
 
-    public function getInstrument(): Instrument
+    public function getInstrument(): ?Instrument
     {
         return $this->instrument;
     }
@@ -51,12 +51,12 @@ class InstrumentUser
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 

@@ -1,0 +1,18 @@
+<table class="table table-sm table-borderless">
+    <tbody>
+        {% for title, row in rows %}
+            <tr>
+                <th scope="row">{{ title }}</th>
+                <td>
+                    {%- if row[0] == "url" -%}
+                        <a href="{{ row[2] }}">{{ row[1] }}</a>
+                    {%- elseif row[0] == "raw" -%}
+                        {{ row[1]|raw }}
+                    {%- else -%}
+                        {{ row[1] }}
+                    {%- endif -%}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,18 @@
+{% extends 'parts/forms/base_form.html.twig' %}
+{% from 'macros.html.twig' import vendor_url, validation_status, rrid_resolver, pillify_epitopes %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+
+{% block title %}Gin :: User information{% endblock %}
+
+{% block form_header %}
+    {{ layout.header(user.id is not null ? "Edit" : "New", user ? user.fullName : "User", false) }}
+
+    {{ layout.toolbox([
+        {
+            "type": "up",
+            "target": returnTo,
+            "tooltipText": "Back",
+        },
+    ]) }}
+{% endblock %}

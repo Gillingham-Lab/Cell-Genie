@@ -1,0 +1,53 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+
+{% block title %}Gin :: Group information{% endblock %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("Group information", false, false) }}
+
+            {# {{ _self.tools(user) }}  #}
+
+            <div class="row row-cols-3">
+                {% embed "embed/card.html.twig" with {
+                    "title": "Group members",
+                    "template": _self,
+                } -%}
+                    {% import template as macros %}
+                    {% block body -%}
+                        {% embed "embed/table.html.twig" with {
+                            "header": ["", "Name", "Office", "Phone"],
+                            "headerStyles": ["width: 50px;", null, null, null],
+                            "rows": group.users|filter(user => user.isActive)|map(user => [
+                                macros.user_tools(user),
+                                user.fullName,
+                                user.office,
+                                user.phoneNumber,
+                            ])
+                        } %}
+                        {% endembed %}
+                    {%- endblock %}
+                {% endembed %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro user_tools(user) %}
+    {% if user %}
+
+        {% set tools = [
+            {
+                "type": "view",
+                "tooltipText": "Show User",
+                "target": url("app_user", {"user": user.id}),
+            }
+        ] %}
+
+
+        {{ layout.toolbox_column(tools, "sm") }}
+    {% endif %}
+{% endmacro %}

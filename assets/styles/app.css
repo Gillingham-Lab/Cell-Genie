@@ -1,3 +1,20 @@
-body {
-    background-color: lightgray;
+.gin-icon-stack {
+    display: inline-block;
+}
+
+.gin-icon-stack-fw {
+    max-width: 1.25em;
+}
+
+.gin-icon-left {
+    position: relative;
+    font-size: 0.75em;
+}
+
+.gin-icon-right {
+    position: relative;
+    color: black;
+    right: 1em;
+    top: -0.5em;
+    font-size: 0.75em;
 }

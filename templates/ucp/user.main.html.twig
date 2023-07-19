@@ -1,0 +1,70 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+
+{% block title %}Gin :: User information{% endblock %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header("User information", false, false) }}
+
+            {{ _self.tools(user) }}
+
+            <div class="row row-cols-3">
+                {% embed "embed/card.html.twig" with {
+                    "title": "Personal Information",
+                } -%}
+                    {% block body -%}
+                        {% from 'macros.html.twig' import orcid_resolver %}
+                        {% embed "embed/list_table.html.twig" with {
+                            "rows": {
+                                "Personal address": ["string", user.address ?? "-"],
+                                "Full Name": ["string", user.completeName],
+                                "Group": ["string", user.group ?? "-"],
+                                "ORC-ID": ["raw", orcid_resolver(user.orcid)],
+                                "Office": ["string", user.office ?? "-"],
+                                "Phone": ["string", user.phoneNumber ?? "-"],
+                                "Roles": ["raw", user.roles|join(", ")]
+                            }
+                        } %}
+
+                        {% endembed %}
+                    {%- endblock %}
+                {% endembed %}
+
+                {% if app.user == user %}
+                    {% embed "embed/card.html.twig" with {
+                        "title": "My responsibilities",
+                    } %}
+                        {% block body -%}
+                            There are so many.
+                        {% endblock %}
+                    {% endembed %}
+
+                    {% embed "embed/card.html.twig" with {
+                        "title": "My projects",
+                    } %}
+                        {% block body -%}
+                            There are so many.
+                        {% endblock %}
+                    {% endembed %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro tools(user) %}
+    {% set tools = [] %}
+
+    {% if is_granted("edit", user) %}
+        {% set tools = tools|merge([{
+            "type": "edit",
+            "tooltipText": "Edit user",
+            "target": url("app_user_edit", {"user": user.id}),
+        }]) %}
+    {% endif %}
+
+    {{ layout.toolbox(tools) }}
+{% endmacro %}

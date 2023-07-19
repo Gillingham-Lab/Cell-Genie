@@ -5,7 +5,8 @@ namespace App\Entity\DoctrineEntity\User;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\Experiment;
-use App\Repository\UserRepository;
+use App\Repository\Substance\UserRepository;
+use App\Validator\Constraint\OrcId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user_accounts")]
@@ -31,10 +33,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $fullName = null;
 
     #[ORM\Column(type: "string", length: 180, unique: true)]
+    #[Assert\NotBlank]
     private string $email;
 
     #[ORM\Column(type: "json")]
     private array $roles = [];
+
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $personalAddress = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $suffix = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $phoneNumber = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    #[Assert\NotBlank]
+    private ?string $office = null;
+
+    #[ORM\Column(length: 19, nullable: true)]
+    #[OrcId]
+    private ?string $orcid = null;
 
     /**
      * @var string The hashed password
@@ -80,7 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->fullName;
     }
 
-    public function setFullName(string $fullName): self
+    public function setFullName(string $fullName): static
     {
         $this->fullName = $fullName;
 
@@ -92,7 +123,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(string $email): static
     {
         $this->email = $email;
 
@@ -133,7 +164,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
@@ -148,7 +179,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
@@ -165,7 +196,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->plainPassword;
     }
 
-    public function setPlainPassword(?string $plainPassword): self
+    public function setPlainPassword(?string $plainPassword): static
     {
         $this->plainPassword = $plainPassword;
 
@@ -197,7 +228,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isAdmin ?? false;
     }
 
-    public function setIsAdmin(?bool $isAdmin): self
+    public function setIsAdmin(?bool $isAdmin): static
     {
         $this->isAdmin = $isAdmin;
 
@@ -209,7 +240,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isActive ?? true;
     }
 
-    public function setIsActive(?bool $isActive): self
+    public function setIsActive(?bool $isActive): static
     {
         $this->isActive = $isActive;
 
@@ -224,7 +255,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->experiments;
     }
 
-    public function addExperiment(Experiment $experiment): self
+    public function addExperiment(Experiment $experiment): static
     {
         if (!$this->experiments->contains($experiment)) {
             $this->experiments[] = $experiment;
@@ -234,7 +265,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeExperiment(Experiment $experiment): self
+    public function removeExperiment(Experiment $experiment): static
     {
         if ($this->experiments->removeElement($experiment)) {
             // set the owning side to null (unless already changed)
@@ -254,7 +285,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->cellCultures;
     }
 
-    public function addCellCulture(CellCulture $cellCulture): self
+    public function addCellCulture(CellCulture $cellCulture): static
     {
         if (!$this->cellCultures->contains($cellCulture)) {
             $this->cellCultures[] = $cellCulture;
@@ -264,7 +295,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeCellCulture(CellCulture $cellCulture): self
+    public function removeCellCulture(CellCulture $cellCulture): static
     {
         if ($this->cellCultures->removeElement($cellCulture)) {
             // set the owning side to null (unless already changed)
@@ -281,7 +312,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->group;
     }
 
-    public function setGroup(?UserGroup $group): self
+    public function setGroup(?UserGroup $group): static
     {
         if ($group === null and $this->group !== null) {
             $this->group->removeUser($this);
@@ -295,6 +326,109 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->group = $group;
         }
 
+        return $this;
+    }
+
+    public function getPersonalAddress(): ?string
+    {
+        return $this->personalAddress;
+    }
+
+    public function setPersonalAddress(?string $personalAddress): static
+    {
+        $this->personalAddress = $personalAddress;
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): static
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): static
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getSuffix(): ?string
+    {
+        return $this->suffix;
+    }
+
+    public function setSuffix(?string $suffix): static
+    {
+        $this->suffix = $suffix;
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): static
+    {
+        $this->phoneNumber = $phoneNumber;
+        return $this;
+    }
+
+    public function getOffice(): ?string
+    {
+        return $this->office;
+    }
+
+    public function setOffice(?string $office): static
+    {
+        $this->office = $office;
+        return $this;
+    }
+
+    public function getCompleteName(): string
+    {
+        $completeName = $this->getFullName();
+
+        if ($this->title) {
+            $completeName = "{$this->title} {$completeName}";
+        }
+
+        if ($this->suffix) {
+            $completeName = "{$completeName}, {$this->suffix}";
+        }
+
+        return $completeName;
+    }
+
+    public function getOrcid(): ?string
+    {
+        return $this->orcid;
+    }
+
+    public function setOrcid(?string $orcid): static
+    {
+        $this->orcid = $orcid;
         return $this;
     }
 }

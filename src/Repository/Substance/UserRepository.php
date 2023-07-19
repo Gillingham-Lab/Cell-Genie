@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Substance;
 
 use App\Entity\DoctrineEntity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

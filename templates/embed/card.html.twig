@@ -1,0 +1,24 @@
+{% if maxHeight is not defined %}
+{% set maxHeight = 800 %}
+{% endif %}
+
+<div class="col p-0 m-0 mb-3">
+    <div class="card mx-3 h-100">
+        <div class="card-header">
+            <h2 class="mb-0 d-lg-none">
+                <button class="btn btn-lg w-100 text-start">
+                    {{- title -}}
+                </button>
+            </h2>
+            <h2 class="mb-0 text-right d-none d-lg-block px-4">
+                {{- title -}}
+            </h2>
+        </div>
+
+        <div class="px-lg-4 overflow-auto" style="max-height: {{ maxHeight }}px;">
+            <div class="card-body">
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
