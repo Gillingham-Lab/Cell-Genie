@@ -19,7 +19,7 @@ trait LongNameTrait
         return $this->longName;
     }
 
-    public function setLongName(string $longName): self
+    public function setLongName(?string $longName): self
     {
         $this->longName = $longName;
 

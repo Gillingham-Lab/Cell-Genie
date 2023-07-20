@@ -13,6 +13,7 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Epitope;
 use App\Entity\Lot;
+use App\Form\Import\ImportLotType;
 use App\Form\Import\ImportOligoType;
 use App\Form\Substance\AntibodyType;
 use App\Form\Substance\ChemicalType;
@@ -23,6 +24,7 @@ use App\Form\Substance\PlasmidType;
 use App\Form\Substance\ProteinType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Genie\Enums\PrivacyLevel;
+use App\Repository\BoxRepository;
 use App\Repository\Cell\CellRepository;
 use App\Repository\EpitopeRepository;
 use App\Repository\LotRepository;
@@ -32,6 +34,8 @@ use App\Repository\Substance\OligoRepository;
 use App\Repository\Substance\PlasmidRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
+use App\Repository\Substance\UserGroupRepository;
+use App\Repository\Substance\UserRepository;
 use App\Security\Voter\Substance\LotVoter;
 use App\Security\Voter\Substance\SubstanceVoter;
 use App\Service\FileUploader;
@@ -40,6 +44,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -48,6 +53,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SubstanceController extends AbstractController
 {
@@ -590,12 +597,12 @@ class SubstanceController extends AbstractController
         ]);
     }
 
-    #[Route("/substance/import/{type}", name: "app_substance_import")]
+    #[Route("/substance/import/{type}", name: "app_substance_import", methods: ["GET"], priority: 1)]
     #[IsGranted("ROLE_USER")]
     public function import(
         Security $security,
         string $type,
-    ) {
+    ): Response {
         /** @var User $user */
         $user = $security->getUser();
 
@@ -604,19 +611,124 @@ class SubstanceController extends AbstractController
                 "owner" => $user,
                 "group" => $user->getGroup(),
                 "privacyLevel" => PrivacyLevel::Group,
+            ],
+            "lot" => [
+                "owner" => $user,
+                "group" => $user->getGroup(),
+                "privacyLevel" => PrivacyLevel::Group,
+                "numberOfAliquotes" => 1,
+                "maxNumberOfAliquots" => 1,
             ]
         ];
+
+        $substanceFormImportType = match($type) {
+            "oligo" => ImportOligoType::class,
+            default => $this->createNotFoundException("Unsupported substance type.")
+        };
+
         $builder = $this->createFormBuilder($data);
+        $builder
+            ->add("substance", $substanceFormImportType, [
 
-        $builder->add("substance", ImportOligoType::class, [
+            ])
+            ->add("lot", ImportLotType::class, [
 
-        ]);
+            ])
+        ;
 
         $form = $builder->getForm();
 
 
         return $this->render("parts/substance/import.html.twig", [
             "importForm" => $form,
+            "postUrl" => $this->generateUrl("app_substance_import_post", ["type" => $type]),
         ]);
+    }
+
+    #[Route("/substance/import/{type}/post", name: "app_substance_import_post", methods: ["POST"])]
+    #[IsGranted("ROLE_USER")]
+    public function postImport(
+        Request $request,
+        Security $security,
+        ValidatorInterface $validator,
+        UserRepository $userRepository,
+        LotRepository $lotRepository,
+        BoxRepository $boxRepository,
+        UserGroupRepository $userGroupRepository,
+        EntityManagerInterface $entityManager,
+        string $type,
+    ): Response {
+        $data = $request->toArray();
+
+        $validateOnly = $data["options"]["validateOnly"] ?? false;
+        $ignoreErrors = $data["options"]["ignoreErrors"] ?? false;
+
+        $substanceClass = match($type) {
+            "oligo" => Oligo::class,
+            default => $this->createNotFoundException("Unsupported substance type"),
+        };
+
+        $substanceRepository = $entityManager->getRepository($substanceClass);
+
+        $answer = [
+            "numRows" => count($data["data"]),
+            "numRowsCreated" => 0,
+            "numRowsValid" => 0,
+        ];
+
+        $answerErrors = [];
+
+        foreach ($data["data"] as $rowNumber => $dataRow) {
+            $substance = $substanceRepository::createFromArray($userRepository, $userGroupRepository, $dataRow["substance"]);
+            $lot = $lotRepository::createFromArray($userRepository, $userGroupRepository, $boxRepository, $dataRow["lot"]);
+
+            // Must be first, or else the validation for the box coordinates fails
+            $substance->addLot($lot);
+
+            $violations = $validator->validate($substance);
+            #$lotViolations = $validator->validate($lot);
+
+            if (count($violations) > 0) {
+                if (empty($answer["errors"])) {
+                    $answer["errors"] = [];
+                }
+
+                $violationAnswer = [];
+
+                /** @var ConstraintViolation $violation */
+                foreach ($violations as $violation) {
+                    $violationAnswer[] = [
+                        "row" => $rowNumber,
+                        "path" => $violation->getPropertyPath(),
+                        "message" => $violation->getMessage(),
+                    ];
+                }
+
+                $answerErrors[] = $violationAnswer;
+            } else {
+                if (!$validateOnly) {
+                    $entityManager->persist($substance);
+                    $answer["numRowsCreated"] += 1;
+                }
+
+                $answer["numRowsValid"] += 1;
+            }
+        }
+
+        if (count($answerErrors) > 0) {
+            $answer["errors"] = $answerErrors;
+
+            if ($ignoreErrors and !$validateOnly) {
+                $entityManager->flush();
+            } else {
+                $answer["numRowsCreated"] = 0;
+            }
+        } elseif(!$validateOnly) {
+            $entityManager->flush();
+        } else {
+            $answer["numRowsCreated"] = 0;
+        }
+
+        return $this->json($answer);
     }
 }

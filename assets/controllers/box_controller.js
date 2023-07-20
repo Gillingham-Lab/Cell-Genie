@@ -139,7 +139,7 @@ export default class extends Controller {
                 case "Antibody":
                     icon = "\ue900";
                     break;
-                case "Oligomer":
+                case "Oligo":
                     icon = "\ue904";
                     break;
                 case "Protein":

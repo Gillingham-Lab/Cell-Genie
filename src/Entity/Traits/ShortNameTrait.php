@@ -16,7 +16,7 @@ trait ShortNameTrait
         max: 50,
     )]
     #[Gedmo\Versioned]
-    private ?string $shortName;
+    private ?string $shortName = null;
 
     public function __toString(): string
     {
@@ -28,7 +28,7 @@ trait ShortNameTrait
         return $this->shortName;
     }
 
-    public function setShortName(string $shortName): self
+    public function setShortName(?string $shortName): self
     {
         $this->shortName = $shortName;
 
