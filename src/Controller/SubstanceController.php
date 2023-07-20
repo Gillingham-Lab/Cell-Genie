@@ -13,6 +13,7 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Epitope;
 use App\Entity\Lot;
+use App\Form\Import\ImportOligoType;
 use App\Form\Substance\AntibodyType;
 use App\Form\Substance\ChemicalType;
 use App\Form\Substance\EpitopeType;
@@ -21,6 +22,7 @@ use App\Form\Substance\OligoType;
 use App\Form\Substance\PlasmidType;
 use App\Form\Substance\ProteinType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
+use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Cell\CellRepository;
 use App\Repository\EpitopeRepository;
 use App\Repository\LotRepository;
@@ -38,6 +40,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -582,6 +587,36 @@ class SubstanceController extends AbstractController
             "substance" => ($new ? null : $epitope),
             "form" => $form,
             "returnTo" => $new ? $this->generateUrl("app_epitopes") : $this->generateUrl("app_epitope_view", ["epitope" => $epitope->getId()]),
+        ]);
+    }
+
+    #[Route("/substance/import/{type}", name: "app_substance_import")]
+    #[IsGranted("ROLE_USER")]
+    public function import(
+        Security $security,
+        string $type,
+    ) {
+        /** @var User $user */
+        $user = $security->getUser();
+
+        $data = [
+            "substance" => [
+                "owner" => $user,
+                "group" => $user->getGroup(),
+                "privacyLevel" => PrivacyLevel::Group,
+            ]
+        ];
+        $builder = $this->createFormBuilder($data);
+
+        $builder->add("substance", ImportOligoType::class, [
+
+        ]);
+
+        $form = $builder->getForm();
+
+
+        return $this->render("parts/substance/import.html.twig", [
+            "importForm" => $form,
         ]);
     }
 }

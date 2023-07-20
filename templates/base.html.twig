@@ -149,11 +149,18 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url("app_oligos") }}">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ url("app_oligos") }}" id="navbar-dropdown-oligo-link" role="button" data-toggle="dropdown" aria-haspopup="true">
                                 {{ icon.oligo() }}
                                 Oligos
                             </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-oligo-link">
+                                <a class="dropdown-item" href="{{ url("app_substance_import", {"type": "oligo"}) }}">
+                                    <span class="fas fa-fw fa-file-import"></span>
+                                    Import
+                                </a>
+                            </div>
                         </li>
 
                         <li class="nav-item">

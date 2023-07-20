@@ -101,6 +101,7 @@ class PrivacyAwareType extends AbstractType
             ->add("privacyLevel", EnumType::class, [
                 "class" => PrivacyLevel::class,
                 "disabled" => !($security->isGranted("ROLE_ADMIN") or $security->isGranted("owns", $builder->getData())),
+                "empty_data" => 1,
             ])
         ;
     }

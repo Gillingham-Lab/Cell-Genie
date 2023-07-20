@@ -22,6 +22,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "d3": "^7.6.1"
+        "d3": "^7.6.1",
+        "papaparse": "^5.4.1"
     }
 }

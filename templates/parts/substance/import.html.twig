@@ -1,0 +1,80 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+{% import 'utility/icons.html.twig' as icons %}
+
+{% block title %}Gin :: Substance Import{% endblock %}
+
+{% block body_container %}
+    {{ layout.header("Substance Import", false, true, icons.oligo()) }}
+
+    <div class="row row-cols-1" {{ stimulus_controller("import", {
+        "data": null,
+    }) }}>
+        <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5">
+            <div class="mb-3">
+                <label for="import-controller-data" class="form-label">Copy-Paste your data and press on submit to continue</label>
+                <textarea id="import-controller-data" {{ stimulus_target("import", "data") }} class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">Delimiter</span>
+                    <select class="form-select" {{ stimulus_target("import", "delimiter") }}>
+                        <option value="auto" selected>Auto</option>
+                        <option value="tab">Tabs</option>
+                        <option value="space">Space</option>
+                        <option value="comma">Comma (,)</option>
+                        <option value="semicolon">Semi colon (;)</option>
+                    </select>
+                    <span class="input-group-text">Header</span>
+                    <select class="form-select" {{ stimulus_target("import", "hasHeader") }}>
+                        <option value="yes" selected>Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <button class="btn btn-primary form-control" {{ stimulus_action("import", "prepareImport", "click") }}>Start import</button>
+                </div>
+            </div>
+
+            <div {{ stimulus_target("import", "importMeta") }}></div>
+        </div>
+
+        <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5" {{ stimulus_target("import", "importAssignment") }}>
+            {% for category in importForm|filter(e => e|length > 0) %}
+                <fieldset class="gin-import-group border rounded-3 p-3 mb-3" data-name="{{ category.vars.name }}">
+                    <legend>{{ form_label(category) }}</legend>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Field</th>
+                                <th scope="col">Column</th>
+                                <th scope="col">Constant value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ _self.add_rows(category) }}
+                        </tbody>
+                    </table>
+                </fieldset>
+            {% endfor %}
+
+            <button class="btn btn-primary form-control" {{ stimulus_action("import", "runImport", "click") }}>Import data</button>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% macro add_rows(group) %}
+    {%- for f in group -%}
+        {% if f|length > 0 %}
+            {{ _self.add_rows(f) }}
+        {% else %}
+            <tr class="gin-import-column" data-name="{{ f.vars.name }}">
+                <td>{{ form_label(f) }}</td>
+                <td><select class="gin-import-column-select form-select form-select-sm" name="column-{{ f.vars.full_name }}">
+                        <option value="none">None</option>
+                    </select></td>
+                <td>{{ form_widget(f) }}</td>
+            </tr>
+        {% endif %}
+    {%- endfor -%}
+{% endmacro %}
