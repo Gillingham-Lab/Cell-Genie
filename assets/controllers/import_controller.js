@@ -147,12 +147,16 @@ export default class extends Controller {
     showImportResult(answer) {
         this.errorMessagesTarget.classList.remove("border-danger", "text-danger", "border-warning", "text-warning", "border-success", "text-success");
 
-        if (answer.errors && answer.numRowsCreated === 0) {
+        if ((answer.errors || answer.db_errors) && answer.numRowsCreated === 0) {
             this.errorMessagesTarget.classList.add("border", "border-danger", "text-danger")
 
+            let db_errors = ""
+            if (answer.db_errors) {
+                db_errors = this.makeDbErrorList(answer.db_errors)
+            }
             let errors = this.makeErrorList(answer.errors)
 
-            this.errorMessagesTarget.innerHTML = `<p>Out of ${answer.numRows}, there have been ${answer.errors.length} lines with an error.</p><ul>${errors}</ul>`;
+            this.errorMessagesTarget.innerHTML = `<p>Out of ${answer.numRows}, there have been ${answer.errors.length} lines with an error.</p><ul>${db_errors}${errors}</ul>`;
         } else if (answer.errors && answer.numRowsCreated > 0) {
             this.errorMessagesTarget.classList.add("border", "border-warning", "text-warning")
 
@@ -167,6 +171,10 @@ export default class extends Controller {
                 this.errorMessagesTarget.innerHTML = `Successfully imported <strong>${answer.numRowsCreated}</strong> rows.`;
             }
         }
+    }
+
+    makeDbErrorList(dbError) {
+        return `<li>Database error (type: ${dbError.type}): ${dbError.message}.</li>`;
     }
 
     makeErrorList(allErrors) {

@@ -40,6 +40,8 @@ use App\Security\Voter\Substance\LotVoter;
 use App\Security\Voter\Substance\SubstanceVoter;
 use App\Service\FileUploader;
 use App\Service\GeneBankImporter;
+use Doctrine\DBAL\Exception\ServerException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -715,18 +717,36 @@ class SubstanceController extends AbstractController
             }
         }
 
+        $flush = false;
         if (count($answerErrors) > 0) {
             $answer["errors"] = $answerErrors;
-
             if ($ignoreErrors and !$validateOnly) {
-                $entityManager->flush();
+                $flush = true;
             } else {
                 $answer["numRowsCreated"] = 0;
             }
         } elseif(!$validateOnly) {
-            $entityManager->flush();
+            $flush = true;
         } else {
             $answer["numRowsCreated"] = 0;
+        }
+
+        if ($flush) {
+            try {
+                $entityManager->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                $answer["db_errors"] = [
+                    "type" => "UniqueConstraintViolation",
+                    "message" => $e->getMessage()
+                ];
+                $answer["numRowsCreated"] = 0;
+            } catch (ServerException $e) {
+                $answer["db_errors"] = [
+                    "type" => "ServerException",
+                    "message" => $e->getMessage()
+                ];
+                $answer["numRowsCreated"] = 0;
+            }
         }
 
         return $this->json($answer);
