@@ -38,6 +38,10 @@ class Box
     #[Gedmo\Versioned]
     private ?int $cols = 1;
 
+    #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
+    private ?string $description = null;
+
     #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "LAZY", inversedBy: "boxes")]
     #[ORM\JoinColumn(name: "rack_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
@@ -61,12 +65,21 @@ class Box
         }
     }
 
+    public function getPathName(): string
+    {
+        if ($this->rack) {
+            return $this->rack->getPathName();
+        } else {
+            return "no-rack";
+        }
+    }
+
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -78,7 +91,7 @@ class Box
         return $this->rows;
     }
 
-    public function setRows(int $rows): self
+    public function setRows(int $rows): static
     {
         $this->rows = $rows;
 
@@ -90,7 +103,7 @@ class Box
         return $this->cols;
     }
 
-    public function setCols(int $cols): self
+    public function setCols(int $cols): static
     {
         $this->cols = $cols;
 
@@ -102,10 +115,24 @@ class Box
         return $this->rack;
     }
 
-    public function setRack(?Rack $rack): self
+    public function setRack(?Rack $rack): static
     {
         $this->rack = $rack;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
         return $this;
     }
 }

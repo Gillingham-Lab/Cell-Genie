@@ -9,6 +9,7 @@ use App\Form\SaveableType;
 use App\Repository\RackRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -31,6 +32,13 @@ class BoxType extends SaveableType
                 "label" => "Name of the box",
                 "help" => "5-255 characters; used to identify the box. No parent names.",
                 "required" => true,
+            ])
+            ->add("description", CKEditorType::class, [
+                "label" => "Description",
+                "sanitize_html" => true,
+                "required" => false,
+                "empty_data" => null,
+                "config" => ["toolbar" => "basic"],
             ])
             ->add("rows", IntegerType::class, [
                 "label" => "Number of rows in the box",

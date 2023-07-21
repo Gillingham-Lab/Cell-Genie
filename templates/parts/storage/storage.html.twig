@@ -113,15 +113,19 @@
                             {% if box is same as(null) %}
                                 No box selected
                             {% else %}
-                                <div class="card-body px-lg-5 mx-0" {{ stimulus_controller("box", {
+                                <h3>{{ box.name }}</h3>
+                                <p class="text-muted border-bottom">{{ box.pathName }}</p>
+                                <div>{{ box.description|raw }}</div>
+
+                                <div {{ stimulus_controller("box", {
                                     boxMap: boxMap,
                                     substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
                                     cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
                                 }) }}>
-                                    <div class="row row-cols-1 row-cols-lg-2">
+                                    <div class="row row-cols-1 row-cols-lg-2 m-0">
                                         <div class="col">
-                                            <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>
                                             <div {{ stimulus_target("box", "boxMap") }} class="text-center"></div>
+                                            <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>
                                         </div>
                                         <div class="col mb-5" {{ stimulus_target("box", "boxMapContent") }}>
 
