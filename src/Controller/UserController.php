@@ -55,6 +55,7 @@ class UserController extends AbstractController
         User $user = null,
     ): Response {
         $new = false;
+        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
 
         if ($user === null) {
             if ($request->get("_route") === "app_user_edit") {

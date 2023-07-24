@@ -21,10 +21,17 @@
             {% endif %}
 
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-            <label for="inputEmail">Email</label>
+
+            <label for="inputEmail" class="form-label">Email</label>
             <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" required autofocus>
-            <label for="inputPassword">Password</label>
+
+            <label for="inputPassword" class="form-label">Password</label>
             <input type="password" name="_password" id="inputPassword" class="form-control" required>
+
+            <div class="form-check">
+                <input class="form-check-input" id="inputRememberMe" type="checkbox" name="_remember_me" checked/>
+                <label class="form-check-label" for="inputRememberMe">Keep me logged in</label>
+            </div>
 
             <input type="hidden" name="_csrf_token"
                    value="{{ csrf_token('authenticate') }}"
