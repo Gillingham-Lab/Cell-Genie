@@ -9,6 +9,7 @@ use App\Form\Instrument\InstrumentType;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
 use App\Repository\Instrument\InstrumentUserRepository;
+use App\Service\FileUploader;
 use App\Service\InstrumentBookingService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,16 +67,18 @@ class InstrumentController extends AbstractController
     public function editInstrument(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Instrument $instrument,
     ) {
         $this->denyAccessUnlessGranted("edit", $instrument);
 
-        return $this->addOrEditInstruments($request, $entityManager, $instrument);
+        return $this->addOrEditInstruments($request, $entityManager, $fileUploader, $instrument);
     }
 
     public function addOrEditInstruments(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Instrument $instrument = null,
     ): Response {
         $routeName = $request->attributes->get("_route");
@@ -83,8 +86,6 @@ class InstrumentController extends AbstractController
         assert($currentUser instanceof User);
         $new = false;
         $formType = InstrumentType::class;
-
-
 
         if ($routeName === "app_instruments_add") {
             $new = true;
@@ -103,6 +104,8 @@ class InstrumentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $fileUploader->upload($form);
+
             try {
                 $entityManager->persist($instrument);
                 $entityManager->flush();

@@ -32,7 +32,7 @@ class InstrumentUser
 
     public function __toString(): string
     {
-        return "{$this->user->getFullName()}: {$this->role->value}";
+        return "{$this->user?->getFullName()}: {$this->role->value}";
     }
 
     public function getInstrument(): ?Instrument
