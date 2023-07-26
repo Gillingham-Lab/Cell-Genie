@@ -9,6 +9,7 @@ use App\Entity\Tissue;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\IdTrait;
 use App\Repository\Cell\CellGroupRepository;
+use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: "number", message: "This cell line number is already in use.")]
 #[UniqueEntity(fields: "name", message: "This cell line group has already been made")]
 #[Gedmo\Loggable]
+#[NotLooped("parent", "children")]
 class CellGroup
 {
     use IdTrait;
