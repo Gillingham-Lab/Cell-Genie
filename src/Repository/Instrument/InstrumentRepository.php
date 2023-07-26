@@ -21,6 +21,20 @@ class InstrumentRepository extends ServiceEntityRepository
         parent::__construct($registry, Instrument::class);
     }
 
+    public function find($id, $lockMode=null, $lockVersion=null): ?Instrument
+    {
+        return $this->createQueryBuilder("i")
+            ->addSelect("iu")
+            ->leftJoin("i.users", "iu")
+            ->leftJoin("iu.user", "u")
+            ->where("i.id = :id")
+            ->andWhere("u.isActive = TRUE")
+            ->groupBy("i")
+            ->addGroupBy("iu")
+            ->setParameter("id", $id, "ulid")
+            ->getQuery()->getOneOrNullResult();
+    }
+
     public function findAllWithUserRole(User $user)
     {
         $instruments = $this->createQueryBuilder("i")
@@ -29,6 +43,8 @@ class InstrumentRepository extends ServiceEntityRepository
             ->addSelect("iu2")
             ->leftJoin("i.users", "iu", conditionType: "WITH", condition: "iu.user = :user")
             ->leftJoin("i.users", "iu2")
+            ->leftJoin("iu.user", "u")
+            ->where("u.isActive = TRUE")
             ->setParameter("user", $user->getId()->toRfc4122())
         ;
 

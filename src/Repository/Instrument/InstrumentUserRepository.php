@@ -24,6 +24,7 @@ class InstrumentUserRepository extends ServiceEntityRepository
             ->leftJoin("iu.user", "u")
             ->leftJoin("u.group", "g")
             ->where("iu.instrument = :instrument")
+            ->andWhere("u.isActive = TRUE")
             ->setParameter("instrument", $instrument->getId()->toRfc4122())
         ;
 
