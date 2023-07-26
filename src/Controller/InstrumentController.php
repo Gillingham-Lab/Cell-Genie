@@ -105,6 +105,7 @@ class InstrumentController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             $fileUploader->upload($form);
+            $fileUploader->updateFileSequence($instrument);
 
             try {
                 $entityManager->persist($instrument);
