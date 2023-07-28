@@ -83,7 +83,7 @@ class InstrumentController extends AbstractController
         $currentUser = $security->getUser();
 
         if (!$log) {
-            $this->denyAccessUnlessGranted("log_create", $instrument);
+            $this->denyAccessUnlessGranted("log_new", $instrument);
 
             $entity = new Log();
             $entity->setOwner($currentUser);
