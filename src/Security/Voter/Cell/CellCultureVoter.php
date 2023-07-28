@@ -54,7 +54,7 @@ class CellCultureVoter extends AbstractPrivacyAwareVoter
 
         if ($subject instanceof CellCulture) {
             return match($attribute) {
-                self::VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner()),
+                self::VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
                 self::EDIT, self::TRASH, self::ADD_EVENT => $this->canEdit($user, $subject),
                 self::OWNS => $subject->getOwner() === $user,
                 self::REMOVE => $user->getIsAdmin(),
@@ -62,7 +62,7 @@ class CellCultureVoter extends AbstractPrivacyAwareVoter
             };
         } elseif ($subject instanceof CellCultureEvent) {
             return match($attribute) {
-                self::VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner()),
+                self::VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
                 self::EDIT, self::REMOVE => $this->canEdit($user, $subject),
                 self::OWNS => $subject->getOwner() === $user,
                 default => false,

@@ -47,12 +47,8 @@ class CellCultureEventTestType extends AbstractType
                 "choices" => array_combine(CellCultureTestEvent::RESULTS, CellCultureTestEvent::RESULTS),
                 "placeholder" => "Choose an option",
             ])
+            ->add("testType", ...$this->getTextOrChoiceOptions("mycoplasmaTests"))
         ;
-
-        $this->addTextOrChoiceType($builder, "testType", "mycoplasmaTests", [
-            "label" => "Test type",
-            "placeholder" => "Choose an option",
-        ]);
 
         $builder->add("supernatantAmount", NumberType::class, [
 
