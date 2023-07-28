@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;

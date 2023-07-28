@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Experiment;
+use App\Entity\Traits\Fields\MolecularMassTrait;
 use App\Entity\Traits\LabJournalTrait;
-use App\Entity\Traits\MolecularMassTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\Substance\ChemicalRepository;
 use Doctrine\Common\Collections\ArrayCollection;

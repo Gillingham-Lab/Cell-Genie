@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
-use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\ShortNameTrait;
 use App\Repository\EpitopeRepository;
 use Doctrine\Common\Collections\ArrayCollection;

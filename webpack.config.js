@@ -1,4 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
+let webpack = require('webpack');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -56,6 +57,15 @@ Encore
         config.corejs = '3.23';
     })
 
+    .copyFiles([
+        {from: './node_modules/ckeditor4/', to: 'ckeditor/[path][name].[ext]', pattern: /\.(js|css)$/, includeSubdirectories: false},
+        {from: './node_modules/ckeditor4/adapters', to: 'ckeditor/adapters/[path][name].[ext]'},
+        {from: './node_modules/ckeditor4/lang', to: 'ckeditor/lang/[path][name].[ext]'},
+        {from: './node_modules/ckeditor4/plugins', to: 'ckeditor/plugins/[path][name].[ext]'},
+        {from: './node_modules/ckeditor4/skins', to: 'ckeditor/skins/[path][name].[ext]'},
+        {from: './node_modules/ckeditor4/vendor', to: 'ckeditor/vendor/[path][name].[ext]'}
+    ])
+
     // enables Sass/SCSS support
     //.enableSassLoader()
 
@@ -71,6 +81,11 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
+
+    .addPlugin(new webpack.ProvidePlugin({
+        jQuery: "jquery",
+        $: "jquery",
+    }))
 ;
 
 module.exports = Encore.getWebpackConfig();

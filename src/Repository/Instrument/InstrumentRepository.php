@@ -9,7 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Instrument|null find($id, $lockMode = null, $lockVersion = null)
  * @method Instrument|null findOneBy(array $criteria, array $orderBy = null)
  * @method Instrument[]    findAll()
  * @method Instrument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
@@ -45,6 +44,7 @@ class InstrumentRepository extends ServiceEntityRepository
             ->leftJoin("i.users", "iu2")
             ->leftJoin("iu.user", "u")
             ->where("u.isActive = TRUE")
+            ->orWhere("iu.role IS NULL")
             ->setParameter("user", $user->getId()->toRfc4122())
         ;
 

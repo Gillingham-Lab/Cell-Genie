@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\NameTrait;
-use App\Repository\PlateSetRepository;
+use App\Entity\Traits\Fields\IdTrait;
+use App\Entity\Traits\Fields\NameTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 ##[ORM\Entity(repositoryClass: PlateSetRepository::class)]
 ##[Gedmo\Loggable]

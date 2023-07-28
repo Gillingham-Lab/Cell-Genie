@@ -1,0 +1,53 @@
+<turbo-frame id="gin-turbo-form">
+    {{ form_start(form) }}
+
+    <div class="gin-form-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    {% set form_groups = form|filter(e => e|length > 0 and e.vars.block_prefixes|length == 2) %}
+    {% if form_groups|length > 0 %}
+        <nav>
+            <ul class="nav nav-tabs" id="form-tab-navigation" role="tablist">
+                {% for group in form_groups %}
+                    <li class="nav-item" role="presentation">
+                        <a
+                                class="nav-link {% if loop.index0 == 0 %}active{% endif %}"
+                                id="form-tab-navigation-tab-{{ group.vars.name }}"
+                                data-bs-toggle="tab"
+                                href="#form-tab-navigation-tab-{{ group.vars.name }}-content"
+                                role="tab"
+                                aria-controls="form-tab-navigation-tab-{{ group.vars.name }}-content"
+                                aria-selected="true"
+                        >{{ group.vars.label }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <div class="tab-content border-light border border-top-0 px-2 py-4 p-lg-5 mb-3 mb-lg-5" id="form-tab-content">
+            {% for group in form_groups %}
+                <div
+                        class="tab-pane fade show {% if loop.index0 == 0 %}active{% endif %}"
+                        id="form-tab-navigation-tab-{{ group.vars.name }}-content"
+                        role="tabpanel"
+                        aria-labelledby="form-tab-navigation-tab-{{ group.vars.name }}"
+                >
+                    <div class="row row-cols-1">
+                        {% for child in group %}
+                            {% if not child.rendered %}
+                                <div class="col">
+                                    {{ form_row(child) }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {{ form_rest(form) }}
+
+    {{ form_end(form) }}
+</turbo-frame>

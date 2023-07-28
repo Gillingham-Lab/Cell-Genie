@@ -1,0 +1,75 @@
+{% import "utility/icons.html.twig" as icons %}
+
+<turbo-frame id="gin-turbo-logs">
+    {% if entityId %}
+        {% set containerId = "gin-log-view-" ~ entityId %}
+    {% else %}
+        {% set containerId = "gin-log-view" %}
+    {% endif %}
+
+    {% if logs|length > 0 %}
+        <h3 class="mb-3 mb-sm-1 mt-3 mt-sm-1">Logs</h3>
+
+        <div class="list-group list-group-root well border-1 border">
+
+        {% for log in logs|sort((lm1, lm2) => lm1.createdAt <=> lm2.createdAt) %}
+            {% set entryId = "gin-log-view-entry-" ~ log.id %}
+
+            {# Determine class #}
+            {% set logTypeClasses = {
+                "Minor": "info",
+                "Major": "warning",
+                "Critical": "danger",
+                "Change": "primary",
+                "Repair": "success",
+                "Normal": "primary",
+                "Info": "light",
+            } %}
+
+            {% set accordionClass = logTypeClasses[log.logType.value] %}
+
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    {# Tools #}
+                    <span class="btn-group btn-group-sm me-3">
+                        {% if is_granted("ROLE_ADMIN") or is_granted("log_edit", [entity, log]) %}
+                            <a class="btn btn-primary"
+                               {{ stimulus_action("form-toggler", "edit", "click", {
+                                   "path": path("app_instrument_form_log_partial", {"instrument": entity.id, "log": log.id})
+                               }) }}
+                            >{{ icons.edit() }}</a>
+                        {% endif %}
+                        {% if is_granted("ROLE_ADMIN") or is_granted("log_remove", [entity, log]) %}
+                            <a class="btn btn-warning"
+                               {{ stimulus_action("form-toggler", "trash", "click", {
+                                   "path": path("app_instrument_remove_log_partial", {"instrument": entity.id, "log": log.id})}) }}
+                            >{{ icons.trash() }}</a>
+                        {% endif %}
+                    </span>
+                    <a class="text-decoration-none text-black text-reset" id="anchor-for-{{ entryId }}" href="#{{ entryId }}"data-bs-toggle="collapse">
+                        <strong>{{ log.title }}</strong>
+                    </a>
+
+                </span>
+                <span>
+                    {{ log.createdAt|date("d. M. Y, H:i") }}
+                    <span class="badge bg-{{ accordionClass }}" style="width: 5rem;">{{ log.logType.value }}</span>
+                </span>
+            </div>
+
+            <div class="list-group border-top collapse" id="{{ entryId }}">
+                <div class="p-3">
+                    {{ log.description | raw }}
+                </div>
+
+                <p class="border-top mt-2 pt-3 px-3 text-muted">
+                    {{ log.owner.fullName }} ({{ log.owner.group }}), last modified {{ log.modifiedAt|date("d. M. Y, H:i") }}
+                </p>
+            </div>
+        {% endfor %}
+
+        </div>
+    {% else %}
+        Nothing has been logged yet.
+    {% endif %}
+</turbo-frame>

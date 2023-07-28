@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\NameTrait;
-use App\Repository\PlateRepository;
+use App\Entity\Traits\Fields\IdTrait;
+use App\Entity\Traits\Fields\NameTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;

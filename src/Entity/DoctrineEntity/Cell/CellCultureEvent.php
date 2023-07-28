@@ -5,7 +5,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
-use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Privacy\GroupOwnerTrait;
 use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Entity\Traits\UnversionedShortNameTrait;

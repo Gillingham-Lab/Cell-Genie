@@ -1,4 +1,8 @@
 # Read the documentation: https://symfony.com/doc/current/bundles/FOSCKEditorBundle/index.html
+fos_ck_editor:
+    base_path: "%env(resolve:APP_URL_PATH)%build/ckeditor"
+    js_path:   "%env(resolve:APP_URL_PATH)%build/ckeditor/ckeditor.js"
+    autoload: false
 
 twig:
     form_themes:

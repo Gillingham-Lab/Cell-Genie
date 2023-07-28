@@ -24,6 +24,43 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
 
+        {# <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.1.0/dist/js/tom-select.complete.min.js"></script>
+
+        <script src="https://unpkg.com/smiles-drawer@1.2.0/dist/smiles-drawer.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery.fancytable/dist/fancyTable.min.js"></script>
+        <script src="https://unpkg.com/html5-qrcode"></script>
+
+        <script src="https://cdn.jsdelivr.net/gh/calipho-sib/sequence-viewer@master/dist/sequence-viewer.min.js" defer></script>
+        <script type="application/javascript" defer>
+            $(document).ready(function () {
+                let viewers = $(".gin-sequenceViewer")
+
+                viewers.each(function (e) {
+                    let sequence = new Sequence(this.innerText);
+
+                    sequence.render("#" + this.id, {
+                        'showLineNumbers': true,
+                        'wrapAminoAcids': true,
+                        'charsPerLine': 100,
+                        'toolbar': true,
+                        'search': true,
+                        'title': this.hasAttribute("data-gin-sequence-title") ? this.getAttribute("data-gin-sequence-title") : "Sequence Viewer",
+                        'header' : {
+                            display:true,
+                            searchInTitle :true,
+                            unit: "Char",
+                            showCpl: false,
+                            badgeWithUnit : false
+                        }
+                    })
+                })
+            });
+        </script> #}
+
         <style rel="stylesheet">
             label.required:after {
                 content: "* ";
@@ -268,262 +305,6 @@
         </nav>
 
         {% block body %}{% endblock %}
-
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.1.0/dist/js/tom-select.complete.min.js"></script>
-
-        <script src="https://unpkg.com/smiles-drawer@1.2.0/dist/smiles-drawer.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jquery.fancytable/dist/fancyTable.min.js"></script>
-        <script src="https://unpkg.com/html5-qrcode"></script>
-
-        <script type="application/javascript">
-            $(document).ready(function() {
-                let shownOnRequest;
-
-                shownOnRequest = localStorage.getItem("shownOnRequest");
-
-                if (!shownOnRequest) {
-                    shownOnRequest = {};
-                } else {
-                    shownOnRequest = JSON.parse(shownOnRequest);
-                }
-
-                $('.collapse').on("shown.bs.collapse", function(e) {
-                    let id = $(this).attr('id');
-                    shownOnRequest[id] = 1;
-                    localStorage.setItem("shownOnRequest", JSON.stringify(shownOnRequest));
-
-                    return true;
-                }).on("hidden.bs.collapse", function(e) {
-                    let id = $(this).attr('id');
-
-                    shownOnRequest[id] = 0;
-                    localStorage.setItem("shownOnRequest", JSON.stringify(shownOnRequest));
-
-                    return true;
-                });
-
-                $("a[data-bs-toggle^='tab']").on("shown.bs.tab", function(e) {
-                    let id = $(this).attr('id');
-                    shownOnRequest[id] = 1;
-                    localStorage.setItem("shownOnRequest", JSON.stringify(shownOnRequest));
-
-                    return true;
-                }).on("hidden.bs.tab", function(e) {
-                    let id = $(this).attr('id');
-
-                    shownOnRequest[id] = 0;
-                    localStorage.setItem("shownOnRequest", JSON.stringify(shownOnRequest));
-
-                    return true;
-                })
-
-                let collapsible = null;
-                for (let id in shownOnRequest) {
-                    if (shownOnRequest[id] === 1) {
-                        collapsible = $("#" + id);
-                        if (collapsible.length > 0 && collapsible.hasClass("navbar-collapse") === false && collapsible.css("display") === "none") {
-                            let bsCollapse = new bootstrap.Collapse(collapsible).show();
-
-                            console.log($(`[href^='#${id}'] > .collapse-icon`, collapsible.parent()));
-                            /*$(`[href^='#gin-storage-01GGVPMNS7F2KBVHCFSYZ43VGC'] > .collapse-icon`, collapsible.parent())
-                                .toggleClass('fa-plus-square')
-                                .toggleClass('fa-minus-square');*/
-                        } else if (collapsible.length > 0 && collapsible.hasClass("nav-link")) {
-                            collapsible.tab("show");
-                        }
-                    }
-                }
-
-                $("input.gin-datetime-autofill[type^=datetime-local]").each(function (i, e) {
-                    now = new Date();
-                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                    now.setMilliseconds(null)
-                    now.setSeconds(null)
-
-                    e.valueAsDate = now;
-                    //e.value = e.value.slice(0,16);
-                    //console.log(e.value.slice(0, 16));
-                })
-
-                $(function() {
-                    $('.list-group').on('shown.bs.collapse', function(e) {
-                        let id = this.id;
-
-                        if (e.target === this) {
-                            $(`#anchor-for-${id} > .collapse-icon`, this.parentElement)
-                                .toggleClass('fa-plus-square')
-                                .toggleClass('fa-minus-square');
-                        }
-                    }).on('hidden.bs.collapse', function(e) {
-                        let id = this.id;
-
-                        if (e.target === this) {
-                            $(`#anchor-for-${id} > .collapse-icon`, this.parentElement)
-                                .toggleClass('fa-plus-square')
-                                .toggleClass('fa-minus-square');
-                        }
-                    });
-                });
-            });
-        </script>
-
-        <script type="application/javascript">
-            $(function () {
-                $('[data-toggle="tooltip"]').tooltip({"html": true})
-            });
-
-            $(function(){
-                $('.dropdown').hover(function(e) {
-                        $(this).addClass('show');
-                        $(this).children("a.dropdown-toggle").attr("aria-expanded", "true");
-                        $(this).children(".dropdown-menu").addClass("show");
-                    },
-                    function() {
-                        $(this).removeClass('show');
-                        $(this).children("a.dropdown-toggle").attr("aria-expanded", "false");
-                        $(this).children(".dropdown-menu").removeClass("show");
-                    });
-            });
-
-            let form_accordions = $("div.accordion-item");
-            form_accordions.has(".is-invalid").addClass("border-warning");
-
-            $(document).ready(function() {
-                /*$(".fancyTable").fancyTable({
-                    sortColumn: 1,
-                    pagination: true,
-                    perPage: 30,
-                    globalSearch: true,
-                    globalSearchExcludeColumns: [0],
-                });*/
-
-                $(".fancyTable").each(function (e) {
-                    let sortColumn = 1;
-
-                    if (this.hasAttribute("data-ft-sort-column")) {
-                        sortColumn = this.getAttribute("data-ft-sort-column");
-                    }
-
-                    $(this).fancyTable({
-                        sortColumn: sortColumn,
-                        pagination: true,
-                        perPage: 30,
-                        globalSearch: true,
-                        globalSearchExcludeColumns: [0],
-                    })
-                })
-            });
-        </script>
-        <script type="application/javascript">
-            new ClipboardJS('.btn-clipboard');
-        </script>
-        <script type="application/javascript">
-            let canvas = $('[data-smiles-type="small"]');
-            let options = {
-                width: 100,
-                height: 100,
-                bondThickness: 1.0,
-                bondLength: 10,
-                shortBondLength: 0.6,
-                bondSpacing: 0.25 * 10,
-                fontSizeLarge: 6,
-                fontSizeSmall: 4,
-                padding: 20.0,
-            };
-
-            // Initialize the drawer to draw to canvas
-            let smilesDrawer = new SmilesDrawer.Drawer(options);
-            // Alternatively, initialize the SVG drawer:
-            // let svgDrawer = new SmilesDrawer.SvgDrawer(options);
-
-            canvas.each(function(index, canvas) {
-                SmilesDrawer.parse(canvas.dataset.smiles, function(tree) {
-                    smilesDrawer.draw(tree, canvas, "light", false)
-                })
-            })
-
-            let largeCanvas = $('[data-smiles-type="large');
-            let largeOptions = {width: 200, height: 200,
-                bondThickness: 1.0,
-                bondLength: 10,
-                shortBondLength: 0.6,
-                bondSpacing: 0.25 * 10,
-                fontSizeLarge: 6,
-                fontSizeSmall: 4,
-                padding: 20.0,}
-
-            // Initialize the drawer to draw to canvas
-            let largeSmilesDrawer = new SmilesDrawer.Drawer(largeOptions);
-            // Alternatively, initialize the SVG drawer:
-            // let svgDrawer = new SmilesDrawer.SvgDrawer(options);
-
-            largeCanvas.each(function(index, canvas) {
-                console.log(canvas)
-                console.log(canvas.dataset.smiles)
-                SmilesDrawer.parse(canvas.dataset.smiles, function(tree) {
-                    largeSmilesDrawer.draw(tree, canvas, "light", false)
-                })
-            })
-        </script>
-
-        <script type="application/javascript">
-            $(document).ready(function() {
-                $("select.gin-fancy-select").each(function (e) {
-                    new TomSelect(this, {
-                        plugins: {
-                            dropdown_input: true,
-                        },
-                        maxOptions: 1000,
-                        sortField:[{field: 'text'}, {field: '$order'}, {field: '$score'}],
-                        create: !!this.attributes["data-allow-add"],
-                        allowEmptyOption: this.attributes["data-allow-empty"] && this.attributes["data-allow-empty"].value === "true",
-                        render: {
-                            optgroup_header: function(data, escape) {
-                                return '<div class="optgroup-header"><strong>' + escape(data.label) + '</strong></div>';
-                            },
-                            option: function(data, escape) {
-                                if (data.optgroup === undefined) {
-                                    return '<div>' + escape(data.text) + '</div>';
-                                } else {
-                                    return '<div class="ps-3">' + escape(data.text) + '</div>';
-                                }
-                            },
-                        }
-                    })
-                })
-            })
-        </script>
-
-        <script src="https://cdn.jsdelivr.net/gh/calipho-sib/sequence-viewer@master/dist/sequence-viewer.min.js"></script>
-        <script type="application/javascript">
-            $(document).ready(function () {
-                let viewers = $(".gin-sequenceViewer")
-
-                viewers.each(function (e) {
-                    let sequence = new Sequence(this.innerText);
-
-                    sequence.render("#" + this.id, {
-                        'showLineNumbers': true,
-                        'wrapAminoAcids': true,
-                        'charsPerLine': 100,
-                        'toolbar': true,
-                        'search': true,
-                        'title': this.hasAttribute("data-gin-sequence-title") ? this.getAttribute("data-gin-sequence-title") : "Sequence Viewer",
-                        'header' : {
-                            display:true,
-                            searchInTitle :true,
-                            unit: "Char",
-                            showCpl: false,
-                            badgeWithUnit : false
-                        }
-                    })
-                })
-            });
-        </script>
 
         {% block script_bottom %}{% endblock %}
     </body>

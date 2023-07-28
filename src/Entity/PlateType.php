@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\NameTrait;
+use App\Entity\Traits\Fields\IdTrait;
+use App\Entity\Traits\Fields\NameTrait;
 use App\Entity\Traits\VendorTrait;
-use App\Repository\PlateTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

@@ -1,13 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity\Traits;
+namespace App\Entity\Traits\Collections;
 
 use App\Entity\File;
-use App\Form\AdminCrud\DocumentationType;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait HasUlidAttachmentsTrait

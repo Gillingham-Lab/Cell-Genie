@@ -3,13 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity;
 
-use App\Entity\DoctrineEntity\Cell\Cell;
-use App\Entity\DoctrineEntity\Cell\CellCulture;
-use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Repository\BarcodeRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BarcodeRepository::class)]
 #[ORM\UniqueConstraint(fields: ["barcode"])]

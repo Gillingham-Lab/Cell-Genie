@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity\Traits;
+namespace App\Entity\Traits\Collections;
 
 use App\Entity\File;
 use App\Form\AdminCrud\DocumentationType;

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\NameTrait;
+use App\Entity\Traits\Fields\IdTrait;
+use App\Entity\Traits\Fields\NameTrait;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

@@ -111,6 +111,83 @@
                     </div>
                 </div>
 
+                {% embed "embed/card.html.twig" with {
+                    "title": "Log Book",
+                    "instrument": instrument,
+                }%}
+                    {% block card_body %}
+                        <div class="overflow-auto card-body p-0" {{ stimulus_controller("form-toggler", {
+                            viewPath: path("app_instrument_view_log_partial", {"instrument": instrument.id}),
+                            formPath: path("app_instrument_form_log_partial", {"instrument": instrument.id}),
+                        }) }}>
+                            {# Toolbar #}
+                            <div class="border-bottom py-1 px-lg-4">
+                                <div class="btn-group btn-group-sm">
+                                    {% if is_granted("ROLE_ADMIN") or is_granted("log_new", instrument) %}
+                                    <a
+                                            class="btn btn-primary collapse show"
+                                            data-toggle="tooltip" data-placement="bottom" title="Add new log entry"
+                                            {{ stimulus_action("form-toggler", "toggle") }}
+                                            {{ stimulus_target("form-toggler", "button") }}
+                                    ><span class="fas fa-fw fa-plus" aria-label="Add"></span></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {# Body #}
+                            <div class="py-1 px-lg-4">
+                                {# Logs #}
+                                <div
+                                        class="collapse show"
+                                        {{ stimulus_target("form-toggler", "frame view") }}
+                                >
+                                    <turbo-frame id="gin-turbo-logs" src="{{ path("app_instrument_view_log_partial", {"instrument": instrument.id}) }}"
+                                    ></turbo-frame>
+                                </div>
+
+
+                                {# Form #}
+                                <div
+                                        class="collapse"
+                                        {{ stimulus_target("form-toggler", "frame form") }}
+                                ><turbo-frame id="gin-turbo-form" {# src="{{ path("app_instrument_form_log_partial", {"instrument": instrument.id}) }}" #}></turbo-frame></div>
+
+                            </div>
+                        </div>
+                        <turbo-frame id="gin-instrument-log">
+
+                        </turbo-frame>
+                        {# <div class="overflow-auto" {{ stimulus_controller("log-add", {
+                            contentUrl: path("app_instrument_form_log_partial", {"instrument": instrument.id}),
+                        }) }}>
+                            <div class="card-body border-bottom py-1 px-lg-4">
+                                <div class="btn-group btn-group-sm">
+                                    <a
+                                            {{ stimulus_target("log-add", "addButton") }}
+                                            {{ stimulus_action("log-add", "toggleForm") }}
+                                            class="btn btn-primary collapse show"
+                                            data-toggle="tooltip" data-placement="bottom" title="Add new log entry"
+                                    ><span class="fas fa-fw fa-plus"></span></a>
+                                </div>
+                            </div>
+
+                            <div class="card-body px-lg-4">
+                                <div class="collapse" {{ stimulus_target("log-add", "logForm") }}>ADD MAGIC STUFF</div>
+                                <div
+                                        class="collapse show"
+                                        {{ stimulus_controller("log-view", {
+                                            contentUrl: path("app_instrument_view_log_partial", {"instrument": instrument.id})
+                                        }) }} {{ stimulus_target("log-add", "logView") }}
+                                >
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> #}
+                    {% endblock %}
+                {% endembed %}
+
                 {# Instrument users #}
                 <div class="col p-0 m-0 mb-3">
                     <div class="card mx-3 h-100">

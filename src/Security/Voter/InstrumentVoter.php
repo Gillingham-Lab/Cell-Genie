@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\InstrumentUser;
+use App\Entity\DoctrineEntity\Log;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\InstrumentRole;
 use App\Genie\Enums\PrivacyLevel;
@@ -17,18 +18,25 @@ class InstrumentVoter extends Voter
     const EDIT = "edit";
     const NEW = "new";
     const BOOK = "book";
+    const LOG_NEW = "log_new";
+    const LOG_EDIT = "log_edit";
+    const LOG_REMOVE = "log_remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::BOOK])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::BOOK, self::LOG_NEW, self::LOG_EDIT, self::LOG_REMOVE])) {
             return false;
         }
 
-        if (!$subject instanceof Instrument) {
-            return false;
+        if ($subject instanceof Instrument) {
+            return true;
         }
 
-        return true;
+        if (is_array($subject) and count($subject) === 2 and $subject[0] instanceof Instrument and $subject[1] instanceof Log) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -45,14 +53,24 @@ class InstrumentVoter extends Voter
             return true;
         }
 
-        /** @var Instrument $cell */
-        $instrument = $subject;
+        if (is_array($subject)) {
+            [$instrument, $log] = $subject;
+        } else {
+            /** @var Instrument $cell */
+            $instrument = $subject;
+            /** @var Log $cell */
+            $log = null;
+        }
+
 
         return match ($attribute) {
             self::VIEW => $this->canView($instrument, $user),
             self::EDIT => $this->canEdit($instrument, $user),
             self::NEW => $this->canCreate($instrument, $user),
             self::BOOK => $this->canBook($instrument, $user),
+            self::LOG_NEW => $this->canChange($instrument, $user),
+            self::LOG_REMOVE, self::LOG_EDIT => $this->canEditLogs($instrument, $log, $user),
+            default => false,
         };
     }
 
@@ -101,6 +119,11 @@ class InstrumentVoter extends Voter
             return false;
         }
 
+        return $this->canChange($instrument, $user);
+    }
+
+    private function canChange(Instrument $instrument, User $user): bool
+    {
         // For booking an instrument that doesn't require training, you must be a group member
         if ($instrument->getRequiresTraining() === false) {
             if ($instrument->getGroup() === null or $instrument->getGroup() === $user->getGroup()) {
@@ -117,6 +140,29 @@ class InstrumentVoter extends Voter
             // Unless you have role unlike "untrained
             $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
             return $instrumentUsers->count() > 0;
+        }
+
+        return false;
+    }
+
+    private function canEditLogs(Instrument $instrument, ?Log $log, User $user): bool
+    {
+        if (!$log) {
+            return false;
+        }
+
+        if (!$this->canChange($instrument, $user)) {
+            return false;
+        }
+
+        if ($log->getOwner() === $user) {
+            return true;
+        }
+
+        // If not owner of the log, user must be admin or responsible for the instrument
+        $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Admin and $e->getRole() !== InstrumentRole::Responsible);
+        if ($instrumentUsers->count() > 0) {
+            return true;
         }
 
         return false;

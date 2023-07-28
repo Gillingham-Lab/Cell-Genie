@@ -2,8 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
-use App\Repository\PlateWellRepository;
+use App\Entity\Traits\Fields\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 ##[ORM\Entity(repositoryClass: PlateWellRepository::class)]

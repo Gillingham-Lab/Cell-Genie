@@ -15,10 +15,14 @@
             </h2>
         </div>
 
-        <div class="px-lg-4 overflow-auto" style="max-height: {{ maxHeight }}px;">
-            <div class="card-body">
-                {% block body %}{% endblock %}
+        {% block card_body %}
+            {% block toolbar %}{% endblock %}
+
+            <div class="px-lg-4 overflow-auto" style="{% if maxHeight %}max-height: {{ maxHeight }}px;{% endif %}">
+                <div class="card-body">
+                    {% block body %}{% endblock %}
+                </div>
             </div>
-        </div>
+        {% endblock %}
     </div>
 </div>

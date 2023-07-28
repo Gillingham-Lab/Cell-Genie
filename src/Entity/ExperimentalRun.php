@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Privacy\OwnerTrait;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\ExperimentalRunRepository;

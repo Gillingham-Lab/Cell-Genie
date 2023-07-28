@@ -4,10 +4,9 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Traits\CommentTrait;
+use App\Entity\Traits\Fields\MolecularMassTrait;
 use App\Entity\Traits\LabJournalTrait;
-use App\Entity\Traits\MolecularMassTrait;
 use App\Entity\Traits\SequenceTrait;
-use App\Genie\SequenceIterator;
 use App\Repository\Substance\OligoRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;

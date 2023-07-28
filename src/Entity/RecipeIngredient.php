@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\Substance\Chemical;
-use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

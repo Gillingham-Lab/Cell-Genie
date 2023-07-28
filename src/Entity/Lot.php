@@ -5,7 +5,7 @@ namespace App\Entity;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
-use App\Entity\Traits\HasAttachmentsTrait;
+use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\VendorTrait;

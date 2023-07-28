@@ -94,6 +94,14 @@
     {{ _self.span("fas fa-fw fa-plus", classOnly) }}
 {% endmacro %}
 
+{% macro trash(classOnly=false) %}
+    {{ _self.span("fas fa-fw fa-trash-alt", classOnly) }}
+{% endmacro %}
+
+{% macro edit(classOnly=false) %}
+    {{ _self.span("fa fa-fw fa-pen", classOnly) }}
+{% endmacro %}
+
 {% macro rack(classOnly=false, addClass="") %}
     {{ _self.span("fas fa-fw fa-boxes " ~ addClass, classOnly) }}
 {% endmacro %}

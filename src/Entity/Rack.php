@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\DoctrineEntity\Substance\Plasmid;
-use App\Entity\Traits\NewIdTrait;
+use App\Entity\Traits\Fields\NewIdTrait;
 use App\Repository\RackRepository;
 use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\ArrayCollection;

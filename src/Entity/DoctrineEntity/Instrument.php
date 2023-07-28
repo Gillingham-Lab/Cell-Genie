@@ -5,9 +5,10 @@ namespace App\Entity\DoctrineEntity;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
-use App\Entity\Traits\HasAttachmentsTrait;
-use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\NameTrait;
+use App\Entity\Traits\Collections\HasAttachmentsTrait;
+use App\Entity\Traits\Collections\HasLogsTrait;
+use App\Entity\Traits\Fields\IdTrait;
+use App\Entity\Traits\Fields\NameTrait;
 use App\Entity\Traits\Privacy\GroupOwnerTrait;
 use App\Entity\Traits\Privacy\OwnerTrait;
 use App\Entity\Traits\Privacy\PrivacyLevelTrait;
@@ -47,6 +48,7 @@ class Instrument implements PrivacyAwareInterface
     use GroupOwnerTrait;
     use OwnerTrait;
     use PrivacyLevelTrait;
+    use HasLogsTrait;
 
     #[ORM\Column(length: 20)]
     #[Assert\NotNull]

@@ -26,10 +26,10 @@
                 </div>
             </div>
 
-            <div class="row row-cols-3 d-lg-none no-gutters">
+            <div class="row row-cols-3 d-lg-none no-gutters row-gap-sm-1">
                 <div class="col mb-2">
                     <div class="card w-100 p-2 text-center">
-                        <a id="qr-reader-toggle" class="link-dark text-decoration-none">
+                        <a id="qr-reader-toggle" class="link-dark text-decoration-none" data-homepage="{{ path("app_homepage") }}">
                             <span class="card-img-top display-3 fas fa-qrcode"></span> <br />
                             <span class="card-text">Scan</span>
                         </a>
@@ -45,7 +45,8 @@
                 {{ _self.make_card("Proteins", icons.protein(true), url("app_proteins")) }}
                 {{ _self.make_card("Oligos", "icon icon-oligomer", url("app_oligos")) }}
                 {{ _self.make_card("Recipes", "fas fa-fw fa-list-alt", url("app_recipes")) }}
-                {{ _self.make_card("Experiments", "fas fa-fw fa-flask", url("app_experiments")) }}
+                {{ _self.make_card("Instruments", "fas fa-fw fa-list-alt", url("app_recipes")) }}
+                {{ _self.make_card("Experiments", "fas fa-fw fa-hdd", url("app_instruments")) }}
             </div>
 
             <div class="row justify-content-center">
@@ -70,50 +71,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block script_bottom %}
-    <script type="application/javascript">
-        $(document).ready(function() {
-            let qrcodeReader = $("#qr-reader");
-            let qrcodeResult = $("#qr-reader-results")
-            let html5Scanner = null;
-
-            $("#qr-reader-toggle").on("click", function (e) {
-                if (qrcodeReader.css("display") === "none") {
-                    html5Scanner = new Html5QrcodeScanner(
-                        "qr-reader", {
-                            fps: 10,
-                            qrbox: 100,
-                        }
-                    );
-
-                    html5Scanner.render(function (decodedText, decodedResult) {
-                        let redirect = "{{ url("app_homepage") }}";
-                        qrcodeReader.toggle();
-
-                        qrcodeResult[0].innerHTML = decodedText;
-                        html5Scanner.clear();
-
-                        // Now do something with the decoded text
-                        if (decodedText.startsWith("gin:///")) {
-                            redirect += decodedText.substring(7);
-
-                            window.location.href = redirect;
-                        } else {
-                            decodedText = decodedText.replace("/", "")
-                            window.location.href = redirect + "barcode/" + decodedText;
-                        }
-                    });
-                } else {
-                    if (html5Scanner !== null) {
-                        html5Scanner.clear();
-                        html5Scanner = null;
-                    }
-                }
-
-                qrcodeReader.toggle();
-            })
-        })
-    </script>
 {% endblock %}

@@ -8,5 +8,21 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
 
+// Import libraries
+const popper = require("@popperjs/core")
+const bootstrap = require("bootstrap")
+
+import './ckeditor/ckeditor';
+
 // start the Stimulus application
 import './bootstrap';
+
+
+import "./gin/expandedDropdown";
+import "./gin/addFancyTable";
+import "./gin/smilesDrawer";
+import "./gin/addTooltips";
+import "./gin/formHelpers";
+import "./gin/addClipboard";
+//import "./gin/addSequenceViewer";
+import "./gin/addQRReader";

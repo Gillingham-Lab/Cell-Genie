@@ -1,27 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity\Traits;
+namespace App\Entity\Traits\Fields;
 
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\Uid\Ulid;
-use Doctrine\ORM\Mapping as ORM;
 
-trait NewIdTrait
+trait IdTrait
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\Column(type: "ulid", unique: true)]
     #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
-    private ?Ulid $ulid = null;
+    private ?Ulid $id = null;
 
-    private function generateUlid(): void
+    private function generateId(): void
     {
-        $this->ulid = new Ulid();
+        $this->id = new Ulid();
     }
 
-    public function getUlid(): ?Ulid
+    public function getId(): ?Ulid
     {
-        return $this->ulid;
+        return $this->id;
     }
 }

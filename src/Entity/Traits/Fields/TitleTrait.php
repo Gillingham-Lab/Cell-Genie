@@ -1,27 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity\Traits;
+namespace App\Entity\Traits\Fields;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-trait LongNameTrait
+trait TitleTrait
 {
     #[ORM\Column(type: "string", length: 255)]
-    #[Assert\Length(max: 250)]
+    #[Assert\Length(min: 5, max: 250)]
     #[Gedmo\Versioned]
-    private ?string $longName = "";
+    private ?string $title = "";
 
-    public function getLongName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->longName;
+        return $this->title;
     }
 
-    public function setLongName(?string $longName): self
+    public function setTitle(?string $title): self
     {
-        $this->longName = $longName;
+        $this->title = $title;
 
         return $this;
     }
