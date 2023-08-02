@@ -1,0 +1,51 @@
+{% block privacy_aware_row %}
+    <div class="mb-3">
+        <label class="form-label" for="{{ form.vars.id }}">
+            {{ form.vars.label }}
+        </label>
+        <div id="{{ form.vars.id }}" class="row form-group">
+            <div class="col-4">
+                <legend class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text py-3">
+                            {{ form.owner.vars.label }}
+                        </div>
+                    </div>
+
+                    {{ form_widget(form.owner) }}
+                </legend>
+                {{ form_help(form.owner) }}
+            </div>
+
+            <div class="col-4">
+                <legend class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text py-3">
+                            {{ form.group.vars.label }}
+                        </div>
+                    </div>
+
+                    {{ form_widget(form.group) }}
+                </legend>
+                {{ form_help(form.group) }}
+            </div>
+
+            <div class="col-4">
+                <legend class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text py-3">
+                            {{ form.privacyLevel.vars.label }}
+                        </div>
+                    </div>
+
+                    {{ form_widget(form.privacyLevel) }}
+                </legend>
+                {{ form_help(form.privacyLevel) }}
+            </div>
+        </div>
+
+        {% if form.vars.help %}
+            <div id="{{ form.vars.id }}_help" class="form-text mb-0 form-help">{{ form.vars.help }}</div>
+        {% endif %}
+    </div>
+{% endblock %}

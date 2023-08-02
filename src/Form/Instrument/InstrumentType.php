@@ -10,6 +10,7 @@ use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Repository\Instrument\InstrumentRepository;
 use Doctrine\ORM\EntityRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\TextEditorType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -71,23 +72,6 @@ class InstrumentType extends SaveableType
                 ->add("requiresReservation", CheckboxType::class, [
                     "label" => "Requires reservation?",
                     "help" => "Check if the instrument requires a reservation.",
-                    "required" => false,
-                    "empty_data" => null,
-                ])
-                ->add("defaultReservationLength", NumberType::class, [
-                    "label" => "Default reservation time, in hours",
-                    "required" => true,
-                    "empty_data" => null,
-                ])
-                ->add("calendarId", EmailType::class, [
-                    "label" => "Google calendar ID",
-                    "help" => "Google calendar id (format: id@group.calendar.google.com) to embed the specific calendar",
-                    "required" => false,
-                    "empty_data" => null,
-                ])
-                ->add("authString", TextareaType::class, [
-                    "label" => "Google API auth string",
-                    "help" => "A google API auth string for a service account. The calendar must be shared with writing access with the service account given in the auth string.",
                     "required" => false,
                     "empty_data" => null,
                 ])
@@ -202,6 +186,35 @@ class InstrumentType extends SaveableType
                     "empty_data" => "",
                     "placeholder" => "Set a date",
                     "widget" => "single_text",
+                ])
+                ->add("citationText", TextEditorType::class, [
+                    "label" => "Citation Text",
+                    "help" => "Write down a text how the instrument should be described in supporting information.",
+                    "required" => false,
+                    "empty_data" => null,
+                ])
+            )
+            ->add(
+                $builder->create("_booking", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Booking",
+                ])
+                ->add("defaultReservationLength", NumberType::class, [
+                    "label" => "Default reservation time, in hours",
+                    "required" => true,
+                    "empty_data" => null,
+                ])
+                ->add("calendarId", EmailType::class, [
+                    "label" => "Google calendar ID",
+                    "help" => "Google calendar id (format: id@group.calendar.google.com) to embed the specific calendar",
+                    "required" => false,
+                    "empty_data" => null,
+                ])
+                ->add("authString", TextareaType::class, [
+                    "label" => "Google API auth string",
+                    "help" => "A google API auth string for a service account. The calendar must be shared with writing access with the service account given in the auth string.",
+                    "required" => false,
+                    "empty_data" => null,
                 ])
             )
             ->add(

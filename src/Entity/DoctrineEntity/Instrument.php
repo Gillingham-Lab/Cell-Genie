@@ -120,6 +120,10 @@ class Instrument implements PrivacyAwareInterface
     #[Assert\Range(minMessage: "Minimum reservation time should be 6 minutes; machines that are quicker should not need reservation.", min: 0.1)]
     private ?float $defaultReservationLength = 1;
 
+    #[ORM\Column(type: "text", nullable: true)]
+    #[Assert\NotBlank]
+    private ?string $citationText;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -406,6 +410,17 @@ class Instrument implements PrivacyAwareInterface
     public function setDefaultReservationLength(?float $defaultReservationLength): self
     {
         $this->defaultReservationLength = $defaultReservationLength;
+        return $this;
+    }
+
+    public function getCitationText(): ?string
+    {
+        return $this->citationText;
+    }
+
+    public function setCitationText(?string $citationText): self
+    {
+        $this->citationText = $citationText;
         return $this;
     }
 }

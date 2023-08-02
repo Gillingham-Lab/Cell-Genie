@@ -57,7 +57,15 @@
                     "disabled": not is_granted("edit", instrument),
                     "tooltipText": "Edit the instrument",
                 },
+                {
+                    "type": "clipboard",
+                    "tooltipText": "Copy information",
+                    "clipboardText": ( instrument.citationText ),
+                    "disabled": not instrument.citationText,
+                }
             ]) %}
+
+
             {{ layout.toolbox(tools) }}
 
             <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
@@ -113,6 +121,13 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        {% if instrument.citationText %}
+                        <div class="border-top mt-3 mb-3 px-3 px-lg-5 py-3">
+                            <h4>Citation</h4>
+                            {{ instrument.citationText|raw }}
+                        </div>
+                        {% endif %}
                         {{ layout.card_body_collapse_end() }}
                     </div>
                 </div>

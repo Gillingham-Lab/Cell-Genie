@@ -20,6 +20,12 @@
                 "target": url("app_instruments_edit", {"instrument": instrument.id}),
                 "disabled": not is_granted("edit", instrument)
             },
+            {
+                "type": "clipboard",
+                "tooltipText": "Copy information",
+                "clipboardText": ( instrument.citationText|escape("html_attr") ),
+                "disabled": not instrument.citationText,
+            }
         ]) }}
     {% endif %}
 {% endmacro %}
