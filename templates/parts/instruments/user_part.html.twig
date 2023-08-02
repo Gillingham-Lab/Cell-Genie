@@ -1,0 +1,72 @@
+{% import "utility/icons.html.twig" as icons %}
+
+<turbo-frame id="gin-turbo-instrument-users">
+    {% if is_granted("train", entity) %}
+    <div class="border-bottom py-1 px-lg-4">
+        {{ form_start(addUserForm, {"attr": {"class": "row row-cols-lg-auto g-3"}}) }}
+        {{ form_errors(addUserForm) }}
+
+        <p class="text-muted col-12 mb-0">Add a new instrument user or change the role of an existing one.</p>
+
+        <div class="col-5">
+            <legend class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        {{ addUserForm.user.vars.label }}
+                    </div>
+                </div>
+
+                {{ form_widget(addUserForm.user) }}
+            </legend>
+        </div>
+
+        <div class="col-5">
+            <legend class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        {{ addUserForm.role.vars.label }}
+                    </div>
+                </div>
+
+                {{ form_widget(addUserForm.role) }}
+            </legend>
+        </div>
+
+        <div class="col-2">
+            {{ form_widget(addUserForm._submit) }}
+        </div>
+        {{ form_end(addUserForm) }}
+    </div>
+    {% endif %}
+    <div class="py-1 px-lg-4">
+        <table class="table table-sm table-borderless table-hover">
+            <thead>
+            <tr>
+                <th scope="col">User</th>
+                <th scope="col">Group</th>
+                <th scope="col">Role</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for instrumentUser in users|sort((a, b) => (a.user and b.user) ? a.user.fullName <=> b.user.fullName : 0) %}
+                {% set user = instrumentUser.user %}
+                {% if user %}
+                <tr {{ user.id is same as(app.user.id) ? 'class="bg-light"' : '' }}>
+                    <td>{{ user.fullName }}</td>
+                    <td>{{ user.group ?? "unknown" }}</td>
+                    <td>{{ instrumentUser.role.value|capitalize }}</td>
+                </tr>
+                {% else %}
+                    <tr>
+                        <td>???</td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="2">No users</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</turbo-frame>

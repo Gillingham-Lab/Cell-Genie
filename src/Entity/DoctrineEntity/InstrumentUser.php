@@ -11,23 +11,23 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: InstrumentUserRepository::class)]
-#[UniqueEntity(fields: ["instrument", "user"])]
+#[UniqueEntity(fields: ["instrument", "user"], groups: ["Default"])]
 class InstrumentUser
 {
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Instrument::class, cascade: ["persist", "remove"], inversedBy: "users")]
     #[ORM\JoinColumn(name: "instrument_id", referencedColumnName: "id", onDelete: "CASCADE")]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ["Default"])]
     private ?Instrument $instrument = null;
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", onDelete: "CASCADE")]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ["Default", "quick"])]
     private ?User $user = null;
 
     #[ORM\Column(type: "string", enumType: InstrumentRole::class, options: ["default" => InstrumentRole::Untrained])]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ["Default", "quick"])]
     private ?InstrumentRole $role = null;
 
     public function __toString(): string

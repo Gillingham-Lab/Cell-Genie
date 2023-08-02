@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,7 +20,7 @@ class InstrumentUserType extends AbstractType
     {
         $builder
             ->add("user", EntityType::class, options: [
-                "label" => "File title (not necessarily a file name)",
+                "label" => "User",
                 "class" => User::class,
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("a")
@@ -30,24 +31,20 @@ class InstrumentUserType extends AbstractType
                     "class" => "gin-fancy-select",
                     "data-allow-empty" => "true",
                 ],
+                "group_by" => function (User $instrumentUser) {
+                    return $instrumentUser->getGroup();
+                },
                 'empty_data' => null,
                 'by_reference' => true,
                 "multiple" => false,
                 "required" => false,
                 "placeholder" => "Empty",
             ])
-            ->add("role", ChoiceType::class, options: [
-                "label" => "Type",
-                "help" => "Mark if the antibody is primary or secondary",
+            ->add("role", EnumType::class, options: [
+                "label" => "Role",
+                "class" => InstrumentRole::class,
+                "help" => "What Role should the user have?",
                 "required" => true,
-                "choices" => [
-                    "Untrained" => InstrumentRole::Untrained,
-                    "Trained" => InstrumentRole::Trained,
-                    "User" => InstrumentRole::User,
-                    "Advanced" => InstrumentRole::Advanced,
-                    "Responsible" => InstrumentRole::Responsible,
-                    "Admin" => InstrumentRole::Admin,
-                ],
             ])
         ;
     }

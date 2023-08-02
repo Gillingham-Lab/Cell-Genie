@@ -81,10 +81,16 @@
                                 </tbody>
                             </table>
 
-                            <div>
+                            <div class="border-bottom mb-3">
                                 <h3>Description</h3>
                                 {{ instrument.description|raw }}
                             </div>
+
+                            {% if instrument.requiresTraining and instrumentRole == "untrained" %}
+                                <p class="alert alert-danger">You have not been trained on this instrument yet. Contact a responsible person for this instrument.</p>
+                            {% elseif instrument.requiresTraining %}
+                                <p class="alert alert-success">You have been trained on this instrument. Contact a responsible person or an advanced user for advice if you have any questions.</p>
+                            {% endif %}
                         </div>
                         {{ layout.card_body_collapse_end() }}
                     </div>
@@ -157,34 +163,6 @@
                         <turbo-frame id="gin-instrument-log">
 
                         </turbo-frame>
-                        {# <div class="overflow-auto" {{ stimulus_controller("log-add", {
-                            contentUrl: path("app_instrument_form_log_partial", {"instrument": instrument.id}),
-                        }) }}>
-                            <div class="card-body border-bottom py-1 px-lg-4">
-                                <div class="btn-group btn-group-sm">
-                                    <a
-                                            {{ stimulus_target("log-add", "addButton") }}
-                                            {{ stimulus_action("log-add", "toggleForm") }}
-                                            class="btn btn-primary collapse show"
-                                            data-toggle="tooltip" data-placement="bottom" title="Add new log entry"
-                                    ><span class="fas fa-fw fa-plus"></span></a>
-                                </div>
-                            </div>
-
-                            <div class="card-body px-lg-4">
-                                <div class="collapse" {{ stimulus_target("log-add", "logForm") }}>ADD MAGIC STUFF</div>
-                                <div
-                                        class="collapse show"
-                                        {{ stimulus_controller("log-view", {
-                                            contentUrl: path("app_instrument_view_log_partial", {"instrument": instrument.id})
-                                        }) }} {{ stimulus_target("log-add", "logView") }}
-                                >
-                                    <div class="spinner-border" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> #}
                     {% endblock %}
                 {% endembed %}
 
@@ -194,36 +172,11 @@
                         {{ layout.card_header_collapse("Users", "Users") }}
 
                         {{ layout.card_body_collapse_start("Users") }}
-                        <div class="card-body px-lg-5 mx-0">
-                            {% if instrument.requiresTraining and instrumentRole == "untrained" %}
-                                <p class="alert alert-danger">You have not been trained on this instrument yet. Contact a responsible person for this instrument.</p>
-                            {% elseif instrument.requiresTraining %}
-                                <p class="alert alert-success">You have been trained on this instrument. Contact a responsible person or an advanced user for advice if you have any questions.</p>
-                            {% endif %}
+                        <div class="card-body">
+                            <turbo-frame id="gin-turbo-instrument-users" src="{{ path("app_instrument_view_user_partial", {"instrument": instrument.id}) }}"
+                            ></turbo-frame>
 
-                            <table class="table table-sm table-borderless table-hover">
-                                <thead>
-                                <tr>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Group</th>
-                                    <th scope="col">Role</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for instrumentUser in instrumentUsers %}
-                                    {% set user = instrumentUser.user %}
-                                    <tr {{ user.id is same as(app.user.id) ? 'class="bg-light"' : '' }}>
-                                        <td>{{ user.fullName }}</td>
-                                        <td>{{ user.group ?? "unknown" }}</td>
-                                        <td>{{ instrumentUser.role.value|capitalize }}</td>
-                                    </tr>
-                                {% else %}
-                                    <tr>
-                                        <td colspan="2">No users</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="border-bottom py-1 px-lg-4"></div>
                         </div>
                         {{ layout.card_body_collapse_end() }}
                     </div>

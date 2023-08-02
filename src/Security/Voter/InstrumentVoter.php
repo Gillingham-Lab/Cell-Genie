@@ -18,13 +18,14 @@ class InstrumentVoter extends Voter
     const EDIT = "edit";
     const NEW = "new";
     const BOOK = "book";
+    const TRAIN = "train";
     const LOG_NEW = "log_new";
     const LOG_EDIT = "log_edit";
     const LOG_REMOVE = "log_remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::BOOK, self::LOG_NEW, self::LOG_EDIT, self::LOG_REMOVE])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::TRAIN, self::BOOK, self::LOG_NEW, self::LOG_EDIT, self::LOG_REMOVE])) {
             return false;
         }
 
@@ -65,7 +66,7 @@ class InstrumentVoter extends Voter
 
         return match ($attribute) {
             self::VIEW => $this->canView($instrument, $user),
-            self::EDIT => $this->canEdit($instrument, $user),
+            self::EDIT, self::TRAIN => $this->canEdit($instrument, $user),
             self::NEW => $this->canCreate($instrument, $user),
             self::BOOK => $this->canBook($instrument, $user),
             self::LOG_NEW => $this->canChange($instrument, $user),
