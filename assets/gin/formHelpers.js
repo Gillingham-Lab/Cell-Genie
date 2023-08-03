@@ -2,9 +2,16 @@ import TomSelect from "tom-select";
 const $ = require("jquery");
 const bootstrap = require("bootstrap");
 
-const formHelpers = () => {
+const formHelpers = (e = null) => {
+    console.log("Run form helpers", e);
+
+    let target = document;
+    if (e) {
+        target = e.target;
+    }
+
     // Bubble up error indicators
-    let accordions = document.querySelectorAll("div.accordion-item");
+    let accordions = target.querySelectorAll("div.accordion-item");
     accordions.forEach((elm) => {
         let elm_search = elm.querySelectorAll(".is-invalid");
 
@@ -14,7 +21,7 @@ const formHelpers = () => {
     });
 
     // Fancy
-    let fancySelections = document.querySelectorAll("select.gin-fancy-select");
+    let fancySelections = target.querySelectorAll("select.gin-fancy-select");
     fancySelections.forEach((elm) => {
         elm.data
         let tomElm = new TomSelect(elm, {
@@ -41,7 +48,7 @@ const formHelpers = () => {
     });
 
     // Remembering some collapse states
-    $(document).ready(function() {
+    $(target).ready(function() {
         let shownOnRequest;
 
         shownOnRequest = localStorage.getItem("shownOnRequest");
@@ -129,6 +136,7 @@ const formHelpers = () => {
 }
 
 document.addEventListener("turbo:load", (e => formHelpers()));
+document.addEventListener("turbo:frame-load", (e => formHelpers(e)));
 
 
 /* Original script

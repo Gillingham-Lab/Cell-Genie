@@ -6,34 +6,32 @@
         {{ form_start(addUserForm, {"attr": {"class": "row row-cols-lg-auto g-3"}}) }}
         {{ form_errors(addUserForm) }}
 
-        <p class="text-muted col-12 mb-0">Add a new instrument user or change the role of an existing one.</p>
+        <div class="row">
+            <p class="text-muted col-12 mb-0">Add a new instrument user or change the role of an existing one.</p>
 
-        <div class="col-5">
-            <legend class="input-group py-3">
-                <div class="input-group-prepend">
+            <div class="col-5">
+                <legend class="input-group py-3">
                     <div class="input-group-text">
                         {{ addUserForm.user.vars.label }}
                     </div>
-                </div>
 
-                {{ form_widget(addUserForm.user) }}
-            </legend>
-        </div>
+                    {{ form_widget(addUserForm.user) }}
+                </legend>
+            </div>
 
-        <div class="col-5">
-            <legend class="input-group py-3">
-                <div class="input-group-prepend">
+            <div class="col-5">
+                <legend class="input-group py-3">
                     <div class="input-group-text">
                         {{ addUserForm.role.vars.label }}
                     </div>
-                </div>
 
-                {{ form_widget(addUserForm.role) }}
-            </legend>
-        </div>
+                    {{ form_widget(addUserForm.role) }}
+                </legend>
+            </div>
 
-        <div class="col-2">
-            {{ form_widget(addUserForm._submit) }}
+            <div class="col-2 py-3">
+                {{ form_widget(addUserForm._submit) }}
+            </div>
         </div>
         {{ form_end(addUserForm) }}
     </div>

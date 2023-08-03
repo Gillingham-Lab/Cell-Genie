@@ -211,8 +211,8 @@
                                     <form method="post" action="{{ url("app_instruments_book", {"instrument": instrument.id}) }}" class="row row-cols-lg-auto g-3">
                                         <div class="col-5">
                                             <legend class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">At</div>
+                                                <div class="input-group-text">
+                                                    At
                                                 </div>
 
                                                 <input type="datetime-local" class="form-control gin-datetime-autofill" name="start">
@@ -221,8 +221,8 @@
 
                                         <div class="col-5">
                                             <legend class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">For (in hours)</div>
+                                                <div class="input-group-text">
+                                                    For (in hours)
                                                 </div>
 
                                                 <input type="text" class="form-control" name="length" value="{{ instrument.defaultReservationLength }}">
