@@ -40,6 +40,7 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
+    #[Assert\NotNull]
     private ?User $aliquoted_by = null;
 
     #[ORM\Column(type: "string", length: 30)]
@@ -138,7 +139,7 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
             "passage" => $this->getPassage(),
             "mycoplasmaResult" => $this->getMycoplasmaResult(),
             "aliquotedOn" => $this->getAliquotedOn()?->format("c"),
-            "aliquotedBy" => $this->getAliquotedBy()->getFullName(),
+            "aliquotedBy" => $this->getAliquotedBy()?->getFullName() == "unknown",
             "cryoMedium" => $this->getCryoMedium(),
             "cellCount" => $this->getCellCount(),
 
