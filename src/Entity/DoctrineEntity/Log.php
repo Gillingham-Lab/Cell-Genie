@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Loggable;
 
 #[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 #[Loggable]
 class Log
 {
