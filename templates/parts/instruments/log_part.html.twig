@@ -12,7 +12,7 @@
 
         <div class="list-group list-group-root well border-1 border">
 
-        {% for log in logs|sort((lm1, lm2) => lm1.createdAt <=> lm2.createdAt) %}
+        {% for log in logs|sort((lm1, lm2) => -(lm1.createdAt <=> lm2.createdAt)) %}
             {% set entryId = "gin-log-view-entry-" ~ log.id %}
 
             {# Determine class #}
