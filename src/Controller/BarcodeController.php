@@ -10,6 +10,7 @@ use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
 use App\Entity\Lot;
+use App\Entity\SubstanceLot;
 use App\Form\BarcodeType;
 use App\Repository\BarcodeRepository;
 use App\Repository\Cell\CellCultureRepository;
@@ -60,7 +61,7 @@ class BarcodeController extends AbstractController
                         "substance" => $barcodeEntity->getReferencedId(),
                     ]
                 ],
-                Lot::class => [
+                Lot::class, SubstanceLot::class => [
                     "route" => "app_substance_lot_view",
                     "params" => [
                         "lot" => $barcodeEntity->getReferencedId(),
