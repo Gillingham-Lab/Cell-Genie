@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits\Fields;
 
+use App\Service\Doctrine\Generator\UlidGenerator;
+use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
-use Symfony\Component\Uid\Ulid;
 
 trait IdTrait
 {

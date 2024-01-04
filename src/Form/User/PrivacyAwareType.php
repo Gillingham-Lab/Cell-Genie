@@ -99,7 +99,7 @@ class PrivacyAwareType extends AbstractType
                 ],
             ])
             ->add("privacyLevel", EnumType::class, [
-                "label" => "Pricay level",
+                "label" => "Privacy level",
                 "help" => "Public entries are visible for everyone, but only group members and admins can edit them. Group entries restrict the visibility to the group. Private entries restrict the visibility (and thus, the ability to edit) to the owner.",
                 "class" => PrivacyLevel::class,
                 "disabled" => !($security->isGranted("ROLE_ADMIN") or $security->isGranted("owns", $builder->getData())),

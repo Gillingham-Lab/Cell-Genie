@@ -1,0 +1,470 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+{% import 'macros.html.twig' as macros %}
+
+{% if currentLot %}
+    {% set var_title = "Consumables :: Lot :: " ~ currentLot.lotIdentifier %}
+{% elseif currentConsumable %}
+    {% set var_title = "Consumables :: Item :: " ~ currentConsumable.longName %}
+{% elseif currentCategory %}
+    {% set var_title = "Consumables :: Type :: " ~ currentCategory.longName %}
+{% else %}
+    {% set var_title = "Consumables" %}
+{% endif %}
+
+{% block title %}Gin :: {{ var_title }}{% endblock %}
+
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            {{ layout.header(var_title) }}
+
+            {# Toolbars #}
+            {% if currentLot is not empty %}
+                {{ _self.consumable_lot_tools(currentLot, true) }}
+            {% elseif currentConsumable is not empty %}
+                {{ _self.consumable_tools(currentConsumable, true) }}
+            {% elseif currentCategory is not empty %}
+            {% endif %}
+
+            <div class="row row-cols-1 row-cols-lg-2">
+                <div class="col p-0 m-0 mb-3">
+                    <div class="card mx-3 h-100">
+                        {{ layout.card_header_collapse("Categories", "ConsumableCategories") }}
+
+                        {{ layout.toolbox_card([
+                            {
+                                "type": "add",
+                                "target": url("app_consumables_category_new"),
+                                "tooltipText": "Add a new consumable category",
+                                "disabled": not is_granted("new", "ConsumableCategory"),
+                            },
+                        ]) }}
+
+                        {{ layout.card_body_collapse_start("ConsumableCategories") }}
+                        <div class="card-body px-lg-5">
+                            {% if categories|length == 0 %}
+                                There are currently no categories available.
+                            {% else %}
+                                <div class="list-group list-group-root well border-1 border">
+                                    {{ _self.display_categories( categories|filter(e => not e.parent), currentCategory) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {{ layout.card_body_collapse_end() }}
+                    </div>
+                </div>
+
+                {% if currentCategory %}
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse("Consumables", "CurrentConsumable") }}
+
+                            {{ layout.toolbox_card([
+                                {
+                                    "type": "add",
+                                    "target": url("app_consumables_item_add_to", {"category": currentCategory.id}),
+                                    "tooltipText": "Add a new consumable",
+                                    "disabled": not is_granted("add_to", currentCategory)
+                                }
+                            ]) }}
+
+                            {{ layout.card_body_collapse_start("CurrentConsumable") }}
+                            <div class="card-body px-lg-5 flex-grow-1">
+                                <h3>{{ currentCategory.longName }}</h3>
+                                <div>
+                                    {{ currentCategory.comment|raw }}
+                                </div>
+
+                                <ul class="list-group">
+                                    {% set consumables = (currentCategory.consumables)|sort((a, b) => a.productNumber <=> b.productNumber) %}
+                                    {% for consumable in consumables %}
+                                        <li class="list-group-item
+                                            {% if currentConsumable is same as(consumable) %}bg-secondary border-dark border-top{% endif %}
+                                        ">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="d-inline-block">
+                                                    <div>{{ _self.consumable_tools(consumable) }}</div>
+                                                </div>
+                                                <div class="ms-2 me-auto">
+                                                    <div class="fw-bold"><a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_item_view", {"consumable": consumable.id}) }}">{{ consumable.longName }}</a></div>
+                                                    {{ consumable.productNumber }}
+                                                </div>
+                                            </div>
+
+                                            {# Stock meter for a consumable #}
+                                            {% set consumableStock = consumable.currentStock / consumable.idealStock %}
+                                            {% set orderedStock = consumable.orderedStock / consumable.idealStock %}
+                                            {% set barColor = "bg-success" %}
+
+                                            {% if consumable.currentStock < consumable.criticalLimit %}
+                                                <span class="text-danger"><strong>Critical:</strong> Orders must be placed</span>
+                                                {% set barColor = "bg-danger" %}
+                                            {% elseif consumable.currentStock < consumable.orderLimit %}
+                                                <span class="text-warning"><strong>Warning:</strong> Orders should be placed</span>
+                                                {% set barColor = "bg-warning" %}
+                                            {% endif %}
+
+                                            <div class="progress border border-1 border-black bg-white" role="progressbar" aria-label="Stock">
+                                                <div class="progress-bar {{ barColor }}" style="width: {{ consumableStock*100 }}%"
+                                                     role="progressbar"
+                                                     aria-valuemin="0" aria-valuemax="{{ consumable.idealStock }}" aria-valuenow="{{ consumable.currentStock }}"
+                                                >
+                                                    {{ consumable.currentStock }} / {{ consumable.idealStock }}
+                                                </div>
+
+                                                {% if consumableStock < 1 %}
+                                                    <div class="progress-bar progress-bar-striped bg-primary-subtle text-black" style="width: {{ orderedStock*100 }}%"
+                                                        aria-valuemin="0" aria-valuemax="{{ consumable.idealStock }}" aria-valuenow="{{ consumable.orderedStock }}"
+                                                     >
+                                                        {{ consumable.orderedStock }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="progress-bar progress-bar-striped bg-primary-subtle text-black" style="width: 5%"
+                                                         aria-valuemin="0" aria-valuemax="{{ consumable.idealStock }}" aria-valuenow="{{ consumable.orderedStock }}"
+                                                    >
+                                                        {{ consumable.orderedStock }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if currentConsumable %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse("Details", "ConsumableDetails") }}
+
+                            {{ layout.card_body_collapse_start("ConsumableDetails") }}
+                            <div class="card-body px-lg-5 flex-grow-1">
+                                {% embed "embed/list_table.html.twig" with {
+                                    "rows": {
+                                        "Category": ["url", currentConsumable.category.longName, path("app_consumables_category_view", {"category": currentConsumable.category.id})],
+                                        "Product number": ["", currentConsumable.productNumber],
+                                        "Standard #Units per package": ["", currentConsumable.numberOfUnits],
+                                        "Standard #Pieces per unit": ["", currentConsumable.unitSize],
+                                        "Standard location": ["", currentConsumable.location],
+                                        "Package consumption": ["", currentConsumable.consumePackage ? "Yes" : "No"],
+                                        "Vendor": ["raw", macros.vendor_url(currentConsumable.vendor, currentConsumable.vendorPN)],
+                                        "Minimum number of units or packages": ["", currentConsumable.orderLimit],
+                                        "Critical number of units or packages": ["", currentConsumable.criticalLimit],
+                                        "Price per package (CHF)": ["", currentConsumable.pricePerPackage],
+                                        "Expected delivery time": ["", currentConsumable.expectedDeliveryTime],
+                                    }
+                                }%}
+                                {% endembed %}
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse("Lots", "ConsumableLots") }}
+
+                            {{ layout.card_body_collapse_start("ConsumableDetails") }}
+                            <div class="card-body px-lg-5 flex-grow-1">
+                                {% if currentConsumable.lots|length > 0 %}
+                                    <ul class="list-group">
+                                        {% for lot in currentConsumable.lots|sort((a, b) => -(a.getSortValue() <=> b.getSortValue())) %}
+                                            {% set bg_color = "bg-success-subtle" %}
+                                            {% if lot.availability.value == "ordered" %}
+                                                {% set bg_color = "bg-warning-subtle"  %}
+                                            {% elseif lot.availability.value == "empty" %}
+                                                {% set bg_color = "bg-secondary-subtle"  %}
+                                            {% elseif lot.isPristine() %}
+                                                {% set bg_color = "" %}
+                                            {% endif %}
+                                            <li class="list-group-item {{ bg_color }}" id="gin-consumable-lot-{{ lot.id }}">
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                    <div class="d-inline-block">
+                                                        <div>{{ _self.consumable_lot_tools(lot) }}</div>
+                                                        <div>Location: {{ lot.location }}</div>
+                                                    </div>
+                                                    <div class="ms-2 me-auto">
+                                                        {# <div class="fw-bold"><a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_item_view", {"consumable": consumable.id}) }}">{{ consumable.longName }}</a></div> #}
+                                                        <div><strong>{{ lot.lotIdentifier }}</strong></div>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        {% if lot.availability.value == "available" %}
+                                                            <div>{{ lot.availability.value }}</div>
+                                                            <div class="text-muted">{{ lot.arrivedOn|date("D, d M Y") }}</div>
+                                                        {% elseif lot.availability.value == "ordered" or lot.availability.value == "in preparation" %}
+                                                            <div>{{ lot.availability.value }}</div>
+                                                            <div class="text-muted">{{ lot.boughtOn|date("D, d M Y") }}</div>
+                                                        {% else %}
+                                                            <div>{{ lot.availability.value }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                <div class="progress" role="progressbar" aria-label="Stock">
+                                                    <div class="progress-bar" style="width: {{ lot.getFullness()*100 }}%">{{ lot.getTotalAvailablePieces() }}/{{ lot.getTotalAmountOfPieces() }}</div>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="text-muted">There are currently no lots registered for this consumable. Use the quick order form to create one.</p>
+                                {% endif %}
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+
+                    {% if quickOrderForm is defined %}
+                        <div class="col p-0 m-0 mb-3">
+                            <div class="card mx-3 h-100">
+                                {{ layout.card_header_collapse("Quick add", "QuickOrder") }}
+
+                                {{ layout.card_body_collapse_start("CurrentConsumable") }}
+                                <div class="card-body px-lg-5 flex-grow-1">
+                                    <p class="text-muted"><strong>This form will not place an order</strong>, but instead create new lots with the Status "Ordered".</p>
+
+                                    {{ form_start(quickOrderForm) }}
+                                    <div class="form-error">
+                                        {{ form_errors(quickOrderForm) }}
+                                    </div>
+                                    <div class="row row-cols-sm-2 row-cols-md-4">
+                                        {% for field in quickOrderForm|filter(e => e.vars.name != "_token") %}
+                                            <div class="col">
+                                                {% if field.vars.label %}
+                                                    <div class="input-group mb-3">
+                                                        <label class="input-group-text" for="{{ field.vars.id }}">{{ field.vars.label }}</label>
+                                                        {{ form_widget(field) }}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form_widget(field) }}
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {{ form_rest(quickOrderForm) }}
+                                    {{ form_end(quickOrderForm) }}
+                                </div>
+                                {{ layout.card_body_collapse_end() }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if currentLot %}
+                        <div class="col p-0 m-0 mb-3">
+                            <div class="card mx-3 h-100">
+                                {{ layout.card_header_collapse("Lot Details", "ConsumableLotDetails") }}
+
+                                {{ layout.card_body_collapse_start("ConsumableLotDetails") }}
+                                <div class="card-body px-lg-5 flex-grow-1">
+                                    {% embed "embed/list_table.html.twig" with {
+                                        "rows": {
+                                            "Identifier": ["", currentLot.lotIdentifier],
+                                            "Consumable": ["url", currentLot.consumable.longName, path("app_consumables_item_view", {"consumable": currentLot.consumable.id})],
+                                            "Category": ["url", currentConsumable.category.longName, path("app_consumables_category_view", {"category": currentConsumable.category.id})],
+                                            "#Units per package": ["", currentLot.numberOfUnits],
+                                            "#Pieces per unit": ["", currentLot.unitSize],
+                                            "Location": ["", currentLot.location],
+                                            "Price per package (CHF)": ["", currentLot.pricePerPackage],
+                                            "Bought by": ["", currentLot.boughtBy],
+                                            "Bought on": ["", currentLot.boughtOn|date("D, d M Y")],
+                                            "Arrived on": ["", currentLot.arrivedOn ? currentLot.arrivedOn|date("D, d M Y") : "never"],
+                                            "Time to arrive": ["", currentLot.arrivedOn is empty or currentLot.boughtOn is empty ? "n.d." : (
+                                                ((currentLot.boughtOn.diff(currentLot.arrivedOn)|date("%d")/7)|round(0, "floor")) ~ " weeks, " ~
+                                            ((currentLot.boughtOn.diff(currentLot.arrivedOn)|date("%d")%7)|round(0, "floor")) ~ " days"
+                                            )],
+                                            "Opened on": ["", currentLot.openedOn ? currentLot.openedOn|date("D, d M Y") : "never"],
+                                        }
+                                    }%}
+                                    {% endembed %}
+                                </div>
+                                {{ layout.card_body_collapse_end() }}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% macro consumable_tools(consumable, toolbar = false) %}
+    {% set tools = [
+        {
+            "type": "edit",
+            "target": url("app_consumables_item_edit", {"consumable": consumable.id}),
+            "tooltipText": "Edit consumable",
+            "disabled": not is_granted("edit", consumable)
+        }
+    ] %}
+
+    {% if toolbar %}
+        {# If toolbar, we also add the "go above" button #}
+
+        {% set tools = [{
+            "type": "up",
+            "target": url("app_consumables_category_view", {"category": consumable.category.id}),
+            "tooltipText": "Go to category",
+            "disabled": not is_granted("view", consumable.category),
+        }]|merge(tools) %}
+
+        {# Display toolbar #}
+        {{ layout.toolbox(tools) }}
+    {% else %}
+        {{ layout.toolbox_column(tools, "sm") }}
+    {% endif %}
+{% endmacro %}
+
+{% macro consumable_lot_tools(lot, toolbar = false) %}
+    {% set isEmpty = lot.availability.value == "empty" %}
+
+    {% set tools = [] %}
+
+    {% set tools = [
+        {
+            "type": "consume",
+            "target": url("app_consumables_lot_consume", {"lot": lot.id}),
+            "tooltipText": "Consume 1" ~ (lot.consumable.consumePackage ? " package" : " piece"),
+            "disabled": not is_granted("edit", lot) or isEmpty,
+        },
+        {
+            "type": "view",
+            "target": url("app_consumables_lot_view", {"lot": lot.id}),
+            "tooltipText": "View lot",
+            "disabled": not is_granted("view", lot) or isEmpty,
+        },
+        {
+            "type": "edit",
+            "target": url("app_consumables_lot_edit", {"lot": lot.id}),
+            "tooltipText": "Edit lot",
+            "disabled": not is_granted("edit", lot) or (isEmpty and not is_granted("ROLE_ADMIN")),
+        }
+    ] %}
+
+    {% if lot.availability.value == "ordered" or lot.availability.value == "in preparation" %}
+        {% set tools = tools|merge([
+            {
+                "type": "arrive",
+                "target": url("app_consumables_lot_makeAvailable", {"lot": lot.id}),
+                "tooltipText": "Make available",
+                "disabled": not is_granted("edit", lot) or isEmpty,
+            },
+        ]) %}
+    {% else %}
+        {% set tools = tools|merge([
+            {
+                "type": "arrive",
+                "tooltipText": "Make available",
+                "disabled": true,
+            },
+        ]) %}
+    {% endif %}
+
+    {% set tools = tools|merge([
+        {
+            "type": "trash",
+            "target": url("app_consumables_item_edit", {"consumable": lot.id}),
+            "tooltipText": "Trash consumable",
+            "disabled": not is_granted("trash", lot) or isEmpty,
+        },
+    ]) %}
+
+    {% if toolbar %}
+        {# If toolbar, we also add the "go above" button #}
+
+        {% set tools = [{
+            "type": "up",
+            "target": url("app_consumables_item_view", {"consumable": lot.consumable.id}),
+            "tooltipText": "Go to consumable",
+            "disabled": not is_granted("view", lot.consumable),
+        }]|merge(tools) %}
+
+        {# Display toolbar #}
+        {{ layout.toolbox(tools) }}
+    {% else %}
+        {{ layout.toolbox_column(tools, "sm") }}
+    {% endif %}
+{% endmacro %}
+
+{% macro display_categories(groups, current, nesting=true) %}
+    {% for group in groups|sort((a, b) => a.longName <=> b.longName) %}
+        {% set groupId = "gin-consumable-category-" ~ group.id %}
+
+        <div class="list-group-item {% if current is same as(group) %}bg-primary-subtle border-dark{% endif %}">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>
+                    {% if group.children|length > 0 and nesting is same as(true) %}
+                        <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
+                            <span class="collapse-icon far fa-plus-square fa-fw"></span>
+                        </a>
+                    {% else %}
+                        <span class="collapse-icon far fa-plus-square fa-fw invisible"></span>
+                    {% endif %}
+
+                        {% if is_granted("edit", group) %}
+                            <span href="me-2">
+                            {{ layout.toolbox_column([
+                                {
+                                    "type": "edit",
+                                    "tooltipText": "Edit category",
+                                    "display": "lg",
+                                    "target": url("app_consumables_category_edit", {"category": group.id }),
+                                },
+                            ], "sm") }}
+                        </span>
+                        {% endif %}
+
+                    <a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_category_view", {"category": group.id}) }}">
+                        <span class="fas fa-box fa-fw"></span>
+                            {{ group.longName }}
+                    </a>
+
+                </span>
+
+                {% if group.showUnits %}
+                {# <span>
+                    <span class="badge bg-primary rounded-pill" style="width: 30px;">N (N)</span>
+                </span>  #}
+                {% endif %}
+            </div>
+
+            {% if group.showUnits %}
+                {% set consumableStock = group.currentStock / group.idealStock %}
+                {% set consumableStock = consumableStock > 1 ? 1 : consumableStock %}
+                {% set barColor = "bg-success" %}
+
+                {% if group.currentStock < group.criticalLimit %}
+                    <span class="text-danger"><strong>Critical:</strong> Orders must be placed</span>
+                    {% set barColor = "bg-danger" %}
+                {% elseif group.currentStock < group.orderLimit %}
+                    <span class="text-warning"><strong>Warning:</strong> Orders should be placed</span>
+                    {% set barColor = "bg-warning" %}
+                {% endif %}
+
+                <div class="progress mt-3" role="progressbar" aria-label="Stock">
+                    <div class="progress-bar {{ barColor }}" style="width: {{ consumableStock*100 }}%"
+                         role="progressbar"
+                         aria-valuemin="0" aria-valuemax="{{ group.idealStock }}" aria-valuenow="{{ group.currentStock }}"
+                    >
+                       {{ group.currentStock }} / {{ group.idealStock }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="list-group collapse" id="{{ groupId }}">
+            {# Display boxes #}
+            {% if group.children|length > 0 and nesting is same as(true) %}
+                {{ _self.display_categories(group.children, current)  }}
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endmacro %}

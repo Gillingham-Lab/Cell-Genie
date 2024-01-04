@@ -63,7 +63,6 @@ class InstrumentVoter extends Voter
             $log = null;
         }
 
-
         return match ($attribute) {
             self::VIEW => $this->canView($instrument, $user),
             self::EDIT, self::TRAIN => $this->canEdit($instrument, $user),

@@ -1,0 +1,142 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Form\StockKeeping;
+
+use App\Entity\DoctrineEntity\StockManagement\Consumable;
+use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
+use App\Form\LongNameType;
+use App\Form\SaveableType;
+use App\Form\User\PrivacyAwareType;
+use Doctrine\ORM\EntityRepository;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class ConsumableCategoryType extends SaveableType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $entity = $builder->getData();
+
+        $builder
+            ->add(
+                $builder->create("_general", LongNameType::class, [
+                    "inherit_data" => true,
+                    "label" => "General information",
+                ])
+                ->add("comment", CKEditorType::class, [
+                    "label" => "Comment",
+                    "sanitize_html" => true,
+                    "required" => false,
+                    "empty_data" => null,
+                    "config" => ["toolbar" => "basic"],
+                ])
+                ->add("showUnits", CheckboxType::class, [
+                    "label" => "Show total units of consumables?",
+                    "help" => "If activated, the entry will show a total of available units for all consumables in this 
+                        category. Activating this is helpful if the category contains consumable from different vendors, 
+                        but with similar purpose (eg, 1.5 mL microcentrifuge tubes) where brand doesn't matter.",
+                    "required" => false,
+                    "empty_data" => null,
+                ])
+                ->add("consumables", EntityType::class, [
+                    "label" => "Consumables",
+                    "help" => "Select consumables to be part of this category.",
+                    "class" => Consumable::class,
+                    "query_builder" => function (EntityRepository $er) use ($entity) {
+                        $qb = $er->createQueryBuilder("c")
+                            ->addOrderBy("c.longName", "ASC")
+                        ;
+
+                        if ($entity->getId()) {
+                            $qb = $qb->andWhere("c.id != :ulid")
+                                ->setParameter("ulid", $entity->getId(), "ulid");
+                        }
+
+                        return $qb;
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                ])
+                ->add("parent", EntityType::class, [
+                    "label" => "Parent",
+                    "help" => "Select a parent category.",
+                    "class" => ConsumableCategory::class,
+                    "query_builder" => function (EntityRepository $er) use ($entity) {
+                        $qb = $er->createQueryBuilder("cc")
+                            ->addOrderBy("cc.longName", "ASC")
+                        ;
+
+                        if ($entity->getId()) {
+                            $qb = $qb->andWhere("cc.id != :ulid")
+                                ->setParameter("ulid", $entity->getId(), "ulid");
+                        }
+
+                        return $qb;
+                    },
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                    'empty_data' => null,
+                    'by_reference' => false,
+                    "multiple" => false,
+                    "required" => false,
+                    "placeholder" => "Empty",
+                ])
+                ->add("children", EntityType::class, [
+                    "label" => "Child categories",
+                    "help" => "Select categories that are part of this one.",
+                    "class" => ConsumableCategory::class,
+                    "query_builder" => function (EntityRepository $er) use ($entity) {
+                        $qb = $er->createQueryBuilder("cc")
+                            ->addOrderBy("cc.longName", "ASC")
+                        ;
+
+                        if ($entity->getId()) {
+                            $qb = $qb->andWhere("cc.id != :ulid")
+                                ->setParameter("ulid", $entity->getId(), "ulid");
+                        }
+
+                        return $qb;
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                ])
+                ->add("_ownership", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership",
+                ])
+            )
+        ;
+
+        parent::buildForm($builder, $options);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            "data_class" => ConsumableCategory::class,
+        ]);
+
+        parent::configureOptions($resolver);
+    }
+}

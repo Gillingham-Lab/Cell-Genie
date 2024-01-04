@@ -22,8 +22,10 @@ class SaveableType extends AbstractType
     {
         $resolver->setDefaults([
             "save_button" => false,
+            "save_label" => "Save",
         ]);
 
         $resolver->setAllowedTypes("save_button", "bool");
+        $resolver->setAllowedTypes("save_label", "string");
     }
 }

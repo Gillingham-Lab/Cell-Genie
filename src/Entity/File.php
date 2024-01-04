@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Repository\FileRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Ulid;
@@ -55,11 +56,11 @@ class File
 
     private bool $freshlyUploaded = false;
 
-    public function setFromFile(UploadedFile $uploadedFile)
+    public function setFromFile(UploadedFile $uploadedFile): void
     {
         try {
             $this->setContentType($uploadedFile->getMimeType());
-        } catch (\LogicException) {
+        } catch (LogicException) {
             $this->setContentType($uploadedFile->getClientMimeType());
         }
 
@@ -109,7 +110,7 @@ class File
 
     public function getOriginalFileName(): string
     {
-        return $this->originalFileName;
+        return strlen($this->originalFileName) > 0 ? $this->originalFileName : $this->title;
     }
 
     public function setOriginalFileName(string $originalFileName): self

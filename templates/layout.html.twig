@@ -74,6 +74,18 @@
                     {# View #}
                     {% set iconClass = "far fa-fw fa-eye" %}
                     {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "consume" %}
+                    {# Consume #}
+                    {% set iconClass = "fas fa-minus" %}
+                    {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "exchange" %}
+                    {# Consume #}
+                    {% set iconClass = "fas fa-exchange-alt" %}
+                    {% set btnClass = "btn-primary" %}
+                {% elseif tool.type == "arrive" %}
+                    {# Consume #}
+                    {% set iconClass = "fas fa-plane-arrival" %}
+                    {% set btnClass = "btn-primary" %}
                 {% elseif tool.type == "trash" %}
                     {# Trash #}
                     {% set iconClass = "fas fa-fw fa-trash-alt" %}
@@ -142,7 +154,7 @@
 
 {% macro toolbox_card(tools, size="md") %}
     {% set divClass = size == "sm" ? "px-lg-2" : "px-lg-5"  %}
-    <div class="card-body border-bottom py-1 {{ divClass }}">
+    <div class="card-body border-bottom py-1 {{ divClass }} flex-grow-0">
         {{ _self.toolbox_content(tools, size) }}
     </div>
 {% endmacro %}

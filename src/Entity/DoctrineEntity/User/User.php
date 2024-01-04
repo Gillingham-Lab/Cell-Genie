@@ -6,15 +6,15 @@ namespace App\Entity\DoctrineEntity\User;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\Experiment;
 use App\Repository\Substance\UserRepository;
+use App\Service\Doctrine\Generator\UlidGenerator;
+use App\Service\Doctrine\Type\Ulid;
 use App\Validator\Constraint\OrcId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
