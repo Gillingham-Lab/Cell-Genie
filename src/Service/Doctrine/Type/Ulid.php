@@ -7,7 +7,7 @@ use Symfony\Component\Uid\Ulid as SymfonyUlid;
 
 class Ulid extends SymfonyUlid
 {
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toRfc4122();
     }
