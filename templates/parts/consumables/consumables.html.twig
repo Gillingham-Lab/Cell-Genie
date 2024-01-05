@@ -80,7 +80,7 @@
                                     {% set consumables = (currentCategory.consumables)|sort((a, b) => a.productNumber <=> b.productNumber) %}
                                     {% for consumable in consumables %}
                                         <li class="list-group-item
-                                            {% if currentConsumable is same as(consumable) %}bg-secondary border-dark border-top{% endif %}
+                                            {% if currentConsumable is same as(consumable) %}active{% endif %}
                                         ">
                                             <div class="d-flex justify-content-between align-items-start">
                                                 <div class="d-inline-block">
@@ -154,7 +154,7 @@
                                         "Product number": ["", currentConsumable.productNumber],
                                         "Standard #Units per package": ["", currentConsumable.numberOfUnits],
                                         "Standard #Pieces per unit": ["", currentConsumable.unitSize],
-                                        "Standard location": ["", currentConsumable.location],
+                                        "Standard location": ["", currentConsumable.location is empty ? "none" : currentConsumable.location.pathName],
                                         "Package consumption": ["", currentConsumable.consumePackage ? "Yes" : "No"],
                                         "Vendor": ["raw", macros.vendor_url(currentConsumable.vendor, currentConsumable.vendorPN)],
                                         "Minimum number of units or packages": ["", currentConsumable.orderLimit],
@@ -178,7 +178,7 @@
                                 {% if currentConsumable.lots|length > 0 %}
                                     <ul class="list-group">
                                         {% for lot in currentConsumable.lots|sort((a, b) => -(a.getSortValue() <=> b.getSortValue())) %}
-                                            {% set bg_color = "bg-success-subtle" %}
+                                            {% set bg_color = "" %}
                                             {% if lot.availability.value == "ordered" %}
                                                 {% set bg_color = "bg-warning-subtle"  %}
                                             {% elseif lot.availability.value == "empty" %}
@@ -186,23 +186,30 @@
                                             {% elseif lot.isPristine() %}
                                                 {% set bg_color = "" %}
                                             {% endif %}
-                                            <li class="list-group-item {{ bg_color }}" id="gin-consumable-lot-{{ lot.id }}">
+
+                                            {% set active = "" %}
+                                            {% if lot is same as(currentLot) %}
+                                                {% set active = "active" %}
+                                            {% endif %}
+
+                                            <li class="list-group-item {{ bg_color }} {{ active }}" id="gin-consumable-lot-{{ lot.id }}">
+                                                <div>
+                                                    <div class="ms-2 mb-2">{{ _self.consumable_lot_tools(lot) }}</div>
+                                                </div>
+
                                                 <div class="d-flex justify-content-between align-items-start mb-3">
-                                                    <div class="d-inline-block">
-                                                        <div>{{ _self.consumable_lot_tools(lot) }}</div>
-                                                        <div>Location: {{ lot.location }}</div>
-                                                    </div>
                                                     <div class="ms-2 me-auto">
                                                         {# <div class="fw-bold"><a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_item_view", {"consumable": consumable.id}) }}">{{ consumable.longName }}</a></div> #}
                                                         <div><strong>{{ lot.lotIdentifier }}</strong></div>
+                                                        <div>Location: {{ lot.location is empty ? "unknown" : lot.location.pathName }}</div>
                                                     </div>
                                                     <div class="text-end">
                                                         {% if lot.availability.value == "available" %}
                                                             <div>{{ lot.availability.value }}</div>
-                                                            <div class="text-muted">{{ lot.arrivedOn|date("D, d M Y") }}</div>
+                                                            <div class="text-muted">{{ lot.arrivedOn is empty ? "unknown" : lot.arrivedOn|date("D, d M Y") }}</div>
                                                         {% elseif lot.availability.value == "ordered" or lot.availability.value == "in preparation" %}
                                                             <div>{{ lot.availability.value }}</div>
-                                                            <div class="text-muted">{{ lot.boughtOn|date("D, d M Y") }}</div>
+                                                            <div class="text-muted">{{ lot.boughtOn is empty ? "unknown" : lot.boughtOn|date("D, d M Y") }}</div>
                                                         {% else %}
                                                             <div>{{ lot.availability.value }}</div>
                                                         {% endif %}
@@ -272,7 +279,7 @@
                                             "Category": ["url", currentConsumable.category.longName, path("app_consumables_category_view", {"category": currentConsumable.category.id})],
                                             "#Units per package": ["", currentLot.numberOfUnits],
                                             "#Pieces per unit": ["", currentLot.unitSize],
-                                            "Location": ["", currentLot.location],
+                                            "Location": ["", currentLot.location is empty ? "unknown" : currentLot.location.pathName],
                                             "Price per package (CHF)": ["", currentLot.pricePerPackage],
                                             "Bought by": ["", currentLot.boughtBy],
                                             "Bought on": ["", currentLot.boughtOn|date("D, d M Y")],
@@ -398,7 +405,7 @@
     {% for group in groups|sort((a, b) => a.longName <=> b.longName) %}
         {% set groupId = "gin-consumable-category-" ~ group.id %}
 
-        <div class="list-group-item {% if current is same as(group) %}bg-primary-subtle border-dark{% endif %}">
+        <div class="list-group-item {% if current is same as(group) %}active{% endif %}">
             <div class="d-flex justify-content-between align-items-center">
                 <span>
                     {% if group.children|length > 0 and nesting is same as(true) %}

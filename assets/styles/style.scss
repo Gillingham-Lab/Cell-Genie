@@ -1,3 +1,4 @@
+@import "~bootswatch/dist/lumen/variables";
 
 div.gin-fancy-select.form-select {
   padding-left: 0rem;
@@ -9,6 +10,10 @@ div.gin-fancy-select.form-select {
   }
 }
 
-@import "~bootswatch/dist/lumen/variables";
+$list-group-active-border-color: "black";
+$list-group-active-bg: $gray-200;
+$list-group-active-color: $gray-900;
+
+
 @import '~bootstrap';
 @import "~bootswatch/dist/lumen/bootswatch";
