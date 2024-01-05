@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace App\Form\StockKeeping;
 
+use App\Entity\Rack;
 use App\Form\SaveableType;
 use App\Genie\Enums\Availability;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -58,9 +61,29 @@ class QuickOrderType extends SaveableType
                     new Assert\NotBlank(),
                 ]
             ])
-            ->add("location", TextType::class, [
+            ->add("location", EntityType::class, [
+                "class" => Rack::class,
                 "label" => "Location",
-                "required" => false,
+                "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
+                "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
+                "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
+                "query_builder" => function (EntityRepository $er) {
+                    return $er->createQueryBuilder("r")
+                        ->select("r")
+                        ->addSelect("b")
+                        ->leftJoin("r.boxes", "b")
+                        ->groupBy("r.ulid")
+                        ->addGroupBy("b.ulid")
+                        ;
+                },
+                'empty_data' => [],
+                'by_reference' => false,
+                "placeholder" => "Empty",
+                "required" => true,
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "false",
+                ],
             ])
         ;
 

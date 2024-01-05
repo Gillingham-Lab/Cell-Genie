@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Service\Doctrine\Generator;
 
 use App\Service\Doctrine\Type\Ulid;
+use App\Service\Factory\UlidFactory;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Id\AbstractIdGenerator;
-use Symfony\Component\Uid\Factory\UlidFactory;
 
 class UlidGenerator extends AbstractIdGenerator
 {

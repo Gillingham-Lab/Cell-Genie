@@ -15,8 +15,8 @@ use App\Service\Doctrine\Type\Ulid;
 
 class UlidFactory
 {
-    public function create(\DateTimeInterface $time = null): self
+    public function create(\DateTimeInterface $time = null): Ulid
     {
-        return new UlidFactory(null === $time ? null : Ulid::generate($time));
+        return new Ulid(null === $time ? null : Ulid::generate($time));
     }
 }

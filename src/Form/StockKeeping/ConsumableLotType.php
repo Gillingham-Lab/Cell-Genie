@@ -6,12 +6,14 @@ namespace App\Form\StockKeeping;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
+use App\Entity\Rack;
 use App\Form\LongNameType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
 use App\Form\VendorType;
 use App\Genie\Enums\Availability;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -53,9 +55,29 @@ class ConsumableLotType extends SaveableType
             ->add("pricePerPackage", NumberType::class, [
                 "label" => "Price per package",
             ])
-            ->add("location", TextType::class, [
+            ->add("location", EntityType::class, [
+                "class" => Rack::class,
                 "label" => "Location",
-                "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
+                "help" => "Location of this lot.",
+                "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
+                "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
+                "query_builder" => function (EntityRepository $er) {
+                    return $er->createQueryBuilder("r")
+                        ->select("r")
+                        ->addSelect("b")
+                        ->leftJoin("r.boxes", "b")
+                        ->groupBy("r.ulid")
+                        ->addGroupBy("b.ulid")
+                        ;
+                },
+                'empty_data' => [],
+                'by_reference' => false,
+                "placeholder" => "Empty",
+                "required" => true,
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "false",
+                ],
             ])
             ->add("boughtBy", UserEntityType::class, [
                 "label" => "Bought by",
