@@ -8,6 +8,7 @@ use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalMeasurement;
 use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunWell;
+use App\Service\Doctrine\Type\Ulid;
 
 class DataSet
 {
@@ -77,7 +78,7 @@ class DataSet
         if ($comments) {
             $table = [
                 "#Experiment: {$this->experiment->getName()}",
-                "#Experiment ID: {$this->experiment->getId()}",
+                "#Experiment ID: {$this->experiment->getId()->toBase58()}",
                 "#Experiment Owner: {$this->experiment->getOwner()}",
                 "#Created: {$this->experiment->getCreatedAt()->format('Y-m-d H:i:s')}",
                 "#Modified: {$this->experiment->getModifiedAt()->format('Y-m-d H:i:s')}",
@@ -92,7 +93,7 @@ class DataSet
 
         foreach ($this->experiment->getExperimentalRuns() as $experimentalRun) {
             $runs = $this->runToArray($experimentalRun, header: false, normalise: $normalise, comments: false, includeRunDate: true);
-            $runs = array_map(fn($x) => [$experimentalRun->getId(), $experimentalRun->getName(), ...$x], $runs);
+            $runs = array_map(fn($x) => [$experimentalRun->getId()->toBase58(), $experimentalRun->getName(), ...$x], $runs);
 
             $table = [...$table, ...$runs];
         }
@@ -114,7 +115,7 @@ class DataSet
         if ($comments) {
             $table = [
                 "#Experiment: {$this->experiment->getName()}",
-                "#Experiment ID: {$this->experiment->getId()}",
+                "#Experiment ID: {$this->experiment->getId()->toBase58()}",
                 "#Run name: {$experimentalRun->getName()}",
                 "#Run id: {$experimentalRun->getId()}",
                 "#Owner: {$experimentalRun->getOwner()}",
@@ -212,11 +213,23 @@ class DataSet
             }
 
             foreach (array_keys($this->generalConditions) as $generalConditionKey) {
-                $row[] = $experimentalRun->getConditionDatum($generalConditionKey) ?? "NaN";
+                $value = $experimentalRun->getConditionDatum($generalConditionKey) ?? "NaN";
+
+                if ($value instanceof Ulid) {
+                    $value = $value->toBase58();
+                }
+
+                $row[] = $value;
             }
 
             foreach (array_keys($this->conditions) as $conditionKey) {
-                $row[] = $well->getWellConditionDatum($conditionKey) ?? "NaN";
+                $value = $well->getWellConditionDatum($conditionKey) ?? "NaN";
+
+                if ($value instanceof Ulid) {
+                    $value = $value->toBase58();
+                }
+
+                $row[] = $value;
             }
 
             foreach (array_keys($this->measurements) as $measurementKey) {
@@ -227,7 +240,9 @@ class DataSet
                     $row[] = $value / $internalStandards[$wellId] / $externalStandards[$measurementKey];
                 } elseif (is_bool($value)) {
                     $row[] = $value ? "yes" : "no";
-                } else {
+                } elseif ($value instanceof Ulid) {
+                    $row[] = $value->toBase58();
+                }else {
                     $row[] = $value ?? "NaN";
                 }
             }
