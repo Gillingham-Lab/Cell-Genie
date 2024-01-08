@@ -78,8 +78,17 @@ class ApiController extends AbstractController
     ): Response {
         $response = new JsonResponse(null, Response::HTTP_OK);
 
-        $volumeDesired = floatval($request->query->get("volume", 1000.0));
-        $concentrationFactor = floatval($request->query->get("concentrationFactor", $recipe->getConcentrationFactor()));
+        if ($request->isMethod("get")) {
+            $volumeDesired = floatval($request->query->get("volume", 1000.0));
+            $concentrationFactor = floatval($request->query->get("concentrationFactor", $recipe->getConcentrationFactor()));
+        } else {
+            $content = json_decode($request->getContent(), true);
+
+            if ($content) {
+                $volumeDesired = floatval($content["volume"]) ?? 1000.0;
+                $concentrationFactor = floatval($content["concentrationFactor"]) ?? $recipe->getConcentrationFactor();
+            }
+        }
 
         $volumeQuantity = Volume::create($volumeDesired, "mL");
 
@@ -128,7 +137,7 @@ class ApiController extends AbstractController
             }
 
             $ingredients[] = [
-                "id" => $ingredient->getId(),
+                "id" => $ingredient->getId()->toRfc4122(),
                 "shortName" => $chemical->getShortName(),
                 "longName" => $chemical->getLongName(),
                 "concentration" => $concentration,
@@ -143,7 +152,7 @@ class ApiController extends AbstractController
         }
 
         $answer = [
-            "id" => $recipe->getId(),
+            "id" => $recipe->getId()->toRfc4122(),
             "shortName" => $recipe->getShortName(),
             "longName" => $recipe->getLongName(),
             "category" => $recipe->getCategory(),

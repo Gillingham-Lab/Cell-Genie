@@ -19,7 +19,10 @@
 
         <div class="row">
                 <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
+                    <div class="card mx-3 h-100" {{ stimulus_controller("recipe", {
+                        "id": recipe.id,
+                        "api": "../../api/public/recipe/",
+                    }) }}>
                         {% if recipe.pH %}
                             <div class="card-body border-bottom">
                                 Required pH: <strong>{{ recipe.pH }}</strong>
@@ -37,23 +40,25 @@
                                 <div class="row row-cols-2 row-cols-md-3">
                                     <div class="col">
                                         <label for="_genie_recipe_totalVolume" class="form-label">Volume (mL)</label>
-                                        <input id="_genie_recipe_totalVolume" type="number" value="1000" class="form-control">
+                                        <input id="_genie_recipe_totalVolume" type="number" value="1000" class="form-control" {{ stimulus_target("recipe", "totalVolume") }}>
                                     </div>
 
                                     <div class="col">
                                         <label for="_genie_recipe_targetConcentrationFactor" class="form-label">Concentration factor</label>
-                                        <input id="_genie_recipe_targetConcentrationFactor" type="number" value="{{ recipe.concentrationFactor }}" class="form-control">
+                                        <input id="_genie_recipe_targetConcentrationFactor" type="number" value="{{ recipe.concentrationFactor }}" class="form-control" {{ stimulus_target("recipe", "concentrationFactor") }}>
                                     </div>
 
                                     <div class="col">
                                         <label for="_genie_recipe_totalVolume_submit" class="form-label">&nbsp;</label>
-                                        <button id='_genie_recipe_totalVolume_submit' class="btn btn-primary form-control" onsubmit="">Recalculate</button>
+                                        <button id='_genie_recipe_totalVolume_submit' class="btn btn-primary form-control"
+                                                {{ stimulus_action("recipe", "recalculate", "click") }}
+                                        >Recalculate</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card-body py-lg-5 py-lg-3">
+                        <div class="card-body py-lg-5 py-lg-3 px-lg-5" {{ stimulus_target("recipe", "ingredientTable") }}>
                             <table class="table table-hover _genie_recipe">
                                 <thead>
                                     <tr>
@@ -84,37 +89,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block script_bottom %}
-    <script type="application/javascript">
-        let api_url = "../../api/public/recipe/{{ recipe.id }}"
-
-        function refresh_recipe() {
-            let targetConcentrationFactor = parseFloat($("#_genie_recipe_targetConcentrationFactor")[0].value)
-            let targetVolume = parseFloat($("#_genie_recipe_totalVolume")[0].value)
-
-            $.getJSON(api_url, {"volume": targetVolume, "concentrationFactor": targetConcentrationFactor}, function(data) {
-                data.ingredients.forEach(function (ingredient) {
-                    let row = $("#ingredient_" + ingredient.id);
-                    let mass_column = row.find("._genie_recipe_ingredient_amount");
-                    let volume_column = row.find("._genie_recipe_ingredient_amount_volume");
-
-                    console.log(ingredient)
-
-                    mass_column[0].innerHTML = ingredient.quantity_formatted;
-
-                    if (ingredient.volume) {
-                        volume_column[0].innerHTML = ingredient.volume_formatted;
-                    } else {
-                        volume_column[0].innerHTML = "-";
-                    }
-                });
-            });
-        }
-
-        let volumeSubmit = $("#_genie_recipe_totalVolume_submit");
-        volumeSubmit.click(refresh_recipe);
-        $(document).ready(refresh_recipe);
-    </script>
 {% endblock %}
