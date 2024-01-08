@@ -10,13 +10,14 @@ use App\Entity\Traits\Fields\LongNameTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Genie\Enums\Availability;
+use App\Repository\StockKeeping\ConsumableRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Loggable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ConsumableRepository::class)]
 #[Loggable]
 class Consumable implements PrivacyAwareInterface
 {

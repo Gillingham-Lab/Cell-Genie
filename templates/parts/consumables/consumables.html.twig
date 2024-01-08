@@ -1,6 +1,7 @@
 {% extends 'homepage.html.twig' %}
 {% import 'layout.html.twig' as layout %}
 {% import 'macros.html.twig' as macros %}
+{% import 'parts/consumables/consumables.helpers.html.twig' as consumable_helpers %}
 
 {% if currentLot %}
     {% set var_title = "Consumables :: Lot :: " ~ currentLot.lotIdentifier %}
@@ -21,7 +22,7 @@
 
             {# Toolbars #}
             {% if currentLot is not empty %}
-                {{ _self.consumable_lot_tools(currentLot, true) }}
+                {{ consumable_helpers.consumable_lot_tools(currentLot, true) }}
             {% elseif currentConsumable is not empty %}
                 {{ _self.consumable_tools(currentConsumable, true) }}
             {% elseif currentCategory is not empty %}
@@ -178,48 +179,7 @@
                                 {% if currentConsumable.lots|length > 0 %}
                                     <ul class="list-group">
                                         {% for lot in currentConsumable.lots|sort((a, b) => -(a.getSortValue() <=> b.getSortValue())) %}
-                                            {% set bg_color = "" %}
-                                            {% if lot.availability.value == "ordered" %}
-                                                {% set bg_color = "bg-warning-subtle"  %}
-                                            {% elseif lot.availability.value == "empty" %}
-                                                {% set bg_color = "bg-secondary-subtle"  %}
-                                            {% elseif lot.isPristine() %}
-                                                {% set bg_color = "" %}
-                                            {% endif %}
-
-                                            {% set active = "" %}
-                                            {% if lot is same as(currentLot) %}
-                                                {% set active = "active" %}
-                                            {% endif %}
-
-                                            <li class="list-group-item {{ bg_color }} {{ active }}" id="gin-consumable-lot-{{ lot.id }}">
-                                                <div>
-                                                    <div class="ms-2 mb-2">{{ _self.consumable_lot_tools(lot) }}</div>
-                                                </div>
-
-                                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                                    <div class="ms-2 me-auto">
-                                                        {# <div class="fw-bold"><a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_item_view", {"consumable": consumable.id}) }}">{{ consumable.longName }}</a></div> #}
-                                                        <div><strong>{{ lot.lotIdentifier }}</strong></div>
-                                                        <div>Location: {{ lot.location is empty ? "unknown" : lot.location.pathName }}</div>
-                                                    </div>
-                                                    <div class="text-end">
-                                                        {% if lot.availability.value == "available" %}
-                                                            <div>{{ lot.availability.value }}</div>
-                                                            <div class="text-muted">{{ lot.arrivedOn is empty ? "unknown" : lot.arrivedOn|date("D, d M Y") }}</div>
-                                                        {% elseif lot.availability.value == "ordered" or lot.availability.value == "in preparation" %}
-                                                            <div>{{ lot.availability.value }}</div>
-                                                            <div class="text-muted">{{ lot.boughtOn is empty ? "unknown" : lot.boughtOn|date("D, d M Y") }}</div>
-                                                        {% else %}
-                                                            <div>{{ lot.availability.value }}</div>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-
-                                                <div class="progress" role="progressbar" aria-label="Stock">
-                                                    <div class="progress-bar" style="width: {{ lot.getFullness()*100 }}%">{{ lot.getTotalAvailablePieces() }}/{{ lot.getTotalAmountOfPieces() }}</div>
-                                                </div>
-                                            </li>
+                                            {{ consumable_helpers.display_lot(lot, currentLot) }}
                                         {% endfor %}
                                     </ul>
                                 {% else %}
@@ -330,77 +290,6 @@
     {% endif %}
 {% endmacro %}
 
-{% macro consumable_lot_tools(lot, toolbar = false) %}
-    {% set isEmpty = lot.availability.value == "empty" %}
-
-    {% set tools = [] %}
-
-    {% set tools = [
-        {
-            "type": "consume",
-            "target": url("app_consumables_lot_consume", {"lot": lot.id}),
-            "tooltipText": "Consume 1" ~ (lot.consumable.consumePackage ? " package" : " piece"),
-            "disabled": not is_granted("edit", lot) or isEmpty,
-        },
-        {
-            "type": "view",
-            "target": url("app_consumables_lot_view", {"lot": lot.id}),
-            "tooltipText": "View lot",
-            "disabled": not is_granted("view", lot) or isEmpty,
-        },
-        {
-            "type": "edit",
-            "target": url("app_consumables_lot_edit", {"lot": lot.id}),
-            "tooltipText": "Edit lot",
-            "disabled": not is_granted("edit", lot) or (isEmpty and not is_granted("ROLE_ADMIN")),
-        }
-    ] %}
-
-    {% if lot.availability.value == "ordered" or lot.availability.value == "in preparation" %}
-        {% set tools = tools|merge([
-            {
-                "type": "arrive",
-                "target": url("app_consumables_lot_makeAvailable", {"lot": lot.id}),
-                "tooltipText": "Make available",
-                "disabled": not is_granted("edit", lot) or isEmpty,
-            },
-        ]) %}
-    {% else %}
-        {% set tools = tools|merge([
-            {
-                "type": "arrive",
-                "tooltipText": "Make available",
-                "disabled": true,
-            },
-        ]) %}
-    {% endif %}
-
-    {% set tools = tools|merge([
-        {
-            "type": "trash",
-            "target": url("app_consumables_item_edit", {"consumable": lot.id}),
-            "tooltipText": "Trash consumable",
-            "disabled": not is_granted("trash", lot) or isEmpty,
-        },
-    ]) %}
-
-    {% if toolbar %}
-        {# If toolbar, we also add the "go above" button #}
-
-        {% set tools = [{
-            "type": "up",
-            "target": url("app_consumables_item_view", {"consumable": lot.consumable.id}),
-            "tooltipText": "Go to consumable",
-            "disabled": not is_granted("view", lot.consumable),
-        }]|merge(tools) %}
-
-        {# Display toolbar #}
-        {{ layout.toolbox(tools) }}
-    {% else %}
-        {{ layout.toolbox_column(tools, "sm") }}
-    {% endif %}
-{% endmacro %}
-
 {% macro display_categories(groups, current, nesting=true) %}
     {% for group in groups|sort((a, b) => a.longName <=> b.longName) %}
         {% set groupId = "gin-consumable-category-" ~ group.id %}
@@ -418,15 +307,15 @@
 
                         {% if is_granted("edit", group) %}
                             <span href="me-2">
-                            {{ layout.toolbox_column([
-                                {
-                                    "type": "edit",
-                                    "tooltipText": "Edit category",
-                                    "display": "lg",
-                                    "target": url("app_consumables_category_edit", {"category": group.id }),
-                                },
-                            ], "sm") }}
-                        </span>
+                                {{ layout.toolbox_column([
+                                    {
+                                        "type": "edit",
+                                        "tooltipText": "Edit category",
+                                        "display": "lg",
+                                        "target": url("app_consumables_category_edit", {"category": group.id }),
+                                    },
+                                ], "sm") }}
+                            </span>
                         {% endif %}
 
                     <a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_category_view", {"category": group.id}) }}">

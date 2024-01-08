@@ -6,13 +6,14 @@ namespace App\Entity\DoctrineEntity\StockManagement;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\Availability;
+use App\Repository\StockKeeping\ConsumableLotRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Loggable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Loggable]
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ConsumableLotRepository::class)]
 class ConsumableLot
 {
     use IdTrait;

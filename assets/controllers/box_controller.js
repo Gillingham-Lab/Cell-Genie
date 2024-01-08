@@ -17,6 +17,7 @@ export default class extends Controller {
     initialize() {
         super.initialize();
 
+        this.boxMapTarget.innerHTML = "";
         this.svgContainer = null;
         this.permanentWell = null;
     }

@@ -11,6 +11,7 @@ use App\Form\Storage\RackType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\RackRepository;
+use App\Repository\StockKeeping\ConsumableLotRepository;
 use App\Repository\Substance\SubstanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,12 +22,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class StorageController extends AbstractController
 {
     #[Route("/storage", name: "app_storage")]
+    #[Route("/storage/location/{rack}", name: "app_storage_view_rack")]
     #[Route("/storage/{box}", name: "app_storage_view_box")]
     public function storageOverview(
         RackRepository $rackRepository,
         BoxRepository $boxRepository,
         SubstanceRepository $substanceRepository,
         CellAliquotRepository $cellAliquotRepository,
+        ConsumableLotRepository $consumableLotRepository,
+        Rack $rack = null,
         Box $box = null,
     ): Response {
         $racks = $rackRepository->findAllWithBoxes();
@@ -54,11 +58,18 @@ class StorageController extends AbstractController
             }
         }
 
+        if ($rack) {
+            // Add consumables
+            $consumablesInRack = $consumableLotRepository->getLotsByLocation($rack);
+        }
+
         return $this->render("parts/storage/storage.html.twig", [
             "racks" => $racks,
             "boxes" => $boxes,
             "box" => $box,
             "boxMap" => $boxMap,
+            "rack" => $rack,
+            "consumables" => $consumablesInRack ?? [],
         ]);
     }
 
