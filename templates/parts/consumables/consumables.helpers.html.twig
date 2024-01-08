@@ -93,7 +93,7 @@
     {% set tools = tools|merge([
         {
             "type": "trash",
-            "target": url("app_consumables_item_edit", {"consumable": lot.id}),
+            "target": url("app_consumables_lot_trash", {"lot": lot.id}),
             "tooltipText": "Trash consumable",
             "disabled": not is_granted("trash", lot) or isEmpty,
         },

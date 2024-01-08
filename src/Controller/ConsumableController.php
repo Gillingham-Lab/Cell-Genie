@@ -221,6 +221,33 @@ class ConsumableController extends AbstractController
         return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $lot->getConsumable()->getId()]);
     }
 
+    #[Route("/consumables/trashLot/{lot}", name: "app_consumables_lot_trash")]
+    public function quickLotTrash(
+        EntityManagerInterface $entityManager,
+        ConsumableLot $lot
+    ): Response {
+        if ($lot->getAvailability() == Availability::Empty) {
+            $this->addFlash("error", "Cannot make lot {$lot->getLotIdentifier()} available as it is already empty");
+        } else {
+            try {
+                $lot->setAvailability(Availability::Empty);
+
+                if ($lot->getConsumable()->isConsumePackage()) {
+                    $lot->setUnitsConsumed($lot->getNumberOfUnits());
+                } else {
+                    $lot->setPiecesConsumed($lot->getTotalAmountOfPieces());
+                }
+
+                $entityManager->flush();
+                $this->addFlash("info", "Lot {$lot->getLotIdentifier()} has been trashed.");
+            } catch (Exception $e) {
+                $this->addFlash("error", $e->getMessage());
+            }
+        }
+
+        return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $lot->getConsumable()->getId()]);
+    }
+
     #[Route("/consumables/new", name: "app_consumables_category_new")]
     #[Route("/consumables/edit/{category}", name: "app_consumables_category_edit")]
     public function addOrEditConsumableCategory(
