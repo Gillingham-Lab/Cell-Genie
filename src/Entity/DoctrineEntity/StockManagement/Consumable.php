@@ -216,7 +216,7 @@ class Consumable implements PrivacyAwareInterface
         if ($this->consumePackage) {
             $method = fn (ConsumableLot $lot): int => $lot->getNumberOfUnits() - $lot->getUnitsConsumed();
         } else {
-            $method = fn (ConsumableLot $lot): int => $lot->getTotalAmountOfPieces();
+            $method = fn (ConsumableLot $lot): int => $lot->getTotalAvailablePieces();
         }
 
         $stock = 0;
