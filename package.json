@@ -36,7 +36,7 @@
         "jquery": "^3.7.0",
         "jquery.fancytable": "^1.0.34",
         "papaparse": "^5.4.1",
-        "smiles-drawer": "^2.0.0",
+        "smiles-drawer": "2.0.0",
         "tom-select": "^2.2.2"
     }
 }
