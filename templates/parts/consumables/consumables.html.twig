@@ -24,7 +24,7 @@
             {% if currentLot is not empty %}
                 {{ consumable_helpers.consumable_lot_tools(currentLot, true) }}
             {% elseif currentConsumable is not empty %}
-                {{ _self.consumable_tools(currentConsumable, true) }}
+                {{ consumable_helpers.consumable_tools(currentConsumable, true) }}
             {% elseif currentCategory is not empty %}
             {% endif %}
 
@@ -80,60 +80,23 @@
                                 <ul class="list-group">
                                     {% set consumables = (currentCategory.consumables)|natsort %}
                                     {% for consumable in consumables %}
-                                        <li class="list-group-item
-                                            {% if currentConsumable is same as(consumable) %}active{% endif %}
-                                        ">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div class="d-inline-block">
-                                                    <div>{{ _self.consumable_tools(consumable) }}</div>
-                                                </div>
-                                                <div class="ms-2 me-auto">
-                                                    <div class="fw-bold"><a class="text-decoration-none text-black text-reset" href="{{ path("app_consumables_item_view", {"consumable": consumable.id}) }}">{{ consumable.longName }}</a></div>
-                                                    {{ consumable.productNumber }}
-                                                </div>
-                                            </div>
-
-                                            {# Stock meter for a consumable #}
-                                            {% set consumableStock = consumable.currentStock / consumable.idealStock %}
-                                            {% set orderedStock = consumable.orderedStock / consumable.idealStock %}
-                                            {% set barColor = "bg-success" %}
-
-                                            {% if consumable.currentStock < consumable.criticalLimit %}
-                                                <span class="text-danger"><strong>Critical:</strong> Orders must be placed</span>
-                                                {% set barColor = "bg-danger" %}
-                                            {% elseif consumable.currentStock < consumable.orderLimit %}
-                                                <span class="text-warning"><strong>Warning:</strong> Orders should be placed</span>
-                                                {% set barColor = "bg-warning" %}
-                                            {% endif %}
-
-                                            <div class="progress border border-1 border-black bg-white" role="progressbar" aria-label="Stock">
-                                                <div class="progress-bar {{ barColor }}" style="width: {{ consumableStock*100 }}%"
-                                                     role="progressbar"
-                                                     aria-valuemin="0" aria-valuemax="{{ consumable.idealStock }}" aria-valuenow="{{ consumable.currentStock }}"
-                                                >
-                                                    {{ consumable.currentStock }} / {{ consumable.idealStock }}
-                                                </div>
-
-                                                {% if consumableStock < 1 %}
-                                                    <div class="progress-bar progress-bar-striped bg-primary-subtle text-black" style="width: {{ orderedStock*100 }}%"
-                                                        aria-valuemin="0" aria-valuemax="{{ consumable.idealStock }}" aria-valuenow="{{ consumable.orderedStock }}"
-                                                     >
-                                                        {{ consumable.orderedStock }}
-                                                    </div>
-                                                {% else %}
-                                                    <div class="progress-bar progress-bar-striped bg-primary-subtle text-black" style="width: 5%"
-                                                         aria-valuemin="0" aria-valuemax="{{ consumable.idealStock }}" aria-valuenow="{{ consumable.orderedStock }}"
-                                                    >
-                                                        {{ consumable.orderedStock }}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div>
-
-                                            </div>
-                                        </li>
+                                        {{ consumable_helpers.display_consumable(consumable, currentConsumable) }}
                                     {% endfor %}
                                 </ul>
+
+                                {% for childCategory in currentCategory.children %}
+                                    {% if childCategory.consumables|length > 0 %}
+                                        <div class="ms-lg-3 ms-lg-5 border-top border-bottom border-black my-3 py-3">
+                                            <h4>{{ childCategory.longName }}</h4>
+                                            <ul class="list-group">
+                                                {% set consumables = (childCategory.consumables)|natsort %}
+                                                {% for consumable in consumables %}
+                                                    {{ consumable_helpers.display_consumable(consumable, currentConsumable) }}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                             {{ layout.card_body_collapse_end() }}
                         </div>
@@ -262,33 +225,6 @@
         </div>
     </div>
 {% endblock %}
-
-{% macro consumable_tools(consumable, toolbar = false) %}
-    {% set tools = [
-        {
-            "type": "edit",
-            "target": url("app_consumables_item_edit", {"consumable": consumable.id}),
-            "tooltipText": "Edit consumable",
-            "disabled": not is_granted("edit", consumable)
-        }
-    ] %}
-
-    {% if toolbar %}
-        {# If toolbar, we also add the "go above" button #}
-
-        {% set tools = [{
-            "type": "up",
-            "target": url("app_consumables_category_view", {"category": consumable.category.id}),
-            "tooltipText": "Go to category",
-            "disabled": not is_granted("view", consumable.category),
-        }]|merge(tools) %}
-
-        {# Display toolbar #}
-        {{ layout.toolbox(tools) }}
-    {% else %}
-        {{ layout.toolbox_column(tools, "sm") }}
-    {% endif %}
-{% endmacro %}
 
 {% macro display_categories(groups, current, nesting=true) %}
     {% for group in groups|natsort %}
