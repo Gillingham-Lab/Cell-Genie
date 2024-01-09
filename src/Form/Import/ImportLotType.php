@@ -19,7 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ImportLotType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->
             add("number", TextType::class, [

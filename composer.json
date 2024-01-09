@@ -21,7 +21,6 @@
         "friendsofsymfony/ckeditor-bundle": "^2.4",
         "gedmo/doctrine-extensions": "^3.7",
         "google/apiclient": "^2.12.1",
-        "sensio/framework-extra-bundle": "^6.0",
         "symfony/console": "*",
         "symfony/debug-bundle": "^6.1",
         "symfony/dotenv": "*",

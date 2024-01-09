@@ -20,3 +20,12 @@ framework:
     #fragments: true
     php_errors:
         log: true
+
+    handle_all_throwables: true
+
+    uid:
+        default_uuid_version: 7
+        time_based_uuid_version: 7
+
+    annotations:
+        enabled: true

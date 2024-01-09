@@ -19,7 +19,14 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, ConsumableCategory::class);
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null)
+    /**
+     * @param $id
+     * @param $lockMode
+     * @param $lockVersion
+     * @return ?ConsumableCategory
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function find($id, $lockMode = null, $lockVersion = null): ?object
     {
         return $this->createQueryBuilder("cc")
             ->addSelect("c")
