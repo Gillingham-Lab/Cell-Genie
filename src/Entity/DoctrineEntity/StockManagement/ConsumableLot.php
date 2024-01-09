@@ -50,6 +50,11 @@ class ConsumableLot
     #[Assert\NotBlank]
     private ?User $boughtBy = null;
 
+    public function __toString(): string
+    {
+        return $this->getLotIdentifier();
+    }
+
     public function getLotIdentifier(
     ): string {
         $lotDate = $this->boughtOn?->format("ymd");
