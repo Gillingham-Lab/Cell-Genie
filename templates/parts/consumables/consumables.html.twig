@@ -78,7 +78,7 @@
                                 </div>
 
                                 <ul class="list-group">
-                                    {% set consumables = (currentCategory.consumables)|sort((a, b) => a.productNumber <=> b.productNumber) %}
+                                    {% set consumables = (currentCategory.consumables)|natsort %}
                                     {% for consumable in consumables %}
                                         <li class="list-group-item
                                             {% if currentConsumable is same as(consumable) %}active{% endif %}
@@ -178,7 +178,7 @@
                             <div class="card-body px-lg-5 flex-grow-1">
                                 {% if currentConsumable.lots|length > 0 %}
                                     <ul class="list-group">
-                                        {% for lot in currentConsumable.lots|sort((a, b) => -(a.getSortValue() <=> b.getSortValue())) %}
+                                        {% for lot in currentConsumable.lots|natsort %}
                                             {{ consumable_helpers.display_lot(lot, currentLot) }}
                                         {% endfor %}
                                     </ul>
@@ -291,7 +291,7 @@
 {% endmacro %}
 
 {% macro display_categories(groups, current, nesting=true) %}
-    {% for group in groups|sort((a, b) => a.longName <=> b.longName) %}
+    {% for group in groups|natsort %}
         {% set groupId = "gin-consumable-category-" ~ group.id %}
 
         <div class="list-group-item {% if current is same as(group) %}active{% endif %}">
