@@ -178,7 +178,7 @@
                             <div class="card-body px-lg-5 flex-grow-1">
                                 {% if currentConsumable.lots|length > 0 %}
                                     <ul class="list-group">
-                                        {% for lot in currentConsumable.lots|natsort %}
+                                        {% for lot in currentConsumable.lots|sort((a, b) => (a.sortValue == b.sortValue ? a.lotIdentifier <=> b.lotIdentifier : b.sortValue <=> a.sortValue)) %}
                                             {{ consumable_helpers.display_lot(lot, currentLot) }}
                                         {% endfor %}
                                     </ul>
