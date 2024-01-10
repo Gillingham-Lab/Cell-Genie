@@ -43,13 +43,9 @@ use App\Service\GeneBankImporter;
 use Doctrine\DBAL\Exception\ServerException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ServiceLocator;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -353,11 +349,11 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/antibodies/view/id/{antibodyId}", name: "app_antibody_view")]
-    #[ParamConverter("antibodyId", options: ["mapping" => ["antibodyId"  => "ulid"]])]
     #[Route("/antibodies/view/{antibodyNr}", name: "app_antibody_view_number")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function viewAntibody(
         AntibodyRepository $antibodyRepository,
+        #[MapEntity(mapping: ["antibodyId"  => "ulid"])]
         Antibody $antibodyId = null,
         string $antibodyNr = null
     ): Response {
@@ -440,8 +436,8 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/compounds/view/{compoundId}", name: "app_compound_view")]
-    #[ParamConverter("chemical", options: ["mapping" => ["compoundId" => "ulid"]])]
     public function viewCompound(
+        #[MapEntity(mapping: ["compoundId" => "ulid"])]
         Chemical $chemical
     ): Response {
         $this->denyAccessUnlessGranted("view", $chemical);
@@ -463,8 +459,8 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/oligos/view/{oligoId}", name: "app_oligo_view")]
-    #[ParamConverter("oligo", options: ["mapping" => ["oligoId"  => "ulid"]])]
     public function viewOligo(
+        #[MapEntity(mapping: ["oligoId" => "ulid"])]
         Oligo $oligo,
     ): Response {
         $this->denyAccessUnlessGranted("view", $oligo);
@@ -488,9 +484,9 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/protein/view/{proteinId}", name: "app_protein_view")]
-    #[ParamConverter("protein", options: ["mapping" => ["proteinId"  => "ulid"]])]
     public function viewProtein(
         CellRepository $cellRepository,
+        #[MapEntity(mapping: ["proteinId" => "ulid"])]
         Protein $protein
     ): Response {
         $this->denyAccessUnlessGranted("view", $protein);
@@ -515,8 +511,8 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/plasmid/view/{plasmidId}", name: "app_plasmid_view")]
-    #[ParamConverter("plasmid", options: ["mapping" => ["plasmidId"  => "ulid"]])]
     public function viewPlasmid(
+        #[MapEntity(mapping: ["plasmidId" => "ulid"])]
         Plasmid $plasmid
     ): Response {
         $this->denyAccessUnlessGranted("view", $plasmid);

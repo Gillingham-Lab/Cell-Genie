@@ -28,7 +28,7 @@ class CellRepository extends ServiceEntityRepository
         parent::__construct($registry, Cell::class);
     }
 
-    public function findCellByIdOrNumber(string $numberOrId): Cell
+    public function findCellByIdOrNumber(string $numberOrId): ?Cell
     {
         $qb = $this->createQueryBuilder("c");
 

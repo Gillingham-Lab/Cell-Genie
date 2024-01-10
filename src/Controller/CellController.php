@@ -39,7 +39,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -323,12 +323,12 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/edit/{cell}", name: "app_cell_edit")]
-    #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewOrEditCell(
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
+        #[MapEntity(expr: "repository.findCellByIdOrNumber(cell)")]
         Cell $cell = null,
     ): Response {
         if (!$cell and $request->get("_route") === "app_cell_add") {
@@ -391,29 +391,37 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/addAliquot/{cell}", name: "app_cell_aliquot_add")]
-    #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewCellAliquot(
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        Cell $cell,
+        #[MapEntity(expr: 'repository.findCellByIdOrNumber(cell)')]
+        Cell $cell = null,
     ): Response {
+        if (!$cell) {
+            throw $this->createNotFoundException("The request cell was not found");
+        }
+
         $this->denyAccessUnlessGranted(CellVoter::ADD_ALIQUOT, $cell);
 
         return $this->addNewOrEditCellAliquot($request, $entityManager, $fileUploader, $cell, null);
     }
 
     #[Route("/cells/editAliquot/{cell}/{cellAliquot}", name: "app_cell_aliquot_edit")]
-    #[ParamConverter("cell", options: ["expr" => "repository.findCellByIdOrNumber(cell)"], isOptional: true)]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewOrEditCellAliquot(
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
+        #[MapEntity(expr: 'repository.findCellByIdOrNumber(cell)')]
         Cell $cell,
         CellAliquot $cellAliquot = null,
     ): Response {
+        if (!$cell) {
+            throw $this->createNotFoundException("The request cell was not found");
+        }
+
         if (!$cellAliquot and $request->get("_route") === "app_cell_aliquot_add") {
             $cellAliquot = new CellAliquot();
             $cellAliquot->setCell($cell);
@@ -480,11 +488,12 @@ class CellController extends AbstractController
 
 
     #[Route("/cells/consume/{aliquoteId}", name: "app_cell_consume_aliquote")]
-    #[ParamConverter("aliquot", options: ["mapping" => ["aliquoteId"  => "id"]])]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     // #ToDo: Change this so that a form to create the cell culture is shown instead of silently adding a culture.
-    public function consumeAliquot(CellAliquot $aliquot): Response
-    {
+    public function consumeAliquot(
+        #[MapEntity(mapping: ["aliquoteId"  => "id"])]
+        CellAliquot $aliquot,
+    ): Response {
         $this->denyAccessUnlessGranted("consume", $aliquot);
 
         if ($aliquot->getVials() <= 0) {
