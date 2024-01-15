@@ -20,6 +20,12 @@ class QuickOrderType extends SaveableType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add("lotIdentifier", TextType::class, [
+                "label" => "Lot#",
+                "required" => false,
+                "constraints" => [
+                ],
+            ])
             ->add("times", IntegerType::class, [
                 "label" => "# times",
                 "required" => true,

@@ -53,7 +53,7 @@ class Consumable implements PrivacyAwareInterface
     private int $criticalLimit = 0;
 
     #[ORM\Column]
-    private ?string $expectedDeliveryTime;
+    private ?string $expectedDeliveryTime = "2 weeks";
 
     #[ORM\OneToMany(mappedBy: "consumable", targetEntity: ConsumableLot::class, cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
     #[ORM\OrderBy(["boughtOn" => "ASC"])]

@@ -15,7 +15,7 @@
 
     <li class="list-group-item {{ bg_color }} {{ active }}" id="gin-consumable-lot-{{ lot.id }}">
         <div>
-            <div class="ms-2 mb-2">{{ _self.consumable_lot_tools(lot) }}</div>
+            <div class="ms-2 me-auto">{{ _self.consumable_lot_tools(lot) }} <strong class="ms-3">{{ lot.consumable.longName }}</strong></div>
         </div>
 
         <div class="d-flex justify-content-between align-items-start mb-3">

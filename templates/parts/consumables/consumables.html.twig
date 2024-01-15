@@ -166,7 +166,7 @@
                                     <div class="form-error">
                                         {{ form_errors(quickOrderForm) }}
                                     </div>
-                                    <div class="row row-cols-sm-2 row-cols-md-4">
+                                    <div class="row row-cols-sm-2 row-cols-lg-3">
                                         {% for field in quickOrderForm|filter(e => e.vars.name != "_token") %}
                                             <div class="col">
                                                 {% if field.vars.label %}

@@ -50,7 +50,7 @@ class ConsumableController extends AbstractController
             "times" => 1,
             "numberOfUnits" => $consumable->getNumberOfUnits(),
             "unitSize" => $consumable->getUnitSize(),
-            "price" => 0,
+            "price" => $consumable->getPricePerPackage(),
             "status" => Availability::Ordered,
             "location" => $consumable->getLocation(),
         ];
@@ -132,6 +132,13 @@ class ConsumableController extends AbstractController
 
             if ($data["location"]) {
                 $lot->setLocation($data["location"]);
+            }
+
+            $lotIdentifier = $data["lotIdentifier"] ?? date("ymd");
+            if ($data["times"] > 1) {
+                $lot->setLotIdentifier($data["lotIdentifier"] . ".{$lotCount}");
+            } else {
+                $lot->setLotIdentifier($data["lotIdentifier"]);
             }
 
             $consumable->addLot($lot);

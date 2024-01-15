@@ -8,6 +8,7 @@ use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\Availability;
 use App\Repository\StockKeeping\ConsumableLotRepository;
 use DateTimeInterface;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Loggable;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,6 +19,14 @@ class ConsumableLot
 {
     use IdTrait;
     use ConsumableCommons;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5)]
+    private ?string $lotIdentifier = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $lotNumber = null;
 
     #[ORM\ManyToOne(targetEntity: Consumable::class, inversedBy: "lots")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
@@ -57,19 +66,30 @@ class ConsumableLot
 
     public function getLotIdentifier(
     ): string {
-        $lotDate = $this->boughtOn?->format("ymd");
+        if ($this->lotIdentifier === null) {
+            $lotDate = $this->boughtOn?->format("ymd");
 
-        if ($this->getId()) {
-            $idFragment = substr($this->getId()->toBase32(), -4);
-        } else {
-            $idFragment = "YYMMDD-????";
-        }
+            if ($this->getId()) {
+                $idFragment = substr($this->getId()->toBase32(), -4);
+            } else {
+                $idFragment = "YYMMDD-????";
+            }
 
-        if ($lotDate) {
-            return "{$lotDate}-{$idFragment}";
+            if ($lotDate) {
+                return "{$lotDate}-{$idFragment}";
+            } else {
+                return "{$idFragment}";
+            }
         } else {
-            return "{$idFragment}";
+            return $this->lotIdentifier;
         }
+    }
+
+    public function setLotIdentifier(
+        string $lotIdentifier
+    ): self {
+        $this->lotIdentifier = $lotIdentifier;
+        return $this;
     }
 
     public function getConsumable(): Consumable
@@ -213,5 +233,16 @@ class ConsumableLot
         } else {
             return $fullness;
         }
+    }
+
+    public function getLotNumber(): ?string
+    {
+        return $this->lotNumber;
+    }
+
+    public function setLotNumber(?string $lotNumber): self
+    {
+        $this->lotNumber = $lotNumber;
+        return $this;
     }
 }

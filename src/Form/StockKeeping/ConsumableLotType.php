@@ -35,9 +35,12 @@ class ConsumableLotType extends SaveableType
             "label" => "General information",
         ])
             ->add("lotIdentifier", TextType::class, [
-                "disabled" => true,
                 "required" => false,
-                "help" => "An automatically generated identifier for the lot. Use this to differentiate multiple packages.",
+                "help" => "An internal identifier for the lot. Use this to differentiate multiple packages.",
+            ])
+            ->add("lotNumber", TextType::class, [
+                "required" => false,
+                "help" => "A vendor given identifier for the lot. Is not necessarily unique per package.",
             ])
             ->add("consumable", EntityType::class, [
                 "disabled" => true,
