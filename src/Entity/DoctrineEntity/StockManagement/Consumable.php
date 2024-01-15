@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\StockManagement;
 
 use App\Entity\Interface\PrivacyAwareInterface;
+use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Fields\LongNameTrait;
@@ -27,6 +28,7 @@ class Consumable implements PrivacyAwareInterface
     use VendorTrait;
     use ConsumableCommons;
     use CommentTrait;
+    use HasAttachmentsTrait;
 
     #[ORM\ManyToOne(targetEntity: ConsumableCategory::class, inversedBy: "consumables")]
     #[ORM\JoinColumn(nullable: false)]

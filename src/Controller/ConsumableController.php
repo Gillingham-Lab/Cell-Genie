@@ -14,6 +14,7 @@ use App\Form\StockKeeping\QuickOrderType;
 use App\Genie\Enums\Availability;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\StockKeeping\ConsumableCategoryRepository;
+use App\Service\FileUploader;
 use DateTime;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -309,6 +310,7 @@ class ConsumableController extends AbstractController
         #[CurrentUser]
         User $user,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         ConsumableCategory $category = null,
         Consumable $consumable = null,
     ): Response {
@@ -342,6 +344,8 @@ class ConsumableController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            $fileUploader->upload($form);
+            $fileUploader->updateFileSequence($consumable);
             $entityManager->persist($consumable);
 
             try {

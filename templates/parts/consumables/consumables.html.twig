@@ -2,6 +2,7 @@
 {% import 'layout.html.twig' as layout %}
 {% import 'macros.html.twig' as macros %}
 {% import 'parts/consumables/consumables.helpers.html.twig' as consumable_helpers %}
+{% from 'utility/attachments.html.twig' import attachments %}
 
 {% if currentLot %}
     {% set var_title = "Consumables :: Lot :: " ~ currentLot.lotIdentifier %}
@@ -187,6 +188,9 @@
                             </div>
                         </div>
                     {% endif %}
+
+                    {# Attachments #}
+                    {{ attachments(currentConsumable.attachments) }}
 
                     {% if currentLot %}
                         <div class="col p-0 m-0 mb-3">

@@ -6,6 +6,7 @@ namespace App\Form\StockKeeping;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\Rack;
+use App\Form\Collection\AttachmentCollectionType;
 use App\Form\LongNameType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
@@ -121,6 +122,15 @@ class ConsumableType extends SaveableType
                 ->add("expectedDeliveryTime", TextType::class, [
                     "label" => "Expected delivery time",
                     "help" => "An approximate time until delivery usually arrives.",
+                ])
+            )
+            ->add(
+                $builder->create("_attachments", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Attachments",
+                ])
+                ->add("attachments", AttachmentCollectionType::class, [
+                    "label" => "Attachments",
                 ])
             )
         ;
