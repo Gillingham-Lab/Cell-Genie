@@ -65,6 +65,7 @@ class Consumable implements PrivacyAwareInterface
     public function __construct()
     {
         $this->lots = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
     }
 
     public function __toString(): string
