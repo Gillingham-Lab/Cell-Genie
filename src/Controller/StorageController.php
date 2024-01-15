@@ -5,9 +5,11 @@ namespace App\Controller;
 
 use App\Entity\Box;
 use App\Entity\BoxMap;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Rack;
 use App\Form\Storage\BoxType;
 use App\Form\Storage\RackType;
+use App\Genie\Enums\PrivacyLevel;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\RackRepository;
@@ -18,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class StorageController extends AbstractController
 {
@@ -76,9 +79,16 @@ class StorageController extends AbstractController
     #[Route("/storage/box/add", name: "app_storage_add_box")]
     public function addBox(
         Request $request,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
     ) {
-        return $this->addStorage($request, $entityManager, null, new Box());
+        $newBox = new Box();
+        $newBox->setOwner($user);
+        $newBox->setGroup($user->getGroup());
+        $newBox->setPrivacyLevel(PrivacyLevel::Group);
+
+        return $this->addStorage($request, $entityManager, null, $newBox);
     }
 
     #[Route("/storage/box/edit/{box}", name: "app_storage_edit_box")]
@@ -93,9 +103,16 @@ class StorageController extends AbstractController
     #[Route("/storage/rack/add", name: "app_storage_add_rack", defaults: ["box" => null, "rack" => null])]
     public function addRack(
         Request $request,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
     ) {
-        return $this->addStorage($request, $entityManager, new Rack(), null);
+        $newBox = new Rack();
+        $newBox->setOwner($user);
+        $newBox->setGroup($user->getGroup());
+        $newBox->setPrivacyLevel(PrivacyLevel::Group);
+
+        return $this->addStorage($request, $entityManager, $newBox, null);
     }
 
     #[Route("/storage/rack/edit/{rack}", name: "app_storage_edit_rack", defaults: ["box" => null, "rack" => null])]
