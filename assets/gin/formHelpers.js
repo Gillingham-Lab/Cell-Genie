@@ -11,13 +11,25 @@ const formHelpers = (e = null) => {
     }
 
     // Bubble up error indicators
-    let accordions = target.querySelectorAll("div.accordion-item");
-    accordions.forEach((elm) => {
-        let elm_search = elm.querySelectorAll(".is-invalid");
+    let accordions = target.querySelectorAll(".accordion-item, .nav-tabs");
 
-        if (elm_search.length > 0) {
-            elm.classList.add("border-warning");
-        }
+    accordions.forEach((elm) => {
+        let nav_links = elm.querySelectorAll(".nav-link");
+
+        nav_links.forEach(navLink => {
+            let tab_id = navLink.getAttribute("aria-controls");
+            let tab_elm = document.getElementById(tab_id);
+
+            let error_elements = [].slice.call(tab_elm.querySelectorAll(".is-invalid"));
+
+            if (error_elements.length > 0) {
+                navLink.classList.add("border-danger");
+                navLink.classList.add("is-invalid");
+            } else {
+                navLink.classList.remove("border-danger");
+                navLink.classList.remove("is-invalid");
+            }
+        });
     });
 
     // Fancy
@@ -48,9 +60,10 @@ const formHelpers = (e = null) => {
     });
 }
 
-document.addEventListener("turbo:load", (e => formHelpers()));
+//
 document.addEventListener("turbo:frame-load", (e => formHelpers(e)));
-
+document.addEventListener("turbo:load", (e => formHelpers()));
+document.addEventListener("turbo:render", (e => formHelpers()));
 
 /* Original script
 <script type="application/javascript" defer>

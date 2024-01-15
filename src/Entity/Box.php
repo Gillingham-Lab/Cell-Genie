@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Fields\NewIdTrait;
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\BoxRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -11,9 +13,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BoxRepository::class)]
 #[Gedmo\Loggable]
-class Box
+class Box implements PrivacyAwareInterface
 {
     use NewIdTrait;
+    use PrivacyAwareTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(

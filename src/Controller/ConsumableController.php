@@ -19,10 +19,10 @@ use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class ConsumableController extends AbstractController
 {
@@ -38,14 +38,13 @@ class ConsumableController extends AbstractController
     #[Route("/consumables/item/{consumable}", name: "app_consumables_item_view")]
     public function consumable(
         Request $request,
-        Security $security,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
         ConsumableCategoryRepository $categoryRepository,
         Consumable $consumable,
     ): Response {
         $category = $consumable->getCategory();
-        $user = $security->getUser();
-        assert($user instanceof User);
 
         $data = [
             "times" => 1,
@@ -85,17 +84,14 @@ class ConsumableController extends AbstractController
     #[Route("/consumables/lot/{lot}", name: "app_consumables_lot_view")]
     public function consumableLot(
         Request $request,
-        Security $security,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
         ConsumableCategoryRepository $categoryRepository,
         ConsumableLot $lot,
     ): Response {
         $consumable = $lot->getConsumable();
         $category = $consumable->getCategory();
-        $user = $security->getUser();
-        assert($user instanceof User);
-
-
 
         return $this->consumableHelper($categoryRepository, $category, $consumable, $lot, options: [
         ]);
@@ -252,13 +248,12 @@ class ConsumableController extends AbstractController
     #[Route("/consumables/edit/{category}", name: "app_consumables_category_edit")]
     public function addOrEditConsumableCategory(
         Request $request,
-        Security $security,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
         ?ConsumableCategory $category = null,
     ): Response {
         $route = $request->attributes->get("_route");
-        $user = $security->getUser();
-        assert($user instanceof User);
 
         if ($route === "app_consumables_category_new") {
             $this->denyAccessUnlessGranted("new", "ConsumableCategory");
@@ -304,7 +299,8 @@ class ConsumableController extends AbstractController
     #[Route("/consumables/editItem/{consumable}", name: "app_consumables_item_edit")]
     public function addOrEditConsumable(
         Request $request,
-        Security $security,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
         ConsumableCategory $category = null,
         Consumable $consumable = null,
@@ -314,8 +310,6 @@ class ConsumableController extends AbstractController
         }
 
         $route = $request->attributes->get("_route");
-        $user = $security->getUser();
-        assert($user instanceof User);
 
         if ($route === "app_consumables_item_add_to") {
             $this->denyAccessUnlessGranted("add_to", $category);
@@ -368,7 +362,8 @@ class ConsumableController extends AbstractController
     #[Route("/consumables/editLot/{lot}", name: "app_consumables_lot_edit")]
     public function addOrEditConsumableLot(
         Request $request,
-        Security $security,
+        #[CurrentUser]
+        User $user,
         EntityManagerInterface $entityManager,
         Consumable $consumable = null,
         ConsumableLot $lot = null,
@@ -378,15 +373,13 @@ class ConsumableController extends AbstractController
         }
 
         $route = $request->attributes->get("_route");
-        $user = $security->getUser();
-        assert($user instanceof User);
 
         if ($route === "app_consumables_item_add_lot") {
             $this->denyAccessUnlessGranted("add_lot", $consumable);
             $newEntity = true;
             $title = "Consumable :: {$consumable->getLongName()} :: Add Lot";
             $lot = $consumable->createLot()
-                ->setBoughtBy($security->getUser())
+                ->setBoughtBy($user)
                 ->setBoughtOn(new DateTime("now"));
         } else {
             $newEntity = false;

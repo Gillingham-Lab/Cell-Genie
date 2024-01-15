@@ -17,11 +17,11 @@ class Comparator implements \Doctrine\Migrations\Version\Comparator
         $version_a = explode("\\", (string)$a);
         $version_b = explode("\\", (string)$b);
 
-        $mainGroupA = $version_a[0] === "DoctrineMigrations2023" ? 1 : 0;
-        $mainGroupB = $version_b[0] === "DoctrineMigrations2023" ? 1 : 0;
+        $version_year_a = intval(substr($version_a[0], -4, 4));
+        $version_year_b = intval(substr($version_b[0], -4, 4));
 
-        if ($mainGroupA !== $mainGroupB) {
-            return $mainGroupA <=> $mainGroupB;
+        if ($version_year_a !== $version_year_b) {
+            return $version_year_a <=> $version_year_b;
         } else {
             return $version_a[1] <=> $version_b[1];
         }

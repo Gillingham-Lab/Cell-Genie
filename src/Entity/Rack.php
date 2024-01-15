@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Fields\NewIdTrait;
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\RackRepository;
 use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,9 +17,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: RackRepository::class)]
 #[Gedmo\Loggable]
 #[NotLooped("parent", "children")]
-class Rack
+class Rack implements PrivacyAwareInterface
 {
     use NewIdTrait;
+    use PrivacyAwareTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(min: 5, max: 255)]

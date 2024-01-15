@@ -5,8 +5,10 @@ namespace App\Form\Storage;
 
 use App\Entity\Rack;
 use App\Form\SaveableType;
+use App\Form\User\PrivacyAwareType;
 use App\Repository\RackRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,27 +47,37 @@ class RackType extends SaveableType
         };
 
         $builder
-            ->add("name", TextType::class, [
-                "label" => "Name of the location",
-                "help" => "5-255 characters; used to identify the location. No parent names.",
-                "required" => true,
-            ])
-            ->add("maxBoxes", IntegerType::class, [
-                "label" => "Box capacity",
-                "help" => "Maximum amount of boxes within this location, with 0 = infinite. Interesting for freezer racks, for example.",
-                "required" => false,
-            ])
-            ->add("parent", ChoiceType::class, [
-                "label" => "Parent location",
-                "choices" => $parentChoices(),
-                "group_by" => function(Rack $rack) { return $rack->getParent()?->getPathName(); },
-                "placeholder" => "Empty",
-                "required" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
-            ])
+            ->add(
+                $builder->create("_general", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Location data",
+                ])
+                ->add("name", TextType::class, [
+                    "label" => "Name of the location",
+                    "help" => "5-255 characters; used to identify the location. No parent names.",
+                    "required" => true,
+                ])
+                ->add("maxBoxes", IntegerType::class, [
+                    "label" => "Box capacity",
+                    "help" => "Maximum amount of boxes within this location, with 0 = infinite. Interesting for freezer racks, for example.",
+                    "required" => false,
+                ])
+                ->add("parent", ChoiceType::class, [
+                    "label" => "Parent location",
+                    "choices" => $parentChoices(),
+                    "group_by" => function(Rack $rack) { return $rack->getParent()?->getPathName(); },
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                ])
+                ->add("_privacy", PrivacyAwareType::class, [
+                    "inherit_data" => true,
+                    "label" => "Ownership"
+                ])
+            )
         ;
 
         parent::buildForm($builder, $options);
