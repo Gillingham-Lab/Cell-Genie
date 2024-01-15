@@ -136,9 +136,9 @@ class ConsumableController extends AbstractController
 
             $lotIdentifier = $data["lotIdentifier"] ?? date("ymd");
             if ($data["times"] > 1) {
-                $lot->setLotIdentifier($data["lotIdentifier"] . ".{$lotCount}");
+                $lot->setLotIdentifier($lotIdentifier . ".{$lotCount}");
             } else {
-                $lot->setLotIdentifier($data["lotIdentifier"]);
+                $lot->setLotIdentifier($lotIdentifier);
             }
 
             $consumable->addLot($lot);
