@@ -84,12 +84,12 @@
                                     {% endfor %}
                                 </ul>
 
-                                {% for childCategory in currentCategory.children %}
+                                {% for childCategory in currentCategory.children|natsort %}
                                     {% if childCategory.consumables|length > 0 %}
-                                        <div class="ms-lg-3 ms-lg-5 border-top border-bottom border-black my-3 py-3">
+                                        <div class="ms-lg-3 ms-lg-5 border border-black my-3 p-3 rounded-1">
                                             <h4>{{ childCategory.longName }}</h4>
                                             <ul class="list-group">
-                                                {% set consumables = (childCategory.consumables)|natsort %}
+                                                {% set consumables = childCategory.consumables|natsort %}
                                                 {% for consumable in consumables %}
                                                     {{ consumable_helpers.display_consumable(consumable, currentConsumable) }}
                                                 {% endfor %}
