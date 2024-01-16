@@ -37,4 +37,17 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
             ->setParameter("id", $id, "ulid")
             ->getQuery()->getOneOrNullResult();
     }
+
+    public function findAllWithConsumablesAndLots(
+    ) {
+        return $this->createQueryBuilder("cc")
+            ->addSelect("c")
+            ->addSelect("cl")
+            ->leftJoin("cc.consumables", "c")
+            ->leftJoin("c.lots", "cl")
+            ->groupBy("cc")
+            ->addGroupBy("c")
+            ->addGroupBy("cl")
+            ->getQuery()->getResult();
+    }
 }

@@ -106,7 +106,7 @@ class ConsumableController extends AbstractController
         array $options = [],
     ): Response {
         return $this->render("parts/consumables/consumables.html.twig", [
-            "categories" => $categoryRepository->findAll(),
+            "categories" => $categoryRepository->findAllWithConsumablesAndLots(),
             "currentCategory" => $category,
             "currentConsumable" => $consumable,
             "currentLot" => $lot,
