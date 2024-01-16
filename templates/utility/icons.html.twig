@@ -109,3 +109,11 @@
 {% macro box(classOnly=false, addClass="") %}
     {{ _self.span("fas fa-fw fa-box " ~ addClass, classOnly) }}
 {% endmacro %}
+
+{% macro instrument(classOnly=false, addClass="") %}
+    {{ _self.span("fas fa-fw fa-hdd " ~ addClass, classOnly) }}
+{% endmacro %}
+
+{% macro consumable(classOnly=false, addClass="") %}
+    {{ _self.span("fas fa-fw fa-cookie-bite " ~ addClass, classOnly) }}
+{% endmacro %}

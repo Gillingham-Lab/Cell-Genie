@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity;
 
+use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
@@ -124,11 +125,15 @@ class Instrument implements PrivacyAwareInterface
     #[Assert\NotBlank]
     private ?string $citationText;
 
+    #[ORM\ManyToMany(targetEntity: Consumable::class, inversedBy: 'instruments')]
+    private Collection $consumables;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->children = new ArrayCollection();
         $this->attachments = new ArrayCollection();
+        $this->consumables = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -421,6 +426,30 @@ class Instrument implements PrivacyAwareInterface
     public function setCitationText(?string $citationText): self
     {
         $this->citationText = $citationText;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Consumable>
+     */
+    public function getConsumables(): Collection
+    {
+        return $this->consumables;
+    }
+
+    public function addConsumable(Consumable $consumable): static
+    {
+        if (!$this->consumables->contains($consumable)) {
+            $this->consumables->add($consumable);
+        }
+
+        return $this;
+    }
+
+    public function removeConsumable(Consumable $consumable): static
+    {
+        $this->consumables->removeElement($consumable);
+
         return $this;
     }
 }

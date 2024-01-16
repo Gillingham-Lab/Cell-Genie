@@ -3,6 +3,7 @@
 {% import 'layout.html.twig' as layout %}
 {% from 'utility/attachments.html.twig' import attachments %}
 {% from 'parts/instruments/instruments.html.twig' import row_tools %}
+{% from 'parts/consumables/consumables.helpers.html.twig' import display_consumable %}
 
 {% block title %}Gin :: Instrument :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}{% endblock %}
 
@@ -237,6 +238,25 @@
                                 {% endif %}
 
                                 <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+                            </div>
+                            {{ layout.card_body_collapse_end() }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Consumables #}
+                {% if instrument.consumables|length %}
+                    <div class="col p-0 m-0 mb-3">
+                        <div class="card mx-3 h-100">
+                            {{ layout.card_header_collapse("Consumables", "Consumables") }}
+
+                            {{ layout.card_body_collapse_start("Consumables") }}
+                            <div class="card-body px-lg-5 mx-0">
+                                <ul class="list-group">
+                                    {% for consumable in instrument.consumables %}
+                                        {{ display_consumable(consumable) }}
+                                    {% endfor %}
+                                </ul>
                             </div>
                             {{ layout.card_body_collapse_end() }}
                         </div>

@@ -253,6 +253,18 @@
     {% endif %}
 {% endmacro %}
 
+{% macro pillify_instruments(instruments) %}
+    {% for instrument in instruments %}
+        {{ _self.pillify_instrument(instrument) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro pillify_instrument(instrument) %}
+    {% from 'utility/icons.html.twig' import instrument as instrument_icon %}
+
+    <a class="badge rounded-pill bg-info text-decoration-none" href="{{ url("app_instruments_view", {"instrument": instrument.id}) }}">{{ instrument_icon() }} {{ instrument.instrumentNumber }} | {{ instrument.longName }}</a>
+{% endmacro %}
+
 {% macro tab_item(name, id, tabid, active=false, enabled=true) %}
     <a class="nav-link {{ active?"active":"" }} {{ enabled ? "" : "disabled" }}" id="{{ id }}" data-toggle="pill" href="#{{ tabid }}" role="tab" aria-controls="{{ tabid }}" aria-selected="{{ active?"true":"false" }}">{{ name }}</a>
 {% endmacro %}

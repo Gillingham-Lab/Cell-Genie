@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Form\Instrument;
 
 use App\Entity\DoctrineEntity\Instrument;
+use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
@@ -192,6 +193,30 @@ class InstrumentType extends SaveableType
                     "help" => "Write down a text how the instrument should be described in supporting information.",
                     "required" => false,
                     "empty_data" => null,
+                ])
+                ->add("consumables", EntityType::class, [
+                    "label" => "Consumables",
+                    "help" => "Select consumables used by this instrument.",
+                    "class" => Consumable::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("c")
+                            ->addSelect("cc")
+                            ->leftJoin("c.category", "cc")
+                            ->addOrderBy("c.longName", "ASC")
+                        ;
+                    },
+                    "group_by" => function (Consumable $consumable) {
+                        return $consumable->getCategory()->getLongName();
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
                 ])
             )
             ->add(

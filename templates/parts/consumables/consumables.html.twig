@@ -126,6 +126,7 @@
                                         "Critical number of units or packages": ["", currentConsumable.criticalLimit],
                                         "Price per package (CHF)": ["", currentConsumable.pricePerPackage],
                                         "Expected delivery time": ["", currentConsumable.expectedDeliveryTime],
+                                        "Instruments": ["raw", macros.pillify_instruments(currentConsumable.instruments)]
                                     }
                                 }%}
                                 {% endembed %}

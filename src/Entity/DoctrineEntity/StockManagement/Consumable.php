@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\StockManagement;
 
+use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\CommentTrait;
@@ -62,10 +63,14 @@ class Consumable implements PrivacyAwareInterface
     #[Assert\Valid]
     private Collection $lots;
 
+    #[ORM\ManyToMany(targetEntity: Instrument::class, mappedBy: 'consumables')]
+    private Collection $instruments;
+
     public function __construct()
     {
         $this->lots = new ArrayCollection();
         $this->attachments = new ArrayCollection();
+        $this->instruments = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -228,5 +233,32 @@ class Consumable implements PrivacyAwareInterface
         }
 
         return $stock;
+    }
+
+    /**
+     * @return Collection<int, Instrument>
+     */
+    public function getInstruments(): Collection
+    {
+        return $this->instruments;
+    }
+
+    public function addInstrument(Instrument $instrument): static
+    {
+        if (!$this->instruments->contains($instrument)) {
+            $this->instruments->add($instrument);
+            $instrument->addConsumable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstrument(Instrument $instrument): static
+    {
+        if ($this->instruments->removeElement($instrument)) {
+            $instrument->removeConsumable($this);
+        }
+
+        return $this;
     }
 }

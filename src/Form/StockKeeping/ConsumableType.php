@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\StockKeeping;
 
+use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\Rack;
@@ -88,6 +89,32 @@ class ConsumableType extends SaveableType
                     "attr"  => [
                         "class" => "gin-fancy-select",
                         "data-allow-empty" => "false",
+                    ],
+                ])
+                ->add("instruments", EntityType::class, [
+                    "label" => "Instruments",
+                    "help" => "Choose instruments that use this consumable. The consumables will then appear on the instruments page.",
+                    "class" => Instrument::class,
+                    "query_builder" => function (EntityRepository $er) {
+                        return $er->createQueryBuilder("i")
+                            // Show ony main instruments
+                            ->andWhere("i.parent is null")
+                            // Sort by instrument ID
+                            ->addOrderBy("i.instrumentNumber", "ASC")
+                        ;
+                    },
+                    "label_html" => true,
+                    "choice_label" => function (Instrument $instrument): string {
+                        return "{$instrument->getInstrumentNumber()} | {$instrument->getLongName()}";
+                    },
+                    'empty_data' => [],
+                    'by_reference' => false,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => true,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
                     ],
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
