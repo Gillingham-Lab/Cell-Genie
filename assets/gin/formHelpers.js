@@ -3,8 +3,6 @@ const $ = require("jquery");
 const bootstrap = require("bootstrap");
 
 const formHelpers = (e = null) => {
-    console.log("Run form helpers", e);
-
     let target = document;
     if (e) {
         target = e.target;

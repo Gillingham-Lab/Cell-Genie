@@ -1,14 +1,20 @@
 const fancyTable = require('jquery.fancytable');
 
 const addFancyTable = () => {
-    $(".fancyTable").each(function (e) {
-        let sortColumn = 1;
+    document.querySelectorAll(".fancyTable").forEach((e) => {
+        // Remove existing search bars
+        e.querySelectorAll(".fancySearchRow").forEach((searchRow) => {
+            searchRow.remove();
+        })
 
-        if (this.hasAttribute("data-ft-sort-column")) {
+        // Default sort column
+        let sortColumn = 1;
+        if (e.hasAttribute("data-ft-sort-column")) {
             sortColumn = this.getAttribute("data-ft-sort-column");
         }
 
-        $(this).fancyTable({
+        // Add fancy table
+        $(e).fancyTable({
             sortColumn: sortColumn,
             pagination: true,
             perPage: 30,
