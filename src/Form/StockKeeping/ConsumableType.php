@@ -13,6 +13,7 @@ use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\VendorType;
 use Doctrine\ORM\EntityRepository;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -31,6 +32,13 @@ class ConsumableType extends SaveableType
                 $builder->create("_general", LongNameType::class, [
                     "inherit_data" => true,
                     "label" => "General information",
+                ])
+                ->add("comment", CKEditorType::class, [
+                    "label" => "Comment",
+                    "sanitize_html" => true,
+                    "required" => false,
+                    "empty_data" => null,
+                    "config" => ["toolbar" => "basic"],
                 ])
                 ->add("category", EntityType::class, [
                     "label" => "Category",

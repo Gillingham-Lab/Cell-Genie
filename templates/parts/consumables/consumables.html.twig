@@ -112,7 +112,7 @@
                             {{ layout.card_header_collapse("Details", "ConsumableDetails") }}
 
                             {{ layout.card_body_collapse_start("ConsumableDetails") }}
-                            <div class="card-body px-lg-5 flex-grow-1">
+                            <div class="card-body px-lg-5 flex-grow-0">
                                 {% embed "embed/list_table.html.twig" with {
                                     "rows": {
                                         "Category": ["url", currentConsumable.category.longName, path("app_consumables_category_view", {"category": currentConsumable.category.id})],
@@ -131,6 +131,12 @@
                                 }%}
                                 {% endembed %}
                             </div>
+                            {% if currentConsumable.comment %}
+                                <div class="card-body px-lg-5 flex-grow-1 border-top">
+                                    {{ currentConsumable.comment|raw }}
+                                </div>
+                            {% endif %}
+
                             {{ layout.card_body_collapse_end() }}
                         </div>
                     </div>
