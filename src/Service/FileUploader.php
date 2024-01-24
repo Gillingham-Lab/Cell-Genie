@@ -39,14 +39,14 @@ class FileUploader
                 continue;
             }
 
-            /** @var File $entity */
+            /** @var ?File $entity */
             $entity = $child->getData();
 
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = $child->get("uploadedFile")->getData();
 
             // Check if a file has actually been uploaded.
-            if ($uploadedFile) {
+            if ($uploadedFile and $entity) {
                 $entity->setFromFile($uploadedFile);
 
                 // Set uploader

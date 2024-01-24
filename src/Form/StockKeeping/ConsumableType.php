@@ -135,6 +135,8 @@ class ConsumableType extends SaveableType
                 $builder->create("_visualisation", VisualisationType::class, [
                     #"inherit_data" => true,
                     "label" => "Visualisation",
+                    "empty_data" => null,
+                    "required" => false,
                 ])
             )
             ->add(
