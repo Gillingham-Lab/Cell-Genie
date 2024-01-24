@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DownloadController extends AbstractController
@@ -44,5 +45,42 @@ class DownloadController extends AbstractController
                 "Content-Disposition" => 'attachment; filename="'. $file->getOriginalFileName() .'"',
             ],
         );
+    }
+
+    #[Route("/ressource/picture/{fileid}", name: "picture")]
+    #[Cache(expires: "+2592000 seconds", maxage: 2592000, public: true)]
+    public function picture(
+        string $fileid
+    ): Response {
+        try {
+            $file = $this->fileRepository->find($fileid);
+        } catch (ConversionException) {
+            $file = null;
+        }
+
+        if (!$file) {
+            throw new FileNotFoundException("The desired file was not found.");
+        }
+
+        $fileBlob = $file->getFileBlob();
+
+        $content = stream_get_contents($fileBlob->getContent());
+
+        return (
+            new Response(
+                $content,
+                status: 200,
+                headers: [
+                    "Content-Type" => $file->getContentType(),
+                    "Content-Length" => $file->getContentSize(),
+                ],
+            )
+        )
+        ->setCache([
+            "must_revalidate" => true,
+            "max_age" => 2592000,
+            "last_modified" => $file->getUploadedOn(),
+            "public" => true,
+        ]);
     }
 }

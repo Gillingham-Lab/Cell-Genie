@@ -12,6 +12,7 @@ use App\Form\LongNameType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\VendorType;
+use App\Form\VisualisationType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -128,6 +129,12 @@ class ConsumableType extends SaveableType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership"
+                ])
+            )
+            ->add(
+                $builder->create("_visualisation", VisualisationType::class, [
+                    #"inherit_data" => true,
+                    "label" => "Visualisation",
                 ])
             )
             ->add(

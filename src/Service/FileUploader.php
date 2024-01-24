@@ -6,6 +6,7 @@ namespace App\Service;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\File;
 use App\Form\DocumentationType;
+use App\Form\VisualisationType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -30,7 +31,7 @@ class FileUploader
         foreach ($form as $child) {
             $config = $child->getConfig();
 
-            if (!$config->getType()->getInnerType() instanceof DocumentationType) {
+            if (!$config->getType()->getInnerType() instanceof DocumentationType and !$config->getType()->getInnerType() instanceof VisualisationType) {
                 if ($config->getCompound()) {
                     $this->upload($child);
                 }

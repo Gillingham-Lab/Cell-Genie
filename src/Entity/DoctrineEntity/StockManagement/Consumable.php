@@ -9,6 +9,7 @@ use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Fields\LongNameTrait;
+use App\Entity\Traits\Fields\VisualisationTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Genie\Enums\Availability;
@@ -30,6 +31,7 @@ class Consumable implements PrivacyAwareInterface
     use ConsumableCommons;
     use CommentTrait;
     use HasAttachmentsTrait;
+    use VisualisationTrait;
 
     #[ORM\ManyToOne(targetEntity: ConsumableCategory::class, inversedBy: "consumables")]
     #[ORM\JoinColumn(nullable: false)]

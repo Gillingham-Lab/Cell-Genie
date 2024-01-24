@@ -28,6 +28,7 @@
         "symfony/form": "^6.1",
         "symfony/framework-bundle": "*",
         "symfony/html-sanitizer": "^6.1",
+        "symfony/mime": "^6.1",
         "symfony/monolog-bundle": "*",
         "symfony/proxy-manager-bridge": "*",
         "symfony/uid": "*",
