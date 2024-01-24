@@ -6,6 +6,7 @@ namespace App\Form\StockKeeping;
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
+use App\Entity\File;
 use App\Entity\Rack;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\LongNameType;
@@ -128,14 +129,17 @@ class ConsumableType extends SaveableType
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
-                    "label" => "Ownership"
+                    "label" => "Ownership",
                 ])
             )
             ->add(
-                $builder->create("_visualisation", VisualisationType::class, [
+                $builder->create("_visualisation", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Picture",
+                ])
+                ->add("visualisation", VisualisationType::class, [
                     #"inherit_data" => true,
                     "label" => "Visualisation",
-                    "empty_data" => null,
                     "required" => false,
                 ])
             )

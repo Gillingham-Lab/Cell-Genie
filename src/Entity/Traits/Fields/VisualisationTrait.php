@@ -12,7 +12,6 @@ trait VisualisationTrait
 {
     #[ORM\ManyToOne(targetEntity: File::class, cascade: ["persist", "remove"], fetch: "EAGER", )]
     #[ORM\JoinColumn(onDelete: "SET NULL")]
-    #[Assert\Valid]
     private ?File $visualisation;
 
     public function getVisualisation(): ?File

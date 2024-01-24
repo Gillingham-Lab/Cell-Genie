@@ -71,5 +71,14 @@ class FileUploader
                 $i++;
             }
         }
+
+        if (method_exists($object, "getVisualisation")) {
+            /** @var File $visualisation */
+            $visualisation = $object->getVisualisation();
+
+            if ($visualisation->getTitle() === null or $visualisation->getFileBlob() === null) {
+                $object->setVisualisation(null);
+            }
+        }
     }
 }
