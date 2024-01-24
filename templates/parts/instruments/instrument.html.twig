@@ -3,7 +3,7 @@
 {% import 'layout.html.twig' as layout %}
 {% from 'utility/attachments.html.twig' import attachments %}
 {% from 'parts/instruments/instruments.html.twig' import row_tools %}
-{% from 'parts/consumables/consumables.helpers.html.twig' import display_consumable %}
+{% from 'parts/consumables/consumables.helpers.html.twig' import display_consumable_card %}
 
 {% block title %}Gin :: Instrument :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}{% endblock %}
 
@@ -252,11 +252,11 @@
 
                             {{ layout.card_body_collapse_start("Consumables") }}
                             <div class="card-body px-lg-5 mx-0">
-                                <ul class="list-group">
+                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                                     {% for consumable in instrument.consumables %}
-                                        {{ display_consumable(consumable) }}
+                                        {{ display_consumable_card(consumable) }}
                                     {% endfor %}
-                                </ul>
+                                </div>
                             </div>
                             {{ layout.card_body_collapse_end() }}
                         </div>

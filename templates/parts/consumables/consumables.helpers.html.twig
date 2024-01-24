@@ -44,7 +44,7 @@
 {% endmacro %}
 
 {% macro display_consumable_card(consumable, currentConsumable) %}
-    <div class="col">
+    <div class="col mb-3">
         <div class="border border-1 border-black rounded-1">
             <div class="bg-light p-2 rounded-top-1">
                 <div class="d-flex justify-content-between align-items-start">
@@ -59,18 +59,22 @@
                 </div>
             </div>
 
-            <div class="border-top border-bottom">
+            <div class="border-top border-bottom" style="max-height: 15rem; min-height: 15rem; overflow: clip;">
                 {% if consumable.visualisation %}
-                    <figure  style="overflow: clip; max-height: 15rem">
+                    <figure  style="overflow: clip;">
                         <img src="{{ path("picture", {"fileid": consumable.visualisation.id}) }}" class="img-fluid">
                     </figure>
                 {% else %}
-                    No picture
+                    <div class="align-content-center align-middle text-center">
+                        <div class="align-middle"></div>
+                    </div>
                 {% endif %}
             </div>
 
             <div class="p-2 rounded-bottom-1">
-                {{ consumable.comment|raw }}
+                <div style="max-height: 6rem; overflow-x: clip; overflow-y: scroll;">
+                    {{ consumable.comment|raw }}
+                </div>
 
                 {# Stock meter for a consumable #}
                 {% set consumableStock = consumable.currentStock / consumable.idealStock %}

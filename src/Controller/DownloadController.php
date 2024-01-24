@@ -48,7 +48,12 @@ class DownloadController extends AbstractController
     }
 
     #[Route("/ressource/picture/{fileid}", name: "picture")]
-    #[Cache(expires: "+2592000 seconds", maxage: 2592000, public: true)]
+    #[Cache(
+        expires: "+3600 seconds",
+        maxage: 3600,
+        smaxage: 7200,
+        public: true,
+    )]
     public function picture(
         string $fileid
     ): Response {
@@ -66,21 +71,19 @@ class DownloadController extends AbstractController
 
         $content = stream_get_contents($fileBlob->getContent());
 
-        return (
-            new Response(
-                $content,
-                status: 200,
-                headers: [
-                    "Content-Type" => $file->getContentType(),
-                    "Content-Length" => $file->getContentSize(),
-                ],
-            )
-        )
-        ->setCache([
-            "must_revalidate" => true,
-            "max_age" => 2592000,
+        $response = new Response(
+            $content,
+            status: 200,
+            headers: [
+                "Content-Type" => $file->getContentType(),
+                "Content-Length" => $file->getContentSize(),
+            ],
+        );
+
+        $response = $response->setCache([
             "last_modified" => $file->getUploadedOn(),
-            "public" => true,
         ]);
+
+        return $response;
     }
 }
