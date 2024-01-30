@@ -1,0 +1,40 @@
+{% extends 'homepage.html.twig' %}
+{% import 'layout.html.twig' as layout %}
+{% import 'macros.html.twig' as macros %}
+{% import 'parts/consumables/consumables.helpers.html.twig' as consumable_helpers %}
+{% from 'utility/attachments.html.twig' import attachments %}
+
+{% set var_title = "Consumables :: Order List :: " ~ title %}
+
+
+{% block title %}Gin :: {{ var_title }}{% endblock %}
+
+{% block body_main %}
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0 col">
+        {{ layout.header(var_title) }}
+
+        <div class="row row-cols-1">
+            <div class="col p-0 m-0 mb-3">
+                <div class="card mx-3 h-100">
+                    {{ layout.card_header_collapse("Consumables", "Consumables") }}
+
+                    {{ layout.card_body_collapse_start("Consumables") }}
+                    <div class="card-body px-lg-5">
+                        {% if consumables|length == 0 %}
+                            No results found.
+                        {% else %}
+                            <div class="row row-cols-2 row-cols-lg-4 row-cols-xl-6">
+                                {% for consumable in consumables %}
+                                    {{ consumable_helpers.display_consumable_card(consumable) }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {{ layout.card_body_collapse_end() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

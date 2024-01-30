@@ -19,4 +19,26 @@ class ConsumableRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Consumable::class);
     }
+
+    public function findAllWithRequiredOrders()
+    {
+        $qb = $this->createQueryBuilder("c")
+            ->addSelect("cl")
+            ->select("c")
+            ->leftJoin("c.lots", "cl")
+            ->leftJoin("c.lots", "cl2")
+            ->groupBy("c")
+            ->addGroupBy("cl")
+            ->having("c.consumePackage = True AND SUM(cl2.numberOfUnits - cl2.unitsConsumed) < c.orderLimit")
+            ->orHaving("c.consumePackage = False AND SUM(cl2.numberOfUnits * cl2.unitSize - cl2.unitsConsumed) < c.orderLimit")
+            ->orderBy("c.category")
+            ->addOrderBy("c.longName");
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAllWithCriticallyRequiredOrders()
+    {
+
+    }
 }

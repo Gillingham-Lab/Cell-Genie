@@ -14,6 +14,7 @@ use App\Form\StockKeeping\QuickOrderType;
 use App\Genie\Enums\Availability;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\StockKeeping\ConsumableCategoryRepository;
+use App\Repository\StockKeeping\ConsumableRepository;
 use App\Service\FileUploader;
 use DateTime;
 use Doctrine\DBAL\Exception as DBALException;
@@ -79,6 +80,25 @@ class ConsumableController extends AbstractController
 
         return $this->consumableHelper($categoryRepository, $category, $consumable, options: [
             "quickOrderForm" => $quickOrderForm,
+        ]);
+    }
+
+    #[Route("consumables/toOrder", name: "app_consumables_to_order")]
+    #[Route("consumables/toOrder/critical", name: "app_consumables_to_order_critical")]
+    public function consumableToOrder(
+        Request $request,
+        #[CurrentUser]
+        User $user,
+        ConsumableRepository $consumableRepository,
+    ): Response {
+        $consumables = match ($request->attributes->get("_route")) {
+            "app_consumables_to_order" => $consumables = $consumableRepository->findAllWithRequiredOrders(),
+            "app_consumables_to_order_critical" => $consumables = $consumableRepository->findAllWithCriticallyRequiredOrders(),
+        };
+
+        return $this->render("parts/consumables/consumable_list.html.twig", [
+            "title" => $request->attributes->get("_route") === "app_consumables_to_order_critical" ? "Critical order list" : "Order list",
+            "consumables" => $consumables,
         ]);
     }
 

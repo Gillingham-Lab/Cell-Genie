@@ -248,11 +248,28 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url("app_consumables") }}">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ url("app_consumables") }}" id="navbar-dropdown-consumables-link" role="button" data-toggle="dropdown" aria-haspopup="true">
                                 <span class="fas fa-fw fa-cookie-bite"></span>
                                 Consumables
                             </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-consumables-link">
+                                <a class="dropdown-item" href="{{ url("app_consumables_to_order") }}">
+                                    <span class="gin-icon-stack gin-icon-stack-fw">
+                                        <span class="fas fa-fw fa-cookie-bite gin-icon-left"></span>
+                                        <span class="fas fa-fw fa-search gin-icon-right"></span>
+                                    </span>
+                                    To-Order list
+                                </a>
+                                <a class="dropdown-item" href="{{ url("app_consumables_to_order_critical") }}">
+                                    <span class="gin-icon-stack gin-icon-stack-fw">
+                                        <span class="fas fa-fw fa-cookie-bite gin-icon-left"></span>
+                                        <span class="fas fa-fw fa-search gin-icon-right"></span>
+                                    </span>
+                                    Must-Order list
+                                </a>
+                            </div>
                         </li>
 
                         <li class="nav-item">
