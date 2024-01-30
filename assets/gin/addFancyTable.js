@@ -10,7 +10,7 @@ const addFancyTable = () => {
         // Default sort column
         let sortColumn = 1;
         if (e.hasAttribute("data-ft-sort-column")) {
-            sortColumn = this.getAttribute("data-ft-sort-column");
+            sortColumn = e.getAttribute("data-ft-sort-column");
         }
 
         // Add fancy table
