@@ -92,8 +92,8 @@ class ConsumableController extends AbstractController
         ConsumableRepository $consumableRepository,
     ): Response {
         $consumables = match ($request->attributes->get("_route")) {
-            "app_consumables_to_order" => $consumables = $consumableRepository->findAllWithRequiredOrders(),
-            "app_consumables_to_order_critical" => $consumables = $consumableRepository->findAllWithCriticallyRequiredOrders(),
+            "app_consumables_to_order" => $consumableRepository->findAllWithRequiredOrders(),
+            "app_consumables_to_order_critical" => $consumableRepository->findAllWithCriticallyRequiredOrders(),
         };
 
         return $this->render("parts/consumables/consumable_list.html.twig", [

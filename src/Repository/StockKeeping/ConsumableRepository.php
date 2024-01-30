@@ -39,6 +39,18 @@ class ConsumableRepository extends ServiceEntityRepository
 
     public function findAllWithCriticallyRequiredOrders()
     {
+        $qb = $this->createQueryBuilder("c")
+            ->addSelect("cl")
+            ->select("c")
+            ->leftJoin("c.lots", "cl")
+            ->leftJoin("c.lots", "cl2")
+            ->groupBy("c")
+            ->addGroupBy("cl")
+            ->having("c.consumePackage = True AND SUM(cl2.numberOfUnits - cl2.unitsConsumed) < c.criticalLimit")
+            ->orHaving("c.consumePackage = False AND SUM(cl2.numberOfUnits * cl2.unitSize - cl2.unitsConsumed) < c.criticalLimit")
+            ->orderBy("c.category")
+            ->addOrderBy("c.longName");
 
+        return $qb->getQuery()->getResult();
     }
 }
