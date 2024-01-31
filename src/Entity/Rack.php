@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Fields\NewIdTrait;
+use App\Entity\Traits\Fields\VisualisationTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\RackRepository;
 use App\Validator\Constraint\NotLooped;
@@ -21,6 +22,7 @@ class Rack implements PrivacyAwareInterface
 {
     use NewIdTrait;
     use PrivacyAwareTrait;
+    use VisualisationTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(min: 5, max: 255)]

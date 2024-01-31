@@ -6,6 +6,7 @@ namespace App\Form\Storage;
 use App\Entity\Rack;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
+use App\Form\VisualisationType;
 use App\Repository\RackRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -76,6 +77,17 @@ class RackType extends SaveableType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership"
+                ])
+            )
+            ->add(
+                $builder->create("_visualisation", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Picture",
+                ])
+                ->add("visualisation", VisualisationType::class, [
+                    #"inherit_data" => true,
+                    "label" => "Visualisation",
+                    "required" => false,
                 ])
             )
         ;

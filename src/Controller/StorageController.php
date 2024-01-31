@@ -15,6 +15,7 @@ use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\RackRepository;
 use App\Repository\StockKeeping\ConsumableLotRepository;
 use App\Repository\Substance\SubstanceRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,22 +83,24 @@ class StorageController extends AbstractController
         #[CurrentUser]
         User $user,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
     ) {
         $newBox = new Box();
         $newBox->setOwner($user);
         $newBox->setGroup($user->getGroup());
         $newBox->setPrivacyLevel(PrivacyLevel::Group);
 
-        return $this->addStorage($request, $entityManager, null, $newBox);
+        return $this->addStorage($request, $entityManager, $fileUploader, null, $newBox);
     }
 
     #[Route("/storage/box/edit/{box}", name: "app_storage_edit_box")]
     public function editBox(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Box $box = null,
     ) {
-        return $this->addStorage($request, $entityManager, null, $box);
+        return $this->addStorage($request, $entityManager, $fileUploader, null, $box);
     }
 
     #[Route("/storage/rack/add", name: "app_storage_add_rack", defaults: ["box" => null, "rack" => null])]
@@ -105,6 +108,7 @@ class StorageController extends AbstractController
         Request $request,
         #[CurrentUser]
         User $user,
+        FileUploader $fileUploader,
         EntityManagerInterface $entityManager,
     ) {
         $newBox = new Rack();
@@ -112,21 +116,23 @@ class StorageController extends AbstractController
         $newBox->setGroup($user->getGroup());
         $newBox->setPrivacyLevel(PrivacyLevel::Group);
 
-        return $this->addStorage($request, $entityManager, $newBox, null);
+        return $this->addStorage($request, $entityManager, $fileUploader, $newBox, null);
     }
 
     #[Route("/storage/rack/edit/{rack}", name: "app_storage_edit_rack", defaults: ["box" => null, "rack" => null])]
     public function editRack(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         Rack $rack,
     ) {
-        return $this->addStorage($request, $entityManager, $rack, null);
+        return $this->addStorage($request, $entityManager, $fileUploader, $rack, null);
     }
 
     public function addStorage(
         Request $request,
         EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
         ?Rack $rack,
         ?Box $box,
     ): Response {
@@ -174,6 +180,11 @@ class StorageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() and $form->isValid()) {
+            if ($type === "rack") {
+                $fileUploader->upload($form);
+                $fileUploader->updateFileSequence($rack);
+            }
+
             try {
                 $entityManager->persist($entity);
                 $entityManager->flush();
