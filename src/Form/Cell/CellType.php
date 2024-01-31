@@ -155,6 +155,12 @@ class CellType extends SaveableType
                     "data-allow-empty" => "true",
                 ],
             ])
+            ->add("aliquotConsumptionCreatesCulture", CheckboxType::class, [
+                "label" => "Create culture on consumption",
+                "help" => "Turn of to prevent the creation of a cell culture upon consumption of an aliquot.",
+                "required" => false,
+                "empty_data" => null,
+            ])
             ->add("_privacy", PrivacyAwareType::class, [
                 "inherit_data" => true,
                 "label" => "Ownership",

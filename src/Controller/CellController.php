@@ -32,6 +32,7 @@ use App\Security\Voter\Cell\CellAliquotVoter;
 use App\Security\Voter\Cell\CellCultureVoter;
 use App\Security\Voter\Cell\CellGroupVoter;
 use App\Security\Voter\Cell\CellVoter;
+use App\Service\Cells\CellCultureService;
 use App\Service\FileUploader;
 use DateInterval;
 use DateTime;
@@ -46,6 +47,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CellController extends AbstractController
@@ -493,6 +495,9 @@ class CellController extends AbstractController
     public function consumeAliquot(
         #[MapEntity(mapping: ["aliquoteId"  => "id"])]
         CellAliquot $aliquot,
+        #[CurrentUser]
+        User $user,
+        CellCultureService $cellCultureService,
     ): Response {
         $this->denyAccessUnlessGranted("consume", $aliquot);
 
@@ -507,31 +512,24 @@ class CellController extends AbstractController
             // Reduce aliquot numbers by 1
             $aliquot->setVials($aliquot->getVials() - 1);
 
-            // Create a new cell culture based on that aliquot
-            $cellCulture = new CellCulture();
+            if ($aliquot->getCell()->isAliquotConsumptionCreatesCulture()) {
+                // Create new cell culture
+                $cellCulture = $cellCultureService->createCellCulture($user, $aliquot);
 
-            // Set user from security (= current user)
-            $user = $this->security->getUser();
-            if ($user instanceof User) {
-                $cellCulture->setOwner($user);
+                // Flush changes
+                $this->entityManager->flush();
+
+                $this->addFlash("success", "Aliquot was consumed and a new cell culture has been created. Check out the current cell cultures!");
+
+                return $this->redirectToRoute("app_cell_culture_edit", [
+                    "cellCulture" => $cellCulture->getId(),
+                ]);
+            } else {
+                // Flush changes
+                $this->entityManager->flush();
+
+                $this->addFlash("success", "Aliquot was consumed.");
             }
-
-            $cellCulture->setAliquot($aliquot);
-            $cellCulture->setUnfrozenOn(new DateTime("today"));
-            $cellCulture->setIncubator("unknown");
-            $cellCulture->setFlask("T-25");
-
-            // Persist object
-            $this->entityManager->persist($cellCulture);
-
-            // Flush changes
-            $this->entityManager->flush();
-
-            $this->addFlash("success", "Aliquot was consumed and a new cell culture has been created. Check out the current cell cultures!");
-
-            return $this->redirectToRoute("app_cell_culture_edit", [
-                "cellCulture" => $cellCulture->getId(),
-            ]);
         }
 
         return $this->redirectToRoute("app_cell_aliquote_view", [

@@ -17,6 +17,7 @@ use App\Repository\Cell\CellRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -149,6 +150,9 @@ class Cell implements PrivacyAwareInterface
     #[ORM\OneToMany(mappedBy: 'cellLine', targetEntity: CellProtein::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\OrderBy(["orderValue" => "ASC"])]
     private Collection $cellProteins;
+
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ["default" => true])]
+    private bool $aliquotConsumptionCreatesCulture = true;
 
     public function __construct()
     {
@@ -601,6 +605,17 @@ class Cell implements PrivacyAwareInterface
     public function setCellGroup(?CellGroup $cellGroup): self
     {
         $this->cellGroup = $cellGroup;
+        return $this;
+    }
+
+    public function isAliquotConsumptionCreatesCulture(): bool
+    {
+        return $this->aliquotConsumptionCreatesCulture;
+    }
+
+    public function setAliquotConsumptionCreatesCulture(bool $aliquotConsumptionCreatesCulture): self
+    {
+        $this->aliquotConsumptionCreatesCulture = $aliquotConsumptionCreatesCulture;
         return $this;
     }
 }
