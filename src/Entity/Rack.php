@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Interface\PrivacyAwareInterface;
+use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\NewIdTrait;
 use App\Entity\Traits\Fields\VisualisationTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
@@ -11,6 +12,7 @@ use App\Repository\RackRepository;
 use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,6 +25,7 @@ class Rack implements PrivacyAwareInterface
     use NewIdTrait;
     use PrivacyAwareTrait;
     use VisualisationTrait;
+    use CommentTrait;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(min: 5, max: 255)]
@@ -44,6 +47,9 @@ class Rack implements PrivacyAwareInterface
     #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
     private ?Rack $parent = null;
+
+    #[ORM\Column(type: Types::STRING, length: 100)]
+    private ?string $pinCode = null;
 
     // Transient properties only sometimes present
     private ?int $depth = null;
@@ -215,6 +221,17 @@ class Rack implements PrivacyAwareInterface
     public function setNameTree(array $nameTree): self
     {
         $this->nameTree = $nameTree;
+        return $this;
+    }
+
+    public function getPinCode(): ?string
+    {
+        return $this->pinCode;
+    }
+
+    public function setPinCode(?string $pinCode): self
+    {
+        $this->pinCode = $pinCode;
         return $this;
     }
 }

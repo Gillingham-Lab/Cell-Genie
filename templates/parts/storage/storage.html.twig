@@ -161,19 +161,37 @@
                 </div>
             </div>
 
-            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-3">
-                {% if rack.visualisation %}
-                {% embed 'embed/card.html.twig' with {
-                    "title": "Location visualisation"
-                }%}
-                    {% block body %}
-                        <figure  style="overflow: clip;">
-                            <img src="{{ path("picture", {"fileid": rack.visualisation.id}) }}" class="img-fluid">
-                        </figure>
-                    {% endblock %}
-                {% endembed %}
-                {% endif %}
-            </div>
+            {% if rack %}
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-3">
+                    {% if rack.visualisation %}
+                    {% embed 'embed/card.html.twig' with {
+                        "title": "Location visualisation"
+                    }%}
+                        {% block body %}
+                            <figure  style="overflow: clip;">
+                                <img src="{{ path("picture", {"fileid": rack.visualisation.id}) }}" class="img-fluid">
+                            </figure>
+                        {% endblock %}
+                    {% endembed %}
+                    {% endif %}
+
+                    {% embed 'embed/card.html.twig' with {
+                        "title": "Location details"
+                    }%}
+                        {% block body %}
+                            {% if rack.pinCode %}
+                                <p><strong>Pin-Code: </strong> {{ rack.pinCode }}</p>
+                            {% endif %}
+
+                            {% if rack.comment %}
+                            <div>
+                                {{ rack.comment|raw }}
+                            </div>
+                            {% endif %}
+                        {% endblock %}
+                    {% endembed %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

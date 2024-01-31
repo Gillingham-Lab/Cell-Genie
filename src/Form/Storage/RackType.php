@@ -8,6 +8,7 @@ use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\VisualisationType;
 use App\Repository\RackRepository;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -56,6 +57,18 @@ class RackType extends SaveableType
                 ->add("name", TextType::class, [
                     "label" => "Name of the location",
                     "help" => "5-255 characters; used to identify the location. No parent names.",
+                    "required" => true,
+                ])
+                ->add("comment", CKEditorType::class, [
+                    "label" => "A comment about the location.",
+                    "sanitize_html" => true,
+                    "required" => false,
+                    "empty_data" => null,
+                    "config" => ["toolbar" => "basic"],
+                ])
+                ->add("pinCode", TextType::class, [
+                    "label" => "Pin code",
+                    "help" => "Pin-Code of the lab or another hint on how to access it.",
                     "required" => true,
                 ])
                 ->add("maxBoxes", IntegerType::class, [
