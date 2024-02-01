@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\StockManagement;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Embeddable\Price;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\Availability;
 use App\Repository\StockKeeping\ConsumableLotRepository;
@@ -58,6 +59,11 @@ class ConsumableLot
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Assert\NotBlank]
     private ?User $boughtBy = null;
+
+    public function __construct()
+    {
+        $this->pricePerPackage = new Price();
+    }
 
     public function __toString(): string
     {

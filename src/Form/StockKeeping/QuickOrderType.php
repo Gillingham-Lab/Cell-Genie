@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace App\Form\StockKeeping;
 
 use App\Entity\Rack;
+use App\Form\PriceType;
 use App\Form\SaveableType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -50,13 +53,20 @@ class QuickOrderType extends SaveableType
                     new Assert\Range(min: 0)
                 ],
             ])
-            ->add("price", NumberType::class, [
+            ->add("priceValue", MoneyType::class, options: [
                 "label" => "Price",
-                "required" => true,
-                "empty_data" => null,
-                "constraints" => [
-                    new Assert\NotBlank(),
-                    new Assert\Range(min: 0)
+                "required" => false,
+                'empty_data' => null,
+                "currency" => false,
+                "divisor" => 1000,
+            ])
+            ->add("priceCurrency", CurrencyType::class, options: [
+                "label" => "Currency",
+                "required" => false,
+                "empty_data" => "CHF",
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "true",
                 ],
             ])
             ->add("status", EnumType::class, [

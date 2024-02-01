@@ -10,6 +10,7 @@ use App\Entity\File;
 use App\Entity\Rack;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\LongNameType;
+use App\Form\PriceType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\VendorType;
@@ -164,7 +165,7 @@ class ConsumableType extends SaveableType
                     "label" => "Absolute minimum before ordering is required",
                     "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
                 ])
-                ->add("pricePerPackage", NumberType::class, [
+                ->add("pricePerPackage", PriceType::class, [
                     "label" => "Price per package",
                 ])
                 ->add("expectedDeliveryTime", TextType::class, [

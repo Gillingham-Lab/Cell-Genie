@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\StockManagement;
 
+use App\Entity\Embeddable\Price;
 use App\Entity\Rack;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,8 +18,8 @@ trait ConsumableCommons
     #[Assert\Range(minMessage: "Number of units must be at least 1", min: 1)]
     private int $numberOfUnits = 1;
 
-    #[ORM\Column]
-    private float $pricePerPackage = 0.0;
+    #[ORM\Embedded(class: Price::class)]
+    private ?Price $pricePerPackage = null;
 
     #[ORM\ManyToOne(targetEntity: Rack::class)]
     #[ORM\JoinColumn(name: "location_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
@@ -46,12 +47,12 @@ trait ConsumableCommons
         return $this;
     }
 
-    public function getPricePerPackage(): float
+    public function getPricePerPackage(): ?Price
     {
         return $this->pricePerPackage;
     }
 
-    public function setPricePerPackage(float $pricePerPackage): self
+    public function setPricePerPackage(?Price $pricePerPackage): self
     {
         $this->pricePerPackage = $pricePerPackage;
         return $this;

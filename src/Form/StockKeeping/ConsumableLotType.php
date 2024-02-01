@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
 use App\Entity\Rack;
 use App\Form\LongNameType;
+use App\Form\PriceType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
@@ -55,7 +56,7 @@ class ConsumableLotType extends SaveableType
                 "label" => "Number of units per package",
                 "help" => "If a typical order comes with 5 packs, then this should be 5. However, if a package only individual units, this should be 1.",
             ])
-            ->add("pricePerPackage", NumberType::class, [
+            ->add("pricePerPackage", PriceType::class, [
                 "label" => "Price per package",
             ])
             ->add("location", EntityType::class, [

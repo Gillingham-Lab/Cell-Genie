@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\StockManagement;
 
 use App\Entity\DoctrineEntity\Instrument;
+use App\Entity\Embeddable\Price;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\CommentTrait;
@@ -73,6 +74,7 @@ class Consumable implements PrivacyAwareInterface
         $this->lots = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->instruments = new ArrayCollection();
+        $this->pricePerPackage = new Price();
     }
 
     public function __toString(): string

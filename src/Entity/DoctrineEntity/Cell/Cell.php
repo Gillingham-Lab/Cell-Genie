@@ -5,6 +5,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Embeddable\Price;
 use App\Entity\Experiment;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Morphology;
@@ -88,9 +89,8 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?DateTimeInterface $acquiredOn = null;
 
-    #[ORM\Column(type: "decimal", precision: 7, scale: 2, nullable: true)]
-    #[Gedmo\Versioned]
-    private ?int $price = null;
+    #[ORM\Embedded(class: Price::class)]
+    private ?Price $price = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -160,8 +160,8 @@ class Cell implements PrivacyAwareInterface
         $this->children = new ArrayCollection();
         $this->experiments = new ArrayCollection();
         $this->attachments = new ArrayCollection();
-        $this->associatedProteins = new ArrayCollection();
         $this->cellProteins = new ArrayCollection();
+        $this->price = new Price();
     }
 
     public function __toString()
@@ -305,12 +305,12 @@ class Cell implements PrivacyAwareInterface
         return $this;
     }
 
-    public function getPrice(): ?int
+    public function getPrice(): ?Price
     {
         return $this->price;
     }
 
-    public function setPrice(?int $price): self
+    public function setPrice(?Price $price): self
     {
         $this->price = $price;
 

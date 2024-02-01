@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Form\CellularProteinCollectionType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\PriceType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
@@ -178,7 +179,7 @@ class CellType extends SaveableType
                 "label" => "Origins",
                 "required" => false,
             ])
-            ->add("price", NumberType::class, [
+            ->add("price", PriceType::class, [
                 "label" => "Cell line price"
             ])
             ->add("acquiredOn", DateType::class, [

@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Embeddable\Price;
 use App\Form\StockKeeping\ConsumableCategoryType;
 use App\Form\StockKeeping\ConsumableLotType;
 use App\Form\StockKeeping\ConsumableType;
@@ -52,7 +53,8 @@ class ConsumableController extends AbstractController
             "times" => 1,
             "numberOfUnits" => $consumable->getNumberOfUnits(),
             "unitSize" => $consumable->getUnitSize(),
-            "price" => $consumable->getPricePerPackage(),
+            "priceValue" => $consumable->getPricePerPackage()?->getPriceValue(),
+            "priceCurrency" => $consumable->getPricePerPackage()?->getPriceCurrency(),
             "status" => Availability::Ordered,
             "location" => $consumable->getLocation(),
         ];
@@ -146,7 +148,11 @@ class ConsumableController extends AbstractController
             $lot = $consumable->createLot();
             $lot->setNumberOfUnits($data["numberOfUnits"]);
             $lot->setUnitSize($data["unitSize"]);
-            $lot->setPricePerPackage($data["price"]);
+            $lot->setPricePerPackage(
+                (new Price())
+                    ->setPriceValue($data["priceValue"])
+                    ->getPriceCurrency($data["priceCurrency"])
+            );
             $lot->setBoughtBy($user);
             $lot->setAvailability($data["status"]);
             $lot->setBoughtOn(new DateTime("now"));
