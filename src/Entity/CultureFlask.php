@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\Vendor;
 use App\Repository\CultureFlaskRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Vendor;
+use App\Entity\DoctrineEntity\Vendor;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

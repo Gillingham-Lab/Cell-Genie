@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
-use App\Entity\Vendor;
+use App\Entity\DoctrineEntity\Vendor;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;

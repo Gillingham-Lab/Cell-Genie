@@ -1,0 +1,21 @@
+{% set btnGroupClass = size == "lg" ? "btn-group-lg" : (size == "sm" ? "btn-group-sm" : "") %}
+
+
+<div class="btn-group {{ btnGroupClass }}" role="group" aria-label="tools">
+    {% for tool in toolbox %}
+        <a
+            href="{{ tool.enabled ? tool.path : "#" }}"
+            class="btn {{ tool.buttonClass }} {{ tool.enabled ? "" : "disabled"}}"
+
+            {% if tool.confirmationRequired %}
+                onclick='return confirm("{{ tool.confirmationText }}")'
+            {% endif %}
+
+            {% if tool.tooltip %}
+                data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
+            {% endif %}
+        >
+            <span class="{{ tool.icon }}"></span>
+        </a>
+    {% endfor %}
+</div>

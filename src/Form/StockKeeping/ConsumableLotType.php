@@ -12,7 +12,7 @@ use App\Form\PriceType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
-use App\Form\VendorType;
+use App\Form\VendorFieldType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

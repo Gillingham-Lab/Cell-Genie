@@ -9,7 +9,7 @@ use App\Entity\Lot;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
-use App\Form\VendorType;
+use App\Form\VendorFieldType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -156,7 +156,7 @@ class LotType extends SaveableType
         if ($options["hideVendor"] !== true) {
             $builder
                 ->add(
-                    $builder->create("vendor", VendorType::class, options: [
+                    $builder->create("vendor", VendorFieldType::class, options: [
                         "inherit_data" => true,
                         "label" => "Vendor"
                     ])

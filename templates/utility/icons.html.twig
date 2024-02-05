@@ -117,3 +117,7 @@
 {% macro consumable(classOnly=false, addClass="") %}
     {{ _self.span("fas fa-fw fa-cookie-bite " ~ addClass, classOnly) }}
 {% endmacro %}
+
+{% macro vendor(classOnly=false, addClass="") %}
+    {{ _self.span("fas fa-fw  fa-store-alt " ~ addClass, classOnly) }}
+{% endmacro %}

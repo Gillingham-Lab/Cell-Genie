@@ -279,11 +279,28 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url("app_recipes") }}">
-                                <span class="fas fa-fw fa-list-alt"></span>
-                                Recipes
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbar-dropdown-other-link" role="button" data-toggle="dropdown" aria-haspopup="true">
+                                <span class="fas fa-fw fa-ellipsis-v"></span>
+                                Others
                             </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbar-dropdown-other-link">
+                                <a class="dropdown-item" href="{{ url("app_recipes") }}">
+                                    <span class="fas fa-fw fa-list-alt"></span>
+                                    Recipes
+                                </a>
+
+                                <a class="dropdown-item" href="{{ url("app_vendors") }}">
+                                    {{ icon.vendor() }}
+                                    Vendors
+                                </a>
+
+                                <a class="dropdown-item" href="{{ url("app_consumables_to_order_critical") }}">
+                                    <span class="fas fa-fw fa-link"></span>
+                                    Ressources
+                                </a>
+                            </div>
                         </li>
 
                         <li class="nav-item dropdown">

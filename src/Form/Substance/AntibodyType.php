@@ -10,7 +10,7 @@ use App\Form\NameType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
-use App\Form\VendorType;
+use App\Form\VendorFieldType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
@@ -161,7 +161,7 @@ class AntibodyType extends SaveableType
                 ])
             )
             ->add(
-                $builder->create("vendor", VendorType::class, [
+                $builder->create("vendor", VendorFieldType::class, [
                     "inherit_data" => true,
                     "label" => "Vendor",
                 ])

@@ -1,18 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity;
 
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\VendorRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VendorRepository::class)]
 class Vendor
 {
+    use PrivacyAwareTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
@@ -25,6 +26,10 @@ class Vendor
 
     #[ORM\Column(type: "text")]
     private string $catalogUrl = "";
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[Assert\Url]
+    private ?string $homepage = null;
 
     #[ORM\Column(type: "boolean")]
     private bool $hasFreeShipping = false;
@@ -117,6 +122,17 @@ class Vendor
     {
         $this->isPreferred = $isPreferred;
 
+        return $this;
+    }
+
+    public function getHomepage(): ?string
+    {
+        return $this->homepage;
+    }
+
+    public function setHomepage(?string $homepage): self
+    {
+        $this->homepage = $homepage;
         return $this;
     }
 }

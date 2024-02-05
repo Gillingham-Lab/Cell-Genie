@@ -13,7 +13,7 @@ use App\Form\LongNameType;
 use App\Form\PriceType;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
-use App\Form\VendorType;
+use App\Form\VendorFieldType;
 use App\Form\VisualisationType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -149,7 +149,7 @@ class ConsumableType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Stock management and Ordering",
                 ])
-                ->add("_vendor", VendorType::class, [
+                ->add("_vendor", VendorFieldType::class, [
                     "inherit_data" => true,
                     "label" => "Vendor",
                 ])
