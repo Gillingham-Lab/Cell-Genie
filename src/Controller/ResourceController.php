@@ -125,11 +125,10 @@ class ResourceController extends AbstractController
 
             try {
                 $entityManager->flush();
-                dump("Test");
                 $this->addFlash("success", "Resource was successfully persisted.");
+
                 return $this->redirectToRoute("app_resources");
             } catch (Exception $e) {
-                dump($e);
                 $this->addFlash("error", "An error occurred while persisting this entity to the database: {$e->getMessage()}");
             }
         }
