@@ -7,9 +7,11 @@ use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\VendorRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VendorRepository::class)]
+#[Gedmo\Loggable]
 class Vendor
 {
     use PrivacyAwareTrait;
@@ -22,25 +24,32 @@ class Vendor
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(min: 3, max: 250)]
     #[Assert\NotBlank]
+    #[Gedmo\Versioned]
     private ?string $name = null;
 
     #[ORM\Column(type: "text")]
+    #[Gedmo\Versioned]
     private string $catalogUrl = "";
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Assert\Url]
+    #[Gedmo\Versioned]
     private ?string $homepage = null;
 
     #[ORM\Column(type: "boolean")]
+    #[Gedmo\Versioned]
     private bool $hasFreeShipping = false;
 
     #[ORM\Column(type: "boolean")]
+    #[Gedmo\Versioned]
     private bool $hasDiscount = false;
 
     #[ORM\Column(type: "text", nullable: true)]
+    #[Gedmo\Versioned]
     private ?string $comment = null;
 
     #[ORM\Column(type: "boolean", options: ["default" => false])]
+    #[Gedmo\Versioned]
     private bool $isPreferred = false;
 
     public function __toString(): string

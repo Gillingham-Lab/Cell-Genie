@@ -22,52 +22,55 @@
         <div class="row">
             <div class="col bg-white mx-3 mb-3 border p-3 p-lg-5 overflow-scroll">
                 {% if table %}
-                <table class="table table-hover fancyTable" data-ft-sort-column={{ table.sortColumn }}>
-                    <thead>
-                        <tr>
-                            {% for column in table.columns %}
-                                {% set width = "" %}
-                                {% if column.widthRecommendation %}
-                                    {% set width = "width: " ~ column.widthRecommendation ~ "em;" %}
-                                {% endif %}
-                                <th
-                                    scope="col"
-                                    style="{{ width }}"
-                                >{% if constant("renderTitle", column) is same as(true) %}{{ column.title }}{% endif %}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in table.data %}
+                    {% set rowCount = table.data|length %}
+                    <table class="table table-hover {{ rowCount > 0 ? "fancyTable": "" }}" data-ft-sort-column={{ table.sortColumn }}>
+                        <thead>
                             <tr>
                                 {% for column in table.columns %}
-                                    <td>
-                                        {%- if constant("raw", column) is same as(true) -%}
-                                            {{ column.render(row)|raw }}
-                                        {%- else -%}
-                                            {% set output = column.render(row) %}
-
-                                            {% if output is instanceof("App\\Entity\\Toolbox\\Toolbox") %}
-                                                {{ include('generic/toolbox.html.twig', {
-                                                    "toolbox": output,
-                                                    "size": "sm",
-                                                }, with_context = false) }}
-                                            {% elseif column is instanceof("App\\Entity\\Table\\UrlCOlumn") %}
-                                                {% if output %}
-                                                    <a href="{{ output }}">{{ output }}</a>
-                                                {% else %}
-                                                    -
-                                                {% endif %}
-                                            {% else %}
-                                                {{ column.render(row) }}
-                                            {% endif -%}
-                                        {%- endif -%}
-                                    </td>
+                                    {% set width = "" %}
+                                    {% if column.widthRecommendation %}
+                                        {% set width = "width: " ~ column.widthRecommendation ~ "em;" %}
+                                    {% endif %}
+                                    <th
+                                        scope="col"
+                                        style="{{ width }}"
+                                    >{% if constant("renderTitle", column) is same as(true) %}{{ column.title }}{% endif %}</th>
                                 {% endfor %}
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for row in table.data %}
+                                <tr>
+                                    {% for column in table.columns %}
+                                        <td>
+                                            {%- if constant("raw", column) is same as(true) -%}
+                                                {{ column.render(row)|raw }}
+                                            {%- else -%}
+                                                {% set output = column.render(row) %}
+
+                                                {% if output is instanceof("App\\Entity\\Toolbox\\Toolbox") %}
+                                                    {{ include('generic/toolbox.html.twig', {
+                                                        "toolbox": output,
+                                                        "size": "sm",
+                                                    }, with_context = false) }}
+                                                {% elseif column is instanceof("App\\Entity\\Table\\UrlCOlumn") %}
+                                                    {% if output %}
+                                                        <a href="{{ output }}">{{ output }}</a>
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ column.render(row) }}
+                                                {% endif -%}
+                                            {%- endif -%}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="{{ table.columns|length }}">No entries</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 {% else %}
                     <div class="bg-danger p-5">
                         No table was given.

@@ -11,7 +11,7 @@ final class Version20240205084458 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Adds a homepage field to the vendor entity.';
     }
 
     public function up(Schema $schema): void

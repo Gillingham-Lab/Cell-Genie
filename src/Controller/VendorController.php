@@ -118,10 +118,10 @@ class VendorController extends AbstractController
 
             try {
                 $entityManager->flush();
-                $this->addFlash("success", "Category was successfully persisted.");
+                $this->addFlash("success", "Vendor was successfully persisted.");
                 return $this->redirectToRoute("app_vendors");
             } catch (Exception $e) {
-                $this->addFlash("error", "An error occured while persisting this entity to the database: {$e->getMessage()}");
+                $this->addFlash("error", "An error occurred while persisting this entity to the database: {$e->getMessage()}");
             }
         }
 
