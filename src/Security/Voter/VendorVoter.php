@@ -13,6 +13,8 @@ class VendorVoter extends Voter
     {
         if ($attribute === "new" and $subject === "vendor") {
             return true;
+        } else {
+            return false;
         }
     }
 
