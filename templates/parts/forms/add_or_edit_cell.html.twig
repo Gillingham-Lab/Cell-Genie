@@ -6,7 +6,7 @@
 {% block title %}Gin :: {{ cell is not null ? cell.cellNumber ~ " :: Edit" : "New" }}{% endblock %}
 
 {% block form_header %}
-    {{ layout.header(cell is not null ? "Edit" : "New", cell ? cell : "Cell", false, icon.any(cell)) }}
+    {{ layout.header(cell is not null ? "Edit" : "New", cell ? cell : "Cell", false, icon.any(cell, false)) }}
 
     {{ layout.toolbox([
         {

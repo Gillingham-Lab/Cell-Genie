@@ -16,9 +16,9 @@
 
 {% block form_header %}
     {% if type == "box" %}
-        {{ layout.header(box.ulid is not null ? "Edit" : "New box", box.ulid ? box : null, false, icon.box()) }}
+        {{ layout.header(box.ulid is not null ? "Edit" : "New box", box.ulid ? box : null, false, icon.box(false)) }}
     {% elseif type == "rack" %}
-        {{ layout.header(rack.ulid is not null ? "Edit" : "New location", rack.ulid ? rack : null, false, icon.rack()) }}
+        {{ layout.header(rack.ulid is not null ? "Edit" : "New location", rack.ulid ? rack : null, false, icon.rack(false)) }}
     {% else %}
         ???
     {% endif %}

@@ -6,7 +6,7 @@
 {% block title %}Gin :: {{ cell.cellNumber ?? cell.cellName }} :: {{ aliquot is not null ? "Edit Aliquot" : "New Aliquot" }}{% endblock %}
 
 {% block form_header %}
-    {{ layout.header(aliquot is not null ? "Edit" : "New", aliquot ? aliquot : "Aliquot", false, icon.any(cell)) }}
+    {{ layout.header(aliquot is not null ? "Edit" : "New", aliquot ? aliquot : "Aliquot", false, icon.any(cell, true)) }}
 
     {{ layout.toolbox([
         {
