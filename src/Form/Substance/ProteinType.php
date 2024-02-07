@@ -8,7 +8,6 @@ use App\Entity\Epitope;
 use App\Entity\Organism;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
-use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
 use App\Repository\VocabularyRepository;
@@ -21,7 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProteinType extends SaveableType
+class ProteinType extends SubstanceType
 {
     use VocabularyTrait;
 

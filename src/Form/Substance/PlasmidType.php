@@ -8,7 +8,6 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Organism;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\Collection\SequenceAnnotationCollectionType;
-use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
@@ -22,7 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PlasmidType extends SaveableType
+class PlasmidType extends SubstanceType
 {
     use VocabularyTrait;
 

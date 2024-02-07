@@ -7,9 +7,9 @@
 
 {% block form_header %}
     {% if createLot is defined %}
-        {{ layout.header(substance ? "Edit Lot" : "New Lot", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+        {{ layout.header(substance ? "Edit Lot" : "New Lot", substance ? substance.shortName : typeName, false, icon.any(substance, true)) }}
     {% else %}
-        {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance)) }}
+        {{ layout.header(substance ? "Edit" : "New", substance ? substance.shortName : typeName, false, icon.any(substance, true)) }}
     {% endif %}
 
     {{ layout.toolbox([

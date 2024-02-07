@@ -7,7 +7,6 @@ use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
-use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
 use App\Form\VendorFieldType;
@@ -24,7 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AntibodyType extends SaveableType
+class AntibodyType extends SubstanceType
 {
     use VocabularyTrait;
 
@@ -176,6 +175,7 @@ class AntibodyType extends SaveableType
                 ])
             )
         ;
+
         parent::buildForm($builder, $options);
     }
 
@@ -183,7 +183,10 @@ class AntibodyType extends SaveableType
     {
         $resolver->setDefaults([
             "data_class" => Antibody::class,
+            "show_lots" => false,
         ]);
+
+        $resolver->addAllowedTypes("show_lots", "bool");
 
         parent::configureOptions($resolver);
     }

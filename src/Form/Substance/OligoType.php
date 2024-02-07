@@ -6,7 +6,6 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\Epitope;
 use App\Form\Collection\AttachmentCollectionType;
-use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OligoType extends SaveableType
+class OligoType extends SubstanceType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
