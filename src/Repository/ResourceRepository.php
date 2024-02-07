@@ -25,7 +25,8 @@ class ResourceRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder("r")
             ->distinct(true)
             ->select("r.category")
-            ->groupBy("r.category");
+            ->groupBy("r.category")
+            ->orderBy("r.category");
 
         if ($searchTerm) {
             $prefix = "%";
