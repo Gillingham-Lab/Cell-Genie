@@ -14,6 +14,7 @@ use App\Entity\Table\UrlColumn;
 use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
+use App\Entity\Toolbox\TrashTool;
 use App\Form\ResourceType;
 use App\Repository\ResourceRepository;
 use App\Service\FileUploader;
@@ -55,6 +56,10 @@ class ResourceController extends AbstractController
                             path: $this->generateUrl("app_resources_edit", ["resource" => $subject->getId()]),
                             enabled: $security->isGranted("edit", $subject),
                         ),
+                        new TrashTool(
+                            path: $this->generateUrl("app_resources_remove", ["resource" => $subject->getId()]),
+                            enabled: $security->isGranted("remove", $subject)
+                        )
                     ])),
                     new Column("Category", fn(Resource $resource) => $resource->getCategory()),
                     new Column("Name", fn(Resource $resource) => $resource->getLongName()),
@@ -100,6 +105,24 @@ class ResourceController extends AbstractController
         return $this->addOrEditResource($request, $security, $entityManager, $fileUploader, $resource, [
             "title" => "Add Resource",
         ]);
+    }
+
+    #[Route("/resource/remove/{resource}", name: "app_resources_remove")]
+    #[IsGranted("remove", "resource")]
+    public function removeResource(
+        EntityManagerInterface $entityManager,
+        Resource $resource,
+    ): Response {
+        try {
+            $entityManager->remove($resource);
+            $entityManager->flush();
+
+            $this->addFlash("success", "Successfully removed the resource");
+        } catch (Exception $e) {
+            $this->addFlash("error", "Resource was not removed. Reason (Code {$e->getCode()}): " . $e->getMessage());
+        }
+
+        return $this->redirectToRoute("app_resources");
     }
 
     protected function addOrEditResource(
