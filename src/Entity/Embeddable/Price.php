@@ -18,14 +18,18 @@ class Price
     #[Gedmo\Versioned]
     private ?string $priceCurrency = null;
 
-    public function getPriceValue(): ?int
+    public function getPriceValue(): int|float|null
     {
         return $this->priceValue;
     }
 
-    public function setPriceValue(?int $priceValue): self
+    public function setPriceValue(int|float|null $priceValue): self
     {
-        $this->priceValue = $priceValue;
+        if (is_float($priceValue)) {
+            $this->priceValue = intval($priceValue);
+        } else {
+            $this->priceValue = $priceValue;
+        }
         return $this;
     }
 

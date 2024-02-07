@@ -54,7 +54,7 @@ class ConsumableController extends AbstractController
             "numberOfUnits" => $consumable->getNumberOfUnits(),
             "unitSize" => $consumable->getUnitSize(),
             "priceValue" => $consumable->getPricePerPackage()?->getPriceValue(),
-            "priceCurrency" => $consumable->getPricePerPackage()?->getPriceCurrency(),
+            "priceCurrency" => $consumable->getPricePerPackage()?->getPriceCurrency() ?? "CHF",
             "status" => Availability::Ordered,
             "location" => $consumable->getLocation(),
         ];
