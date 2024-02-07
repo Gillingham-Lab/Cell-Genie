@@ -36,7 +36,7 @@ class ResourceController extends AbstractController
         Security $security,
         ResourceRepository $resourceRepository,
     ): Response {
-        $resources = $resourceRepository->findAll();
+        $resources = $resourceRepository->findBy([], orderBy: ["category" => "ASC", "longName" => "ASC"]);
 
         return $this->render("generic/simple_table.html.twig", [
             "title" => "Resources",
