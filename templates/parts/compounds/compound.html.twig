@@ -70,8 +70,19 @@
                         {{ layout.card_header("Structure") }}
 
                         {{ layout.card_body_start() }}
-                        <div class="card-body px-lg-5 mx-0 text-center">
-                            <canvas data-smiles-type="large" data-smiles="{{ chemical.smiles ? chemical.smiles : "" }}" class="border d-inline-block align-middle"></canvas>
+                        <div class="card-body px-lg-5 mx-0">
+                            <div {{ stimulus_controller("smiles", {
+                                "id": chemical.ulid,
+                                "smiles": chemical.smiles,
+                            }) }}>
+                                <h3>Canonical smiles</h3>
+                                <p class="font-monospace" {{ stimulus_target("smiles", "smiles") }}>{{ chemical.smiles }}</p>
+
+                                <h3>Structure</h3>
+                                <div class="text-center">
+                                    <canvas class="border d-inline-block align-middle" {{ stimulus_target("smiles", "canvas") }} style="width: 500px"></canvas>
+                                </div>
+                            </div>
                         </div>
                         {{ layout.card_body_end() }}
                     </div>
