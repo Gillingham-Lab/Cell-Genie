@@ -6,6 +6,11 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
+# Fix for MS office links?
+if (strpos($_SERVER["HTTP_USER_AGENT"], "ms-office") !== false) {
+    die("The user agents contains ms-office. Execution is stopped here to prevent redirects to load the wrong page.");
+}
+
 require dirname(__DIR__).'/vendor/autoload.php';
 
 (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
