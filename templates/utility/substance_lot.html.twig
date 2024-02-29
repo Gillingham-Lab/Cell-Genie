@@ -56,7 +56,7 @@
                                             {{ macros.definition_row("Lot #", lot.lotNumber) }}
                                             {{ macros.definition_row("Status", lot.availability.value) }}
                                             {% if substance is not substanceAntibody %}
-                                            {{ macros.definition_row_raw("Vendor", macros.vendor_url(lot.vendor, lot.vendorPN)) }}
+                                                {{ macros.definition_row_raw("Vendor", macros.vendor_url(lot.vendor, lot.vendorPN)) }}
                                             {% endif %}
                                             {{ macros.definition_row("Storage", lot.box ~ (lot.boxCoordinate ? ", in " ~ lot.boxCoordinate : "")) }}
                                             {{ macros.definition_row("Amount", lot.amount) }}
