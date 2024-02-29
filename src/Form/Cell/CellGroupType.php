@@ -42,12 +42,12 @@ class CellGroupType extends SaveableType
                 ->add("number", TextType::class, [
                     "label" => "Cell number",
                     "required" => true,
-                    "help" => "The number that should be used to reference this cell group. Use the cellosauros ID if applicable.",
+                    "help" => "The number that should be used to reference this cell group. Use the cellosaurus ID if applicable.",
                 ])
                 ->add("name", TextType::class, [
                     "label" => "Cell group name",
                     "required" => true,
-                    "help" => "The name of the cell group can either be abstract (such as 'Human' or 'Engineered') for supersets, but should turn into official cell names further down if cells are added to it."
+                    "help" => "For commercial cell lines, use the cellosaurus ID. For conceptual groups, it can be abstract (such as 'Human' or 'Engineered') for supersets, but should turn into official cell names further down if cells are added to it."
                 ])
                 ->add("cellosaurusId", TextType::class, [
                     "label" => "Cellosaurus ID",
@@ -57,6 +57,7 @@ class CellGroupType extends SaveableType
                 ->add("rrid", TextType::class, [
                     "label" => "RRID",
                     "required" => false,
+                    "help" => "Can usually be found on Cellosaurus as well and is often equivalent to Cellosaurus Acession number. Alternatively, check here: https://scicrunch.org/resources/data/source/SCR_013869-1/search"
                 ])
                 ->add("cultureType", ... $this->getTextOrChoiceOptions("cultureType", [
                     "label" => "Culture type",
