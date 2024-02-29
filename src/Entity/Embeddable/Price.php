@@ -43,6 +43,4 @@ class Price
         $this->priceCurrency = $priceCurrency;
         return $this;
     }
-
-
 }
