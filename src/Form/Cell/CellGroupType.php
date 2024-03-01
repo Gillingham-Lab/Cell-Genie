@@ -47,7 +47,7 @@ class CellGroupType extends SaveableType
                 ->add("name", TextType::class, [
                     "label" => "Cell group name",
                     "required" => true,
-                    "help" => "For commercial cell lines, use the cellosaurus ID. For conceptual groups, it can be abstract (such as 'Human' or 'Engineered') for supersets, but should turn into official cell names further down if cells are added to it."
+                    "help" => "For conceptual groups, it can be abstract (such as 'Human' or 'Engineered') for supersets, but should turn into official cell names further down if cells are added to it (not a cellosaurus number). Use the preferred name on cellosaurus!"
                 ])
                 ->add("cellosaurusId", TextType::class, [
                     "label" => "Cellosaurus ID",
