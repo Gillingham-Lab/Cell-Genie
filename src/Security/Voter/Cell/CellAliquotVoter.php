@@ -97,7 +97,7 @@ class CellAliquotVoter extends Voter
     private function canRemove(CellAliquot $aliquot, User $user): bool
     {
         // Removal is only possible by admins
-        if (in_array("ROLE_ADMIN", $user->getRoles())) {
+        if (in_array("ROLE_GROUP_ADMIN", $user->getRoles()) and $aliquot->getGroup() === $user->getGroup()) {
             return true;
         }
         else {

@@ -45,6 +45,11 @@ class CellAliquotType extends SaveableType
                 "label" => "General",
                 "inherit_data" => true,
             ])
+            ->add("aliquotName", TextType::class, [
+                "label" => "Aliquot name",
+                "help" => "Give each aliquot a name that is also mentioned on the physical tube(s)",
+                "required" => true,
+            ])
             ->add("aliquoted_on", DateType::class, [
                 "label" => "Aliquoted on",
                 "help" => "On which date has this field been aliquoted? Leave empty if unknown.",

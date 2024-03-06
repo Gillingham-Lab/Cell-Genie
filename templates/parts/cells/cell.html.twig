@@ -5,7 +5,14 @@
 {% import 'utility/icons.html.twig' as icon %}
 {% from 'utility/attachments.html.twig' import attachments %}
 
-{% block title %}Gin :: Cell :: {{ cell.cellNumber ~ " -" ~ cell.name }}{% endblock %}
+{% set title %}
+    {{ cell.cellNumber ~ " - " ~ cell.name }}
+    {% if aliquote %}
+        | Aliquot {{ aliquote.aliquotName }}
+    {% endif %}
+{% endset %}
+
+{% block title %}Gin :: Cell :: {{ title }}{% endblock %}
 
 {% macro tab_item(name, id, tabid, active=false, enabled=true) %}
     <a class="nav-link {{ active?"active":"" }} {{ enabled ? "" : "disabled" }}" id="{{ id }}" data-toggle="pill" href="#{{ tabid }}" role="tab" aria-controls="{{ tabid }}" aria-selected="{{ active?"true":"false" }}">{{ name }}</a>
@@ -31,7 +38,8 @@
             <tr>
                 <th scope="col" style="width: 25px;"></th>
                 <th>ID</th>
-                <th>Passage</th>
+                <th>Name</th>
+                <th>p</th>
                 <th>Vials</th>
                 <th>Owner</th>
             </tr>
@@ -40,7 +48,7 @@
             {% for aliquot in cell.cellAliquotes %}
                 <tr>
                     <td>
-                        {{ layout.toolbox_column([
+                        {% set tools =  [
                             {
                                 "type": "view",
                                 "tooltipText": "View aliquot",
@@ -53,9 +61,23 @@
                                 "target": url("app_cell_aliquot_edit", {"cell": cell.cellNumber ?: cell.id, "cellAliquot": aliquot.id}),
                                 "disabled": not is_granted("edit", aliquot),
                             },
-                        ]) }}
+                        ]%}
+
+                        {% if is_granted("remove", aliquot) %}
+                            {% set tools = tools|merge([{
+                                "type": "trash",
+                                "tooltipText": "Trash aliquot",
+                                "target": url("app_cell_trash_aliquot", {"aliquotId": aliquot.id}),
+                                "disabled": not is_granted("trash", aliquot),
+                            }]) %}
+                        {% endif %}
+
+
+                        {{ layout.toolbox_column(tools) }}
+
                     </td>
                     <td>{{ aliquot.id }}</td>
+                    <td>{{ aliquot.aliquotName }}</td>
                     <td>{{ aliquot.passage }}</td>
                     <td>
                         <div class="progress">
@@ -118,7 +140,7 @@
 
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(cell.cellNumber ~ " -" ~ cell.name, false, true, icon.cell(true)) }}
+            {{ layout.header(title, false, true, icon.cell(true)) }}
 
             {{ _self.toolbox(cell) }}
 
@@ -194,7 +216,7 @@
                                 },
                                 {
                                     "type": "other",
-                                    "text": "Consume #" ~ aliquote.id,
+                                    "text": "Consume #" ~ aliquote.aliquotName ?? aliquote.id,
                                     "tooltipText": aliquote.vials > 0 ? "Consume one aliquot" : "No aliquots left to consume.",
                                     "disabled": is_granted("consume", aliquote) ? false : (aliquote.vials > 0 ? false : true),
                                     "target": url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id})

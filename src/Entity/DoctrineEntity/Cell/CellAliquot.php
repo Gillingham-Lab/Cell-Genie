@@ -119,6 +119,10 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     #[ValidBoxCoordinate]
     private ?string $boxCoordinate = null;
 
+    #[ORM\Column(type: "string", length: 30, nullable: true)]
+    #[Assert\length(min: 2, max: 30)]
+    private ?string $aliquotName = null;
+
     public function __construct()
     {
         $this->childAliquots = new ArrayCollection();
@@ -132,10 +136,12 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     public function jsonSerialize(): mixed
     {
         return [
+            "id" => $this->getId(),
             "vialColor" => $this->getVialColor(),
             "numberOfAliquots" => $this->getVials(),
             "maxNumberOfAliquots" => $this->getMaxVials() ?? $this->getVials(),
             "number" => $this->getId(),
+            "name" => $this->getAliquotName() ?? $this->getId(),
             "passage" => $this->getPassage(),
             "mycoplasmaResult" => $this->getMycoplasmaResult(),
             "aliquotedOn" => $this->getAliquotedOn()?->format("c"),
@@ -398,6 +404,17 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     public function setBoxCoordinate(?string $boxCoordinate): self
     {
         $this->boxCoordinate = $boxCoordinate;
+        return $this;
+    }
+
+    public function getAliquotName(): ?string
+    {
+        return $this->aliquotName;
+    }
+
+    public function setAliquotName(?string $aliquotName): self
+    {
+        $this->aliquotName = $aliquotName;
         return $this;
     }
 }

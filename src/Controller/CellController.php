@@ -538,6 +538,24 @@ class CellController extends AbstractController
         ]);
     }
 
+    #[Route("/cells/aliquot/trash/{aliquotId}", name: "app_cell_trash_aliquot")]
+    #[IsGranted("remove", "aliquot")]
+    public function trashAliquot(
+        EntityManagerInterface $entityManager,
+        #[MapEntity(mapping: ["aliquotId"  => "id"])]
+        CellAliquot $aliquot,
+    ): Response {
+        try {
+            $entityManager->remove($aliquot);
+            $entityManager->flush();
+            $this->addFlash("success", "Aliquot was removed.");
+        } catch (\Exception $e) {
+            $this->addFlash("error", "Aliquot was not removed. Reason: {$e->getMessage()}");
+        }
+
+        return $this->redirectToRoute("app_cell_view_number", ["cellNumber" => $aliquot->getCell()->getCellNumber()]);
+    }
+
     #[Route("/cells/cultures", name: "app_cell_cultures")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function cellCultures(Request $request): Response

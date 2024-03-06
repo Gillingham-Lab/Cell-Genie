@@ -168,6 +168,35 @@ export default class extends Controller {
             borderColor = "red";
         }
 
+        let strokeWidth = 0;
+        let strokeColor = "grey";
+
+        let mycoplasmaColor = "#DDDDDD";
+        if (e.object.mycoplasmaResult === "positive") {
+            mycoplasmaColor = "#ff8e8e";
+        } else if (e.object.mycoplasmaResult === "negative") {
+            mycoplasmaColor = "#caffb6";
+        }
+
+        // Overwrite background color if its the current aliquot
+        let backgroundColor = "white";
+        if (e.object.cell && this.currentAliquotValue && this.currentAliquotValue.cell && this.currentAliquotValue.id === e.object.id) {
+            backgroundColor = "#b6e8ff";
+            strokeWidth = 1;
+            strokeColor = "black";
+        }
+
+        this.svgContainer
+            .append("rect")
+            .attr("fill", backgroundColor)
+            .attr("x", grid_size*(e.col-1)+x_shift)
+            .attr("y", grid_size*(e.row-1)+y_shift)
+            .attr("width", grid_size)
+            .attr("height", grid_size)
+            .attr("stroke", strokeColor)
+            .attr("stroke-width", strokeWidth)
+        ;
+
         this.svgContainer
             .append("circle")
             .attr("data-substance", id)
@@ -228,6 +257,15 @@ export default class extends Controller {
                 }
             }.bind(this))
         ;
+
+        this.svgContainer
+            .append("circle")
+            .attr("cx", grid_size*(e.col-1)+x_shift+grid_size/8+grid_size/16)
+            .attr("cy", grid_size*(e.row-1)+y_shift+grid_size-(grid_size/8+grid_size/16))
+            .attr("r", grid_size/8)
+            .attr("fill", mycoplasmaColor)
+            .attr("stroke", "black")
+            .attr("stroke-width", 0.5)
     }
 
     getIdFromObject(object) {
@@ -368,7 +406,7 @@ export default class extends Controller {
         }
 
         subHeader.classList.add("text-muted");
-        subHeader.innerText = `Aliquot#${aliquot.number}, p${aliquot.passage}`;
+        subHeader.innerText = `Aliquot ${cell.number}.${aliquot.name}, p${aliquot.passage}`;
 
         annotationElement.classList.add("table", "table-small", "table-hover", "mt-5");
 
