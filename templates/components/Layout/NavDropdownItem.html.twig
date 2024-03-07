@@ -1,0 +1,4 @@
+<a{{ attributes.defaults({"class": "dropdown-item"})}} href="{{ href }}">
+    {% if icon %}<twig:Icon :icon="icon" :stack="iconStack" class="me-1" />{% endif %}
+    {{ label }}
+</a>

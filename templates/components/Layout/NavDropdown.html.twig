@@ -1,0 +1,17 @@
+<li{{ attributes.defaults({"class": "navitem dropdown"})}}
+        id="{{ id }}"
+>
+    <a
+            class="nav-link dropdown-toggle"
+            id="{{ this.dropdownId }}"
+            role="button" data-toggle="dropdown" aria-haspopup="true"
+            {% if href %}href="{{ href }}"{% endif %}
+    >
+        <twig:Icon :icon="icon" :stack="iconStack" />
+        {{ label }}
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="{{ this.dropdownId }}">
+        {% block content %}{% endblock %}
+    </div>
+</li>

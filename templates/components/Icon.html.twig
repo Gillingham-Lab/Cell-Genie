@@ -1,0 +1,8 @@
+<span{{ attributes.defaults({"class": this.iconClass})}}>
+    {% if stack %}
+        <twig:Icon :icon="icon" class="gin-icon-left "/>
+        <twig:Icon :icon="stack" class="gin-icon-right" />
+    {% else %}
+        {{ this.iconContent|raw }}
+    {% endif %}
+</span>

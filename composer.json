@@ -5,6 +5,7 @@
     "description": "A php-based web tool for small chemical biology labs.",
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "version": "1.9.12",
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
@@ -34,7 +35,9 @@
         "symfony/proxy-manager-bridge": "*",
         "symfony/uid": "*",
         "symfony/ux-autocomplete": "^2.14",
+        "symfony/ux-live-component": "^2.16",
         "symfony/ux-turbo": "^2.10",
+        "symfony/ux-twig-component": "^2.16",
         "symfony/validator": "*",
         "symfony/var-dumper": "^6.1",
         "symfony/webpack-encore-bundle": "^1.15",

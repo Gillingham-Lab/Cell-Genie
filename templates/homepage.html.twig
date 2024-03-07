@@ -37,16 +37,8 @@
             <main class="col p-3 bg-secondary" role="main">
                 {% if app.session.flashbag.peekAll|length > 0 %}
                     {% for type, messages in app.session.flashbag.all %}
-                        {% if type == "error" %}
-                            {% set css_type = "alert-danger" %}
-                        {% else %}
-                            {% set css_type = "alert-info" %}
-                        {% endif %}
-
                         {% for message in messages %}
-                            <div class="alert {{ css_type }}">
-                                {{ message|trans({}, domain|default('messages')) }}
-                            </div>
+                            <twig:Alert message="{{ message }}" type="{{ type }}"/>
                         {% endfor %}
                     {% endfor %}
                 {% endif %}

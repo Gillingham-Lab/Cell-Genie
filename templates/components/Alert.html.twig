@@ -1,0 +1,14 @@
+{% set cssType = "info" %}
+{% if type == "danger" or type == "error" %}
+    {% set cssType = 'danger' %}
+{% elseif type == "success" %}
+    {% set cssType = "success" %}
+{% elseif type == "warning" %}
+    {% set cssType = "warning" %}
+{% endif %}
+
+<div{{ attributes.defaults({"class": "alert alert-" ~ cssType }) }}>
+    <twig:Icon icon="{{ this.icon }}" class="me-2" />
+
+    {{ message }}
+</div>
