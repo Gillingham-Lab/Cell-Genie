@@ -1,0 +1,12 @@
+<div{{ attributes.defaults({"class": "card w-100 p-2 text-center"})}}>
+    <a href="{{ target }}" class="link-dark text-decoration-none">
+        <div class="card-img-top display-3">
+        {% if icon %}
+            <twig:Icon :icon="icon"/>
+        {% endif %}
+        </div>
+        <div class="card-text">
+            {{ label }}
+        </div>
+    </a>
+</div>

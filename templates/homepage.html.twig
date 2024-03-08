@@ -5,40 +5,12 @@
 {% block body %}
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
-            {# Navigation pane left #}
-            {# <div class="col col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2 border-right pt-3">
-                <h5>Cell cultures</h5>
-
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <h6><a class="nav-link" href="{{ url("app_cells") }}"><span class="fas fa-fw fa-disease mr-2"></span>Cell database</a></h6>
-                    </li>
-
-                    <li class="nav-item">
-                        <h6><a class="nav-link" href="#"><span class="fas fa-fw fa-flask mr-2"></span>Experiments</a></h6>
-                    </li>
-
-                    <li class="nav-item">
-                        <h6><a class="nav-link" href="{{ url("app_compounds") }}"><span class="fas fa-fw fa-tablets mr-2"></span>Compounds</a></h6>
-                    </li>
-
-                    <li class="nav-item">
-                        <h6><a class="nav-link" href="{{ url("app_proteins") }}"><span class="fas fa-fw fa-bullseye mr-2"></span>Protein Targets</a></h6>
-                    </li>
-
-                    <li class="nav-item">
-                        <h6><a class="nav-link" href="{{ url("app_antibodies") }}"><span class="fas fa-fw mr-2"></span>Antibodies</a></h6>
-                    </li>
-                </ul>
-            </div> #}
-
             {# main content #}
-            {# <main class="col col-12 col-sm-12 col-md-9 col-lg-10 col-xl-10 py-md-3 px-lg-3" role="main"> #}
             <main class="col p-3 bg-secondary" role="main">
                 {% if app.session.flashbag.peekAll|length > 0 %}
                     {% for type, messages in app.session.flashbag.all %}
                         {% for message in messages %}
-                            <twig:Alert message="{{ message }}" type="{{ type }}"/>
+                            <twig:Layout:Alert message="{{ message }}" type="{{ type }}"/>
                         {% endfor %}
                     {% endfor %}
                 {% endif %}

@@ -17,37 +17,41 @@
 {% block body_main %}
     <div class="row mb-5">
         <div class="container container-fluid w-100 p-0 m-0">
-            <div class="row row-cols-1 d-lg-none">
-                <div class="col">
+            <twig:Layout:Row cols="1" class="d-lg-none">
+                <twig:Layout:Col>
                     <div class="bg-white m-2">
                         <div id="qr-reader" style="display: none"></div>
                         <div id="qr-reader-results"></div>
                     </div>
-                </div>
-            </div>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
-            <div class="row row-cols-3 d-lg-none no-gutters row-gap-sm-1">
-                <div class="col mb-2">
+            <twig:Layout:Row cols="3" class="gx-2 gy-2 d-lg-none">
+                <twig:Layout:Col>
                     <div class="card w-100 p-2 text-center">
                         <a id="qr-reader-toggle" class="link-dark text-decoration-none" data-homepage="{{ path("app_homepage") }}">
-                            <span class="card-img-top display-3 fas fa-qrcode"></span> <br />
-                            <span class="card-text">Scan</span>
+                            <div class="card-img-top display-3 "><span class="fas fa-fw fa-qrcode"></span></div>
+                            <div class="card-text">Scan</div>
                         </a>
                     </div>
-                </div>
+                </twig:Layout:Col>
 
-                {{ _self.make_card("Cells", "fas fa-fw fa-disease", url("app_cells")) }}
-                {{ _self.make_card("Cell Cultures", "fas fa-fw fa-flask", url("app_cell_cultures")) }}
-                {{ _self.make_card("Antibodies", "icon icon-antibody", url("app_antibodies")) }}
-                {{ _self.make_card("1° Antibodies", "icon icon-antibody-primary", url("app_antibodies", {"antibodyType": "primaries"})) }}
-                {{ _self.make_card("2° Antibodies", "icon icon-antibody-secondary", url("app_antibodies", {"antibodyType": "secondaries"})) }}
-                {{ _self.make_card("Chemicals", "fas fa-fw fa-tablets", url("app_compounds")) }}
-                {{ _self.make_card("Proteins", icons.protein(true), url("app_proteins")) }}
-                {{ _self.make_card("Oligos", "icon icon-oligomer", url("app_oligos")) }}
-                {{ _self.make_card("Recipes", "fas fa-fw fa-list-alt", url("app_recipes")) }}
-                {{ _self.make_card("Instruments", "fas fa-fw fa-list-alt", url("app_recipes")) }}
-                {{ _self.make_card("Experiments", "fas fa-fw fa-hdd", url("app_instruments")) }}
-            </div>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Cells" icon="cell" target="{{ path("app_cells_all") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Cell Cultures" icon="cellCulture" target="{{ path("app_cell_cultures") }}" /></twig:Layout:Col>
+
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Antibodies" icon="antibody" target="{{ path("app_antibodies") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="1° Antibodies" icon="antibody.primary" target="{{ path("app_antibodies", {"antibodyType": "primaries"}) }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="2° Antibodies" icon="antibody.secondary" target="{{ path("app_antibodies", {"antibodyType": "secondaries"}) }}" /></twig:Layout:Col>
+
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Chemicals" icon="chemical" target="{{ path("app_compounds") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Proteins" icon="protein" target="{{ path("app_proteins") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Oligos" icon="oligo" target="{{ path("app_oligos") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Plasmids" icon="plasmid" target="{{ path("app_plasmids") }}" /></twig:Layout:Col>
+
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Recipes" icon="recipe" target="{{ path("app_recipes") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Instruments" icon="instrument" target="{{ path("app_instruments") }}" /></twig:Layout:Col>
+                <twig:Layout:Col class="mb-2"><twig:Layout:CardNav label="Resources" icon="resource" target="{{ path("app_resources") }}" /></twig:Layout:Col>
+            </twig:Layout:Row>
 
             <div class="row justify-content-center">
                 <div class="col col-sm-12 col-md-12 col-lg-6 p-1">
