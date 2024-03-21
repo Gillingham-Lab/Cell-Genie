@@ -1,0 +1,41 @@
+<div{{ attributes.defaults({}) }}>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {% for column in table.columns %}
+                    {% set width = "" %}
+                    {% if column.widthRecommendation %}
+                        {% set width = "width: " ~ column.widthRecommendation ~ "em;" %}
+                    {% endif %}
+
+                    <th scope="col" style="{{ width }}">{{ column.label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table.rows %}
+                <tr>
+                    {% for rowColumn in row %}
+                        <td>
+                            {% if rowColumn.raw %}
+                                {{ rowColumn.value|raw }}
+                            {% elseif table.columns[loop.index0].type == "App\\Entity\\Table\\UrlColumn" %}
+                                {% if not rowColumn.value %}
+                                    -
+                                {% elseif rowColumn.value is isarray %}
+                                    <a href="{{ rowColumn.value.href }}">{{ rowColumn.value.label }} <twig:Icon icon="external" /></a>
+                                {% else %}
+                                    <a href="{{ rowColumn.value }}">{{ rowColumn.value }} <twig:Icon icon="external" /></a>
+                                {% endif %}
+                            {% elseif table.columns[loop.index0].type == "App\\Entity\\Table\\ToolboxColumn"%}
+                                <twig:Toolbox size="sm" toolbox="{{ rowColumn.value }}" />
+                            {% else %}
+                                {{ rowColumn.value }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

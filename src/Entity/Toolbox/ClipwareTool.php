@@ -3,18 +3,24 @@ declare(strict_types=1);
 
 namespace App\Entity\Toolbox;
 
-class AddTool extends Tool
+class ClipwareTool extends Tool
 {
     public function __construct(
-        string $path,
-        string $icon = "add",
-        string $buttonClass = "btn-primary",
+        private readonly string $clipboardText,
+        string $path = "",
+        ?string $icon = "clipboard",
+        string $buttonClass = "btn-primary btn-clipboard",
         bool $enabled = true,
-        string $tooltip = "Add",
+        ?string $tooltip = null,
         bool $confirmationRequired = false,
         string $confirmationText = "Are you sure?",
         ?string $iconStack = null,
     ) {
         parent::__construct($path, $icon, $buttonClass, $enabled, $tooltip, $confirmationRequired, $confirmationText, $iconStack);
+    }
+
+    public function getClipboardText(): string
+    {
+        return $this->clipboardText;
     }
 }

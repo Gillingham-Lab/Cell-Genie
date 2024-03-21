@@ -34,11 +34,13 @@ class Icon
             "cell" => "icon icon-mammalian-cell",
             "cellCulture", "experiment" => "fas fa-fw fa-flask",
 
+            "view" => "far fa-fw fa-eye",
             "add" => "fas fa-fw fa-plus",
             "trash", "remove" => "fas fa-fw fa-trash-alt",
             "edit" => "fa fa-fw fa-pen",
             "import" => "fas fa-fw fa-file-import",
             "search" => "fas fa-fw fa-search",
+            "clipboard" => "far fa-fw fa-clipboard",
 
             "rack", "location", "storage" => "fas fa-fw fa-boxes",
             "box" => "fas fa-fw fa-box",
@@ -53,6 +55,7 @@ class Icon
             "admin", "settings" => "fas fa-fw fa-tools",
 
             "logout" => "fas fa-sign-out-alt fa-fw",
+            "external" => "fa fa-external-link-alt fa-fw",
 
             "other" => "fas fa-fw fa-ellipsis-v",
             "none" => "fas fa-fw",

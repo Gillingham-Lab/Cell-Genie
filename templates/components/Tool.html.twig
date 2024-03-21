@@ -1,0 +1,20 @@
+<a{{ attributes.defaults({
+    class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
+    href: tool.path,
+}) }}
+    {% if tool.tooltip %}
+        data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
+    {% endif %}
+
+    {% if tool.confirmationRequired %}
+        onclick='return confirm("{{ tool.confirmationText }}")'
+    {% endif %}
+
+    {% if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
+        data-clipboard-text="{{ tool.clipboardText }}"
+    {% endif %}
+>
+    {% if tool.icon %}
+        <twig:Icon icon="{{ tool.icon }}" />
+    {% endif %}
+</a>

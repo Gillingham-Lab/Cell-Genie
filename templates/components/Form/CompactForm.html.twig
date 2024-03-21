@@ -1,0 +1,17 @@
+<div{{ attributes }}>
+    {{ form_start(form, formAttributes) }}
+
+    {{ form_errors(form) }}
+
+    <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
+        {% for child in form.children %}
+            <twig:Layout:Col>
+                {{ form_row(child) }}
+            </twig:Layout:Col>
+        {% endfor %}
+    </twig:Layout:Row>
+
+    {% block content %}{% endblock %}
+
+    {{ form_end(form) }}
+</div>

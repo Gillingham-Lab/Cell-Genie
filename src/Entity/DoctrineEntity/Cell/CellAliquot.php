@@ -11,6 +11,7 @@ use App\Entity\Traits\Privacy\OwnerTrait;
 use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Validator\Constraint\ValidBoxCoordinate;
+use App\Validator\Constraint\WithinBoxBounds;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CellAliquotRepository::class)]
 #[ORM\Table("cell_aliquote")]
 #[Gedmo\Loggable]
+#[WithinBoxBounds("boxCoordinate", "box")]
 class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
 {
     use HasBoxTrait;

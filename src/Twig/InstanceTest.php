@@ -12,6 +12,7 @@ class InstanceTest extends AbstractExtension
     {
         return [
             new TwigTest("instanceof", fn(mixed $var, $instance) => $var instanceof $instance),
+            new TwigTest("isarray", fn(mixed $var) => is_array($var)),
         ];
     }
 }

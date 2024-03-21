@@ -15,6 +15,7 @@ class Tool
         private readonly ?string $tooltip = null,
         private readonly bool $confirmationRequired = false,
         private readonly string $confirmationText = "Are you sure?",
+        private readonly ?string $iconStack = null,
     ) {
 
     }
@@ -52,5 +53,10 @@ class Tool
     public function getConfirmationText(): string
     {
         return $this->confirmationText;
+    }
+
+    public function getIconStack(): ?string
+    {
+        return $this->iconStack;
     }
 }

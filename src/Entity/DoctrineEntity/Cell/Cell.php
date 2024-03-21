@@ -22,6 +22,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellRepository::class)]
@@ -37,6 +38,7 @@ class Cell implements PrivacyAwareInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
+    #[Groups(["cell"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: CellGroup::class, cascade: ["persist"], fetch: "LAZY", inversedBy: "cells")]
@@ -44,12 +46,14 @@ class Cell implements PrivacyAwareInterface
     #[ORM\OrderBy(["cellNumber" => "ASC"])]
     #[Gedmo\Versioned]
     #[Assert\NotBlank]
+    #[Groups(["cell"])]
     private ?CellGroup $cellGroup = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
+    #[Groups(["cell"])]
     private string $name = "";
 
     #[ORM\Column(type: "boolean")]

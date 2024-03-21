@@ -1,0 +1,5 @@
+<div{{ attributes.defaults({class: "btn-group " ~ this.groupSize}) }} role="group" aria-label="tools">
+    {% for tool in toolbox %}
+        <twig:Tool :tool="tool" />
+    {% endfor %}
+</div>

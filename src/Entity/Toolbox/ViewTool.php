@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace App\Entity\Toolbox;
 
-class TrashTool extends Tool
+class ViewTool extends Tool
 {
     public function __construct(
         string $path,
-        string $icon = "trash",
-        string $buttonClass = "btn-warning",
+        ?string $icon = "view",
+        string $buttonClass = "btn-primary",
         bool $enabled = true,
-        string $tooltip = "Trash",
-        bool $confirmationRequired = true,
+        ?string $tooltip = null,
+        bool $confirmationRequired = false,
         string $confirmationText = "Are you sure?",
         ?string $iconStack = null,
     ) {

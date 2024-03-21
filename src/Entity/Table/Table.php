@@ -12,6 +12,7 @@ class Table
         /** @var Column[] */
         private array $columns = [],
         private int $sortColumn = 1,
+        private ?int $maxRows = null,
     ) {
 
     }
@@ -41,5 +42,40 @@ class Table
     public function getSortColumn(): int
     {
         return $this->sortColumn;
+    }
+
+    public function toArray()
+    {
+        $table = [
+            "numberOfRows" => 0,
+            "maxNumberOfRows" => $this->maxRows,
+            "rows" => [],
+            "columns" => [],
+        ];
+
+        foreach ($this->columns as $column) {
+            $table["columns"][] = [
+                "label" => $column->getTitle(),
+                "type" => $column::class,
+                "showLabel" => $column::renderTitle,
+                "widthRecommendation" => $column->getWidthRecommendation(),
+            ];
+        }
+
+        foreach ($this->data as $datum) {
+            $row = [];
+
+            foreach ($this->columns as $column) {
+                $row[] = [
+                    "value" => $column->getRender($datum),
+                    "raw" => $column::raw,
+                ];
+            }
+
+            $table["rows"][] = $row;
+            $table["numberOfRows"]++;
+        }
+
+        return $table;
     }
 }

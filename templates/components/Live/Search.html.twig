@@ -1,0 +1,16 @@
+<div {{ attributes }}>
+    <twig:ElementCard :title="title" icon="search" collapsed>
+        {% set formAttr = {
+            attr: {
+                "data-action": "live#action:prevent",
+                "data-live-action-param": "save",
+                "data-model": "norender|*",
+            }
+        } %}
+        <twig:Form:CompactForm :form="form" formAttributes="{{ formAttr }}" :title="title">
+            <button class="btn btn-primary">Search</button>
+            {# <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="remember">Remember</button>  #}
+            <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="reset">Reset</button>
+        </twig:Form:CompactForm>
+    </twig:ElementCard>
+</div>

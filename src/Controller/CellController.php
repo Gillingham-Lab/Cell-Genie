@@ -20,6 +20,7 @@ use App\Form\Cell\CellCultureEvents\CellCultureSplittingType;
 use App\Form\Cell\CellCultureType;
 use App\Form\Cell\CellGroupType;
 use App\Form\Cell\CellType;
+use App\Form\Search\CellSearchType;
 use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellCultureRepository;
@@ -46,7 +47,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -93,7 +94,10 @@ class CellController extends AbstractController
         );
 
         return $this->render("parts/cells/cells_list.html.twig", [
-           "cells" => $cells,
+            "cells" => $cells,
+            "entityClass" => Cell::class,
+            "entityContext" => "cell",
+            "liveSearchFormType" => CellSearchType::class,
        ]) ;
     }
 

@@ -15,7 +15,7 @@
                 data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
             {% endif %}
         >
-            <span class="{{ tool.icon }}"></span>
+            <twig:Icon :icon="tool.icon" />
         </a>
     {% endfor %}
 </div>

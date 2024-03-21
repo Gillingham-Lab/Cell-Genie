@@ -1,0 +1,19 @@
+<twig:Layout:Row>
+    <twig:Layout:Col class="bg-white mx-3 mb-3 border d-flex align-items-center">
+        <div class="float-lg-start p-3 p-lg-5 flex-fill">
+            <h1 class="align-middle">
+                {% if icon %}<twig:Icon :icon="icon" :stack="iconStack" />{% endif %}
+
+                {{ title }}
+            </h1>
+
+            {% if subTitle %}
+                <h2 class="text-muted">{{ subTitle }}</h2>
+            {% endif %}
+        </div>
+
+        {% if barcode %}
+            <div class="d-none d-lg-block float-lg-end p-2 py-auto">{{ app.request.pathInfo|GinPathQRCode }}</div>
+        {% endif %}
+    </twig:Layout:Col>
+</twig:Layout:Row>

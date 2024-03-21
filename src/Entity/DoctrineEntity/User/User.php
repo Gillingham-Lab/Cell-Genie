@@ -248,36 +248,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Experiment>
-     */
-    public function getExperiments(): Collection
-    {
-        return $this->experiments;
-    }
-
-    public function addExperiment(Experiment $experiment): static
-    {
-        if (!$this->experiments->contains($experiment)) {
-            $this->experiments[] = $experiment;
-            $experiment->setOwner($this);
-        }
-
-        return $this;
-    }
-
-    public function removeExperiment(Experiment $experiment): static
-    {
-        if ($this->experiments->removeElement($experiment)) {
-            // set the owning side to null (unless already changed)
-            if ($experiment->getOwner() === $this) {
-                $experiment->setOwner(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, CellCulture>
      */
     public function getCellCultures(): Collection
