@@ -48,7 +48,7 @@ class Rack implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?Rack $parent = null;
 
-    #[ORM\Column(type: Types::STRING, length: 100)]
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: true)]
     private ?string $pinCode = null;
 
     // Transient properties only sometimes present
