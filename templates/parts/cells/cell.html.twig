@@ -12,6 +12,11 @@
     {% endif %}
 {% endset %}
 
+{% set subtitle = cell.cellGroup.name %}
+{% if cell.rrid %}
+    {% set subtitle = subtitle ~ " (RRID:" ~ cell.rrid ~ ")" %}
+{% endif %}
+
 {% block title %}Gin :: Cell :: {{ title }}{% endblock %}
 
 {% macro tab_item(name, id, tabid, active=false, enabled=true) %}
@@ -52,7 +57,7 @@
                             {
                                 "type": "view",
                                 "tooltipText": "View aliquot",
-                                "target": url("app_cell_aliquote_view_number", {"cellNumber": cell.cellNumber ?: cell.id, "aliquoteId": aliquot.id}),
+                                "target": url("app_cell_aliquot_view_number", {"cellNumber": cell.cellNumber ?: cell.id, "aliquotId": aliquot.id}),
                                 "disabled": not is_granted("view", aliquot),
                             },
                             {
@@ -140,193 +145,56 @@
 
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(title, false, true, icon.cell(true)) }}
+            <twig:PageHeader :title="title" :subTitle="subtitle" icon="cell" :barcode="true"  />
 
-            {{ _self.toolbox(cell) }}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox" />
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
-            <div class="row row-cols-1 row-cols-lg-2">
-                {# Cell metadata #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Details", "Details") }}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="outer" class="col-12 col-lg-6 col-xl-8">
+                    <twig:ElementCard title="Cell metadata">
+                        <twig:Metadata
+                                class="border-bottom pb-3"
+                                data="{{ {
+                                    "ID": cell.id,
+                                    "Group": ["entity", cell.cellGroup],
+                                    "RRID": ["rrid", cell.rrid],
+                                    "Cellosaurus": ["cellosaurus", cell.cellosaurusId],
+                                    "Parent Cell": ["entity", cell.parent],
+                                    "Derived Cells": ["entity", cell.children],
+                                    "Organism": cell.organism ? cell.organism.fullName : "undefined",
+                                    "Tissue": cell.tissue ? cell.tissue.name : "undefined",
+                                    "Age": cell.age ?? "unknown",
+                                    "Sex": cell.sex ?? "unknown",
+                                    "Ethnicity": cell.ethnicity ?? "unknown",
+                                    "Disease": cell.disease ?? "unknown",
+                                    "Morphology": cell.morphology ? cell.morphology.name ? "unknown",
+                                    "Culture Type": cell.cultureType ?? "unknown",
+                                    "Cancer cell": ["boolean", cell.isCancer],
+                                    "Engineered cell": ["boolean", cell.isEngineered],
+                                } }}"
+                        />
 
-                        {{ layout.card_body_collapse_start("Details") }}
-                        <div class="card-body px-lg-5">
-                            <table class="table w-100 table-borderless table-sm table-hover">
-                                <tbody>
-                                {{ macros.definition_row("ID", cell.id) }}
-                                {{ macros.definition_row("Group", cell.cellGroup) }}
-                                {{ macros.definition_row("RRID", macros.rrid_resolver(cell.rrid)) }}
-                                {{ macros.definition_row_raw("Cellosaurus", cell_macros.cellosauros_url(cell)) }}
+                        <section class="mt-3">
+                            <h3>Aliquots</h3>
 
-                                {% if cell.parent %}
-                                    {{ macros.definition_row("Parent", cell.parent.name, cell_macros.url_cell(cell.parent)) }}
-                                {% else %}
-                                    {{ macros.definition_row("Parent", "none") }}
-                                {% endif %}
+                            <twig:Live:CellAliquotTable :cell="cell" loading="lazy" :currentAliquot="currentAliquot"></twig:Live:CellAliquotTable>
+                        </section>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
 
-                                {% if cell.children|length > 0 %}
-                                    <tr>
-                                        <th scope="row">Children</th>
-                                        <td>
-                                            {{ macros.pillify(cell.children) }}
-                                        </td>
-                                    </tr>
-                                {% else %}
-                                    {{ macros.definition_row("Children", "none") }}
-                                {% endif %}
+                <twig:Layout:Col type="outer" class="col-12 col-lg-6 col-xl-4">
+                    <twig:ElementCard title="Boxes" noPadding>
+                        <twig:Live:Boxes :boxes="boxes" :currentCellAliquot="currentAliquot"></twig:Live:Boxes>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
-                                {{ macros.definition_row("Organism", cell.organism ? cell.organism.fullName : "undefined") }}
-                                {{ macros.definition_row("Tissue", cell.tissue ? cell.tissue.name : "undefined") }}
-                                {{ macros.definition_row("Age", cell.age) }}
-                                {{ macros.definition_row("Sex", cell.sex ?: "-") }}
-                                {{ macros.definition_row("Ethnicity", cell.ethnicity ?: "-") }}
-                                {{ macros.definition_row("Disease", cell.disease ?: "-") }}
-                                {{ macros.definition_row("Morphology", cell.morphology ? cell.morphology.name : "undefined") }}
-                                {{ macros.definition_row("Culture type", cell.cultureType) }}
-                                {{ macros.definition_row("Cancer", cell.isCancer ? "Yes" : "No") }}
-                                {{ macros.definition_row("Engineered", cell.isEngineered ? "Yes" : "No") }}
-                                </tbody>
-                            </table>
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Aliquot information #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100 {{ boxes|length == 0 ? "border-danger" : "" }}">
-                        {{ layout.card_header_collapse("Aliquot Overview", "AliquotOverview") }}
-
-                        {{ layout.card_body_collapse_start("AliquotOverview") }}
-
-                        {% if aliquote and is_granted("ROLE_USER") %}
-                            {{ layout.toolbox_card([
-                                {
-                                    "type": "add",
-                                    "tooltipText": "Add cell aliquot",
-                                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
-                                    "disabled": not is_granted("add_aliquot", cell),
-                                },
-                                {
-                                    "type": "edit",
-                                    "tooltipText": "Edit current aliquot",
-                                    "target": url("app_cell_aliquot_edit", {"cell": cell.cellNumber ?: cell.id, "cellAliquot": aliquote.id}),
-                                    "disabled": not is_granted("edit", aliquote)
-                                },
-                                {
-                                    "type": "other",
-                                    "text": "Consume #" ~ aliquote.aliquotName ?? aliquote.id,
-                                    "tooltipText": aliquote.vials > 0 ? "Consume one aliquot" : "No aliquots left to consume.",
-                                    "disabled": is_granted("consume", aliquote) ? false : (aliquote.vials > 0 ? false : true),
-                                    "target": url("app_cell_consume_aliquote", {"aliquoteId": aliquote.id})
-                                }
-                            ]) }}
-                        {% elseif is_granted("ROLE_USER") %}
-                            {{ layout.toolbox_card([
-                                {
-                                    "type": "add",
-                                    "tooltipText": "Add aliquot",
-                                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
-                                    "disabled": not is_granted("add_aliquot", cell),
-                                },
-                            ]) }}
-                        {% endif %}
-
-                        <div class="card-body p-0 pt-2">
-                            {% if boxes|length == 0 %}
-                                <div class="px-5">
-                                    <em>No aliquots registered.</em>
-                                </div>
-                            {% else %}
-                                {% set found = null %}
-                                {% set displayed_box = false %}
-                                {% for boxMap in boxMaps %}
-                                    {% if boxMap.count > 0 %}
-                                        {% set displayed_box = true %}
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if displayed_box %}
-                                    <nav>
-                                        <div class="nav nav-tabs" id="box-tab-navigation" role="tablist">
-                                            {% for box in boxes %}
-                                                {% if aliquote and boxAliquotes[box.ulid.toBase58] is defined %}
-                                                    {% for a in boxAliquotes[box.ulid.toBase58] %}
-                                                        {% if a.id == aliquote.id %}
-                                                            {% set found = box %}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% elseif loop.first %}
-                                                    {% set found = box %}
-                                                {% endif %}
-
-                                                {% if boxMaps[box.ulid.toBase58].count > 0 %}
-                                                    <a class="nav-item nav-link {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "active" : "" }}"
-                                                       id="box-tab-{{ loop.index }}"
-                                                       data-bs-toggle="tab" href="#box-{{ loop.index }}" role="tab"
-                                                       aria-controls="box-{{ loop.index }}" aria-selected="{{ found ? "true" : "false" }}"
-                                                    >Box {{ loop.index }}</a>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </nav>
-                                {% endif %}
-
-                                {% if not displayed_box %}
-                                    <div class="p-3">
-                                        {{ _self.aliquot_list(cell) }}
-                                    </div>
-                                {% else %}
-                                    <div class="tab-content border-light border border-top-0 p-3" id="box-tab-content">
-                                        {% for box in boxes %}
-                                            {% if boxMaps[box.ulid.toBase58].count > 0 %}
-                                                <div class="tab-pane fade {{ found and found.ulid.toBase58 == box.ulid.toBase58 ? "show active" : "" }}" id="box-{{ loop.index }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}">
-                                                    <h6>{{ box.fullLocation }}</h6>
-
-                                                    <!--<div style="max-width: 20rem">
-                                                    {{ box }}
-                                                    {# {{ macros.make_box(box, boxAliquotes[box.ulid.toBase58] is defined ? boxAliquotes[box.ulid.toBase58] : null, cell, aliquote) }} #}
-                                                </div>-->
-
-                                                    <div class="mx-0"
-                                                            {% if aliquote %}
-                                                                {{ stimulus_controller("box", {
-                                                                    boxMap: boxMaps[box.ulid.toBase58],
-                                                                    substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
-                                                                    cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
-                                                                    currentAliquot: aliquote|json_encode,
-                                                                }) }}
-                                                            {% else %}
-                                                                {{ stimulus_controller("box", {
-                                                                    boxMap: boxMaps[box.ulid.toBase58],
-                                                                    substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
-                                                                    cellTarget: url("app_cell_aliquote_view_number", {"cellNumber": "placeholder-cell-numer", "aliquoteId": "placeholder-aliquot-id"}),
-                                                                }) }}
-                                                            {% endif %}
-                                                    >
-                                                        <div class="row row-cols-1 row-cols-lg-2">
-                                                            <div class="col">
-                                                                <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>
-                                                                <div {{ stimulus_target("box", "boxMap") }} class="text-center"></div>
-                                                            </div>
-                                                            <div class="col mb-5" {{ stimulus_target("box", "boxMapContent") }}>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-            </div>
+            <twig:Layout:Row>
+            </twig:Layout:Row>
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
 
@@ -555,18 +423,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% if displayed_box %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Aliquot list", "AliquotList") }}
-
-                            {{ layout.card_body_collapse_start("AliquotList") }}
-                            {{ _self.aliquot_list(cell) }}
                             {{ layout.card_body_collapse_end() }}
                         </div>
                     </div>

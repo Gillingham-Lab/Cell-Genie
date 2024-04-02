@@ -1,4 +1,4 @@
-<div{{ attributes.defaults({class: "card mx-3 h-100"}) }}>
+<div{{ attributes.defaults({class: "card mx-1 mx-md-3 h-100"}) }}>
     <div class="card-header" id="collapse-{{ computed.id }}-header">
         <h2 class="mb-0">
             <button class="btn btn-lg w-100 text-start"
@@ -11,7 +11,7 @@
     </div>
 
     <div id="collapse-{{ computed.id }}-content" class="collapse overflow-auto {{ collapsed ?: "show" }}" aria-labelledby="collapse-{{ computed.id }}-header">
-        <div class="card-body px-lg-5">
+        <div class="card-body {% if not noPadding %}p-3 px-lg-5{% else %}p-0{% endif %}">
             {% block content %}{% endblock %}
         </div>
     </div>

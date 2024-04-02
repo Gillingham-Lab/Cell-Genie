@@ -7,14 +7,17 @@ use Traversable;
 
 class Table
 {
+    private $isActive = null;
+
     public function __construct(
         private ?iterable $data = null,
         /** @var Column[] */
         private array $columns = [],
         private int $sortColumn = 1,
         private ?int $maxRows = null,
+        ?callable $isActive = null,
     ) {
-
+        $this->isActive = $isActive;
     }
 
     public function addColumn(Column $column): self
@@ -53,6 +56,8 @@ class Table
             "columns" => [],
         ];
 
+        $isActive = $this->isActive;
+
         foreach ($this->columns as $column) {
             $table["columns"][] = [
                 "label" => $column->getTitle(),
@@ -69,6 +74,8 @@ class Table
                 $row[] = [
                     "value" => $column->getRender($datum),
                     "raw" => $column::raw,
+                    "component" => $column::component,
+                    "isActive" => $isActive ? $isActive($datum) : false,
                 ];
             }
 

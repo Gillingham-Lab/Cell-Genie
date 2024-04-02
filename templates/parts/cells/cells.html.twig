@@ -245,8 +245,12 @@
                                 <h4>Cells</h4>
                                 {% if currentGroup.cells|length > 0 %}
                                     <div class="list-group list-group-root well border-1 border">
-                                        {{ _self.display_cells(currentGroup.cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
-                                        {{ _self.display_cells(currentGroup.cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                        {% if app.user and app.user.group %}
+                                            {{ _self.display_cells(currentGroup.cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
+                                            {{ _self.display_cells(currentGroup.cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                        {% else %}
+                                            {{ _self.display_cells(currentGroup.cells) }}
+                                        {% endif %}
                                     </div>
                                 {% else %}
                                     <p>This group contains no cells.</p>
@@ -263,8 +267,12 @@
 
                                         {% set otherCells = otherCells|sort((a, b) => a.cellNumber <=> b.cellNumber) %}
 
-                                        {{ _self.display_cells(otherCells|filter(e => e.group and e.group.id == app.user.group.id)) }}
-                                        {{ _self.display_cells(otherCells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                        {% if app.user and app.user.group %}
+                                            {{ _self.display_cells(otherCells|filter(e => e.group and e.group.id == app.user.group.id)) }}
+                                            {{ _self.display_cells(otherCells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
+                                        {% else %}
+                                            {{ _self.display_cells(otherCells) }}
+                                        {% endif %}
                                     </div>
                                 {% endif %}
                             {% endif %}

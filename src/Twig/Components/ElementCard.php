@@ -15,4 +15,5 @@ class ElementCard
     public ?string $icon = null;
     public ?string $iconStack = null;
     public bool $collapsed = false;
+    public bool $noPadding = false;
 }

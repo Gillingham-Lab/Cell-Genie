@@ -31,8 +31,8 @@
 
             <twig:Layout:NavSeparator />
             <twig:Layout:NavDropdown id="gin-navbar-cell" label="Cells" icon="cell" href="{{ url("app_cells") }}">
-                <twig:Layout:NavDropdownItem label="Overview" href="{{ url("app_cells") }}" icon="cell" />
-                <twig:Layout:NavDropdownItem label="All cells" href="{{ url("app_cells_all") }}" icon="cell" />
+                <twig:Layout:NavDropdownItem label="Browse cells" href="{{ url("app_cells") }}" icon="cell" iconStack="view" />
+                <twig:Layout:NavDropdownItem label="Search cells" href="{{ url("app_cells_all") }}" icon="cell" iconStack="search" />
                 {% if is_granted("add", "cell") %}
                     <twig:Layout:NavDropdownItem label="Add cell" href="{{ url("app_cell_add") }}" icon="add" />
                 {% endif %}

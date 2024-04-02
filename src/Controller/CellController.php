@@ -13,6 +13,11 @@ use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\ClipwareTool;
+use App\Entity\Toolbox\EditTool;
+use App\Entity\Toolbox\Tool;
+use App\Entity\Toolbox\Toolbox;
 use App\Form\Cell\CellAliquotType;
 use App\Form\Cell\CellCultureEvents\CellCultureEventTestType;
 use App\Form\Cell\CellCultureEvents\CellCultureOtherType;
@@ -35,6 +40,7 @@ use App\Security\Voter\Cell\CellGroupVoter;
 use App\Security\Voter\Cell\CellVoter;
 use App\Service\Cells\CellCultureService;
 use App\Service\FileUploader;
+use App\Service\Storage\StorageBoxService;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -56,15 +62,15 @@ class CellController extends AbstractController
     private ?User $user = null;
 
     public function __construct(
-        readonly private Security $security,
-        readonly private CellRepository $cellRepository,
-        readonly private BoxRepository $boxRepository,
-        readonly private CellAliquotRepository $cellAliquoteRepository,
-        readonly private ChemicalRepository $chemicalRepository,
-        readonly private ProteinRepository $proteinRepository,
+        readonly private Security                 $security,
+        readonly private CellRepository           $cellRepository,
+        readonly private BoxRepository            $boxRepository,
+        readonly private CellAliquotRepository    $cellAliquotRepository,
+        readonly private ChemicalRepository       $chemicalRepository,
+        readonly private ProteinRepository        $proteinRepository,
         readonly private ExperimentTypeRepository $experimentTypeRepository,
-        readonly private EntityManagerInterface $entityManager,
-        readonly private CellCultureRepository $cellCultureRepository,
+        readonly private EntityManagerInterface   $entityManager,
+        readonly private CellCultureRepository    $cellCultureRepository,
     ) {
         $user = $this->security->getUser();
 
@@ -129,6 +135,7 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/group/remove/{cellGroup}", name: "app_cells_group_remove")]
+    #[IsGranted(CellGroupVoter::REMOVE, "cellGroup")]
     public function removeCellGroup(
         EntityManagerInterface $entityManager,
         CellGroup $cellGroup = null,
@@ -228,74 +235,36 @@ class CellController extends AbstractController
         ]);
     }
 
-    #[Route("/cells/view/{cellId}", name: "app_cell_view")]
     #[Route("/cells/view/no/{cellNumber}", name: "app_cell_view_number")]
-    #[Route("/cells/view/{cellId}/{aliquoteId}", name: "app_cell_aliquote_view")]
-    #[Route("/cells/view/no/{cellNumber}/{aliquoteId}", name: "app_cell_aliquote_view_number")]
-    public function viewCell(
-        string $cellId = null,
-        string $aliquoteId = null,
-        string $cellNumber = null,
+    #[Route("/cells/view/no/{cellNumber}/{aliquotId}", name: "app_cell_aliquot_view_number")]
+    #[IsGranted("view", "cell")]
+    #[IsGranted("view", "aliquot")]
+    public function viewCellByNumber(
+        StorageBoxService $boxService,
+        #[MapEntity(mapping: ["cellNumber" => "cellNumber"])]
+        Cell $cell,
+        #[MapEntity(mapping: ["aliquotId" => "id"])]
+        ?CellAliquot $aliquot,
     ): Response {
-        if ($cellId === null AND $cellNumber === null) {
-            throw new NotFoundHttpException();
-        }
+        return $this->viewCell($boxService, $cell, $aliquot);
+    }
 
-        if ($cellId) {
-            try {
-                $cell = $this->cellRepository->find($cellId);
-            } catch (ConversionException) {
-                $cell = null;
-            }
-        }
+    #[Route("/cells/view/{cellId}", name: "app_cell_view")]
+    #[Route("/cells/view/{cellId}/{aliquotId}", name: "app_cell_aliquot_view")]
+    #[IsGranted("view", "cell")]
+    #[IsGranted("view", "aliquot")]
+    public function viewCell(
+        StorageBoxService $boxService,
+        #[MapEntity(mapping: ["cellId" => "id"])]
+        Cell $cell,
+        #[MapEntity(mapping: ["aliquotId" => "id"])]
+        ?CellAliquot $aliquot,
+    ): Response {
+        // Get all boxes that contain aliquots of the current cell line
+        $boxes = $boxService->getBoxes($cell);
 
-        if ($cellNumber) {
-            $cell = $this->cellRepository->findOneBy(["cellNumber" => $cellNumber]);
-        }
-
-        if (!$cell) {
-            $this->addFlash("error", "Cell was not found");
-            return $this->redirectToRoute("app_cells");
-        }
-
-        // Get all boxes that contain aliquotes of the current cell line
-        $boxes = $this->boxRepository->findByAliquotedCell($cell);
-
-        // Create box maps for each box
-        $boxMaps = [];
-        foreach ($boxes as $box) {
-            $boxMaps[$box->getUlid()->toBase58()] = BoxMap::fromBox($box);
-        }
-
-        // Get all aliquotes from those boxes
-        $aliquotes = $this->cellAliquoteRepository->findAllFromBoxes($boxes);
-
-        // Create an associative array that makes box.id => aliquotes[]
-        $boxAliquotes = [];
-        foreach ($aliquotes as $aliquote) {
-            $aliquoteBox = $aliquote->getBox();
-            $boxId = $aliquoteBox->getUlid()->toBase58();
-
-            $numberOfAliquots = $aliquote->getVials();
-            $lotCoordinate = $aliquote->getBoxCoordinate();
-
-            // Only add to the box map if the aliquot can be consumed
-            // Otherwise, the storage information must be hidden.
-            if ($this->isGranted("consume", $aliquote)) {
-                $boxMaps[$boxId]->add($aliquote, $numberOfAliquots, $lotCoordinate);
-            }
-        }
-
-        if ($aliquoteId) {
-            $aliquote = $this->cellAliquoteRepository->find($aliquoteId);
-
-            if (!$aliquote) {
-                $this->addFlash("error", "Cell aliquot was not found");
-                return $this->redirectToRoute("app_cell_view_number", ["cellNumber" => $cellNumber]);
-            }
-        } else {
-            $aliquote = null;
-        }
+        // Get corresponding box maps
+        $boxMaps = $boxService->getBoxMaps($cell, $boxes);
 
         // Get associated chemicals
         $chemicals = $this->chemicalRepository->findByCell($cell);
@@ -304,12 +273,35 @@ class CellController extends AbstractController
         // Get associated experiment types
         $experimentTypes = $this->experimentTypeRepository->findByCell($cell);
 
+        $toolBox = new Toolbox([
+            new Tool(
+                path: $this->generateUrl("app_cells", ["cellGroup" => $cell->getCellGroup()->getId()]),
+                icon: "up",
+                buttonClass: "btn-secondary",
+                tooltip: "Browse cell group"
+            ),
+            new Tool(
+                path: $this->generateUrl("app_cells_all"),
+                icon: "search",
+                buttonClass: "btn-secondary",
+                tooltip: "Search cells"
+            ),
+            new ClipwareTool(
+                clipboardText: $cell->getName() . ($cell->getRrid() ? " (RRID:{$cell->getRrid()})" : ""),
+                tooltip: "Copy citation on cell",
+            ),
+            new EditTool($this->generateUrl("app_cell_edit", ["cell" => $cell->getCellNumber()]), tooltip: "Edit cell"),
+            new AddTool($this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()]), tooltip: "Add aliquot"),
+        ]);
+
         return $this->render('parts/cells/cell.html.twig', [
+            "toolbox" => $toolBox,
             "cell" => $cell,
             "boxes" => $boxes,
             //"boxAliquotes" => $boxAliquotes,
+            "currentAliquot" => $aliquot,
             "boxMaps" => $boxMaps,
-            "aliquote" => $aliquote,
+            "aliquote" => $aliquot,
             "chemicals" => $chemicals,
             "proteins" => $proteins,
             "experimentTypes" => $experimentTypes,
@@ -473,9 +465,9 @@ class CellController extends AbstractController
                 $this->addFlash("success", "Cell aliquot has been updated.");
 
                 if ($cell->getCellNumber()) {
-                    return $this->redirectToRoute("app_cell_aliquote_view_number", ["cellNumber" => $cell->getCellNumber(), "aliquoteId" => $cellAliquot->getId()]);
+                    return $this->redirectToRoute("app_cell_aliquot_view_number", ["cellNumber" => $cell->getCellNumber(), "aliquotId" => $cellAliquot->getId()]);
                 } else {
-                    return $this->redirectToRoute("app_cell_aliquote_view", ["cellId" => $cell->getId(), "aliquoteId" => $cellAliquot->getId()]);
+                    return $this->redirectToRoute("app_cell_aliquot_view", ["cellId" => $cell->getId(), "aliquotId" => $cellAliquot->getId()]);
                 }
             } catch (\Exception $e) {
                 $this->addFlash("error", "Something went wrong: {$e->getMessage()}.");
@@ -493,11 +485,11 @@ class CellController extends AbstractController
     }
 
 
-    #[Route("/cells/consume/{aliquoteId}", name: "app_cell_consume_aliquote")]
+    #[Route("/cells/consume/{aliquotId}", name: "app_cell_consume_aliquot")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     // #ToDo: Change this so that a form to create the cell culture is shown instead of silently adding a culture.
     public function consumeAliquot(
-        #[MapEntity(mapping: ["aliquoteId"  => "id"])]
+        #[MapEntity(mapping: ["aliquotId"  => "id"])]
         CellAliquot $aliquot,
         #[CurrentUser]
         User $user,

@@ -1,3 +1,17 @@
-<div{{ attributes.defaults({"class": "col"}) }}>
+{% props type = 'outer' %}
+
+{% set column_type = cva({
+    base: "col ",
+    variants: {
+        type: {
+            inner: "bg-white mx-3 mb-3 border d-flex py-2 px-3 px-lg-5",
+            outer: "p-0 m-0 mb-3",
+        }
+    }
+}) %}
+
+<div class="{{ column_type.apply({type}, attributes.render("class") ?? "") }}"
+    {{ attributes.defaults({"class": "col"}) }}
+>
     {% block content %}{% endblock %}
 </div>

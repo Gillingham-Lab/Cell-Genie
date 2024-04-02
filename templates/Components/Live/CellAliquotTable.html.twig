@@ -1,0 +1,7 @@
+{% set table = computed.table %}
+
+<div{{ attributes.defaults({class: "p-0 m-0"}) }}>
+    Hallo Welt.
+
+    <twig:Table table="{{ computed.table }}" data-loading="addClass(opacity-50)" />
+</div>

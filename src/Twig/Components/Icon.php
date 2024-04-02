@@ -20,6 +20,7 @@ class Icon
         return match ($this->icon) {
             "success" => "far fa-check-circle",
             "danger" => "fas fa-exclamation-circle",
+            "unknown" => "far fa-question-circle",
             "info" => "fas fa-info-circle",
 
             "antibody" => "icon icon-antibody",
@@ -35,7 +36,8 @@ class Icon
             "cellCulture", "experiment" => "fas fa-fw fa-flask",
 
             "view" => "far fa-fw fa-eye",
-            "add" => "fas fa-fw fa-plus",
+            "add", "increase" => "fas fa-fw fa-plus",
+            "minus", "decrease" => "fas fa-fw fa-minus",
             "trash", "remove" => "fas fa-fw fa-trash-alt",
             "edit" => "fa fa-fw fa-pen",
             "import" => "fas fa-fw fa-file-import",
@@ -56,6 +58,9 @@ class Icon
 
             "logout" => "fas fa-sign-out-alt fa-fw",
             "external" => "fa fa-external-link-alt fa-fw",
+
+            "up" => "fas fa-fw fa-arrow-up",
+            "down" => "fas fa-fw fa-arrow-down",
 
             "other" => "fas fa-fw fa-ellipsis-v",
             "none" => "fas fa-fw",

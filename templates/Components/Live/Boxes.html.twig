@@ -1,0 +1,57 @@
+<div{{ attributes }}>
+    {% if boxes|length == 0 %}
+        <div class="p-3 text-muted text-center">No boxes</div>
+    {% else %}
+        {# Navigation tabs in case there are multiple boxes #}
+        <nav id="box-tab-navigation-{{ computed.id }}" class="nav nav-tabs mt-3" role="tablist">
+            {% for box in boxes %}
+                <a class="nav-item nav-link {{ loop.index == 1 ? "active" : "" }}"
+                   id="box-tab-{{ loop.index }}-{{ computed.id }}"
+                   data-bs-toggle="tab" href="#box-{{ loop.index }}-{{ computed.id }}" role="tab"
+                   aria-controls="box-{{ loop.index }}-{{ computed.id }}" aria-selected="{{ loop.index == 1 ? "true" : "false" }}"
+                >
+                    {{ box.name }}
+                </a>
+            {% endfor %}
+        </nav>
+
+        {# Box view #}
+        <div class="tab-content border-light border border-top-0 p-3" id="box-tab-content-{{ computed.id }}">
+                {% for box in boxes %}
+                <div class="tab-pane fade {{ loop.index == 1 ? "show active" : "" }}" id="box-{{ loop.index }}-{{ computed.id }}" role="tabpanel" aria-labelledby="box-tab-{{ loop.index }}-{{ computed.id }}">
+                        <div><strong>Location:</strong> {{ box.pathName }}</div>
+
+                        <div class="mx-0"
+                            {% if currentCellAliquot %}
+                                    {{ stimulus_controller("box", {
+                                            boxMap: boxMaps[box.ulid.toBase58],
+                                            substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
+                                            cellTarget: url("app_cell_aliquot_view_number", {"cellNumber": "placeholder-cell-numer", "aliquotId": "placeholder-aliquot-id"}),
+                                            currentAliquot: currentCellAliquot|json_encode,
+                                    }) }}
+                            {% else %}
+                                    {{ stimulus_controller("box", {
+                                            boxMap: boxMaps[box.ulid.toBase58],
+                                            substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
+                                            cellTarget: url("app_cell_aliquot_view_number", {"cellNumber": "placeholder-cell-numer", "aliquotId": "placeholder-aliquot-id"}),
+                                    }) }}
+                            {% endif %}
+                        >
+                                <div class="text-muted mb-3">Ctrl+Click to access the entry directly. On smartphones, try a long press instead.</div>
+
+                                <div class="row">
+                                        <div class="col px-lg-5">
+                                                <div {{ stimulus_target("box", "boxMap") }} class="text-center"></div>
+                                        </div>
+                                </div>
+
+                                <div class="row">
+                                        <div class="col" {{ stimulus_target("box", "boxMapContent") }}>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+                {% endfor %}
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,17 @@
+<div{{ attributes }}>
+    <dl class="row row-cols-1 row-cols-md-2 row-cols-xl-4 gy-4">
+        {% for title, datum in data %}
+            <div class="col">
+                <dt>{{ title }}</dt>
+
+                <dd>
+                    {% if datum[0] is defined %}
+                        {{ component(datum[0], datum[1]) }}
+                    {% else %}
+                        {{ datum }}
+                    {% endif %}
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+</div>

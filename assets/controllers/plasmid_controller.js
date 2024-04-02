@@ -150,7 +150,7 @@ export default class extends Controller {
                 oldFeatureElement.setAttribute("stroke-width", 1);
             }
         } else {
-            // Toggle state
+            // Toggle.html.twig state
             console.log("toggle off");
             this.permanentFeature = null;
             featureElement.setAttribute("stroke-width", 1);

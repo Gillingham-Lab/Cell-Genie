@@ -14,11 +14,13 @@
         </thead>
         <tbody>
             {% for row in table.rows %}
-                <tr>
+                <tr class="{{ row[0].isActive ? "table-active" : "" }}">
                     {% for rowColumn in row %}
                         <td>
                             {% if rowColumn.raw %}
                                 {{ rowColumn.value|raw }}
+                            {% elseif rowColumn.component %}
+                                {{ component(rowColumn.value.component, rowColumn.value.props) }}
                             {% elseif table.columns[loop.index0].type == "App\\Entity\\Table\\UrlColumn" %}
                                 {% if not rowColumn.value %}
                                     -
@@ -34,6 +36,10 @@
                             {% endif %}
                         </td>
                     {% endfor %}
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="{{ table.columns|length }}" class="text-muted">No entries</td>
                 </tr>
             {% endfor %}
         </tbody>

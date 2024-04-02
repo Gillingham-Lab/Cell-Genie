@@ -1,0 +1,21 @@
+<span{{ attributes }}>
+    {% if entity is same as(null) %}
+            none
+    {% else %}
+        {% if iterable %}
+            {% for e in entity %}
+                <a class="badge bg-primary rounded-pill text-decoration-none">
+                    <twig:Icon :icon="icon" />
+                    {{ e }}
+                </a>
+            {% else %}
+                none
+            {% endfor %}
+        {% else %}
+            <a class="badge bg-primary rounded-pill text-decoration-none">
+                <twig:Icon :icon="icon" />
+                {{ entity }}
+            </a>
+        {% endif %}
+    {% endif %}
+</span>

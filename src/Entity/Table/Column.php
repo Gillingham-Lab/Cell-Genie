@@ -6,6 +6,7 @@ namespace App\Entity\Table;
 class Column
 {
     const raw = false;
+    const component = false;
     const renderTitle = true;
 
     public function __construct(

@@ -74,7 +74,7 @@
                                 {{ macros.definition_row("Trashed on", (culture.trashedOn ? culture.trashedOn|date("d. F Y") : "-")) }}
 
                                 {% if culture.aliquot %}
-                                    {{ macros.definition_row("Aliquot", culture.aliquot, url("app_cell_aliquote_view_number", {"cellNumber": culture.aliquot.cell.cellNumber, "aliquoteId": culture.aliquot.id}) ) }}
+                                    {{ macros.definition_row("Aliquot", culture.aliquot, url("app_cell_aliquot_view_number", {"cellNumber": culture.aliquot.cell.cellNumber, "aliquotId": culture.aliquot.id}) ) }}
                                 {% else %}
                                     {{ macros.definition_row("Ancestor culture", culture.parentCellCulture.name, url("app_cell_culture_view", {"cellCulture": culture.parentCellCulture.id})) }}
                                 {% endif %}

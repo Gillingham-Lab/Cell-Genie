@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -258,9 +259,18 @@ class Cell implements PrivacyAwareInterface
     /**
      * @return Collection<int, CellAliquot>
      */
-    public function getCellAliquotes(): Collection
+    public function getCellAliquots(): Collection
     {
         return $this->cellAliquotes;
+    }
+
+    /**
+     * @return Collection<int, CellAliquot>
+     */
+    #[Deprecated]
+    public function getCellAliquotes(): Collection
+    {
+        return $this->getCellAliquots();
     }
 
     public function addCellAliquote(CellAliquot $cellAliquote): self
