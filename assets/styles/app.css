@@ -1,5 +1,6 @@
-.gin-icon-stack {
+/*.gin-icon-stack {
     display: inline-block;
+    white-space: nowrap;
 }
 
 .gin-icon-stack-fw {
@@ -13,11 +14,10 @@
 
 .gin-icon-right {
     position: relative;
-    color: black;
     right: 1em;
     top: -0.5em;
     font-size: 0.75em;
-}
+}*/
 
 label.required:after {
     content: "* ";

@@ -276,13 +276,15 @@ class CellController extends AbstractController
         $toolBox = new Toolbox([
             new Tool(
                 path: $this->generateUrl("app_cells", ["cellGroup" => $cell->getCellGroup()->getId()]),
-                icon: "up",
+                icon: "cell",
+                iconStack: "up",
                 buttonClass: "btn-secondary",
                 tooltip: "Browse cell group"
             ),
             new Tool(
                 path: $this->generateUrl("app_cells_all"),
-                icon: "search",
+                icon: "cell",
+                iconStack: "search",
                 buttonClass: "btn-secondary",
                 tooltip: "Search cells"
             ),
@@ -290,7 +292,7 @@ class CellController extends AbstractController
                 clipboardText: $cell->getName() . ($cell->getRrid() ? " (RRID:{$cell->getRrid()})" : ""),
                 tooltip: "Copy citation on cell",
             ),
-            new EditTool($this->generateUrl("app_cell_edit", ["cell" => $cell->getCellNumber()]), tooltip: "Edit cell"),
+            new EditTool($this->generateUrl("app_cell_edit", ["cell" => $cell->getCellNumber()]), tooltip: "Edit cell", iconStack: "edit", icon: "cell"),
             new AddTool($this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()]), tooltip: "Add aliquot"),
         ]);
 

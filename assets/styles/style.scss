@@ -17,3 +17,40 @@ $enable-negative-margins: true;
 
 @import '~bootstrap';
 @import "~bootswatch/dist/lumen/bootswatch";
+
+:root {
+  --right-icon-color: #{$body-color};
+  --left-icon-color: #{$secondary};
+  --left-icon-opacity: 0.6;
+}
+
+// Stacked icons
+.dropdown-item {
+  --left-icon-opacity: 1.0;
+
+  .gin-icon-right {
+    color: black;
+  }
+}
+
+.gin-icon-stack {
+  display: inline-block;
+  white-space: nowrap;
+
+  .gin-icon-left {
+    position: relative;
+    font-size: 0.75em;
+    opacity: var(--left-icon-opacity);
+  }
+
+  .gin-icon-right {
+    position: relative;
+    right: 1em;
+    top: -0.5em;
+    font-size: 0.75em;
+  }
+}
+.gin-icon-stack-fw {
+  max-width: 1.25em;
+}
+
