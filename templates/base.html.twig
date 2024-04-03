@@ -39,7 +39,7 @@
 
                 {% if is_granted("ROLE_USER") %}
                     <twig:Layout:NavDropdownDivider />
-                    <twig:Layout:NavDropdownItem label="Cell Cultures" href="{{ url("app_cell_cultures") }}" icon="cellCulture" />
+                    <twig:Layout:NavDropdownItem label="Cell Cultures" href="{{ url("app_cell_cultures") }}" icon="cell" iconStack="cellCulture" />
                 {% endif %}
             </twig:Layout:NavDropdown>
 
