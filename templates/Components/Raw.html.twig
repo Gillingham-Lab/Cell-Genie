@@ -1,0 +1,7 @@
+<div{{ attributes }}>
+    {% if body is same as(null) %}
+        <p class="text-muted">empty</p>
+    {% else %}
+        {{ body|raw }}
+    {% endif %}
+</div>

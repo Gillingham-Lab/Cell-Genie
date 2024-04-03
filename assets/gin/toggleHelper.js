@@ -67,15 +67,19 @@ const toggleHelper = () => {
     // Revert state of collapsibles
     let collapsible = null;
     for (let id in shownOnRequest) {
+        collapsible = document.getElementById(`${id}`);
+
+        if (!collapsible) {
+            continue;
+        }
+
         if (shownOnRequest[id] === 1) {
-            collapsible = document.getElementById(`${id}`);
-
-            if (collapsible) {
-                console.log(collapsible);
-
-                if (collapsible.classList.contains("collapse") && !collapsible.classList.contains("shown")) {
-                    new bootstrap.Collapse(collapsible).show();
-                }
+            if (collapsible.classList.contains("collapse") && !collapsible.classList.contains("show")) {
+                new bootstrap.Collapse(collapsible).show();
+            }
+        } else if (shownOnRequest[id] === 0) {
+            if (collapsible.classList.contains("collapse") && collapsible.classList.contains("show")) {
+                new bootstrap.Collapse(collapsible).hide();
             }
         }
     }

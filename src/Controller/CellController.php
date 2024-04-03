@@ -480,7 +480,7 @@ class CellController extends AbstractController
             "form" => $form,
             "returnTo" => $new
                 ? $this->generateUrl("app_cell_view_number", ["cellNumber" => $cell->getCellNumber()])
-                : $this->generateUrl("app_cell_aliquote_view_number", ["cellNumber" => $cell->getCellNumber(), "aliquoteId" => $cellAliquot->getId()]),
+                : $this->generateUrl("app_cell_aliquot_view_number", ["cellNumber" => $cell->getCellNumber(), "aliquotId" => $cellAliquot->getId()]),
         ]);
     }
 
@@ -528,9 +528,9 @@ class CellController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute("app_cell_aliquote_view", [
+        return $this->redirectToRoute("app_cell_aliquot_view", [
             "cellId" => $aliquot->getCell()->getId(),
-            "aliquoteId" => $aliquot->getId(),
+            "aliquotId" => $aliquot->getId(),
         ]);
     }
 

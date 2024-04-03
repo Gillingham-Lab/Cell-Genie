@@ -55,6 +55,7 @@ class Icon
             "user" => "fas fa-fw fa-user",
             "users", "user.group" => "fas fa-fw fa-users",
             "admin", "settings" => "fas fa-fw fa-tools",
+            "engineering" => "fas fa-fw fa-cogs",
 
             "logout" => "fas fa-sign-out-alt fa-fw",
             "external" => "fa fa-external-link-alt fa-fw",

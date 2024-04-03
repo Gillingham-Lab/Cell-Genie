@@ -14,7 +14,7 @@
         </thead>
         <tbody>
             {% for row in table.rows %}
-                <tr class="{{ row[0].isActive ? "table-active" : "" }}">
+                <tr class="{{ row[0].isActive ? "table-active" : "" }} align-middle">
                     {% for rowColumn in row %}
                         <td>
                             {% if rowColumn.raw %}

@@ -6,9 +6,7 @@ namespace App\Twig\Components;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
-class ProgressBar
+class ColorPreview
 {
-    public int $current;
-    public int $max;
-    public bool $showNumbers;
+    public string $color;
 }

@@ -8,6 +8,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent]
 class ExternalUrl
 {
-    public string $title;
+    public ?string $title;
     public string $href;
 }

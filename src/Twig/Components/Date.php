@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
+use DateTime;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
-class ProgressBar
+class Date
 {
-    public int $current;
-    public int $max;
-    public bool $showNumbers;
+    public ?DateTime $dateTime = null;
 }

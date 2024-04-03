@@ -1,18 +1,25 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
+use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
+use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\Epitope;
+use App\Genie\Enums\AntibodyType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Collection\CollectionInterface;
 
 class IconService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager
     ) {
-
     }
 
     public function get(null|object|array $object): ?string
@@ -27,6 +34,15 @@ class IconService
 
         return match($this->entityManager->getClassMetadata(get_class($object))->getName()) {
             CellGroup::class, Cell::class => "cell",
+            Plasmid::class => "plasmid",
+            Oligo::class => "oligo",
+            Chemical::class => "chemical",
+            Protein::class => "protein",
+            Antibody::class => match ($object->getType()) {
+                AntibodyType::Primary => "antibody.primary",
+                AntibodyType::Secondary => "antibody.secondary",
+            },
+            Epitope::class => "epitope",
             default => null,
         };
     }

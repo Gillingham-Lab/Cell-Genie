@@ -1,4 +1,10 @@
-<a{{attributes}} href="{{ href }}">
-    {{ title }}
-    <twig:Icon icon="external" />
-</a>
+<span{{ attributes }}>
+    {% if title %}
+    <a href="{{ href }}">
+        {{ title }}
+        <twig:Icon icon="external" />
+    </a>
+    {% else %}
+        <span class="text-muted">empty</span>
+    {% endif %}
+</span>

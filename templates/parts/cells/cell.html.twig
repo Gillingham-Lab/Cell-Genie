@@ -157,7 +157,6 @@
                 <twig:Layout:Col type="outer" class="col-12 col-lg-6 col-xl-8">
                     <twig:ElementCard title="Cell metadata">
                         <twig:Metadata
-                                class="border-bottom pb-3"
                                 data="{{ {
                                     "ID": cell.id,
                                     "Group": ["entity", cell.cellGroup],
@@ -177,12 +176,40 @@
                                     "Engineered cell": ["boolean", cell.isEngineered],
                                 } }}"
                         />
-
-                        <section class="mt-3">
+                        <section class="mt-3 border-top pt-3">
                             <h3>Aliquots</h3>
 
                             <twig:Live:CellAliquotTable :cell="cell" loading="lazy" :currentAliquot="currentAliquot"></twig:Live:CellAliquotTable>
                         </section>
+
+                        {% if currentAliquot %}
+                            <section class="mt-3 border-top pt-3">
+                                <h3>Aliquot</h3>
+
+                                {% set mycoplasmaStatus %}
+                                    {% if currentAliquot.mycoplasmaResult == "unknown" %}
+                                        <p class="text-muted">Not tested for mycoplasma</p>
+                                    {% elseif currentAliquot.mycoplasmaResult == "negative" %}
+                                        <p class="text-success">This aliquot was tested mycoplasma negative</p>
+                                    {% else %}
+                                        <p class="text-danger">This aliquot was tested mycoplasma positive</p>
+                                    {% endif %}
+                                {% endset %}
+
+                                <twig:Metadata
+                                    data="{{ {
+                                        "ID": currentAliquot.id,
+                                        "Name": currentAliquot.aliquotName,
+                                        "Typing": ["raw", currentAliquot.typing],
+                                        "History": ["raw", currentAliquot.history],
+                                        "Mycoplasma Status": ["raw", mycoplasmaStatus],
+                                        "Test comment": ["raw", currentAliquot.mycoplasma],
+                                        "Tested by": [currentAliquot.mycoplasmaTestedBy],
+                                        "Tested on": ["date", currentAliquot.mycoplasmaTestedOn],
+                                    } }}"
+                                />
+                            </section>
+                        {% endif %}
                     </twig:ElementCard>
                 </twig:Layout:Col>
 
@@ -193,241 +220,131 @@
                 </twig:Layout:Col>
             </twig:Layout:Row>
 
-            <twig:Layout:Row>
+            <twig:Layout:Row cols="1" md="2" xl="4">
+                {# Origin #}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Origin" collapsed>
+                        {% if cell.origin %}
+                            {{ cell.origin|raw }}
+
+                            {{ cell.originComment|raw }}
+                        {% else %}
+                            No information about the origin of this cell has been given.
+                        {% endif %}
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+
+                {# Acquisition #}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Acquisition" icon="vendor" collapsed>
+                        <twig:Metadata
+                            columns="1"
+                            xl="2"
+                            md="1"
+                            data="{{ {
+                                "Vendor": cell.vendor ? (cell.vendor.catalogUrl ? ["url", {"title": cell.vendor.name, "href": cell.vendor.productUrl(cell.vendorPn ?? "")}] : cell.vendor) : "unknown",
+                                "Price": cell.price.priceValue is same as(null) ? "unknown" : (cell.price.priceValue > 0 ? "#{cell.price.priceValue/1000} #{cell.price.priceCurrency}" : "free"),
+                                "Acquired by" : cell.boughtBy ? cell.boughtBy.fullName : "unknown",
+                                "Acquired on": cell.acquiredOn ? cell.acquiredOn|date("m. F Y") : "unknown",
+                            } }}"
+                        />
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+
+                {# Cell culture details #}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Culturing" icon="cellCulture" collapsed>
+                        <twig:Metadata
+                            columns="1"
+                            xl="1"
+                            md="1"
+                            data="{{ {
+                                "Growth medium": ["raw", cell.medium],
+                                "Trypsin": ["raw", cell.trypsin],
+                                "Culture Conditions": ["raw", cell.cultureConditions],
+                                "Splitting": ["raw", cell.splitting],
+                                "Freezing": ["raw", cell.freezing],
+                                "Thawing": ["raw", cell.thawing],
+                            } }}"
+                        />
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+
+                {# Experimental hints #}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Experimental Suggestions" icon="experiment" collapsed>
+                        <twig:Metadata
+                            columns="1"
+                            xl="1"
+                            md="1"
+                            data="{{ {
+                                "Culturing": ["raw", cell.seeding],
+                                "Cell count at confluency": [cell.countOnConfluence ? cell.countOnConfluence|number_format : "no data"],
+                                "Lysis": ["raw", cell.lysing],
+                            } }}"
+                        />
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+
+                {# Associated proteins #}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Associated Proteins" icon="protein" collapsed>
+                        {% for protein in cell.cellProteins %}
+                            <section class="{% if loop.index0 > 0 %}border-top pt-2 mt-2{% endif %}">
+                                <h4>{{ protein.associatedProtein }} <a href="{{ path("app_protein_view", {"proteinId": protein.associatedProtein.ulid}) }}"><twig:Icon icon="view" /></a></h4>
+
+                                <div>
+                                    {% if protein.description %}{{ protein.description }}{% else %}<span class="text-muted">no description given</span>{% endif %}
+                                </div>
+
+                                <div class="ps-2">
+                                    <h5 class="mt-2">Detection methods</h5>
+
+                                    {% if protein.detection|length > 0 %}
+                                        <dl class="ms-2">
+                                            {% for detection in protein.detection %}
+                                                <dt>{{ detection.method }} <twig:Toggle value="{{ detection.isDetectable }}" /></dt>
+                                                <dd>{{ detection.comment }}</dd>
+                                            {% endfor %}
+                                        </dl>
+                                    {% else %}
+                                        <div class="text-muted">No detection details given</div>
+                                    {% endif %}
+                                </div>
+                            </section>
+                        {% else %}
+                            <span class="text-muted">No proteins have been associated with this cell line.</span>
+                        {% endfor %}
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+
+                {% if cell.isEngineered %}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Engineering" icon="engineering" collapsed>
+                        <twig:Metadata
+                            columns="1"
+                            xl="2"
+                            md="1"
+                            data="{{ {
+                                "Engineer": cell.engineer,
+                                "Plasmid": ["entity", cell.engineeringPlasmid],
+                            } }}"
+                        />
+
+                        <twig:Metadata
+                            columns="1"
+                            xl="1"
+                            md="1"
+                            data="{{ {
+                                "Details": ["raw", cell.engineeringDescription],
+                            } }}"
+                        />
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+                {% endif %}
             </twig:Layout:Row>
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
-
-                {# Origin #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Origin", "Origin") }}
-
-                        {{ layout.card_body_collapse_start("Origin") }}
-                        <div class="card-body">
-                            <div>
-                                {{ (cell.origin ?? "unknown")|raw }}
-
-                                {{ cell.originComment|raw }}
-                            </div>
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Acquisition #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Acquisition", "Acquisition") }}
-
-                        {{ layout.card_body_collapse_start("Acquisition") }}
-                        <div class="card-body">
-                            <table class="table table-sm table-borderless">
-                                <tbody>
-                                {% if cell.vendor and cell.vendorPn %}
-                                    {{ macros.definition_row_raw("Vendor", macros.vendor_url(cell.vendor, cell.vendorPn)) }}
-                                {% elseif cell.vendor and not cell.vendorPn %}
-                                    {{ macros.definition_row("Vendor", cell.vendor) }}
-                                {% else %}
-                                    {{ macros.definition_row("Vendor", "unknown") }}
-                                {% endif %}
-                                {{ macros.definition_row(
-                                    "Price",
-                                    cell.price.priceValue is same as(null)
-                                        ? 'unknown'
-                                        : (cell.price.priceValue > 0
-                                            ? "#{cell.price.priceValue/1000} #{cell.price.priceCurrency}"
-                                            : "free"
-                                        )
-                                ) }}
-                                {{ macros.definition_row("Acquired by", cell.boughtBy ?  cell.boughtBy.fullName : "unknown") }}
-                                {{ macros.definition_row("Acquired on", cell.acquiredOn ? cell.acquiredOn|date("m. F Y") : "unknown") }}
-                                </tbody>
-                            </table>
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Cell culturing details #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Culturing", "Culturing") }}
-
-                        {{ layout.card_body_collapse_start("Culturing") }}
-                        <div class="card-body">
-                            <table class="table table-sm table-borderless table-hover">
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">Growth medium</th>
-                                        <td>{{ cell.medium | raw }}</td>
-                                    </tr><tr>
-                                        <th scope="row">Trypsin</th>
-                                        <td>{{ cell.trypsin | raw }}</td>
-                                    </tr><tr>
-                                        <th scope="row">Culture conditions</th>
-                                        <td>{{ cell.cultureConditions | raw }}</td>
-                                    </tr><tr>
-                                        <th scope="row">Splitting</th>
-                                        <td>{{ cell.splitting | raw }}</td>
-                                    </tr><tr>
-                                        <th scope="row">Freezing</th>
-                                        <td>{{ cell.freezing | raw }}</td>
-                                    </tr><tr>
-                                        <th scope="row">Thawing</th>
-                                        <td>{{ cell.thawing | raw }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Experimental data #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Experimental", "Experimental") }}
-
-                        {{ layout.card_body_collapse_start("Experimental") }}
-                        <div class="card-body">
-                            <table class="table table-sm table-borderless table-hover">
-                                <tbody>
-                                <tr>
-                                    <th scope="row">Culturing</th>
-                                    <td>{{ cell.seeding | raw }}</td>
-                                </tr><tr>
-                                    <th scope="row">Cell count at confluency</th>
-                                    <td>{{ cell.countOnConfluence?cell.countOnConfluence|number_format:"no data" }}</td>
-                                </tr><tr>
-                                    <th scope="row">Lysis</th>
-                                    <td>{{ cell.lysing | raw }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Associated proteins #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Associated Proteins", "AssociatedProteins") }}
-
-                        {{ layout.card_body_collapse_start("AssociatedProteins") }}
-                        <div class="card-body">
-                            {% if cell.cellProteins|length == 0 %}
-                                none
-                            {% else %}
-                                <table class="table table-sm table-borderless table-hover">
-                                    <tbody>
-                                    {% for cellProtein in cell.cellProteins %}
-                                        <tr>
-                                            <th scope="row">{{ cellProtein.associatedProtein }} <a href="{{ url("app_protein_view", {"proteinId": cellProtein.associatedProtein.ulid}) }}"><span class="fa fa-eye fa-sm"></span></a></th>
-                                            <td>
-                                                <div>{{ cellProtein.description }}</div>
-
-                                                {% if cellProtein.detection %}
-                                                    <dl>
-                                                        {% for detection in cellProtein.detection %}
-                                                            <dt class="{{ detection.isDetectable ? "text-success" : "text-danger"}}">{{ detection.method }}</dt>
-                                                            <dd>{{ detection.comment }}</dd>
-                                                        {% endfor %}
-                                                    </dl>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% endif %}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Engineering #}
-                {% if cell.isEngineered %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Engineered", "Engineered") }}
-
-                            {{ layout.card_body_collapse_start("Engineered") }}
-                            <div class="card-body">
-                                {% if cell.engineer %}
-                                    <p>Cells have been engineered by {{ cell.engineer ? cell.engineer.fullName : "whoever" }}.</p>
-                                {% else %}
-                                    <p>Cells have been engineered.</p>
-                                {% endif %}
-
-                                {% if cell.engineeringPlasmid %}
-                                    <p><em>Engineered with</em> {{ macros.pillify([cell.engineeringPlasmid]) }}</p>
-                                {% endif %}
-
-                                {% if cell.engineeringDescription %}
-                                    <div>
-                                        {{ cell.engineeringDescription|raw }}
-                                    </div>
-                                {% else %}
-                                    <div class="text-muted">
-                                        no further details have been given.
-                                    </div>
-                                {% endif %}
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {# Aliquot information #}
-                {% if aliquote %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Aliquot details", "AliquotDetails") }}
-
-                            {{ layout.card_body_collapse_start("AliquotDetails") }}
-                            <div class="card-body">
-                                <table class="table table-sm table-borderless table-hover">
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">Mycoplasma</th>
-                                            <td>
-                                                {% if aliquote.mycoplasmaResult == "unknown" %}
-                                                    This aliquot has not yet been tested for macoplasma
-                                                {% else %}
-                                                    {% set strongColor = "black" %}
-                                                    {% if aliquote.mycoplasmaResult == "positive" %}
-                                                        {% set strongColor = "red" %}
-                                                    {% elseif aliquote.mycoplasmaResult == "negative" %}
-                                                        {% set strongColor = "green" %}
-                                                    {% endif %}
-                                                    <p class="mb-n1">
-                                                        The aliquot was tested <strong style="color: {{ strongColor  }}">{{ aliquote.mycoplasmaResult }}</strong> by {{ aliquote.mycoplasmaTestedBy? aliquote.mycoplasmaTestedBy.fullName : "whoever" }}, {{ aliquote.mycoplasmaTestedOn ? (aliquote.mycoplasmaTestedOn|date("d. M. Y")) : "whenever" }}.
-                                                    </p>
-
-                                                    {% if aliquote.mycoplasma %}
-                                                        <div class="mt-3">
-                                                            {{ aliquote.mycoplasma|raw }}
-                                                        </div>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </td>
-                                        </tr><tr>
-                                            <th scope="row">Typing</th>
-                                            <td>{{ aliquote.typing | raw }}</td>
-                                        </tr><tr>
-                                            <th scope="row">History</th>
-                                            <td>{{ aliquote.history | raw }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
-                {% endif %}
-
                 {{ attachments(cell.attachments) }}
             </div>
         </div>

@@ -4,7 +4,7 @@
     {% else %}
         {% if iterable %}
             {% for e in entity %}
-                <a class="badge bg-primary rounded-pill text-decoration-none">
+                <a class="badge bg-primary rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
                     <twig:Icon :icon="icon" />
                     {{ e }}
                 </a>
@@ -12,7 +12,7 @@
                 none
             {% endfor %}
         {% else %}
-            <a class="badge bg-primary rounded-pill text-decoration-none">
+            <a class="badge bg-primary rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
                 <twig:Icon :icon="icon" />
                 {{ entity }}
             </a>

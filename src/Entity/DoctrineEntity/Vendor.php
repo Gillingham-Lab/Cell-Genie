@@ -144,4 +144,21 @@ class Vendor
         $this->homepage = $homepage;
         return $this;
     }
+
+    public function getProductUrl(?string $productNumber = null): string
+    {
+        if (!$productNumber) {
+            return str_replace("{pn}", "", $this->catalogUrl);
+        } else {
+            if (strpos($this->catalogUrl, "{pn}") === false) {
+                if (str_ends_with($this->catalogUrl, "#")) {
+                    return $this->catalogUrl;
+                } else {
+                    return $this->catalogUrl . $productNumber;
+                }
+            } else {
+                return str_replace("{pn}", $productNumber, $this->catalogUrl);
+            }
+        }
+    }
 }

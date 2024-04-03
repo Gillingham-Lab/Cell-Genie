@@ -5,9 +5,11 @@ namespace App\Twig\Components;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
+use App\Service\EntityResolver;
 use App\Service\IconService;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Collection\CollectionInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent]
@@ -18,7 +20,8 @@ class EntityReference
     public string $icon;
 
     public function __construct(
-        private IconService $iconService,
+        private readonly IconService $iconService,
+        private readonly EntityResolver $entityResolver,
     ) {
 
     }
@@ -33,5 +36,15 @@ class EntityReference
             "iterable" => is_array($entity) || $entity instanceof \ArrayAccess,
             "icon" => $this->iconService->get($entity) ?? "unknown",
         ];
+    }
+
+    #[ExposeInTemplate(name: "href")]
+    public function getHref(?object $entity = null): ?string
+    {
+        if (!$entity) {
+            $entity = $this->entity;
+        }
+
+        return $this->entityResolver->getPath($entity);
     }
 }
