@@ -5,10 +5,12 @@ namespace App\Form;
 
 use App\Entity\DoctrineEntity\Cell\CellProtein;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Genie\Enums\GeneRegulation;
 use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tienvx\UX\CollectionJs\Form\CollectionJsType;
@@ -22,6 +24,10 @@ class CellularProteinCollectionType extends AbstractType
                 "placeholder" => "Choose a protein",
                 "label" => "Protein",
                 "help" => "Add the corresponding protein",
+            ])
+            ->add("geneRegulation", EnumType::class, [
+                "label" => "Gene regulation",
+                "class" => GeneRegulation::class,
             ])
             ->add("description", options: [
                 "help" => "Context or details about the protein."

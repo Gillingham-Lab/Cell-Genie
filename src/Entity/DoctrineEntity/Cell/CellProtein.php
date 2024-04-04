@@ -5,6 +5,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Traits\Fields\IdTrait;
+use App\Genie\Enums\GeneRegulation;
 use App\Repository\Cell\CellProteinRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -35,6 +36,9 @@ class CellProtein
 
     private ?Collection $detectionCollection = null;
 
+    #[ORM\Column(length: 20, nullable: true, enumType: GeneRegulation::class)]
+    private ?GeneRegulation $geneRegulation = null;
+
     public function __toString()
     {
         return $this->cellLine . "::" . $this->associatedProtein;
@@ -45,7 +49,7 @@ class CellProtein
         return $this->cellLine;
     }
 
-    public function setCellLine(?Cell $cellLine): self
+    public function setCellLine(?Cell $cellLine): static
     {
         $this->cellLine = $cellLine;
 
@@ -57,7 +61,7 @@ class CellProtein
         return $this->associatedProtein;
     }
 
-    public function setAssociatedProtein(?Protein $associatedProtein): self
+    public function setAssociatedProtein(?Protein $associatedProtein): static
     {
         $this->associatedProtein = $associatedProtein;
 
@@ -69,7 +73,7 @@ class CellProtein
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
@@ -81,7 +85,7 @@ class CellProtein
         return $this->detection;
     }
 
-    public function setDetection(?array $detection): self
+    public function setDetection(?array $detection): static
     {
         $this->detection = $detection;
 
@@ -93,9 +97,21 @@ class CellProtein
         return $this->orderValue;
     }
 
-    public function setOrderValue(int $orderValue): self
+    public function setOrderValue(int $orderValue): static
     {
         $this->orderValue = $orderValue;
+        return $this;
+    }
+
+    public function getGeneRegulation(): ?GeneRegulation
+    {
+        return $this->geneRegulation;
+    }
+
+    public function setGeneRegulation(?GeneRegulation $geneRegulation): static
+    {
+        $this->geneRegulation = $geneRegulation;
+
         return $this;
     }
 }

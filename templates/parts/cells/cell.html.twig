@@ -291,7 +291,22 @@
                     <twig:ElementCard title="Associated Proteins" icon="protein" collapsed>
                         {% for protein in cell.cellProteins %}
                             <section class="{% if loop.index0 > 0 %}border-top pt-2 mt-2{% endif %}">
-                                <h4>{{ protein.associatedProtein }} <a href="{{ path("app_protein_view", {"proteinId": protein.associatedProtein.ulid}) }}"><twig:Icon icon="view" /></a></h4>
+                                {% set regulation = "" %}
+                                {% if protein.geneRegulation.value == "doublein" or protein.geneRegulation.value == "two" %}
+                                    {% set regulation = "<sup>(+/+)</sup>" %}
+                                {% elseif protein.geneRegulation.value == "in" or protein.geneRegulation.value == "out" or protein.geneRegulation.value == "one" %}
+                                    {% set regulation = "<sup>(+/-)</sup>" %}
+                                {% elseif protein.geneRegulation.value == "doubleout" %}
+                                    {% set regulation = "<sup>(-/-)</sup>" %}
+                                {% elseif protein.geneRegulation.value == "unknown" %}
+                                    {% set regulation = "<sup>?</sup>" %}
+                                {% elseif protein.geneRegulation.value == "up" %}
+                                    {% set regulation = "<sup>↑</sup>" %}
+                                {% elseif protein.geneRegulation.value == "down" %}
+                                    {% set regulation = "<sup>↓</sup>" %}
+                                {% endif %}
+
+                                <h4>{{ protein.associatedProtein }}{{ regulation|raw }} <a href="{{ path("app_protein_view", {"proteinId": protein.associatedProtein.ulid}) }}"><twig:Icon icon="view" /></a></h4>
 
                                 <div>
                                     {% if protein.description %}{{ protein.description }}{% else %}<span class="text-muted">no description given</span>{% endif %}
