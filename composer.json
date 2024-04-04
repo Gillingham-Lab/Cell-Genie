@@ -19,6 +19,7 @@
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "dev-DDC-2917-2.23 as 2.13.1",
+        "dunglas/doctrine-json-odm": "^1.4",
         "easycorp/easyadmin-bundle": "^4.0",
         "friendsofsymfony/ckeditor-bundle": "^2.4",
         "gedmo/doctrine-extensions": "^3.7",

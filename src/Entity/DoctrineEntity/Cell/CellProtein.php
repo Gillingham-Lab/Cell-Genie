@@ -7,7 +7,9 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Repository\Cell\CellProteinRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
 
 #[ORM\Entity(repositoryClass: CellProteinRepository::class)]
 class CellProtein
@@ -22,13 +24,13 @@ class CellProtein
     #[ORM\JoinColumn(referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private ?Protein $associatedProtein = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: JsonDocumentType::NAME, nullable: true)]
     private ?array $detection = [];
 
-    #[ORM\Column(type: "integer", nullable: false, options: ["default" => 0])]
+    #[ORM\Column(type: Types::INTEGER, nullable: false, options: ["default" => 0])]
     private int $orderValue = 0;
 
     private ?Collection $detectionCollection = null;
