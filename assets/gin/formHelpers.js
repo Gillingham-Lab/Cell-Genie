@@ -2,10 +2,9 @@ import TomSelect from "tom-select";
 const $ = require("jquery");
 const bootstrap = require("bootstrap");
 
-const formHelpers = (e = null) => {
-    let target = document;
-    if (e) {
-        target = e.target;
+const formHelpers = (target = null) => {
+    if (target === null) {
+        target = document;
     }
 
     // Bubble up error indicators
@@ -59,9 +58,11 @@ const formHelpers = (e = null) => {
 }
 
 //
-document.addEventListener("turbo:frame-load", (e => formHelpers(e)));
+document.addEventListener("turbo:frame-load", (e => formHelpers(e.target)));
 document.addEventListener("turbo:load", (e => formHelpers()));
 document.addEventListener("turbo:render", (e => formHelpers()));
+
+export default formHelpers
 
 /* Original script
 <script type="application/javascript" defer>
