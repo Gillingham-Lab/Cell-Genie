@@ -10,147 +10,55 @@
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(antibody, false, true, icons.antibody(true)) }}
+            <twig:PageHeader :title="title" :subTitle="subtitle" icon="antibody" :barcode="true"  />
 
-            {{ layout.toolbox([
-                {
-                    "type": "up",
-                    "target": url("app_antibodies"),
-                    "tooltipText": "Back to all antibodies",
-                },
-                {
-                    "type": "clipboard",
-                    "tooltipText": "Copy information",
-                    "clipboardText": ( antibody.longName ~ " (" ~ (antibody.vendor.name ?? "??") ~ ", " ~ (antibody.vendorPN ?? "??") ~(antibody.rrid ? ", RRID:" ~antibody.rrid : "") ~ ")" ),
-                },
-                {
-                    "type": "edit",
-                    "tooltipText": "Edit antibody",
-                    "target": url("app_substance_edit", {"substance": antibody.ulid}),
-                },
-                {
-                    "type": "add",
-                    "tooltipText": "Add lot",
-                    "target": url("app_substance_add_lot", {"substance": antibody.ulid}),
-                }
-            ]) }}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox" />
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
 
-            <div class="row row-cols-1 row-cols-lg-2">
-                {# Antibody metadata #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Details", "Details") }}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="outer" class="col-12">
+                    <twig:ElementCard title="Metadata">
+                        <twig:Metadata data="{{ {
+                            "ID": antibody.ulid,
+                            "Number": antibody.number,
+                            "Name": antibody.shortName,
+                            "Full name": antibody.longName,
+                            "RRID": antibody.rrid,
+                            "Target epitopes": ["entity", antibody.epitopeTargets],
+                            "AB epitopes": ["entity", antibody.epitopes],
+                            "Clonality": antibody.clonality,
+                            "Vendor": antibody.vendor.homepage ? ["url", {"title": antibody.vendor.name, "href": antibody.vendor.homepage}] : antibody.vendor.name,
+                            "Product Number": antibody.vendor ? (antibody.vendor.catalogUrl ? ["url", {"title": antibody.vendorPn, "href": antibody.vendor.productUrl(antibody.vendorPn ?? "")}] : antibody.vendor) : "unknown",
+                            "Storage": antibody.storageTemperature,
+                            "Usage": antibody.usage,
+                        } }}"/>
 
-                        {{ layout.card_body_collapse_start("Details") }}
-                        <div class="card-body px-lg-5 mx-0">
-                            <table class="table table-sm table-borderless">
-                                <tbody>
-                                {{ macros.definition_row("ID", antibody.number) }}
-                                {{ macros.definition_row_raw("Short name", antibody.shortName ~ macros.validation_status(antibody)) }}
-                                {{ macros.definition_row("Long name", antibody.longName) }}
-                                {{ macros.definition_row("RRID", macros.rrid_resolver(antibody.rrid)) }}
-                                {% if antibody.vendor %}
-                                    {{ macros.definition_row_raw("Vendor", macros.vendor_url(antibody.vendor, antibody.vendorPN)) }}
-                                {% endif %}
-                                {{ macros.definition_row("Host epitopes", macros.pillify_epitopes(antibody.epitopes, "antibody")) }}
-                                {{ macros.definition_row("Clonality", antibody.clonality) }}
+                        {% if antibody.dilution %}
+                            <twig:Metadata xl="2" lg="2" data="{{ {
+                                "Dilution recommendations": ["raw", antibody.dilution],
+                                } }}" />
+                        {% endif %}
+                    </twig:ElementCard>
+                </twig:Layout:Col>
 
-                                {% if antibody.epitopeTargets|length > 0 %}
-                                    {{ macros.definition_row("Epitope targets", macros.pillify_epitopes(antibody.epitopeTargets, "protein")) }}
-                                {% endif %}
+                <twig:Layout:Col type="outer" class="col-12">
+                    <twig:ElementCard title="Lots">
+                        <twig:Live:SubstanceLotTable :substance="antibody" defer />
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
-                                {% if antibody.detection %}
-                                    {{ macros.definition_row("Detection", antibody.detection) }}
-                                {% endif %}
-
-                                {{ macros.definition_row("Store at", antibody.storageTemperature ~ " °C") }}
-                                {{ macros.definition_row("Usage", antibody.usage ?? "(unknown)") }}
-                                </tbody>
-                            </table>
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Lots #}
-                {{ lot(antibody) }}
-
-                {# Usage #}
-                {% if antibody.dilution %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Usage", "Usage") }}
-
-                            {{ layout.card_body_collapse_start("Usage") }}
-                            <div class="card-body px-lg-4">
-                                {{ antibody.dilution|raw }}
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {{ attachments(antibody.attachments) }}
-            </div>
+            <twig:Layout:Row cols="3">
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Attachments">
+                        <twig:Attachments :attachments="antibody.attachments"></twig:Attachments>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
         </div>
     </div>
-{#
-        <div class="col col-12 bg-white mb-3 border p-5">
-
-        </div>
-
-        {# Tabbed info at the bottom # }
-        <div class="col col-12 mb-3">
-            <div class="row bg-white p-5 border">
-                <div class="col-3 col-xl-2">
-                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        {{ macros.tab_item("Lots", "tab-lots", "tab-lots-content", true) }}
-                        {{ macros.tab_item("Dilutions", "tab-dilutions", "tab-dilutions-content") }}
-                        {{ macros.tab_item("Experiments", "tab-experiments", "tab-experiments-content") }}
-                        {{ macros.tab_item("Attachments", "tab-attachments", "tab-attachments-content", false, antibody.vendorDocumentation|length > 0?true:false) }}
-                    </div>
-                </div>
-
-                <div class="col-9 col-xl-10">
-                    <div class="tab-content" id="v-pills-tabContent">
-                        {# Antibodies # }
-                        <div class="tab-pane fade show active" id="tab-lots-content" role="tabpanel" aria-labelledby="tab-lots">
-                            <div class="row">
-                                {% if not antibody.lots %}
-                                    No lots registered
-                                {% else %}
-                                    {% for lot in antibody.lots %}
-                                        <div class="col-4 mb-3 pb-3">
-                                            <div class="bg-secondary p-2 mb-n1 border-secondary border">
-                                                <h4 class="float-left">{{ antibody.number ~ "." ~ lot }}</h4>
-                                                <div class="text-right">
-                                                    <a
-                                                            class="far fa-clipboard btn-clipboard small"
-                                                            data-clipboard-text="{{ antibody.longName }} ({{ antibody.vendor.name ?? "??" }}, {{ antibody.vendorPN ?? "??" }}, Lot# {{ lot.lotNumber }}{{ antibody.rrid ? ", RRID:" ~ antibody.rrid : "" }})"
-                                                    ></a>
-                                                </div>
-                                            </div>
-
-                                            <div class="p-2 pt-3 border-secondary border">
-
-
-
-                                                <p class="text-muted">
-                                                    This antibody was bought by <em>{{ lot.boughtBy }}</em>
-                                                    on <em>{{ lot.boughtOn|date("d. M Y") }}</em>.
-                                                    Opened on <em>{{ lot.openedOn|date("d. M Y") }}</em>.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <!-- end row -->
-    </div>#}
 {% endblock %}

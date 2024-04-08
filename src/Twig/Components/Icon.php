@@ -64,6 +64,13 @@ class Icon
             "up" => "fas fa-fw fa-arrow-up",
             "down" => "fas fa-fw fa-arrow-down",
 
+            "file", "file.any" => "fas fa-fw fa-file",
+            "file.powerpoint" => "fas fa-fw fa-file-powerpoint",
+            "file.excel" => "fas fa-fw fa-file-excel",
+            "file.word" => "fas fa-fw fa-file-word",
+            "file.pdf" => "fas fa-fw fa-file-pdf",
+            "download" => "fa fa-fw fa-download",
+
             "other" => "fas fa-fw fa-ellipsis-v",
             "none" => "fas fa-fw",
         };

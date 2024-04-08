@@ -13,6 +13,11 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Epitope;
 use App\Entity\Lot;
+use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\ClipwareTool;
+use App\Entity\Toolbox\EditTool;
+use App\Entity\Toolbox\Tool;
+use App\Entity\Toolbox\Toolbox;
 use App\Form\Import\ImportLotType;
 use App\Form\Import\ImportOligoType;
 use App\Form\Substance\AntibodyType;
@@ -291,8 +296,6 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/antibodies", name: "app_antibodies")]
-    ##[Route("/antibodies/{antibodyType}", name: "app_antibodies")]
-    ##[Route("/antibodies/epitope/{epitope}", name: "app_antibodies_epitope")]
     public function viewAntibodies(
         IconService $iconService,
     ): Response {
@@ -302,94 +305,51 @@ class SubstanceController extends AbstractController
         ]);
     }
 
-
-    public function _viewAntibodies(
-        Request $request,
-        AntibodyRepository $antibodyRepository,
-        ?string $antibodyType = null,
-        ?Epitope $epitope = null,
-    ): Response {
-        $primaryAntibodies = [];
-        $secondaryAntibodies = [];
-
-        if (!empty($antibodyType) and !in_array($antibodyType, ["primaries", "secondaries"])) {
-            throw new FileNotFoundException("The requested antibody type does not exist.");
-        }
-
-        $antibodies = $antibodyRepository->findAnyAntibody($epitope);
-
-        if ($epitope !== null) {
-            return $this->render('parts/antibodies/antibodies.html.twig', [
-                "antibodies" => $antibodies,
-            ]);
-        }
-
-        /** @var Antibody $antibody */
-        foreach ($antibodies as $row) {
-            $antibody = $row[0];
-            $numberOfLots = $row[1];
-            $numberOfAvailableLots = $row[2];
-
-            if ($numberOfAvailableLots > 0) {
-                $antibody->setAvailable(true);
-            } else {
-                $antibody->setAvailable(false);
-            }
-
-            $addPrimary = false;
-            $addSecondary = false;
-
-            if ($antibody->getType() === AntibodyTypeEnum::Primary) {
-                $addPrimary = true;
-            } else {
-                $addSecondary = true;
-            }
-
-            if ($addPrimary and ($antibodyType === "primaries" or empty($antibodyType))) {
-                $primaryAntibodies[] = $antibody;
-            }
-
-            if ($addSecondary and ($antibodyType === "secondaries" or empty($antibodyType))) {
-                $secondaryAntibodies[] = $antibody;
-            }
-        }
-
-        return $this->render('parts/antibodies/antibodies.html.twig', [
-            "antibodies" => [],
-            "primaryAntibodies" => $primaryAntibodies,
-            "secondaryAntibodies" => $secondaryAntibodies,
+    #[Route("/antibodies/view/id/{antibodyId}", name: "app_antibody_view")]
+    #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted("view", "antibody")]
+    public function viewAntibody(
+        #[MapEntity(mapping: ["antibodyId"  => "ulid"])]
+        Antibody $antibody,
+    ) {
+        return $this->render("parts/antibodies/antibody.html.twig", [
+            "title" => "{$antibody->getNumber()} - {$antibody->getShortName()}",
+            "subtitle" => $antibody->getCitation(),
+            "antibody" => $antibody,
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_antibodies"),
+                    icon: "antibody",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Seach antibody",
+                    iconStack: "search",
+                ),
+                new ClipwareTool(
+                    clipboardText: $antibody->getCitation(),
+                    tooltip: "Copy citation on antibody",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_substance_edit", ["substance" => $antibody->getUlid()]),
+                    tooltip: "Edit antibody",
+                    icon: "antibody",
+                    iconStack: "edit",
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_substance_add_lot", ["substance" => $antibody->getUlid()]),
+                    tooltip: "Register a new lot",
+                )
+            ])
         ]);
     }
 
-    #[Route("/antibodies/view/id/{antibodyId}", name: "app_antibody_view")]
     #[Route("/antibodies/view/{antibodyNr}", name: "app_antibody_view_number")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
-    public function viewAntibody(
-        AntibodyRepository $antibodyRepository,
-        #[MapEntity(mapping: ["antibodyId"  => "ulid"])]
-        Antibody $antibodyId = null,
-        string $antibodyNr = null
-    ): Response {
-        if ($antibodyId === null and $antibodyNr === null) {
-            throw new FileNotFoundException("Antibody not found.");
-        }
-
-        if ($antibodyNr !== null) {
-            $antibody = $antibodyRepository->findOneBy(["number" => $antibodyNr]);
-
-            if (!$antibody) {
-                $this->addFlash("error", "Antibody was not found");
-                return $this->redirectToRoute("app_antibodies");
-            }
-        } else {
-            $antibody = $antibodyId;
-        }
-
-        $this->denyAccessUnlessGranted("view", $antibody);
-
-        return $this->render("parts/antibodies/antibody.html.twig", [
-            "antibody" => $antibody,
-        ]);
+    #[IsGranted("view", "antibody")]
+    public function viewAntibodyByNumber(
+        #[MapEntity(mapping: ["antibodyNr" => "number"])]
+        Antibody $antibody,
+    ) {
+        return $this->viewAntibody($antibody);
     }
 
     #[Route("/antibodies/search", name: "app_antibodies_search", priority: 10)]

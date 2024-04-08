@@ -293,4 +293,24 @@ class Antibody extends Substance
         $this->available = $available;
         return $this;
     }
+
+    public function getCitation(?Lot $lot=null)
+    {
+        $other = [
+            $this->getVendor()?->getName() ?? "??",
+            $this->getVendorPn() ?? "??",
+        ];
+
+        if ($lot) {
+            $other[] = "#Lot:{$lot->getLotNumber()}";
+        }
+
+        if ($this->rrid) {
+            $other[] = "RRID:{$this->rrid}";
+        }
+
+        $other = implode(", ", $other);
+
+        return "{$this->getLongName()} ($other)";
+    }
 }

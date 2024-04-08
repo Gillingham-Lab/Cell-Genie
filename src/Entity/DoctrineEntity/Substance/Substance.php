@@ -35,7 +35,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
     #[ORM\JoinTable(name: "substance_lots")]
     #[ORM\JoinColumn(name: "substance_ulid", referencedColumnName: "ulid")]
     #[ORM\InverseJoinColumn(name: "lot_id", referencedColumnName: "id", unique: true)]
-    #[ORM\OrderBy(["lotNumber" => "ASC"])]
+    #[ORM\OrderBy(["number" => "ASC"])]
     #[Assert\Valid]
     private Collection $lots;
 
@@ -107,5 +107,19 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
             $epitope->removeSubstance($this);
         }
         return $this;
+    }
+
+    public function getCitation(?Lot $lot=null)
+    {
+        $other = [
+        ];
+
+        if ($lot) {
+            $other[] = "#Lot:{$lot->getLotNumber()}";
+        }
+
+        $other = implode(", ", $other);
+
+        return "{$this->getLongName()} ($other)";
     }
 }

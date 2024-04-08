@@ -277,16 +277,16 @@ class CellController extends AbstractController
             new Tool(
                 path: $this->generateUrl("app_cells", ["cellGroup" => $cell->getCellGroup()->getId()]),
                 icon: "cell",
-                iconStack: "up",
                 buttonClass: "btn-secondary",
-                tooltip: "Browse cell group"
+                tooltip: "Browse cell group",
+                iconStack: "up"
             ),
             new Tool(
                 path: $this->generateUrl("app_cells_all"),
                 icon: "cell",
-                iconStack: "search",
                 buttonClass: "btn-secondary",
-                tooltip: "Search cells"
+                tooltip: "Search cells",
+                iconStack: "search"
             ),
             new ClipwareTool(
                 clipboardText: $cell->getName() . ($cell->getRrid() ? " (RRID:{$cell->getRrid()})" : ""),

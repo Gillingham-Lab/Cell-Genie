@@ -1,0 +1,40 @@
+<div{{ attributes }}>
+    {% for attachment in attachments %}
+            <section class="mb-2 border-start ps-3">
+                    <header class="d-flex justify-content-between">
+                            <h3 class="flex-column h4"><twig:Icon icon="file.{{ attachment.fileType.value }}" class="me-2" />{{ attachment.title }}</h3>
+                            <div class="flex-column align-content-lg-end"><a class="btn btn-outline-primary btn-md"><twig:Icon icon="download" /> Download</a></div>
+                    </header>
+
+                    <div>
+                            {{ file.description ?? "(no description given)" }}
+                    </div>
+
+                    <footer class="text-muted mt-3">
+                            <p class="card-text"><small class="text-muted">{{ attachment.originalFileName }} ({{ _self.format_file_size(attachment.contentSize)|trim }})</small></p>
+                    </footer>
+            </section>
+    {% endfor %}
+</div>
+
+{% macro format_file_size(size, limit = 200) %}
+        {% if size < limit %}
+                {{ size }} B
+        {% else %}
+                {% set size = size/1024 %}
+
+                {% if size < limit %}
+                        {{ size|round(1) }} kiB
+                {% else %}
+                        {% set size = size/1024 %}
+
+                        {% if size < limit %}
+                                {{ size|round(1) }} MiB
+                        {% else %}
+                                {% set size = size/1024 %}
+
+                                {{ size|round(1) }} GiB
+                        {% endif %}
+                {% endif %}
+        {% endif %}
+{% endmacro %}

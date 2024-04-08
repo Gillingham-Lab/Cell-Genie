@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Genie\Enums\FileType;
 use App\Repository\FileRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -206,5 +207,25 @@ class File
     public function isFreshlyUploaded(): bool
     {
         return $this->freshlyUploaded;
+    }
+
+    public function getFileType(): FileType
+    {
+        return match($this->contentType) {
+            "application/pdf" => FileType::Pdf,
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation" => FileType::PowerPoint,
+            default => match($this->getFileExtension()) {
+                "doc", "docx" => FileType::Word,
+                "ppt", "pptx" => FileType::PowerPoint,
+                "xls", "xlsx" => FileType::Excel,
+                default => FileType::Any,
+            },
+        };
+    }
+
+    public function getFileExtension()
+    {
+        $parts = explode(".", $this->originalFileName);
+        return end($parts);
     }
 }
