@@ -210,7 +210,11 @@ final class SubstanceTable extends AbstractController
                 ]),
                 new Column("Type", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getType()->value),
                 new Column("Available Lots (total)", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
-                new Column("Name", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getShortName()),
+                new Column(
+                    "Name",
+                    fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getShortName(),
+                    tooltip: fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getLongName(),
+                ),
                 new ComponentColumn("Target Epitope", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => [
                     "EntityReference",
                     [

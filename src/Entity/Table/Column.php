@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Table;
 
+use Closure;
+
 class Column
 {
     const raw = false;
@@ -10,9 +12,10 @@ class Column
     const renderTitle = true;
 
     public function __construct(
-        private string $title,
-        private \Closure $renderCallback,
+        private readonly string $title,
+        private readonly Closure $renderCallback,
         public readonly bool $bold = false,
+        private readonly ?Closure $tooltip = null,
     ) {
 
     }
@@ -34,5 +37,10 @@ class Column
     public function getWidthRecommendation(): ?int
     {
         return null;
+    }
+
+    public function getTooltip(): ?Closure
+    {
+        return $this->tooltip;
     }
 }

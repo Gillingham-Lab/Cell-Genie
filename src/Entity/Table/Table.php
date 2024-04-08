@@ -50,7 +50,28 @@ class Table
         return $this->sortColumn;
     }
 
-    public function toArray()
+    /**
+     * @return array{
+     *     numberOfRows: int,
+     *     maxNumberOfRows: int,
+     *     rows: array<int, array{
+     *         label: string,
+     *         type: string,
+     *         showLabel: bool,
+     *         widthRecommendation: int,
+     *         bold: bool,
+     *     }>,
+     *     columns: array<int, array{
+     *         value: mixed,
+     *         tooltip: mixed,
+     *         raw: bool,
+     *         component: string,
+     *         isActive: bool,
+     *         isDisabled: bool,
+     *     }>,
+     * }
+     */
+    public function toArray(): array
     {
         $table = [
             "numberOfRows" => 0,
@@ -77,10 +98,11 @@ class Table
             foreach ($this->columns as $column) {
                 $row[] = [
                     "value" => $column->getRender($datum, $this->spreadDatum),
+                    "tooltip" => $column->getTooltip() === null ? null : $this->call($column->getTooltip(), $datum, $this->spreadDatum),
                     "raw" => $column::raw,
                     "component" => $column::component,
-                    "isActive" => $this->isActive ? ($this->spreadDatum ? ($this->isActive)(...$datum) : ($this->isActive)($datum)) : false,
-                    "isDisabled" => $this->isDisabled ? ($this->spreadDatum ? ($this->isDisabled)(...$datum) : ($this->isDisabled)($datum)) : false,
+                    "isActive" => $this->isActive ? $this->call($this->isActive, $datum, $this->spreadDatum) : false,
+                    "isDisabled" => $this->isDisabled ? $this->call($this->isDisabled, $datum, $this->spreadDatum) : false,
                 ];
             }
 
@@ -89,6 +111,15 @@ class Table
         }
 
         return $table;
+    }
+
+    private function call(Closure $closure, mixed $datum, bool $spreadDatum): mixed
+    {
+        if ($spreadDatum) {
+            return $closure(...$datum);
+        } else {
+            return $closure($datum);
+        }
     }
 
     public function getMaxRows(): ?int

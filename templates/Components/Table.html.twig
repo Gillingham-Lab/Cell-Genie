@@ -1,4 +1,4 @@
-<div{{ attributes.defaults({}) }}>
+<div{{ attributes }}>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -34,7 +34,11 @@
                             {% elseif currentColumn.type == "App\\Entity\\Table\\ToolboxColumn"%}
                                 <twig:Toolbox size="sm" toolbox="{{ rowColumn.value }}" />
                             {% else %}
-                                {{ rowColumn.value }}
+                                {% if rowColumn.tooltip %}
+                                    <span data-toggle="tooltip" data-placement="bottom" title="{{ rowColumn.tooltip|escape("html_attr") }}">{{ rowColumn.value }}</span>
+                                {% else %}
+                                    {{ rowColumn.value }}
+                                {% endif %}
                             {% endif %}
                         </td>
                     {% endfor %}
