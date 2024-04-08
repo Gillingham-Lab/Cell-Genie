@@ -57,7 +57,7 @@ final class SubstanceTable extends AbstractController
     public EntityRepository $entityRepository;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -183,6 +183,7 @@ final class SubstanceTable extends AbstractController
                 new ToolboxColumn("", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => new Toolbox([
                     new ViewTool(
                         path: $this->generateUrl("app_antibody_view_number", ["antibodyNr" => $antibody->getNumber()]),
+                        enabled: $this->isGranted("view", $antibody),
                         tooltip: "View Antibody",
                     ),
                     new ClipwareTool(
@@ -191,10 +192,12 @@ final class SubstanceTable extends AbstractController
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_substance_edit", ["substance" => $antibody->getUlid()]),
+                        enabled: $this->isGranted("edit", $antibody),
                         tooltip: "Edit antibody",
                     ),
                     new AddTool(
                         path: $this->generateUrl("app_substance_add_lot", ["substance" => $antibody->getUlid()]),
+                        enabled: $this->isGranted("add_lot", $antibody),
                         tooltip: "Add lot",
                     )
                 ])),
