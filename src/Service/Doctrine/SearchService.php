@@ -30,7 +30,7 @@ class SearchService
         if (is_array($field)) {
             $expressions = [];
             foreach ($field as $f) {
-                $expressions[] = $this->searchWith($qb, $f, $type ,$value);
+                $expressions[] = $this->searchWith($qb, $f, $type, $value);
             }
             return $qb->expr()->orX(...$expressions);
         } else {

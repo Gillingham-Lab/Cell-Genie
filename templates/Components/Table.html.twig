@@ -14,9 +14,11 @@
         </thead>
         <tbody>
             {% for row in table.rows %}
-                <tr class="{{ row[0].isActive ? "table-active" : "" }} align-middle">
+                <tr class="{{ row[0].isActive ? "table-active" : "" }} align-middle {{ row[0].isDisabled ? "disabled":"" }}">
                     {% for rowColumn in row %}
-                        <td>
+                        {% set currentColumn = table.columns[loop.index0] %}
+
+                        <td class="{{ currentColumn.bold ? "fw-bold" }}">
                             {% if rowColumn.raw %}
                                 {{ rowColumn.value|raw }}
                             {% elseif rowColumn.component %}
@@ -29,7 +31,7 @@
                                 {% else %}
                                     <a href="{{ rowColumn.value }}">{{ rowColumn.value }} <twig:Icon icon="external" /></a>
                                 {% endif %}
-                            {% elseif table.columns[loop.index0].type == "App\\Entity\\Table\\ToolboxColumn"%}
+                            {% elseif currentColumn.type == "App\\Entity\\Table\\ToolboxColumn"%}
                                 <twig:Toolbox size="sm" toolbox="{{ rowColumn.value }}" />
                             {% else %}
                                 {{ rowColumn.value }}

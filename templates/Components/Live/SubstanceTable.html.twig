@@ -1,0 +1,28 @@
+<div{{ attributes.defaults({class: "p-0 m-0"}) }}>
+    {% set component = this %}
+    {% set computedTable = computed.table %}
+    {% set computedNumberOfRows = computed.numberOfRows %}
+    {% set errors = _errors %}
+
+    <twig:Layout:Col class="p-0 m-0 mb-3">
+        <twig:Live:Search :formId="liveSearchFormType" :formType="liveSearchFormType" title="Search" :formData="search" eventSuffix="{{ component.type }}" />
+    </twig:Layout:Col>
+
+    <twig:Layout:Col class="p-0 m-0 mb-3">
+        <twig:ElementCard title="Results">
+            {% if errors.has("type") %}
+                <div class="alert alert-danger">
+                    Violation of type property in this component: {{ errors.get("type") }}
+                </div>
+            {% endif %}
+
+            {% if computedTable %}
+                <p class="text-muted">{{ computedNumberOfRows }} entries found.</p>
+
+                <twig:Pagination :currentPage="component.page" :lastPage="component.lastPageNumber" />
+
+                <twig:Table table="{{ computedTable }}" data-loading="addClass(opacity-50)" />
+            {% endif %}
+        </twig:ElementCard>
+    </twig:Layout:Col>
+</div>

@@ -10,9 +10,9 @@ class ToolboxColumn extends Column
     const renderTitle = false;
     const component = true;
 
-    public function getRender(object $row): mixed
+    public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
-        $toolbox = parent::getRender($row);
+        $toolbox = parent::getRender($row, $spreadDatum);
 
         return [
             "component" => Toolbox::class,

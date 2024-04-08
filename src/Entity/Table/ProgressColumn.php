@@ -17,9 +17,9 @@ class ProgressColumn extends Column
         parent::__construct($title, $renderCallback);
     }
 
-    public function getRender(object $row): mixed
+    public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
-        [$current, $max] = parent::getRender($row);
+        [$current, $max] = parent::getRender($row, $spreadDatum);
 
         return [
             "component" => ProgressBar::class,

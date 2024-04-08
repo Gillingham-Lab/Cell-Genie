@@ -5,6 +5,7 @@ namespace App\Twig\Components;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
+use App\Entity\Epitope;
 use App\Service\EntityResolver;
 use App\Service\IconService;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Collection\CollectionInterface;
@@ -33,7 +34,7 @@ class EntityReference
 
         return [
             "entity" => $entity,
-            "iterable" => is_array($entity) || $entity instanceof \ArrayAccess,
+            "iterable" => is_array($entity) || ($entity instanceof \ArrayAccess),
             "icon" => $this->iconService->get($entity) ?? "unknown",
         ];
     }
@@ -46,5 +47,17 @@ class EntityReference
         }
 
         return $this->entityResolver->getPath($entity);
+    }
+
+    public function getClass(?object $entity = null): string
+    {
+        if (!$entity) {
+            $entity = $this->entity;
+        }
+
+        return match ($this->entityResolver->getEntityClass($entity)) {
+            Epitope::class => "bg-warning",
+            default => "bg-primary",
+        };
     }
 }

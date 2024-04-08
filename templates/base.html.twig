@@ -48,8 +48,8 @@
                 <twig:Layout:NavSeparator />
                 <twig:Layout:NavDropdown id="gin-navbar-antibody" label="Antibodies" icon="antibody" href="{{ url("app_antibodies") }}">
                     <twig:Layout:NavDropdownItem label="All" icon="none" href="{{ url("app_antibodies") }}" />
-                    <twig:Layout:NavDropdownItem label="Primaries" icon="antibody.primary" href="{{ url("app_antibodies", {"antibodyType": "primaries"}) }}" />
-                    <twig:Layout:NavDropdownItem label="Secondaries" icon="antibody.secondary" href="{{ url("app_antibodies", {"antibodyType": "secondaries"}) }}" />
+                    <twig:Layout:NavDropdownItem label="Primaries" icon="antibody.primary" href="{{ url("app_antibodies", {"search[antibodyType]": "primary"}) }}" />
+                    <twig:Layout:NavDropdownItem label="Secondaries" icon="antibody.secondary" href="{{ url("app_antibodies", {"search[antibodyType]": "secondary"}) }}" />
                     <twig:Layout:NavDropdownDivider />
                     <twig:Layout:NavDropdownItem label="New Antibody" icon="antibody" iconStack="add" href="{{ url("app_substance_new", {"type": "antibody"}) }}" />
                     <twig:Layout:NavDropdownDivider />

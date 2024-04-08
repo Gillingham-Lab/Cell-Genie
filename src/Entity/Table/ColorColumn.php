@@ -9,9 +9,9 @@ class ColorColumn extends Column
 {
     const component = true;
 
-    public function getRender(object $row): mixed
+    public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
-        $color = parent::getRender($row);
+        $color = parent::getRender($row, $spreadDatum);
 
         return [
             "component" => ColorPreview::class,

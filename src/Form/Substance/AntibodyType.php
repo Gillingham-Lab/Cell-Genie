@@ -98,7 +98,6 @@ class AntibodyType extends SubstanceType
                     "attr"  => [
                         "class" => "gin-fancy-select",
                         "data-allow-empty" => "true",
-                        //"data-allow-add" => true,
                     ],
                 ])
                 ->add("epitopeTargets", EntityType::class, [
@@ -117,7 +116,6 @@ class AntibodyType extends SubstanceType
                     "attr"  => [
                         "class" => "gin-fancy-select",
                         "data-allow-empty" => "true",
-                        //"data-allow-add" => true,
                     ],
                 ])
             )

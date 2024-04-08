@@ -33,6 +33,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 use Twig\Error\RuntimeError;
 use UnhandledMatchError;
 
@@ -54,6 +55,16 @@ class CellTable extends AbstractController
     public function __construct(
         private CellRepository $cellRepository,
     ) {
+    }
+
+    public function getNumberOfRows(): ?int
+    {
+        if ($this->numberOfRows === null) {
+            $numberOfRows = $this->getPaginatedResults(true)->count();
+            $this->setNumberOfRows($numberOfRows);
+        }
+
+        return $this->numberOfRows;
     }
 
     #[LiveListener("search")]
@@ -151,7 +162,7 @@ class CellTable extends AbstractController
                 new ToggleColumn("Cancer", fn(Cell $cell) => $cell->getIsCancer()),
                 new ToggleColumn("Engineered", fn(Cell $cell) => $cell->getIsEngineered()),
             ],
-            maxRows: $this->getPaginatedResults(true)->count(),
+            maxRows: $this->getNumberOfRows(),
         );
 
         return $table->toArray();

@@ -111,6 +111,8 @@ class CellRepository extends ServiceEntityRepository
 
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
+        $searchService = $this->searchService;
+
         $expressions = [];
         foreach ($searchFields as $searchField => $searchValue) {
             if ($searchValue === null or (is_string($searchValue) and strlen($searchValue) === 0)) {

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Table;
 
+use Closure;
 use Traversable;
 
 class Table
@@ -16,11 +17,13 @@ class Table
         private int $sortColumn = 1,
         private ?int $maxRows = null,
         ?callable $isActive = null,
+        private bool $spreadDatum = false,
+        private ?Closure $isDisabled = null,
     ) {
         $this->isActive = $isActive;
     }
 
-    public function addColumn(Column $column): self
+    public function addColumn(Column $column): static
     {
         $this->columns[] = $column;
         return $this;
@@ -36,7 +39,7 @@ class Table
         yield from $this->data;
     }
 
-    public function setData(iterable $data): self
+    public function setData(iterable $data): static
     {
         $this->data = $data;
         return $this;
@@ -64,6 +67,7 @@ class Table
                 "type" => $column::class,
                 "showLabel" => $column::renderTitle,
                 "widthRecommendation" => $column->getWidthRecommendation(),
+                "bold" => $column->bold,
             ];
         }
 
@@ -72,10 +76,11 @@ class Table
 
             foreach ($this->columns as $column) {
                 $row[] = [
-                    "value" => $column->getRender($datum),
+                    "value" => $column->getRender($datum, $this->spreadDatum),
                     "raw" => $column::raw,
                     "component" => $column::component,
-                    "isActive" => $isActive ? $isActive($datum) : false,
+                    "isActive" => $this->isActive ? ($this->spreadDatum ? ($this->isActive)(...$datum) : ($this->isActive)($datum)) : false,
+                    "isDisabled" => $this->isDisabled ? ($this->spreadDatum ? ($this->isDisabled)(...$datum) : ($this->isDisabled)($datum)) : false,
                 ];
             }
 
@@ -84,5 +89,16 @@ class Table
         }
 
         return $table;
+    }
+
+    public function getMaxRows(): ?int
+    {
+        return $this->maxRows;
+    }
+
+    public function setMaxRows(?int $maxRows): static
+    {
+        $this->maxRows = $maxRows;
+        return $this;
     }
 }

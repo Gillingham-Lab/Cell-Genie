@@ -12,6 +12,7 @@ class Column
     public function __construct(
         private string $title,
         private \Closure $renderCallback,
+        public readonly bool $bold = false,
     ) {
 
     }
@@ -21,9 +22,13 @@ class Column
         return $this->title;
     }
 
-    public function getRender(object $row): mixed
+    public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
-        return ($this->renderCallback)($row);
+        if ($spreadDatum and is_array($row)) {
+            return ($this->renderCallback)(... $row);
+        } else {
+            return ($this->renderCallback)($row);
+        }
     }
 
     public function getWidthRecommendation(): ?int

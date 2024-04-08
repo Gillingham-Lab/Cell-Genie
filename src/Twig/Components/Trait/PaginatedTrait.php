@@ -18,6 +18,8 @@ trait PaginatedTrait
     #[Assert\Range(min: 10, max: 100)]
     public int $limit = 30;
 
+    public ?int $numberOfRows = null;
+
     /**
      * Goes to the next page
      * @return void
@@ -68,12 +70,25 @@ trait PaginatedTrait
      */
     public function getLastPageNumber(): int
     {
-        return intval(ceil($this->getPaginatedResults()->count() / $this->limit));
+        return intval(ceil($this->getNumberOfRows() / $this->limit));
     }
 
     /**
-     * Returns a paginated doctrine query
-     * @return mixed
+     * Returns the maximum number of rows.
+     *
+     * Must be implemented in the component.
+     * @return int|null
      */
-    abstract private function getPaginatedResults(): Paginator;
+    abstract public function getNumberOfRows(): ?int;
+
+    /**
+     * Sets the number of rows.
+     * @param int|null $numberOfRows
+     * @return $this
+     */
+    private function setNumberOfRows(?int $numberOfRows): static
+    {
+        $this->numberOfRows = $numberOfRows;
+        return $this;
+    }
 }

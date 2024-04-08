@@ -24,6 +24,19 @@ class EntityResolver
 
     }
 
+    public function getEntityClass(?object $object): ?string
+    {
+        if ($object === null) {
+            return null;
+        }
+
+        try {
+            return $this->entityManager->getClassMetadata(get_class($object))->getName();
+        } catch (MappingException $mappingException) {
+            return $object::class;
+        }
+    }
+
     public function getPath(null|object $object): ?string
     {
         if ($object === null) {

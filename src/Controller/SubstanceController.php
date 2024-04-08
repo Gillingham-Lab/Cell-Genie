@@ -40,6 +40,7 @@ use App\Security\Voter\Substance\LotVoter;
 use App\Security\Voter\Substance\SubstanceVoter;
 use App\Service\FileUploader;
 use App\Service\GeneBankImporter;
+use App\Service\IconService;
 use Doctrine\DBAL\Exception\ServerException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +50,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -290,9 +291,19 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/antibodies", name: "app_antibodies")]
-    #[Route("/antibodies/{antibodyType}", name: "app_antibodies")]
-    #[Route("/antibodies/epitope/{epitope}", name: "app_antibodies_epitope")]
+    ##[Route("/antibodies/{antibodyType}", name: "app_antibodies")]
+    ##[Route("/antibodies/epitope/{epitope}", name: "app_antibodies_epitope")]
     public function viewAntibodies(
+        IconService $iconService,
+    ): Response {
+        return $this->render("parts/substance/search.html.twig", [
+            "title" => "Antibodies",
+            "icon" => "antibody",
+        ]);
+    }
+
+
+    public function _viewAntibodies(
         Request $request,
         AntibodyRepository $antibodyRepository,
         ?string $antibodyType = null,

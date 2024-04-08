@@ -5,7 +5,7 @@
 
     <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
         {% for child in form.children %}
-            <twig:Layout:Col>
+            <twig:Layout:Col type="none">
                 {{ form_row(child) }}
             </twig:Layout:Col>
         {% endfor %}

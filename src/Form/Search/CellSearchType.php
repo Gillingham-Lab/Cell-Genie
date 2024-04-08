@@ -15,13 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CellSearchType extends AbstractType
 {
-    public function __construct(
-        private UserGroupRepository $userGroupRepository,
-    ) {
-
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add("cellNumber", TextType::class, [
@@ -41,12 +35,6 @@ class CellSearchType extends AbstractType
                 "label" => "Cell group name",
                 "required" => false,
             ])
-            /*->add("groupOwner", ChoiceType::class, [
-                "label" => "Group",
-                "choices" => [null, ...$this->userGroupRepository->findAll()],
-                "choice_label" => fn(?UserGroup $userGroup) => $userGroup?->getShortName() ?? "Any",
-                "choice_value" => fn(?UserGroup $userGroup) => $userGroup?->getId()->toRfc4122() ?? null,
-            ])*/
             ->add("groupOwner", EntityType::class, [
                 "label" => "Group",
                 "class" => UserGroup::class,

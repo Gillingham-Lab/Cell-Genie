@@ -7,9 +7,9 @@ class ToggleColumn extends Column
 {
     const raw = true;
 
-    public function getRender(object $row): mixed
+    public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
-        $result = parent::getRender($row);
+        $result = parent::getRender($row, $spreadDatum);
 
         if ($result) {
             return "<span class='fas fa-fw fa-toggle-on fa-2x' aria-valuetext='Yes'></span>";

@@ -34,6 +34,9 @@ class Search extends AbstractController
     #[LiveProp]
     public string $title;
 
+    #[LiveProp]
+    public ?string $eventSuffix = null;
+
     public function __construct(
         #[CurrentUser]
         private ?User $user,
@@ -75,6 +78,8 @@ class Search extends AbstractController
                     $eventData[$field] = $value->getId();
                 } elseif (method_exists($value, "getUlid")) {
                     $eventData[$field] = $value->getUlid();
+                } elseif ($value instanceof \BackedEnum) {
+                    $eventData[$field] = $value->value;
                 } else {
                     $eventData[$field] = (string)$value;
                 }
@@ -83,7 +88,11 @@ class Search extends AbstractController
             }
         }
 
-        $this->emitUp("search", $eventData);
+        if ($this->eventSuffix) {
+            $this->emitUp("search.{$this->eventSuffix}", $eventData);
+        } else {
+            $this->emitUp("search", $eventData);
+        }
     }
 
     /**
@@ -102,6 +111,11 @@ class Search extends AbstractController
     {
         $this->formData = [];
         $this->resetForm();
-        $this->emitUp("search", []);
+
+        if ($this->eventSuffix) {
+            $this->emitUp("search.{$this->eventSuffix}", []);
+        } else {
+            $this->emitUp("search", []);
+        }
     }
 }

@@ -7,9 +7,9 @@ class ComponentColumn extends Column
 {
     const component = true;
 
-    public function getRender(object $row): mixed
+    public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
-        [$component, $props] = parent::getRender($row);
+        [$component, $props] = parent::getRender($row, $spreadDatum);
 
         return [
             "component" => $component,
