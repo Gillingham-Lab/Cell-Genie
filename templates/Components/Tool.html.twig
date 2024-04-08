@@ -1,7 +1,10 @@
 <a{{ attributes.defaults({
     class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
-    href: tool.path,
 }) }}
+    {% if tool.path %}
+        href="{{ tool.path }}"
+    {% endif %}
+
     {% if tool.tooltip %}
         data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
     {% endif %}
