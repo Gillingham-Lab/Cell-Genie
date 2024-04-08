@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AntibodySearchType extends AbstractType
 {
@@ -125,5 +126,10 @@ class AntibodySearchType extends AbstractType
         }
 
         $event->setData($formData);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(['csrf_protection' => false]);
     }
 }
