@@ -356,11 +356,13 @@
                     </twig:ElementCard>
                 </twig:Layout:Col>
                 {% endif %}
-            </twig:Layout:Row>
 
-            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
-                {{ attachments(cell.attachments) }}
-            </div>
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Attachments" icon="attachment">
+                        <twig:Attachments :attachments="cell.attachments"></twig:Attachments>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
         </div>
     </div>
 {% endblock %}

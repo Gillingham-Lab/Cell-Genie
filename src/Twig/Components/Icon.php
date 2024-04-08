@@ -70,6 +70,7 @@ class Icon
             "file.word" => "fas fa-fw fa-file-word",
             "file.pdf" => "fas fa-fw fa-file-pdf",
             "download" => "fa fa-fw fa-download",
+            "attachment" => "fas fa-fw fa-paperclip",
 
             "other" => "fas fa-fw fa-ellipsis-v",
             "none" => "fas fa-fw",
