@@ -15,6 +15,7 @@ use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Genie\Enums\Availability;
 use App\Twig\Components\Date;
+use App\Twig\Components\EntityReference;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -47,7 +48,7 @@ class SubstanceLotTable extends AbstractController
                 new ComponentColumn("Opened on", fn(Lot $lot) => [Date::class, ["dateTime" => $lot->getOpenedOn()]]),
                 new Column("Bought by", fn(Lot $lot) => $lot->getBoughtBy()?->getFullName() ?? "??"),
                 new ComponentColumn("Bought on", fn(Lot $lot) => [Date::class, ["dateTime" => $lot->getBoughtOn()]]),
-                new Column("Location", fn(Lot $lot) => $lot->getBox()->getName()),
+                new ComponentColumn("Location", fn(Lot $lot) => [EntityReference::class, ["entity" => $lot->getBox()]]),
                 new Column("Coordinate", fn(Lot $lot) => $lot->getBoxCoordinate()),
                 new Column("Amount", fn(Lot $lot) => $lot->getAmount()),
                 new Column("Concentration", fn(Lot $lot) => $lot->getPurity()),

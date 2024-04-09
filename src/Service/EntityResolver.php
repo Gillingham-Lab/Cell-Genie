@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Box;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Antibody;
@@ -11,6 +12,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
+use App\Entity\Rack;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -51,6 +53,8 @@ class EntityResolver
                 CellGroup::class => $this->router->generate("app_cells_group", ["cellGroup" => $object->getId()]),
                 Plasmid::class, Oligo::class, Protein::class, Chemical::class, Antibody::class => $this->router->generate("app_substance_view", ["substance" => $object->getUlid()]),
                 Epitope::class => $this->router->generate("app_epitope_view", ["epitope" => $object->getId()]),
+                Box::class => $this->router->generate("app_storage_view_box", ["box" => $object->getUlid()]),
+                Rack::class => $this->router->generate("app_storage_view_rack", ["rack" => $object->getUlid()]),
                 default => null,
             };
         } catch (MappingException $mappingException) {
