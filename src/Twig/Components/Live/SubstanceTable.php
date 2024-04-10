@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Twig\Components\Live;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Epitope;
 use App\Entity\Table\Column;
@@ -17,9 +18,11 @@ use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
 use App\Form\Search\AntibodySearchType;
+use App\Form\Search\ChemicalSearchType;
 use App\Genie\Enums\AntibodyType;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Service\Doctrine\Type\Ulid;
+use App\Twig\Components\SmilesViewer;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -42,7 +45,7 @@ final class SubstanceTable extends AbstractController
     use PaginatedTrait;
 
     #[LiveProp]
-    #[Assert\Choice(choices: ["antibody"])]
+    #[Assert\Choice(choices: ["antibody", "chemical"])]
     public string $type;
 
     #[LiveProp]
@@ -66,13 +69,15 @@ final class SubstanceTable extends AbstractController
     {
         $props["entityType"] = match ($props["type"]) {
             "antibody" => Antibody::class,
+            "chemical" => Chemical::class,
             default => null,
         };
 
         $props["entityRepository"] = $props["entityType"] == null ? null : $this->entityManager->getRepository($props["entityType"]);
 
         $props["liveSearchFormType"] = match($props["type"]) {
-            "antibody" => AntibodySearchType::class
+            "antibody" => AntibodySearchType::class,
+            "chemical" => ChemicalSearchType::class,
         };
 
         return $props;
@@ -112,6 +117,7 @@ final class SubstanceTable extends AbstractController
 
         $table = match($this->type) {
             "antibody" => $this->getAntibodyTable(),
+            "chemical" => $this->getChemicalTable(),
         };
 
         $this->addData($table);
@@ -134,6 +140,7 @@ final class SubstanceTable extends AbstractController
         if (!isset($this->entityType)) {
             $this->entityType = match ($this->type) {
                 "antibody" => Antibody::class,
+                "chemical" => Chemical::class,
                 default => null,
             };
         }
@@ -277,6 +284,59 @@ final class SubstanceTable extends AbstractController
             "rrid" => $rrid,
             "hasEpitope" => $hasEpitope === null ? null : Ulid::fromString($hasEpitope)->toRfc4122(),
             "targetsEpitope" => $targetsEpitope === null ? null : Ulid::fromString($targetsEpitope)->toRfc4122(),
+        ];
+
+        $this->page = 0;
+    }
+
+    private function getChemicalTable(): Table
+    {
+        return new Table(
+            data: [],
+            columns: [
+                new ToolboxColumn("", fn(Chemical $chemical, int $lotCount, int $hasAvailableLot) => new Toolbox([
+                    new ViewTool(
+                        path: $this->generateUrl("app_substance_view", ["substance" => $chemical->getUlid()]),
+                        enabled: $this->isGranted("view", $chemical),
+                        tooltip: "View Chemical",
+                    ),
+                    new ClipwareTool(
+                        clipboardText: $chemical->getCitation(),
+                    ),
+                    new EditTool(
+                        path: $this->generateUrl("app_substance_edit", ["substance" => $chemical->getUlid()]),
+                        enabled: $this->isGranted("edit", $chemical),
+                        tooltip: "Edit chemical",
+                    ),
+                    new AddTool(
+                        path: $this->generateUrl("app_substance_add_lot", ["substance" => $chemical->getUlid()]),
+                        enabled: $this->isGranted("add_lot", $chemical),
+                        tooltip: "Add lot",
+                    )
+                ])),
+                new ComponentColumn("Structure", fn(Chemical $chemical, int $lotCount, int $hasAvailableLot) => [
+                    SmilesViewer::class, [
+                        "key" => $chemical->getUlid()->toRfc4122(),
+                        "smiles" => $chemical->getSmiles(),
+                        "padding" => 2,
+                    ],
+                ], widthRecommendation: 10),
+                new Column("Name", fn(Chemical $chemical, int $lotCount, int $hasAvailableLot) => $chemical->getShortName(), bold: true),
+                new Column("CAS", fn(Chemical $chemical, int $lotCount, int $hasAvailableLot) => $chemical->getCasNumber()),
+                new Column("Available Lots (total)", fn(Chemical $chemical, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
+            ],
+            spreadDatum: true,
+        );
+    }
+
+    #[LiveListener("search.chemical")]
+    public function onChemicalSearch(
+        #[LiveArg] ?string $shortName = null,
+        #[LiveArg] ?string $anyName = null,
+    ): void {
+        $this->search = [
+            "shortName" => $shortName,
+            "anyName" => $anyName,
         ];
 
         $this->page = 0;

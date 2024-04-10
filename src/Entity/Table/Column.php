@@ -16,6 +16,7 @@ class Column
         private readonly Closure $renderCallback,
         public readonly bool $bold = false,
         private readonly ?Closure $tooltip = null,
+        private readonly ?int $widthRecommendation = null,
     ) {
 
     }
@@ -36,7 +37,7 @@ class Column
 
     public function getWidthRecommendation(): ?int
     {
-        return null;
+        return $this->widthRecommendation;
     }
 
     public function getTooltip(): ?Closure

@@ -28,12 +28,14 @@ class Icon
             "antibody.secondary" => "icon icon-antibody-secondary-twocolor",
             "epitope" => "icon icon-epitope-twocolor",
 
-            "chemical" => "icon icon-chemical",
+            "chemical", "compound" => "icon icon-chemical",
             "protein" => "icon icon-protein",
-            "oligo" => "icon icon-oligomer",
+            "oligo" => "icon icon-oligo",
             "plasmid" => "icon icon-plasmid",
             "cell" => "icon icon-mammalian-cell",
             "cellCulture", "experiment" => "fas fa-fw fa-flask",
+
+            "lot" => "icon icon-Lot",
 
             "view" => "far fa-fw fa-eye",
             "add", "increase" => "fas fa-fw fa-plus",

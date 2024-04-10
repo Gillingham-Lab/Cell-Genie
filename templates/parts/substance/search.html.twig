@@ -8,7 +8,7 @@
             <twig:PageHeader title="{{ title }}" icon="{{ icon }}" barcode />
 
             <twig:Layout:Row>
-                <twig:Live:SubstanceTable type="antibody" loading="defer" />
+                <twig:Live:SubstanceTable :type="substanceType" loading="defer" />
             </twig:Layout:Row>
         </div>
     </div>

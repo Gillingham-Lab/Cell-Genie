@@ -1,0 +1,14 @@
+<div{{ attributes.defaults(
+    stimulus_controller('smiles', {
+        "smiles": smiles,
+        "id": key,
+        "padding": padding,
+    })
+) }}>
+    <div style="position: relative; display: inline-block; width: 100%;" class="align-content-center">
+        <a style="position: absolute; top: 0; left: 0;" data-clipboard-text="{{ smiles }}" class="btn-clipboard"><twig:Icon icon="clipboard" class="{{ size>20 ? "h2" : "" }}" /></a>
+        <canvas id="smiles-viewer-canvas-{{ key }}" class="d-inline-block align-middle" {{ stimulus_target("smiles", "canvas") }} style="width: 100%; max-width: {{ size }}rem"></canvas>
+    </div>
+
+    <div class="{{ showSmiles ? "" : "d-none" }} font-monospace mt-5" {{ stimulus_target("smiles", "smiles") }}></div>
+</div>

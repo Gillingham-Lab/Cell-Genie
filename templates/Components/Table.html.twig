@@ -5,7 +5,7 @@
                 {% for column in table.columns %}
                     {% set width = "" %}
                     {% if column.widthRecommendation %}
-                        {% set width = "width: " ~ column.widthRecommendation ~ "em;" %}
+                        {% set width = "width: " ~ column.widthRecommendation ~ "rem;" %}
                     {% endif %}
 
                     <th scope="col" style="{{ width }}">{{ column.label }}</th>

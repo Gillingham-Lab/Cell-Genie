@@ -53,48 +53,6 @@ class AntibodyRepository extends ServiceEntityRepository implements PaginatedRep
         return $qb;
     }
 
-    public function findAnyAntibody(?Epitope $epitope = null): array
-    {
-        $qb = $this->getBaseQuery();
-
-        if ($epitope !== null) {
-            $qb = $qb->andWhere("ept.id = :epitope")
-                ->setParameter("epitope", $epitope->getId(), "ulid");
-        }
-
-        return $qb->getQuery()
-            ->getResult()
-            ;
-    }
-
-    public function findBySearchTerm(string $searchTerm): array
-    {
-        if (!str_starts_with($searchTerm, "%") and !str_starts_with($searchTerm, "^")) {
-            $searchTerm = "%" . $searchTerm;
-        }
-
-        if (!str_ends_with($searchTerm, "%") and !str_starts_with($searchTerm, "$")) {
-            $searchTerm = $searchTerm . "%";
-        }
-
-        $qb = $this->getBaseQuery();
-
-        return $qb
-            ->distinct(True)
-            ->where("a.shortName LIKE :val")
-            ->orWhere("a.longName LIKE :val")
-            ->orWhere("a.detection LIKE :val")
-            ->orWhere("a.number LIKE :val")
-            ->orWhere("eph.shortName LIKE :val")
-            ->orWhere("ept.shortName LIKE :val")
-            ->orWhere("a.clonality LIKE :val")
-            ->orWhere("a.usage LIKE :val")
-            ->orderBy("a.number")
-            ->setParameter("val", $searchTerm)
-            ->getQuery()
-            ->getResult();
-    }
-
     private function getPaginatedQuery(): QueryBuilder
     {
         return $this->getBaseQuery();

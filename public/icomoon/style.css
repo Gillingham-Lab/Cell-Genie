@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?g3i5a3');
-  src:  url('fonts/icomoon.eot?g3i5a3#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?g3i5a3') format('truetype'),
-    url('fonts/icomoon.woff?g3i5a3') format('woff'),
-    url('fonts/icomoon.svg?g3i5a3#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?ua0vfp');
+  src:  url('fonts/icomoon.eot?ua0vfp#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?ua0vfp') format('truetype'),
+    url('fonts/icomoon.woff?ua0vfp') format('woff'),
+    url('fonts/icomoon.svg?ua0vfp#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,69 +25,60 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-plasmid-twocolor .path1:before {
-  content: "\e90d";
-  color: rgb(136, 136, 136);
+.icon-oligo:before {
+  content: "\e900";
 }
-.icon-plasmid-twocolor .path2:before {
-  content: "\e90e";
-  margin-left: -1em;
-  color: rgb(35, 31, 32);
+.icon-Lot:before {
+  content: "\e901";
 }
-.icon-epitope-twocolor .path1:before {
-  content: "\e909";
-  color: rgb(0, 0, 0);
-}
-.icon-epitope-twocolor .path2:before {
-  content: "\e90a";
-  margin-left: -0.9287109375em;
-  color: rgb(136, 136, 136);
+.icon-antibody:before {
+  content: "\e902";
 }
 .icon-antibody-primary-twocolor .path1:before {
-  content: "\e907";
+  content: "\e903";
   color: rgb(136, 136, 136);
 }
 .icon-antibody-primary-twocolor .path2:before {
-  content: "\e908";
+  content: "\e904";
   margin-left: -0.9287109375em;
   color: rgb(0, 0, 0);
 }
 .icon-antibody-secondary-twocolor .path1:before {
-  content: "\e90f";
+  content: "\e905";
   color: rgb(0, 0, 0);
 }
 .icon-antibody-secondary-twocolor .path2:before {
-  content: "\e910";
+  content: "\e906";
   margin-left: -0.9287109375em;
   color: rgb(136, 136, 136);
 }
-.icon-plasmid:before {
-  content: "\e913";
+.icon-chemical:before {
+  content: "\e907";
+}
+.icon-epitope-twocolor .path1:before {
+  content: "\e908";
+  color: rgb(0, 0, 0);
+}
+.icon-epitope-twocolor .path2:before {
+  content: "\e909";
+  margin-left: -0.9287109375em;
+  color: rgb(136, 136, 136);
 }
 .icon-mammalian-cell:before {
+  content: "\e90a";
+}
+.icon-plasmid:before {
   content: "\e90b";
 }
-.icon-mammalian-cell-alt:before {
+.icon-plasmid-twocolor .path1:before {
   content: "\e90c";
+  color: rgb(136, 136, 136);
 }
-.icon-epitope:before {
-  content: "\e906";
-}
-.icon-chemical:before {
-  content: "\e905";
-}
-.icon-antibody:before {
-  content: "\e900";
-}
-.icon-antibody-primary:before {
-  content: "\e901";
-}
-.icon-antibody-secondary:before {
-  content: "\e902";
-}
-.icon-oligomer:before {
-  content: "\e904";
+.icon-plasmid-twocolor .path2:before {
+  content: "\e90d";
+  margin-left: -1em;
+  color: rgb(35, 31, 32);
 }
 .icon-protein:before {
-  content: "\e903";
+  content: "\e90e";
 }

@@ -211,7 +211,7 @@ class SubstanceController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_substance.html.twig", [
+        return $this->render("parts/forms/add_substance.html.twig", [
             "title" => $new ? "{$typeName} :: New" : "{$typeName} :: {$substance->getShortName()} :: Edit",
             "substance" => ($new ? null : $substance),
             "form" => $form,
@@ -284,7 +284,7 @@ class SubstanceController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_substance.html.twig", [
+        return $this->render("parts/forms/add_substance.html.twig", [
             "substance_type" => $substanceType,
             "title" => $new ? "$substanceType :: Lot :: New" : "$substanceType :: {$substance->getShortName()} :: Lot :: {$lot->getNumber()} :: Edit",
             "substance" => ($new ? null : $substance),
@@ -302,6 +302,7 @@ class SubstanceController extends AbstractController
         return $this->render("parts/substance/search.html.twig", [
             "title" => "Antibodies",
             "icon" => "antibody",
+            "substanceType" => "antibody",
         ]);
     }
 
@@ -312,7 +313,7 @@ class SubstanceController extends AbstractController
         #[MapEntity(mapping: ["antibodyId"  => "ulid"])]
         Antibody $antibody,
     ) {
-        return $this->render("parts/antibodies/antibody.html.twig", [
+        return $this->render("parts/substance/view_antibody.html.twig", [
             "title" => "{$antibody->getNumber()} - {$antibody->getShortName()}",
             "subtitle" => $antibody->getCitation(),
             "antibody" => $antibody,
@@ -330,13 +331,15 @@ class SubstanceController extends AbstractController
                 ),
                 new EditTool(
                     path: $this->generateUrl("app_substance_edit", ["substance" => $antibody->getUlid()]),
-                    tooltip: "Edit antibody",
                     icon: "antibody",
+                    tooltip: "Edit antibody",
                     iconStack: "edit",
                 ),
                 new AddTool(
                     path: $this->generateUrl("app_substance_add_lot", ["substance" => $antibody->getUlid()]),
+                    icon: "lot",
                     tooltip: "Register a new lot",
+                    iconStack: "add",
                 )
             ])
         ]);
@@ -352,71 +355,52 @@ class SubstanceController extends AbstractController
         return $this->viewAntibody($antibody);
     }
 
-    #[Route("/antibodies/search", name: "app_antibodies_search", priority: 10)]
-    public function searchAntibodies(
-        AntibodyRepository $antibodyRepository,
-        Request $request
-    ): Response {
-        $searchTerm = $request->request->get("search", null);
-
-        if (!$searchTerm) {
-            $this->addFlash("error", "Search term was empty.");
-            return $this->redirectToRoute("app_antibodies");
-        } elseif (strlen($searchTerm) < 3) {
-            $this->addFlash("error", "Search term must contain at least 3 characters");
-            return $this->redirectToRoute("app_antibodies");
-        }
-
-        $results =  $antibodyRepository->findBySearchTerm($searchTerm);
-        $antibodies = [];
-
-        if (empty($results)) {
-            $this->addFlash("info", "No results found.");
-            return $this->redirectToRoute("app_antibodies");
-        }
-
-        foreach ($results as $row) {
-            /** @var Antibody $antibody */
-            $antibody = $row[0];
-            $numberOfLots = $row[1];
-            $numberOfAvailableLots = $row[2];
-
-            if ($numberOfAvailableLots > 0) {
-                $antibody->setAvailable(true);
-            } else {
-                $antibody->setAvailable(false);
-            }
-
-            $antibodies[] = $antibody;
-        }
-
-        return $this->render('parts/antibodies/antibodies.html.twig', [
-            "antibodies" => $antibodies,
-            "primaryAntibodies" => [],
-            "secondaryAntibodies" => [],
-        ]);
-    }
-
     #[Route("/compounds", name: "app_compounds")]
-    public function compounds(
-        ChemicalRepository $chemicalRepository
-    ): Response {
-        $chemicals = $chemicalRepository->findBy([], orderBy: ["shortName" => "ASC"]);
-
-        return $this->render("parts/compounds/compounds.html.twig", [
-            "chemicals" => $chemicals
+    #[IsGranted("ROLE_USER")]
+    public function compounds(): Response
+    {
+        return $this->render("parts/substance/search.html.twig", [
+            "title" => "Chemicals",
+            "icon" => "chemical",
+            "substanceType" => "chemical",
         ]);
     }
 
     #[Route("/compounds/view/{compoundId}", name: "app_compound_view")]
+    #[IsGranted("view", "chemical")]
     public function viewCompound(
         #[MapEntity(mapping: ["compoundId" => "ulid"])]
         Chemical $chemical
     ): Response {
-        $this->denyAccessUnlessGranted("view", $chemical);
-
-        return $this->render("parts/compounds/compound.html.twig", [
+        return $this->render("parts/substance/view_compound.html.twig", [
+            "title" => $chemical->getShortName(),
+            "subtitle" => $chemical->getCitation(),
             "chemical" => $chemical,
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_compounds"),
+                    icon: "compound",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Seach chemical",
+                    iconStack: "search",
+                ),
+                new ClipwareTool(
+                    clipboardText: $chemical->getCitation(),
+                    tooltip: "Copy citation",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_substance_edit", ["substance" => $chemical->getUlid()]),
+                    icon: "compound",
+                    tooltip: "Edit chemical",
+                    iconStack: "edit",
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_substance_add_lot", ["substance" => $chemical->getUlid()]),
+                    icon: "lot",
+                    tooltip: "Register a new lot",
+                    iconStack: "add",
+                )
+            ]),
         ]);
     }
 

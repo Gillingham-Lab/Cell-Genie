@@ -8,9 +8,11 @@
     {% set computedNumberOfRows = computed.numberOfRows %}
     {% set errors = _errors %}
 
+    {% if liveSearchFormType %}
     <twig:Layout:Col class="p-0 m-0 mb-3">
         <twig:Live:Search :formId="liveSearchFormType" :formType="liveSearchFormType" title="Search" :formData="search" eventSuffix="{{ component.type }}" />
     </twig:Layout:Col>
+    {% endif %}
 
     <twig:Layout:Col class="p-0 m-0 mb-3">
         <twig:ElementCard title="Results">
@@ -25,7 +27,7 @@
 
                 <twig:Pagination :currentPage="component.page" :lastPage="component.lastPageNumber" />
 
-                <twig:Table table="{{ computedTable }}" data-loading="addClass(opacity-50)" />
+                <twig:Table table="{{ computedTable }}" data-loading="addClass(opacity-50)" data-skip-morph />
             {% endif %}
         </twig:ElementCard>
     </twig:Layout:Col>

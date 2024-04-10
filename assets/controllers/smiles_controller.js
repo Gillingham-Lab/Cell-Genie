@@ -5,6 +5,7 @@ export default class extends Controller {
     static values = {
         "id": String,
         "smiles": String,
+        "padding": {type: Number, default: 20.0},
     };
 
     static targets = [
@@ -28,7 +29,7 @@ export default class extends Controller {
             bondSpacing: 0.25 * 10,
             fontSizeLarge: 6,
             fontSizeSmall: 4,
-            padding: 20.0,
+            padding: this.paddingValue,
         }
 
         let smilesDrawer = new Drawer(canvasOptions);

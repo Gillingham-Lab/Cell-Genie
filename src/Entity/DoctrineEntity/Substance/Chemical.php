@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Experiment;
+use App\Entity\Lot;
 use App\Entity\Traits\Fields\MolecularMassTrait;
 use App\Entity\Traits\LabJournalTrait;
 use App\Entity\Traits\VendorTrait;
@@ -122,5 +123,33 @@ class Chemical extends Substance
         $this->iupacName = $iupacName;
 
         return $this;
+    }
+
+    public function getCitation(?Lot $lot = null): string
+    {
+        $options = [];
+
+        if ($this->casNumber) {
+            $options[] = "[$this->casNumber]";
+        }
+
+        if ($lot) {
+            if ($lot->getVendor()) {
+                $options[] = $this->getVendor();
+            }
+
+            if ($lot->getVendorPn()) {
+                $options[] = $this->getVendorPn();
+            }
+        }
+
+        if (count($options)) {
+            $options = implode(", ", $options);
+            $options = " ($options)";
+        } else {
+            $options = "";
+        }
+
+        return $this->getLongName() . $options;
     }
 }

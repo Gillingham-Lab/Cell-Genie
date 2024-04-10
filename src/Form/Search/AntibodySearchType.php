@@ -38,7 +38,6 @@ class AntibodySearchType extends AbstractType
                 "label" => "RRID",
                 "required" => false,
             ])
-
             ->add("hasEpitope", EntityType::class, [
                 "label" => "Has epitopes",
                 "class" => Epitope::class,

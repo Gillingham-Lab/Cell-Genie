@@ -6,10 +6,5 @@ const addClipboard = () => {
 
 document.addEventListener("turbo:load", (e => addClipboard()));
 
-/* Original code
+export default addClipboard;
 
-        <script type="application/javascript" defer>
-            new ClipboardJS('.btn-clipboard');
-        </script>
-
- */

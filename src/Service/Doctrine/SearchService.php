@@ -14,11 +14,15 @@ class SearchService
 
     public function parse(string $searchValue): string
     {
-        if (!str_starts_with($searchValue, "%") and !str_starts_with($searchValue, "^")) {
+        if (str_starts_with($searchValue, "^")) {
+            $searchValue = substr($searchValue, 1);
+        } elseif (!str_starts_with($searchValue, "%")) {
             $searchValue = "%" . $searchValue;
         }
 
-        if (!str_ends_with($searchValue, "%") and !str_starts_with($searchValue, "$")) {
+        if (str_ends_with($searchValue, "$")) {
+            $searchValue = substr($searchValue, 0, strlen($searchValue)-1);
+        } elseif (!str_ends_with($searchValue, "%")) {
             $searchValue = $searchValue . "%";
         }
 
