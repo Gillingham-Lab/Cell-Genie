@@ -408,22 +408,50 @@ class SubstanceController extends AbstractController
     public function oligos(
         OligoRepository $oligoRepository,
     ): Response {
-        $oligos = $oligoRepository->findAllWithLotCount();
-
-        return $this->render("parts/oligos/oligos.html.twig", [
-            "oligos" => $oligos,
+        return $this->render("parts/substance/search.html.twig", [
+            "title" => "Oligos",
+            "icon" => "oligo",
+            "substanceType" => "oligo",
         ]);
     }
 
     #[Route("/oligos/view/{oligoId}", name: "app_oligo_view")]
+    #[IsGranted("view", "oligo")]
     public function viewOligo(
         #[MapEntity(mapping: ["oligoId" => "ulid"])]
         Oligo $oligo,
     ): Response {
         $this->denyAccessUnlessGranted("view", $oligo);
 
-        return $this->render("parts/oligos/oligo.html.twig", [
+        return $this->render("parts/substance/view_oligo.html.twig", [
+            "title" => $oligo->getShortName(),
+            "subtitle" => $oligo->getCitation(),
             "oligo" => $oligo,
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_oligos"),
+                    icon: "oligo",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Seach oligo",
+                    iconStack: "search",
+                ),
+                new ClipwareTool(
+                    clipboardText: $oligo->getCitation(),
+                    tooltip: "Copy citation",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_substance_edit", ["substance" => $oligo->getUlid()]),
+                    icon: "oligo",
+                    tooltip: "Edit oligo",
+                    iconStack: "edit",
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_substance_add_lot", ["substance" => $oligo->getUlid()]),
+                    icon: "lot",
+                    tooltip: "Register a new lot",
+                    iconStack: "add",
+                )
+            ]),
         ]);
     }
 

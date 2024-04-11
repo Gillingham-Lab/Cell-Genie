@@ -118,8 +118,13 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
             $other[] = "#Lot:{$lot->getLotNumber()}";
         }
 
-        $other = implode(", ", $other);
+        if (count($other)) {
+            $other = implode(", ", $other);
+            $other = " ($other)";
+        } else {
+            $other = "";
+        }
 
-        return "{$this->getLongName()} ($other)";
+        return "{$this->getLongName()}{$other}";
     }
 }

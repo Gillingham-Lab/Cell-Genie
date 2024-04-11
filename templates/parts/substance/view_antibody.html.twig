@@ -3,57 +3,59 @@
 {% block title %}Gin :: Antibody :: {{ antibody }}{% endblock %}
 
 {% block body_main %}
-    <div class="row">
-        <div class="container container-fluid w-100 p-0 m-0">
-            <twig:PageHeader :title="title" :subTitle="subtitle" icon="antibody" :barcode="true"  />
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0">
+        <twig:PageHeader :title="title" :subTitle="subtitle" icon="antibody" :barcode="true"  />
 
-            <twig:Layout:Row>
-                <twig:Layout:Col type="inner">
-                    <twig:Toolbox :toolbox="toolbox" />
-                </twig:Layout:Col>
-            </twig:Layout:Row>
+        <twig:Layout:Row>
+            <twig:Layout:Col type="inner">
+                <twig:Toolbox :toolbox="toolbox" />
+            </twig:Layout:Col>
+        </twig:Layout:Row>
 
 
-            <twig:Layout:Row>
-                <twig:Layout:Col type="outer" class="col-12">
-                    <twig:ElementCard title="Metadata">
-                        <twig:Metadata data="{{ {
-                            "ID": antibody.ulid,
-                            "Number": antibody.number,
-                            "Name": antibody.shortName,
-                            "Full name": antibody.longName,
-                            "RRID": antibody.rrid,
-                            "Target epitopes": ["entity", antibody.epitopeTargets],
-                            "AB epitopes": ["entity", antibody.epitopes],
-                            "Clonality": antibody.clonality,
-                            "Vendor": antibody.vendor.homepage ? ["url", {"title": antibody.vendor.name, "href": antibody.vendor.homepage}] : antibody.vendor.name,
-                            "Product Number": antibody.vendor ? (antibody.vendor.catalogUrl ? ["url", {"title": antibody.vendorPn, "href": antibody.vendor.productUrl(antibody.vendorPn ?? "")}] : antibody.vendor) : "unknown",
-                            "Storage": antibody.storageTemperature,
-                            "Usage": antibody.usage,
-                        } }}"/>
+        <twig:Layout:Row>
+            <twig:Layout:Col type="outer" class="col-12">
+                <twig:ElementCard title="Metadata">
+                    <twig:Metadata data="{{ {
+                        "ID": antibody.ulid,
+                        "Number": antibody.number,
+                        "Name": antibody.shortName,
+                        "Full name": antibody.longName,
+                        "RRID": antibody.rrid,
+                        "Target epitopes": ["entity", antibody.epitopeTargets],
+                        "AB epitopes": ["entity", antibody.epitopes],
+                        "Clonality": antibody.clonality,
+                        "Vendor": antibody.vendor.homepage ? ["url", {"title": antibody.vendor.name, "href": antibody.vendor.homepage}] : antibody.vendor.name,
+                        "Product Number": antibody.vendor ? (antibody.vendor.catalogUrl ? ["url", {"title": antibody.vendorPn, "href": antibody.vendor.productUrl(antibody.vendorPn ?? "")}] : antibody.vendor) : "unknown",
+                        "Storage": antibody.storageTemperature,
+                        "Usage": antibody.usage,
+                    } }}"/>
 
-                        {% if antibody.dilution %}
-                            <twig:Metadata xl="2" lg="2" data="{{ {
-                                "Dilution recommendations": ["raw", antibody.dilution],
-                                } }}" />
-                        {% endif %}
-                    </twig:ElementCard>
-                </twig:Layout:Col>
+                    {% if antibody.dilution %}
+                        <twig:Metadata xl="2" lg="2" data="{{ {
+                            "Dilution recommendations": ["raw", antibody.dilution],
+                            } }}" />
+                    {% endif %}
+                </twig:ElementCard>
+            </twig:Layout:Col>
 
-                <twig:Layout:Col type="outer" class="col-12">
-                    <twig:ElementCard title="Lots" icon="lot">
-                        <twig:Live:SubstanceLotTable :substance="antibody" defer />
-                    </twig:ElementCard>
-                </twig:Layout:Col>
-            </twig:Layout:Row>
+            <twig:Layout:Col type="outer" class="col-12">
+                <twig:ElementCard title="Lots" icon="lot">
+                    <twig:Live:SubstanceLotTable :substance="antibody" defer />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+        </twig:Layout:Row>
 
-            <twig:Layout:Row cols="3">
-                <twig:Layout:Col type="outer">
-                    <twig:ElementCard title="Attachments" icon="attachment">
-                        <twig:Attachments :attachments="antibody.attachments"></twig:Attachments>
-                    </twig:ElementCard>
-                </twig:Layout:Col>
-            </twig:Layout:Row>
-        </div>
+        {% if antibody.attachments|length > 0 %}
+        <twig:Layout:Row cols="3">
+            <twig:Layout:Col type="outer">
+                <twig:ElementCard title="Attachments" icon="attachment">
+                    <twig:Attachments :attachments="antibody.attachments"></twig:Attachments>
+                </twig:ElementCard>
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+        {% endif %}
     </div>
+</div>
 {% endblock %}

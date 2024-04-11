@@ -5,6 +5,7 @@ namespace App\Twig\Components\Live;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Epitope;
 use App\Entity\Table\Column;
@@ -19,6 +20,7 @@ use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
 use App\Form\Search\AntibodySearchType;
 use App\Form\Search\ChemicalSearchType;
+use App\Form\Search\OligoSearchType;
 use App\Genie\Enums\AntibodyType;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Service\Doctrine\Type\Ulid;
@@ -45,7 +47,7 @@ final class SubstanceTable extends AbstractController
     use PaginatedTrait;
 
     #[LiveProp]
-    #[Assert\Choice(choices: ["antibody", "chemical"])]
+    #[Assert\Choice(choices: ["antibody", "chemical", "oligo"])]
     public string $type;
 
     #[LiveProp]
@@ -70,6 +72,7 @@ final class SubstanceTable extends AbstractController
         $props["entityType"] = match ($props["type"]) {
             "antibody" => Antibody::class,
             "chemical" => Chemical::class,
+            "oligo" => Oligo::class,
             default => null,
         };
 
@@ -78,6 +81,7 @@ final class SubstanceTable extends AbstractController
         $props["liveSearchFormType"] = match($props["type"]) {
             "antibody" => AntibodySearchType::class,
             "chemical" => ChemicalSearchType::class,
+            "oligo" => OligoSearchType::class,
         };
 
         return $props;
@@ -118,6 +122,7 @@ final class SubstanceTable extends AbstractController
         $table = match($this->type) {
             "antibody" => $this->getAntibodyTable(),
             "chemical" => $this->getChemicalTable(),
+            "oligo" => $this->getOligoTable(),
         };
 
         $this->addData($table);
@@ -141,6 +146,7 @@ final class SubstanceTable extends AbstractController
             $this->entityType = match ($this->type) {
                 "antibody" => Antibody::class,
                 "chemical" => Chemical::class,
+                "oligo" => Oligo::class,
                 default => null,
             };
         }
@@ -333,10 +339,73 @@ final class SubstanceTable extends AbstractController
     public function onChemicalSearch(
         #[LiveArg] ?string $shortName = null,
         #[LiveArg] ?string $anyName = null,
+        #[LiveArg] ?string $casNumber = null,
+        #[LiveArg] ?string $hasEpitope = null,
     ): void {
         $this->search = [
             "shortName" => $shortName,
             "anyName" => $anyName,
+            "casNumber" => $casNumber,
+            "hasAvailableLot" => match($hasAvailableLots) {
+                "true" => true,
+                "false" => false,
+                default => null,
+            },
+        ];
+
+        $this->page = 0;
+    }
+
+    private function getOligoTable(): Table
+    {
+        return new Table(
+            data: [],
+            columns: [
+                new ToolboxColumn("", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => new Toolbox([
+                    new ViewTool(
+                        path: $this->generateUrl("app_substance_view", ["substance" => $oligo->getUlid()]),
+                        enabled: $this->isGranted("view", $oligo),
+                        tooltip: "View Chemical",
+                    ),
+                    new ClipwareTool(
+                        clipboardText: $oligo->getCitation(),
+                    ),
+                    new EditTool(
+                        path: $this->generateUrl("app_substance_edit", ["substance" => $oligo->getUlid()]),
+                        enabled: $this->isGranted("edit", $oligo),
+                        tooltip: "Edit chemical",
+                    ),
+                    new AddTool(
+                        path: $this->generateUrl("app_substance_add_lot", ["substance" => $oligo->getUlid()]),
+                        enabled: $this->isGranted("add_lot", $oligo),
+                        tooltip: "Add lot",
+                    )
+                ])),
+                new Column("Name", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getShortName(), bold: true),
+                new Column("Length", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getSequenceLength()),
+                new Column("Available Lots (total)", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
+                new Column("Sequence", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getSequence()),
+            ],
+            spreadDatum: true,
+        );
+    }
+
+    #[LiveListener("search.oligo")]
+    public function onOligoSearch(
+        #[LiveArg] ?string $shortName = null,
+        #[LiveArg] ?string $anyName = null,
+        #[LiveArg] ?string $sequence = null,
+        #[LiveArg] ?string $hasAvailableLots = null,
+    ): void {
+        $this->search = [
+            "shortName" => $shortName,
+            "anyName" => $anyName,
+            "sequence" => $sequence,
+            "hasAvailableLot" => match($hasAvailableLots) {
+                "true" => true,
+                "false" => false,
+                default => null,
+            },
         ];
 
         $this->page = 0;

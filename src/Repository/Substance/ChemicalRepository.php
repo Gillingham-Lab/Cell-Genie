@@ -23,7 +23,7 @@ class ChemicalRepository extends ServiceEntityRepository implements PaginatedRep
 {
     use PaginatedRepositoryTrait;
 
-    private const LotAvailableQuery = "SUM(CASE WHEN l.availability = 'available' THEN 1 ELSE 0 END)";
+    protected const LotAvailableQuery = "SUM(CASE WHEN l.availability = 'available' THEN 1 ELSE 0 END)";
 
     public function __construct(
         ManagerRegistry $registry,
