@@ -145,13 +145,13 @@ class SubstanceController extends AbstractController
             throw $this->createNotFoundException("Substance type '{$type}' has not been found.");
         }
 
-        [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam] = match($substance::class) {
-            Antibody::class => [AntibodyType::class, "Antibody", "app_antibodies", "app_antibody_view", "antibodyId"],
-            Chemical::class => [ChemicalType::class, "Chemical", "app_compounds", "app_compound_view", "compoundId"],
-            Oligo::class => [OligoType::class, "Oligo", "app_oligos", "app_oligo_view", "oligoId"],
-            Protein::class => [ProteinType::class, "Protein", "app_proteins", "app_protein_view", "proteinId"],
-            Plasmid::class => [PlasmidType::class, "Plasmid", "app_plasmids", "app_plasmid_view", "plasmidId"],
-            default => [null, null, null, null, null],
+        [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam, $icon] = match($substance::class) {
+            Antibody::class => [AntibodyType::class, "Antibody", "app_antibodies", "app_antibody_view", "antibodyId", "antibody"],
+            Chemical::class => [ChemicalType::class, "Chemical", "app_compounds", "app_compound_view", "compoundId", "compound"],
+            Oligo::class => [OligoType::class, "Oligo", "app_oligos", "app_oligo_view", "oligoId", "oligo"],
+            Protein::class => [ProteinType::class, "Protein", "app_proteins", "app_protein_view", "proteinId", "protein"],
+            Plasmid::class => [PlasmidType::class, "Plasmid", "app_plasmids", "app_plasmid_view", "plasmidId", "plasmid"],
+            default => [null, null, null, null, null, null],
         };
 
         if ($formType === null) {
@@ -217,6 +217,7 @@ class SubstanceController extends AbstractController
             "form" => $form,
             "returnTo" => $new ? $this->generateUrl($overviewRoute) : $this->generateUrl($specificRoute, [$routeParam => $substance->getUlid()]),
             "typeName" => $typeName,
+            "icon" => $icon
         ]);
     }
 
@@ -292,6 +293,7 @@ class SubstanceController extends AbstractController
             "returnTo" => $this->generateUrl("app_substance_view", ["substance" => $substance->getUlid()]),
             "typeName" => $substanceType,
             "createLot" => true,
+            "icon" => "lot",
         ]);
     }
 
