@@ -47,7 +47,7 @@
         {% if chemical.attachments|length > 0 %}
         <twig:Layout:Row cols="3">
             <twig:Layout:Col type="outer">
-                <twig:ElementCard title="Attachments" icon="attachment">
+                <twig:ElementCard title="Attachments" icon="attachment" collapsed>
                     <twig:Attachments :attachments="chemical.attachments"></twig:Attachments>
                 </twig:ElementCard>
             </twig:Layout:Col>

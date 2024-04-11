@@ -52,14 +52,14 @@
 
         <twig:Layout:Row cols="3">
             <twig:Layout:Col type="outer">
-                <twig:ElementCard title="Features" icon="plasmid" iconStack="tags">
+                <twig:ElementCard title="Features" icon="plasmid" iconStack="tags" collapsed>
                     <twig:Table :table="annotations" />
                 </twig:ElementCard>
             </twig:Layout:Col>
 
             {% if plasmid.attachments|length > 0 %}
             <twig:Layout:Col type="outer">
-                <twig:ElementCard title="Attachments" icon="attachment">
+                <twig:ElementCard title="Attachments" icon="attachment" collapsed>
                     <twig:Attachments :attachments="plasmid.attachments"></twig:Attachments>
                 </twig:ElementCard>
             </twig:Layout:Col>
