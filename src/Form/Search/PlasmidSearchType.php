@@ -82,7 +82,7 @@ class PlasmidSearchType extends AbstractType
                 "required" => false,
             ])
             ->add("expressedProtein", EntityType::class, [
-                "label" => "Targets epitope",
+                "label" => "Expressed protein",
                 "class" => Protein::class,
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("e")
