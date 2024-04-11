@@ -14,5 +14,25 @@
             {# <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="remember">Remember</button>  #}
             <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="reset">Reset</button>
         </twig:Form:CompactForm>
+
+        <div class="text-muted mt-3">
+            <details>
+                <summary>Help with search</summary>
+
+                <p>The search is case-insensitive.
+
+                    In text fields (like the one for name or sequences), you can search with the help of % to indicate gaps. A ^ at the beginning will explicitly search for hits that start with
+                    the next character. A $ at the end searches explicitly for hits ending the string before.</p>
+
+                <p><strong>Examples</strong></p>
+                <p><ul>
+                    <li>'pET19b' will retrieve 'pET19b', but also 'pET19b MGMT' or 'Copy of pET19b'</li>
+                    <li>'^pET19b' will retrieve 'pET19b', but also 'pET19b MGMT'</li>
+                    <li>'pET19b$' will retrieve 'pET19b', but also 'Copy of pET19b'</li>
+                    <li>'^pET19b$' will only retrieve 'pET19b'</li>
+                    <li>'^pET%b$' will retrieve hits like 'pET19b', but also 'pET20b' or 'pET19a bad batch b'</li>
+                </ul></p>
+            </details>
+        </div>
     </twig:ElementCard>
 </div>
