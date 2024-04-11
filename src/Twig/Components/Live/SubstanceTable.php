@@ -6,6 +6,7 @@ namespace App\Twig\Components\Live;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Epitope;
 use App\Entity\Table\Column;
@@ -21,9 +22,11 @@ use App\Entity\Toolbox\ViewTool;
 use App\Form\Search\AntibodySearchType;
 use App\Form\Search\ChemicalSearchType;
 use App\Form\Search\OligoSearchType;
+use App\Form\Search\PlasmidSearchType;
 use App\Genie\Enums\AntibodyType;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Service\Doctrine\Type\Ulid;
+use App\Twig\Components\EntityReference;
 use App\Twig\Components\SmilesViewer;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,7 +50,7 @@ final class SubstanceTable extends AbstractController
     use PaginatedTrait;
 
     #[LiveProp]
-    #[Assert\Choice(choices: ["antibody", "chemical", "oligo"])]
+    #[Assert\Choice(choices: ["antibody", "chemical", "oligo", "plasmid"])]
     public string $type;
 
     #[LiveProp]
@@ -73,6 +76,7 @@ final class SubstanceTable extends AbstractController
             "antibody" => Antibody::class,
             "chemical" => Chemical::class,
             "oligo" => Oligo::class,
+            "plasmid" => Plasmid::class,
             default => null,
         };
 
@@ -82,6 +86,7 @@ final class SubstanceTable extends AbstractController
             "antibody" => AntibodySearchType::class,
             "chemical" => ChemicalSearchType::class,
             "oligo" => OligoSearchType::class,
+            "plasmid" => PlasmidSearchType::class,
         };
 
         return $props;
@@ -123,6 +128,7 @@ final class SubstanceTable extends AbstractController
             "antibody" => $this->getAntibodyTable(),
             "chemical" => $this->getChemicalTable(),
             "oligo" => $this->getOligoTable(),
+            "plasmid" => $this->getPlasmidTable(),
         };
 
         $this->addData($table);
@@ -147,6 +153,7 @@ final class SubstanceTable extends AbstractController
                 "antibody" => Antibody::class,
                 "chemical" => Chemical::class,
                 "oligo" => Oligo::class,
+                "plasmid" => Plasmid::class,
                 default => null,
             };
         }
@@ -406,6 +413,87 @@ final class SubstanceTable extends AbstractController
                 "false" => false,
                 default => null,
             },
+        ];
+
+        $this->page = 0;
+    }
+
+    private function getPlasmidTable(): Table
+    {
+        return new Table(
+            data: [],
+            columns: [
+                new ToolboxColumn("", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => new Toolbox([
+                    new ViewTool(
+                        path: $this->generateUrl("app_substance_view", ["substance" => $plasmid->getUlid()]),
+                        enabled: $this->isGranted("view", $plasmid),
+                        tooltip: "View Plasmid",
+                    ),
+                    new ClipwareTool(
+                        clipboardText: $plasmid->getCitation(),
+                    ),
+                    new EditTool(
+                        path: $this->generateUrl("app_substance_edit", ["substance" => $plasmid->getUlid()]),
+                        enabled: $this->isGranted("edit", $plasmid),
+                        tooltip: "Edit plasmid",
+                    ),
+                    new AddTool(
+                        path: $this->generateUrl("app_substance_add_lot", ["substance" => $plasmid->getUlid()]),
+                        enabled: $this->isGranted("add_lot", $plasmid),
+                        tooltip: "Add lot",
+                    )
+                ])),
+                new Column("Number", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getNumber(), bold: true),
+                new Column("Name", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getShortName()),
+                new Column("Length (kbp)", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getSequenceLength()/1000),
+                new Column("Available Lots (total)", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
+                new Column("Plasmid growth resistance", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => implode(", ", $plasmid->getGrowthResistance())),
+                new ComponentColumn("Expressed protein", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => [
+                    EntityReference::class,
+                    [
+                        "entity" => $plasmid->getExpressedProteins(),
+                    ]
+                ]),
+                new Column("Expression host", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getExpressionIn()),
+                new Column("Expression resistance", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => implode(", ", $plasmid->getExpressionResistance())),
+                new ToggleColumn("For production", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->isForProduction()),
+            ],
+            spreadDatum: true,
+        );
+    }
+
+    #[LiveListener("search.plasmid")]
+    public function onPlasmidSearch(
+        #[LiveArg] ?string $number = null,
+        #[LiveArg] ?string $shortName = null,
+        #[LiveArg] ?string $anyName = null,
+        #[LiveArg] ?string $sequence = null,
+        #[LiveArg] ?string $hasAvailableLots = null,
+        #[LiveArg] ?string $growthResistance = null,
+        #[LiveArg] ?string $expressionResistance = null,
+        #[LiveArg] ?string $expressionOrganism = null,
+        #[LiveArg] ?string $expressedProtein = null,
+        #[LiveArg] ?string $expressesProtein = null,
+    ): void {
+        $this->search = [
+            "number" => $number,
+            "shortName" => $shortName,
+            "anyName" => $anyName,
+            "sequence" => $sequence,
+            "hasAvailableLot" => match($hasAvailableLots) {
+                "true" => true,
+                "false" => false,
+                default => null,
+            },
+            "expressesProtein" => match($expressesProtein) {
+                "true" => true,
+                "false" => false,
+                default => null,
+            },
+            "growthResistance" => $growthResistance,
+            "expressionResistance" => $expressionResistance,
+            "expressionOrganism" => $expressionOrganism !==null ? intval($expressionOrganism) : null,
+            "expressedProtein" => $expressedProtein === null ? null : Ulid::fromString($expressedProtein)->toRfc4122(),
         ];
 
         $this->page = 0;

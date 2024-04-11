@@ -13,6 +13,11 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Epitope;
 use App\Entity\Lot;
+use App\Entity\SequenceAnnotation;
+use App\Entity\Table\ColorColumn;
+use App\Entity\Table\Column;
+use App\Entity\Table\Table;
+use App\Entity\Table\ToggleColumn;
 use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\ClipwareTool;
 use App\Entity\Toolbox\EditTool;
@@ -423,8 +428,6 @@ class SubstanceController extends AbstractController
         #[MapEntity(mapping: ["oligoId" => "ulid"])]
         Oligo $oligo,
     ): Response {
-        $this->denyAccessUnlessGranted("view", $oligo);
-
         return $this->render("parts/substance/view_oligo.html.twig", [
             "title" => $oligo->getShortName(),
             "subtitle" => $oligo->getCitation(),
@@ -487,25 +490,60 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/plasmid", name: "app_plasmids")]
-    public function viewPlasmids(
-        PlasmidRepository $plasmidRepository,
-    ): Response {
-        $plasmids = $plasmidRepository->findAllWithLotCount();
-
-        return $this->render("parts/plasmids/plasmids.html.twig", [
-            "plasmids" => $plasmids,
+    public function viewPlasmids(): Response
+    {
+        return $this->render("parts/substance/search.html.twig", [
+            "title" => "Plasmids",
+            "icon" => "plasmid",
+            "substanceType" => "plasmid",
         ]);
     }
 
     #[Route("/plasmid/view/{plasmidId}", name: "app_plasmid_view")]
+    #[IsGranted("view", "plasmid")]
     public function viewPlasmid(
         #[MapEntity(mapping: ["plasmidId" => "ulid"])]
         Plasmid $plasmid
     ): Response {
-        $this->denyAccessUnlessGranted("view", $plasmid);
-
-        return $this->render("parts/plasmids/plasmid.html.twig", [
+        return $this->render("parts/substance/view_plasmid.html.twig", [
+            "title" => $plasmid->getShortName(),
+            "subtitle" => $plasmid->getCitation(),
             "plasmid" => $plasmid,
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_plasmids"),
+                    icon: "plasmid",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Seach plasmid",
+                    iconStack: "search",
+                ),
+                new ClipwareTool(
+                    clipboardText: $plasmid->getCitation(),
+                    tooltip: "Copy citation",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_substance_edit", ["substance" => $plasmid->getUlid()]),
+                    icon: "plasmid",
+                    tooltip: "Edit plasmid",
+                    iconStack: "edit",
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_substance_add_lot", ["substance" => $plasmid->getUlid()]),
+                    icon: "lot",
+                    tooltip: "Register a new lot",
+                    iconStack: "add",
+                )
+            ]),
+            "annotations" => new Table(
+                data: $plasmid->getSequenceAnnotations(),
+                columns: [
+                    new Column("Name", fn (SequenceAnnotation $annotation) => $annotation->getAnnotationLabel()),
+                    new Column("Type", fn (SequenceAnnotation $annotation) => $annotation->getAnnotationType()),
+                    new Column("Spans", fn (SequenceAnnotation $annotation) => "{$annotation->getAnnotationStart()} .. {$annotation->getAnnotationEnd()}"),
+                    new ToggleColumn("Forward", fn (SequenceAnnotation $annotation) => !$annotation->isComplement()),
+                    new ColorColumn("Color", fn (SequenceAnnotation $annotation) => $annotation->getColor() ?? "grey"),
+                ]
+            )
         ]);
     }
 

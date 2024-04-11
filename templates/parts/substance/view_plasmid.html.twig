@@ -1,0 +1,70 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Gin :: Plasmid :: {{ plasmid.shortName }}{% endblock %}
+
+{% block body_main %}
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0">
+        <twig:PageHeader :title="title" :subTitle="subtitle" icon="plasmid" :barcode="true"  />
+
+        <twig:Layout:Row>
+            <twig:Layout:Col type="inner">
+                <twig:Toolbox :toolbox="toolbox" />
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+
+        <twig:Layout:Row>
+            <twig:Layout:Col type="outer" class="col-12">
+                <twig:ElementCard title="Metadata">
+                    <twig:Layout:Row class="p-3">
+                        <twig:Layout:Col class="col-sm-12 col-md-8 col-lg-3">
+                            <twig:PlasmidViewer
+                                :sequence="plasmid.sequence"
+                                :length="plasmid.sequenceLength"
+                                :annotations="plasmid.sequenceAnnotations" />
+                        </twig:Layout:Col>
+                        <twig:Layout:Col class="col-sm-12 col-md-4 col-lg-9">
+                            <twig:Metadata data="{{ {
+                                "ID": plasmid.ulid,
+                                "Number": plasmid.number,
+                                "Short name": plasmid.shortName,
+                                "Long name": plasmid.longName,
+                                "Growth resistance": plasmid.growthResistance|join(", "),
+                                "Expressed proteins": ["entity", plasmid.expressedProteins],
+                                "Expression system": plasmid.expressionIn,
+                                "Expression resistance": plasmid.expressionResistance|join(", "),
+                                "Fit for expression": ["boolean", plasmid.forProduction],
+                                "Created by": [plasmid.createdBy],
+                                "Parent plasmid": ["entity", plasmid.parent],
+                                "Child plasmid(s)": ["entity", plasmid.children],
+                            } }}" />
+                        </twig:Layout:Col>
+                    </twig:Layout:Row>
+                </twig:ElementCard>
+            </twig:Layout:Col>
+
+            <twig:Layout:Col type="outer" class="col-12">
+                <twig:ElementCard title="Lots" icon="lot">
+                    <twig:Live:SubstanceLotTable :substance="plasmid" defer />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+
+        <twig:Layout:Row cols="3">
+            <twig:Layout:Col type="outer">
+                <twig:ElementCard title="Features" icon="plasmid" iconStack="tags">
+                    <twig:Table :table="annotations" />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+
+            {% if plasmid.attachments|length > 0 %}
+            <twig:Layout:Col type="outer">
+                <twig:ElementCard title="Attachments" icon="attachment">
+                    <twig:Attachments :attachments="plasmid.attachments"></twig:Attachments>
+                </twig:ElementCard>
+            </twig:Layout:Col>
+            {% endif %}
+        </twig:Layout:Row>
+    </div>
+</div>
+{% endblock %}

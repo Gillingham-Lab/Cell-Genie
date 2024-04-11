@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait SequenceAnnotationTrait
 {
-    #[ORM\ManyToMany(targetEntity: SequenceAnnotation::class, cascade: ["persist", "remove"], fetch: "EAGER")]
+    #[ORM\ManyToMany(targetEntity: SequenceAnnotation::class, cascade: ["persist", "remove"], fetch: "LAZY")]
     #[ORM\JoinTable]
     #[ORM\JoinColumn(name: "substance_id", referencedColumnName: "ulid", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(name: "annotation_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]

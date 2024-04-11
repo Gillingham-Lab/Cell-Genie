@@ -250,6 +250,8 @@ export default class extends Controller {
             totalHeight = 400;
         }
 
+        this.plasmidMapTarget.innerHTML = "";
+
         let svg = d3.select(this.plasmidMapTarget)
             .append("svg")
             .attr("width", width + 2*margin)

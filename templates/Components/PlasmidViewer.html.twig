@@ -1,0 +1,8 @@
+<div{{ attributes.defaults(stimulus_controller("plasmid", {
+    sequence: sequence,
+    sequenceLength: length,
+    features: annotations|json_encode,
+})) }}>
+    <div {{ stimulus_target("plasmid", "plasmidMap") }} class="text-center"></div>
+    <div {{ stimulus_target("plasmid", "plasmidFeatureDetails") }}></div>
+</div>

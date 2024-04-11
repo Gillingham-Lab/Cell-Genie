@@ -62,6 +62,8 @@ class Icon
             "logout" => "fas fa-sign-out-alt fa-fw",
             "external" => "fa fa-external-link-alt fa-fw",
             "hint", "idea" => "far fa-fw fa-lightbulb",
+            "tag", "annotation" => "fa-fw fas fa-tag",
+            "tags", "annotations" => "fa-fw fas fa-tags",
 
             "up" => "fas fa-fw fa-arrow-up",
             "down" => "fas fa-fw fa-arrow-down",
