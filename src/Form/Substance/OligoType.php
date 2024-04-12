@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace App\Form\Substance;
 
+use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\User\PrivacyAwareType;
+use App\Genie\Enums\OligoTypeEnum;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -20,6 +26,8 @@ class OligoType extends SubstanceType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $currentId = $builder->getData()->getUlid();
+
         $builder
             ->add(
                 $builder->create("general", FormType::class, [
@@ -39,6 +47,11 @@ class OligoType extends SubstanceType
                     "help" => "A short comment of the purpose of this oligo, or any other information.",
                     "required" => false,
                 ])
+                ->add("oligoTypeEnum", EnumType::class, [
+                    "label" => "Oligo type",
+                    "class" => OligoTypeEnum::class,
+                    "required" => false,
+                ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
@@ -53,6 +66,60 @@ class OligoType extends SubstanceType
                     "label" => "Sequence",
                     "help" => "The DNA oligomer sequence (5' to 3'). Add modified bases using the square bracket notation (e.g., [Hexylamine]ATG[FAM])",
                     "required" => false,
+                ])
+                ->add("startConjugate", EntityType::class, [
+                    "class" => Substance::class,
+                    "query_builder" => function (EntityRepository $er) use ($currentId) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.shortName", "ASC")
+                            ->andWhere("e.ulid != :currentId")
+                            ->setParameter("currentId", $currentId)
+                            ;
+                    },
+                    "group_by" => function (Substance $e) {
+                        return match($e::class) {
+                            Antibody::class => "Antibody",
+                            Chemical::class => "Compound",
+                            Oligo::class => "Oligo",
+                            Protein::class => "Protein",
+                            default => "Other",
+                        };
+                    },
+                    'empty_data' => null,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => false,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
+                ])
+                ->add("endConjugate", EntityType::class, [
+                    "class" => Substance::class,
+                    "query_builder" => function (EntityRepository $er) use ($currentId) {
+                        return $er->createQueryBuilder("e")
+                            ->addOrderBy("e.shortName", "ASC")
+                            ->andWhere("e.ulid != :currentId")
+                            ->setParameter("currentId", $currentId)
+                            ;
+                    },
+                    "group_by" => function (Substance $e) {
+                        return match($e::class) {
+                            Antibody::class => "Antibody",
+                            Chemical::class => "Compound",
+                            Oligo::class => "Oligo",
+                            Protein::class => "Protein",
+                            default => "Other",
+                        };
+                    },
+                    'empty_data' => null,
+                    "placeholder" => "Empty",
+                    "required" => false,
+                    "multiple" => false,
+                    "attr"  => [
+                        "class" => "gin-fancy-select",
+                        "data-allow-empty" => "true",
+                    ],
                 ])
                 ->add("molecularMass", NumberType::class, [
                     "label" => "Molecular mass [Da]",

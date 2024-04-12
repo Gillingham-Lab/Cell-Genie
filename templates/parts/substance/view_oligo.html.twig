@@ -24,11 +24,15 @@
                             <twig:Metadata data="{{ {
                                 "ID": oligo.ulid,
                                 "Short Name": oligo.shortName,
+                                "Type": (oligo.oligoTypeEnum ? oligo.oligoTypeEnum.value : null),
                                 "Long Name": oligo.longName,
                                 "Molecular weight": oligo.molecularMass > 0 ? oligo.molecularMass ~ " Da" : null,
+                                "Extinktion coefficient": oligo.extinctionCoefficient ? oligo.extinctionCoefficient ~ " mM⁻¹ cm⁻¹",
                                 "Sequence length": oligo.sequenceLength,
                                 "Epitopes": ["entity", oligo.epitopes],
                                 "Lab Journal entry": oligo.labjournal,
+                                (oligo.oligoTypeEnum and oligo.oligoTypeEnum.value == "peptide" ? "N-Terminus" : "5' end"): ["entity", oligo.startConjugate],
+                                (oligo.oligoTypeEnum and oligo.oligoTypeEnum.value == "peptide" ? "C-Terminus" : "3' end"): ["entity", oligo.endConjugate],
                             } }}" />
                         </twig:Layout:Col>
                     </twig:Layout:Row>
