@@ -132,23 +132,23 @@ export default class extends Controller {
 
             switch (type) {
                 case "Plasmid":
-                    icon = "\ue913";
+                    icon = "\ue90b";
                     break;
                 case "Chemical":
-                    icon = "\ue905";
+                    icon = "\ue907";
                     break;
                 case "Antibody":
-                    icon = "\ue900";
+                    icon = "\ue902";
                     break;
                 case "Oligo":
-                    icon = "\ue904";
+                    icon = "\ue900";
                     break;
                 case "Protein":
-                    icon = "\ue903";
+                    icon = "\ue90e";
                     break;
             }
         } else if (e.object && e.object.cell) {
-            icon = "\ue90b";
+            icon = "\ue90a";
         }
 
         let grid_size = this.gridSizeValue;
