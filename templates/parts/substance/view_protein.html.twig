@@ -32,7 +32,7 @@
                                 "Parent proteins(s)": ["entity", protein.parents],
                                 "Child proteins(s)": ["entity", protein.children],
                                 "Epitopes": ["entity", protein.epitopes],
-                                "Human protein atlas": protein.proteinAtlasUri ? ["url", protein.proteinAtlasUri] : "None",
+                                "Human protein atlas": protein.proteinAtlasUri ? (["url", {"title": protein.proteinAtlasUri, "href": protein.proteinAtlasUri}]) : "None",
                             } }}" />
                         </twig:Layout:Col>
                     </twig:Layout:Row>
