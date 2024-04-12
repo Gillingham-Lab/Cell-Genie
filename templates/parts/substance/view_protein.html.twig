@@ -1,0 +1,72 @@
+{% extends 'homepage.html.twig' %}
+
+{% block title %}Gin :: Protein :: {{ protein.shortName }}{% endblock %}
+
+{% block body_main %}
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0">
+        <twig:PageHeader :title="title" :subTitle="subtitle" icon="protein" :barcode="true"  />
+
+        <twig:Layout:Row>
+            <twig:Layout:Col type="inner">
+                <twig:Toolbox :toolbox="toolbox" />
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+
+        <twig:Layout:Row>
+            <twig:Layout:Col type="outer" class="col-12">
+                <twig:ElementCard title="Metadata">
+                    <twig:Layout:Row class="p-3">
+                        <twig:Layout:Col class="col-sm-12 col-md-8 col-lg-3">
+                            <div class="px-3 font-monospace">
+                                {{ protein.fastaSequence }}
+                            </div>
+                        </twig:Layout:Col>
+                        <twig:Layout:Col class="col-sm-12 col-md-4 col-lg-9">
+                            <twig:Metadata data="{{ {
+                                "ID": protein.ulid,
+                                "Short name": protein.shortName,
+                                "Long name": protein.longName,
+                                "Organism": protein.organism,
+                                "Type": protein.proteinType,
+                                "Parent proteins(s)": ["entity", protein.parents],
+                                "Child proteins(s)": ["entity", protein.children],
+                                "Epitopes": ["entity", protein.epitopes],
+                                "Human protein atlas": protein.proteinAtlasUri ? ["url", protein.proteinAtlasUri] : "None",
+                            } }}" />
+                        </twig:Layout:Col>
+                    </twig:Layout:Row>
+                </twig:ElementCard>
+            </twig:Layout:Col>
+
+            <twig:Layout:Col type="outer" class="col-12">
+                <twig:ElementCard title="Lots" icon="lot">
+                    <twig:Live:SubstanceLotTable :substance="protein" defer />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+
+        <twig:Layout:Row cols="3">
+            <twig:Layout:Col type="outer">
+                <twig:ElementCard title="Antibodies" icon="antibody" collapsed>
+                    <twig:Table :table="antibodyTable" />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+
+            <twig:Layout:Col type="outer">
+                <twig:ElementCard title="Associated cells" icon="cell" collapsed>
+                    <twig:Table :table="associatedCells" />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+
+            {% if protein.attachments|length > 0 %}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Attachments" icon="attachment" collapsed>
+                        <twig:Attachments :attachments="protein.attachments"></twig:Attachments>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            {% endif %}
+        </twig:Layout:Row>
+    </div>
+</div>
+{% endblock %}

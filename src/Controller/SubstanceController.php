@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\AnnotateableInterface;
+use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellProtein;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
@@ -16,13 +18,16 @@ use App\Entity\Lot;
 use App\Entity\SequenceAnnotation;
 use App\Entity\Table\ColorColumn;
 use App\Entity\Table\Column;
+use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\Table;
 use App\Entity\Table\ToggleColumn;
+use App\Entity\Table\ToolboxColumn;
 use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\ClipwareTool;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Tool;
 use App\Entity\Toolbox\Toolbox;
+use App\Entity\Toolbox\ViewTool;
 use App\Form\Import\ImportLotType;
 use App\Form\Import\ImportOligoType;
 use App\Form\Substance\AntibodyType;
@@ -51,6 +56,9 @@ use App\Security\Voter\Substance\SubstanceVoter;
 use App\Service\FileUploader;
 use App\Service\GeneBankImporter;
 use App\Service\IconService;
+use App\Twig\Components\EntityReference;
+use App\Twig\Components\Layout\Col;
+use App\Twig\Components\Metadata;
 use Doctrine\DBAL\Exception\ServerException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -460,35 +468,6 @@ class SubstanceController extends AbstractController
         ]);
     }
 
-    #[Route("/protein", name: "app_proteins")]
-    #[Route("/protein/epitope/{epitope}", name: "app_proteins_epitope")]
-    public function proteins(
-        ProteinRepository $proteinRepository,
-        Epitope $epitope = null
-    ): Response {
-        $proteins = $proteinRepository->findWithAntibodiesAndLotCount($epitope, orderBy: ["p.shortName" => "ASC"]);
-
-        return $this->render("parts/proteins/proteins.html.twig", [
-            "proteins" => $proteins
-        ]);
-    }
-
-    #[Route("/protein/view/{proteinId}", name: "app_protein_view")]
-    public function viewProtein(
-        CellRepository $cellRepository,
-        #[MapEntity(mapping: ["proteinId" => "ulid"])]
-        Protein $protein
-    ): Response {
-        $this->denyAccessUnlessGranted("view", $protein);
-
-        $associatedCells = $cellRepository->fetchByProtein($protein);
-
-        return $this->render("parts/proteins/protein.html.twig", [
-            "protein" => $protein,
-            "associatedCells" => $associatedCells,
-        ]);
-    }
-
     #[Route("/plasmid", name: "app_plasmids")]
     public function viewPlasmids(): Response
     {
@@ -501,7 +480,7 @@ class SubstanceController extends AbstractController
 
     #[Route("/plasmid/view/{plasmidId}", name: "app_plasmid_view")]
     #[IsGranted("view", "plasmid")]
-    public function viewPlasmid(
+    public function plasmids(
         #[MapEntity(mapping: ["plasmidId" => "ulid"])]
         Plasmid $plasmid
     ): Response {
@@ -542,6 +521,119 @@ class SubstanceController extends AbstractController
                     new Column("Spans", fn (SequenceAnnotation $annotation) => "{$annotation->getAnnotationStart()} .. {$annotation->getAnnotationEnd()}"),
                     new ToggleColumn("Forward", fn (SequenceAnnotation $annotation) => !$annotation->isComplement()),
                     new ColorColumn("Color", fn (SequenceAnnotation $annotation) => $annotation->getColor() ?? "grey"),
+                ]
+            )
+        ]);
+    }
+
+    #[Route("/protein", name: "app_proteins")]
+    public function proteins(
+    ): Response {
+        return $this->render("parts/substance/search.html.twig", [
+            "title" => "Proteins",
+            "icon" => "protein",
+            "substanceType" => "protein",
+        ]);
+    }
+
+    #[Route("/protein/view/{proteinId}", name: "app_protein_view")]
+    #[IsGranted("view", "protein")]
+    public function viewProtein(
+        CellRepository $cellRepository,
+        #[MapEntity(mapping: ["proteinId" => "ulid"])]
+        Protein $protein
+    ): Response {
+        $antibodies = [];
+        /** @var Epitope $epitope */
+        foreach ($protein->getEpitopes() as $epitope) {
+            /** @var Antibody $antibody */
+            foreach ($epitope->getAntibodies() as $antibody) {
+                $antibodies[$antibody->getNumber()] = $antibody;
+            }
+        }
+        ksort($antibodies);
+
+        $cells = $cellRepository->fetchByProtein($protein);
+
+        return $this->render("parts/substance/view_protein.html.twig", [
+            "title" => $protein->getShortName(),
+            "subtitle" => $protein->getCitation(),
+            "protein" => $protein,
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_plasmids"),
+                    icon: "protein",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Seach protein",
+                    iconStack: "search",
+                ),
+                new ClipwareTool(
+                    clipboardText: $protein->getCitation(),
+                    tooltip: "Copy citation",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_substance_edit", ["substance" => $protein->getUlid()]),
+                    icon: "protein",
+                    tooltip: "Edit protein",
+                    iconStack: "edit",
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_substance_add_lot", ["substance" => $protein->getUlid()]),
+                    icon: "lot",
+                    tooltip: "Register a new lot",
+                    iconStack: "add",
+                )
+            ]),
+            "antibodyTable" => new Table(
+                data: $antibodies,
+                columns: [
+                    new ToolboxColumn("", fn (Antibody $antibody) => new Toolbox([
+                        new ViewTool(
+                            path: $this->generateUrl("app_antibody_view_number", ["antibodyNr" => $antibody->getNumber()]),
+                            icon: "antibody",
+                            iconStack: "view",
+                        ),
+                    ])),
+                    new Column("Number", fn (Antibody $antibody) => $antibody->getNumber()),
+                    new ComponentColumn("Lots", fn(Antibody $antibody) => [
+                        EntityReference::class,
+                        [
+                            "entity" => $antibody->getAvailableLots(),
+                        ]
+                    ])
+                ]
+            ),
+            "associatedCells" => new Table(
+                data: $cells,
+                columns: [
+                    new ToolboxColumn("", fn (Cell $cell) => new Toolbox([
+                        new ViewTool(
+                            path: $this->generateUrl("app_cell_view_number", ["cellNumber" => $cell->getCellNumber()]),
+                            icon: "cell",
+                            iconStack: "view",
+                        ),
+                    ])),
+                    new Column("Number", fn(Cell $cell) => $cell->getCellNumber()),
+                    new Column("Name", fn(Cell $cell) => $cell->getName()),
+                    new ComponentColumn("Methods", function(Cell $cell) use ($protein) {
+                        $cellularProtein = $cell->getCellProteins()->filter(fn(CellProtein $cellProtein) => $cellProtein->getAssociatedProtein() === $protein)->first();
+
+                        $detections = [];
+                        foreach ($cellularProtein->getDetection() as $detection) {
+                            $detections[$detection["method"]] = $detection["isDetectable"];
+                        }
+
+                        if (count($detections) === 0) {
+                            $detections = ["Method" => null];
+                        }
+
+                        return [
+                            Metadata::class, [
+                                "md" => 1, "xl" => 1,
+                                "data" => $detections,
+                            ]
+                        ];
+                    })
                 ]
             )
         ]);

@@ -9,5 +9,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class ExternalUrl
 {
     public ?string $title;
-    public string $href;
+    public ?string $href;
 }

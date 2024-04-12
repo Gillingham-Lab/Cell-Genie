@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
+use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Epitope;
 use App\Entity\Table\Column;
@@ -14,6 +15,7 @@ use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\Table;
 use App\Entity\Table\ToggleColumn;
 use App\Entity\Table\ToolboxColumn;
+use App\Entity\Table\UrlColumn;
 use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\ClipwareTool;
 use App\Entity\Toolbox\EditTool;
@@ -23,10 +25,12 @@ use App\Form\Search\AntibodySearchType;
 use App\Form\Search\ChemicalSearchType;
 use App\Form\Search\OligoSearchType;
 use App\Form\Search\PlasmidSearchType;
+use App\Form\Search\ProteinSearchType;
 use App\Genie\Enums\AntibodyType;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Service\Doctrine\Type\Ulid;
 use App\Twig\Components\EntityReference;
+use App\Twig\Components\ExternalUrl;
 use App\Twig\Components\SmilesViewer;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,7 +54,7 @@ final class SubstanceTable extends AbstractController
     use PaginatedTrait;
 
     #[LiveProp]
-    #[Assert\Choice(choices: ["antibody", "chemical", "oligo", "plasmid"])]
+    #[Assert\Choice(choices: ["antibody", "chemical", "oligo", "plasmid", "protein"])]
     public string $type;
 
     #[LiveProp]
@@ -77,6 +81,7 @@ final class SubstanceTable extends AbstractController
             "chemical" => Chemical::class,
             "oligo" => Oligo::class,
             "plasmid" => Plasmid::class,
+            "protein" => Protein::class,
             default => null,
         };
 
@@ -87,6 +92,7 @@ final class SubstanceTable extends AbstractController
             "chemical" => ChemicalSearchType::class,
             "oligo" => OligoSearchType::class,
             "plasmid" => PlasmidSearchType::class,
+            "protein" => ProteinSearchType::class,
         };
 
         return $props;
@@ -129,6 +135,7 @@ final class SubstanceTable extends AbstractController
             "chemical" => $this->getChemicalTable(),
             "oligo" => $this->getOligoTable(),
             "plasmid" => $this->getPlasmidTable(),
+            "protein" => $this->getProteinTable(),
         };
 
         $this->addData($table);
@@ -154,6 +161,7 @@ final class SubstanceTable extends AbstractController
                 "chemical" => Chemical::class,
                 "oligo" => Oligo::class,
                 "plasmid" => Plasmid::class,
+                "protein" => Protein::class,
                 default => null,
             };
         }
@@ -492,8 +500,100 @@ final class SubstanceTable extends AbstractController
             },
             "growthResistance" => $growthResistance,
             "expressionResistance" => $expressionResistance,
-            "expressionOrganism" => $expressionOrganism !==null ? intval($expressionOrganism) : null,
+            "expressionOrganism" => $expressionOrganism !== null ? intval($expressionOrganism) : null,
             "expressedProtein" => $expressedProtein === null ? null : Ulid::fromString($expressedProtein)->toRfc4122(),
+        ];
+
+        $this->page = 0;
+    }
+
+    private function getProteinTable(): Table
+    {
+        $getLastElementOfArray = function (array $array) {
+            $last_key = array_key_last($array);
+            return $array[$last_key];
+        };
+
+        return new Table(
+            data: [],
+            columns: [
+                new ToolboxColumn("", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => new Toolbox([
+                    new ViewTool(
+                        path: $this->generateUrl("app_substance_view", ["substance" => $protein->getUlid()]),
+                        enabled: $this->isGranted("view", $protein),
+                        tooltip: "View Protein",
+                    ),
+                    new ClipwareTool(
+                        clipboardText: $protein->getCitation(),
+                    ),
+                    new EditTool(
+                        path: $this->generateUrl("app_substance_edit", ["substance" => $protein->getUlid()]),
+                        enabled: $this->isGranted("edit", $protein),
+                        tooltip: "Edit plasmid",
+                    ),
+                    new AddTool(
+                        path: $this->generateUrl("app_substance_add_lot", ["substance" => $protein->getUlid()]),
+                        enabled: $this->isGranted("add_lot", $protein),
+                        tooltip: "Add lot",
+                    )
+                ])),
+                new Column("Name", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => $protein->getShortName()),
+                new ComponentColumn("Protein Atlas", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => [
+                    ExternalUrl::class, [
+                        "title" => $protein->getProteinAtlasUri() === null ? "" : $getLastElementOfArray(explode("/", $protein->getProteinAtlasUri())),
+                        "href" => $protein->getProteinAtlasUri(),
+                    ]
+                ]),
+                new Column("Origin organism", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => $protein->getOrganism()),
+                new Column("Length (aa)", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => $protein->getFastaSequence() !== null ? strlen($protein->getFastaSequence()) : 0),
+                new Column("Available Lots (total)", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
+                /*new ComponentColumn("Parent proteins", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => [
+                    EntityReference::class,
+                    [
+                        "entity" => $protein->getParents(),
+                    ]
+                ]),
+                new ComponentColumn("Derived proteins", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => [
+                    EntityReference::class,
+                    [
+                        "entity" => $protein->getChildren(),
+                    ]
+                ]),*/
+                new ComponentColumn("Epitopes", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => [
+                    EntityReference::class,
+                    [
+                        "entity" => $protein->getEpitopes(),
+                    ]
+                ]),
+            ],
+            spreadDatum: true,
+        );
+    }
+
+    #[LiveListener("search.protein")]
+    public function onProteinSearch(
+        #[LiveArg] ?string $shortName = null,
+        #[LiveArg] ?string $anyName = null,
+        #[LiveArg] ?string $sequence = null,
+        #[LiveArg] ?string $hasAvailableLots = null,
+        #[LiveArg] ?string $hasAntibodies = null,
+        #[LiveArg] ?string $originOrganism = null,
+    ): void {
+        $this->search = [
+            "shortName" => $shortName,
+            "anyName" => $anyName,
+            "sequence" => $sequence,
+            "hasAvailableLot" => match($hasAvailableLots) {
+                "true" => true,
+                "false" => false,
+                default => null,
+            },
+            "hasAntibodies" => match($hasAntibodies) {
+                "true" => true,
+                "false" => false,
+                default => null,
+            },
+            "originOrganism" => $originOrganism !== null ? intval($originOrganism) : null,
         ];
 
         $this->page = 0;

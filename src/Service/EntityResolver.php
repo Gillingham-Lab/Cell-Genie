@@ -12,6 +12,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
+use App\Entity\Lot;
 use App\Entity\Rack;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
@@ -55,6 +56,7 @@ class EntityResolver
                 Epitope::class => $this->router->generate("app_epitope_view", ["epitope" => $object->getId()]),
                 Box::class => $this->router->generate("app_storage_view_box", ["box" => $object->getUlid()]),
                 Rack::class => $this->router->generate("app_storage_view_rack", ["rack" => $object->getUlid()]),
+                Lot::class => $this->router->generate("app_substance_lot_view", ["lot" => $object->getId()]),
                 default => null,
             };
         } catch (MappingException $mappingException) {

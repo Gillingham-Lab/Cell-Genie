@@ -12,6 +12,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
+use App\Entity\Lot;
 use App\Entity\Rack;
 use App\Genie\Enums\AntibodyType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,7 +47,8 @@ class IconService
             },
             Epitope::class => "epitope",
             Box::class => "box",
-            Rack::class => "locaiton",
+            Rack::class => "location",
+            Lot::class => "lot",
             default => null,
         };
     }

@@ -11,9 +11,12 @@ use App\Entity\Traits\Collections\HasUlidAttachmentsTrait;
 use App\Entity\Traits\Fields\NameTrait;
 use App\Entity\Traits\Fields\NewIdTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
+use App\Genie\Enums\Availability;
 use App\Repository\Substance\SubstanceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -66,6 +69,11 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
     public function getLots(): Collection
     {
         return $this->lots;
+    }
+
+    public function getAvailableLots(): Collection
+    {
+        return $this->lots->matching((new Criteria())->where(new Comparison("availability", "=", Availability::Available->value)));
     }
 
     public function addLot(Lot $lot): self

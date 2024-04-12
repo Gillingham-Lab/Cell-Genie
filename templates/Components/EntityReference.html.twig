@@ -2,12 +2,16 @@
     {% if entity is same as(null) %}
             none
     {% else %}
-        {% if iterable %}
+        {% if entity is iterable %}
             {% for e in entity %}
-                <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
-                    <twig:Icon :icon="icon" />
-                    {{ e }}
-                </a>
+                {% if e is iterable %}
+                    <twig:EntityReference :entity="e" />
+                {% else %}
+                    <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
+                        <twig:Icon :icon="icon" />
+                        {{ e }}
+                    </a>
+                {% endif %}
             {% else %}
                 none
             {% endfor %}
