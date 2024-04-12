@@ -166,7 +166,7 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
                 $searchService->searchWithStringLike($queryBuilder, "p.longName", $searchValue),
             ),
             "sequence" => $searchService->searchWithStringLike($queryBuilder, "p.fastaSequence", $searchValue),
-            "originOrganism" => $searchService->searchWithInteger($queryBuilder, "p.originOrganism", $searchValue),
+            "originOrganism" => $searchService->searchWithInteger($queryBuilder, "p.organism", $searchValue),
             default => null,
         });
 
