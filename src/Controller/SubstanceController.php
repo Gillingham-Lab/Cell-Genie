@@ -561,7 +561,7 @@ class SubstanceController extends AbstractController
             "protein" => $protein,
             "toolbox" => new Toolbox([
                 new Tool(
-                    path: $this->generateUrl("app_plasmids"),
+                    path: $this->generateUrl("app_proteins"),
                     icon: "protein",
                     buttonClass: "btn-secondary",
                     tooltip: "Seach protein",
