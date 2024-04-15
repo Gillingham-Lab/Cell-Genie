@@ -31,6 +31,7 @@ use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Service\Doctrine\Type\Ulid;
 use App\Twig\Components\EntityReference;
 use App\Twig\Components\ExternalUrl;
+use App\Twig\Components\Raw;
 use App\Twig\Components\SmilesViewer;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -397,8 +398,17 @@ final class SubstanceTable extends AbstractController
                     )
                 ])),
                 new Column("Name", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getShortName(), bold: true),
+                new Column("Type", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getOligoTypeEnum()?->value),
                 new Column("Length", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getSequenceLength()),
                 new Column("Available Lots (total)", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
+                new ComponentColumn("Start conjugate", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => [
+                    EntityReference::class,
+                    ["entity" => $oligo->getStartConjugate()]
+                ]),
+                new ComponentColumn("End conjugate", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => [
+                    EntityReference::class,
+                    ["entity" => $oligo->getEndConjugate()]
+                ]),
                 new Column("Sequence", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getSequence()),
             ],
             spreadDatum: true,
@@ -411,16 +421,22 @@ final class SubstanceTable extends AbstractController
         #[LiveArg] ?string $anyName = null,
         #[LiveArg] ?string $sequence = null,
         #[LiveArg] ?string $hasAvailableLots = null,
+        #[LiveArg] ?string $oligoType = null,
+        #[LiveArg] ?string $startConjugate = null,
+        #[LiveArg] ?string $endConjugate = null,
     ): void {
         $this->search = [
             "shortName" => $shortName,
             "anyName" => $anyName,
+            "oligoType" => $oligoType,
             "sequence" => $sequence,
             "hasAvailableLot" => match($hasAvailableLots) {
                 "true" => true,
                 "false" => false,
                 default => null,
             },
+            "startConjugate" => $startConjugate === null ? null : Ulid::fromString($startConjugate)->toRfc4122(),
+            "endConjugate" => $endConjugate === null ? null : Ulid::fromString($endConjugate)->toRfc4122(),
         ];
 
         $this->page = 0;

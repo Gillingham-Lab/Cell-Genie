@@ -37,7 +37,11 @@
                                 {% if rowColumn.tooltip %}
                                     <span data-toggle="tooltip" data-placement="bottom" title="{{ rowColumn.tooltip|escape("html_attr") }}">{{ rowColumn.value }}</span>
                                 {% else %}
-                                    {{ rowColumn.value }}
+                                    {% if rowColumn.value is same as(null) %}
+                                        <span class="text-muted">empty</span>
+                                    {% else %}
+                                        {{ rowColumn.value }}
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                         </td>

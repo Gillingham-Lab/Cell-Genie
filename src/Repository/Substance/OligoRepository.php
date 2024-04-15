@@ -90,8 +90,14 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
         $qb = $this->createQueryBuilder("c")
             ->addSelect("COUNT(l) AS lotCount")
             ->addSelect($this::LotAvailableQuery . " AS hasAvailableLot")
+            ->addSelect("cs")
+            ->addSelect("ce")
             ->leftJoin("c.lots", "l")
+            ->leftJoin("c.startConjugate", "cs")
+            ->leftJoin("c.endConjugate", "ce")
             ->groupBy("c.ulid")
+            ->addGroupBy("cs")
+            ->addGroupBy("ce")
             ->orderBy("c.shortName");
 
         return $qb;
@@ -124,6 +130,9 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
                 $searchService->searchWithStringLike($queryBuilder, "c.iupacName", $searchValue),
             ),
             "sequence" => $searchService->searchWithStringLike($queryBuilder, "c.sequence", $searchValue),
+            "oligoType" => $searchService->searchWithString($queryBuilder, "c.oligoTypeEnum", $searchValue),
+            "startConjugate" => $searchService->searchWithUlid($queryBuilder, "cs.ulid", $searchValue),
+            "endConjugate" => $searchService->searchWithUlid($queryBuilder, "ce.ulid", $searchValue),
             default => null,
         });
 

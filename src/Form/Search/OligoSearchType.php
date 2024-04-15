@@ -3,8 +3,15 @@ declare(strict_types=1);
 
 namespace App\Form\Search;
 
+use App\Entity\DoctrineEntity\Substance\Oligo;
+use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Genie\Enums\OligoTypeEnum;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -28,6 +35,59 @@ class OligoSearchType extends AbstractType
                 "label" => "Sequence",
                 "required" => false,
             ])
+            ->add("oligoType", EnumType::class, [
+                "label" => "Oligo type",
+                "required" => false,
+                "class" => OligoTypeEnum::class,
+            ])
+            ->add("startConjugate", EntityType::class, [
+                "label" => "Start conjugate",
+                "required" => false,
+                "class" => Substance::class,
+                "query_builder" => function (EntityRepository $er) {
+                    return $er->createQueryBuilder("e")
+                        ->join(Oligo::class, "o", Join::WITH, "e.ulid = o.startConjugate")
+                        ->addOrderBy("e.shortName", "ASC")
+                        ;
+                },
+                "choice_value" => function (Substance|null|string $entity) {
+                    if (is_string($entity)) {
+                        return $entity;
+                    } else {
+                        return $entity?->getUlid()?->toRfc4122();
+                    }
+                },
+                "placeholder" => "Empty",
+                "multiple" => false,
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "true",
+                ],
+            ])
+            ->add("endConjugate", EntityType::class, [
+                "label" => "End conjugate",
+                "required" => false,
+                "class" => Substance::class,
+                "query_builder" => function (EntityRepository $er) {
+                    return $er->createQueryBuilder("e")
+                        ->join(Oligo::class, "o", Join::WITH, "e.ulid = o.endConjugate")
+                        ->addOrderBy("e.shortName", "ASC")
+                        ;
+                },
+                "choice_value" => function (Substance|null|string $entity) {
+                    if (is_string($entity)) {
+                        return $entity;
+                    } else {
+                        return $entity?->getUlid()?->toRfc4122();
+                    }
+                },
+                "placeholder" => "Empty",
+                "multiple" => false,
+                "attr"  => [
+                    "class" => "gin-fancy-select",
+                    "data-allow-empty" => "true",
+                ],
+            ])
             ->add("hasAvailableLots", ChoiceType::class, [
                 "label" => "Has available lots",
                 "choices" => [
@@ -38,6 +98,19 @@ class OligoSearchType extends AbstractType
                 "required" => false,
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, "onPreSetData"]);
+    }
+
+    public function onPreSetData(FormEvent $event): void
+    {
+        $formData = $event->getData();
+
+        if (isset($formData["oligoType"]) and is_string($formData["oligoType"])) {
+            $formData["oligoType"] = OligoTypeEnum::from($formData["oligoType"]);
+        }
+
+        $event->setData($formData);
     }
 
     public function configureOptions(OptionsResolver $resolver)
