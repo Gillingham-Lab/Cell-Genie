@@ -632,8 +632,6 @@ class SubstanceController extends AbstractController
                             $detections = ["Method" => null];
                         }
 
-                        dump($detections);
-
                         return [
                             Metadata::class, [
                                 "md" => 1, "xl" => 1,
