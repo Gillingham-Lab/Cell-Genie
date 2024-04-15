@@ -14,6 +14,7 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Epitope;
+use App\Entity\FormEntity\DetectionEntry;
 use App\Entity\Lot;
 use App\Entity\SequenceAnnotation;
 use App\Entity\Table\ColorColumn;
@@ -620,12 +621,18 @@ class SubstanceController extends AbstractController
 
                         $detections = [];
                         foreach ($cellularProtein->getDetection() as $detection) {
-                            $detections[$detection["method"]] = $detection["isDetectable"];
+                            if ($detection instanceof DetectionEntry) {
+                                $detections[$detection->getMethod()] = ["boolean", $detection->getIsDetectable()];
+                            } else {
+                                $detections[$detection["method"]] = ["boolean", $detection["isDetectable"]];
+                            }
                         }
 
                         if (count($detections) === 0) {
                             $detections = ["Method" => null];
                         }
+
+                        dump($detections);
 
                         return [
                             Metadata::class, [
