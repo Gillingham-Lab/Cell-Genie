@@ -5,13 +5,17 @@ namespace App\Entity\DoctrineEntity\User;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\Experiment;
+use App\Entity\Param\Param;
+use App\Entity\Param\ParamBag;
 use App\Repository\Substance\UserRepository;
 use App\Service\Doctrine\Generator\UlidGenerator;
 use App\Service\Doctrine\Type\Ulid;
 use App\Validator\Constraint\OrcId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -90,6 +94,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(UserGroup::class, cascade: ["persist"], inversedBy: "users")]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?UserGroup $group = null;
+
+    #[ORM\Column(type: JsonDocumentType::NAME, nullable: true)]
+    private ?ParamBag $settings;
 
     public function __construct()
     {
@@ -399,6 +406,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setOrcid(?string $orcid): static
     {
         $this->orcid = $orcid;
+        return $this;
+    }
+
+    public function getSettings(): ?ParamBag
+    {
+        if ($this->settings === null) {
+            $this->settings = new ParamBag();
+        }
+
+        return $this->settings;
+    }
+
+    public function setSettings(?ParamBag $settings): static
+    {
+        $this->settings = $settings;
         return $this;
     }
 }

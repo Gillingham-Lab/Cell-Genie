@@ -10,18 +10,23 @@ div.gin-fancy-select.form-select {
   }
 }
 
+@import '~bootstrap';
+@import 'bootstrap/scss/variables';
+@import "~bootswatch/dist/lumen/bootswatch";
+
 $list-group-active-border-color: "black";
 $list-group-active-bg: $gray-200;
 $list-group-active-color: $gray-900;
 $enable-negative-margins: true;
 
-@import '~bootstrap';
-@import "~bootswatch/dist/lumen/bootswatch";
-
 :root {
   --right-icon-color: #{$body-color};
   --left-icon-color: #{$secondary};
   --left-icon-opacity: 0.6;
+}
+
+.pagination {
+  --bs-pagination-disabled-color: #{$gray-300};
 }
 
 // Stacked icons
