@@ -3,13 +3,25 @@ declare(strict_types=1);
 
 namespace App\Entity\Param;
 
+use Symfony\Component\Serializer\Attribute\Ignore;
+use function Symfony\Component\String\b;
+
 class Param
 {
     public function __construct(
         private int|float|bool|string $value,
-        private readonly ParamTypeEnum $paramType,
+        private ?ParamTypeEnum $paramType = null,
     ) {
-        $this->assertParamType();
+        if ($this->paramType !== null) {
+            $this->assertParamType();
+        } else {
+            $this->paramType = match(get_debug_type($this->value)) {
+                "bool" => ParamTypeEnum::Bool,
+                "int" => ParamTypeEnum::Int,
+                "float" => ParamTypeEnum::Float,
+                "string" => ParamTypeEnum::String,
+            };
+        }
     }
 
     public function getValue(): mixed
@@ -23,24 +35,24 @@ class Param
         $this->value = $value;
     }
 
-    public function getStringValue(): string
+    public function asInt(): int
     {
-        return $this->value;
+        return (int)$this->getValue();
     }
 
-    public function getIntValue(): int
+    public function asFloat(): float
     {
-        return $this->value;
+        return (float)$this->getValue();
     }
 
-    public function getFloatValue(): float
+    public function asString(): string
     {
-        return $this->value;
+        return (string)$this->getValue();
     }
 
-    public function getBoolValue(): bool
+    public function asBool(): bool
     {
-        return $this->value;
+        return (bool)$this->getValue();
     }
 
     private function assertParamType(null|int|float|bool|string $value=null)
