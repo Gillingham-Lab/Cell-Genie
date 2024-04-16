@@ -14,4 +14,7 @@ class Pagination
 
     #[Assert\Range(min: 0)]
     public int $lastPage;
+
+    #[Assert\Range(min: 5)]
+    public int $limit = 30;
 }

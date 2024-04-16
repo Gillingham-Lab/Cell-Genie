@@ -8,7 +8,7 @@
         <twig:PageHeader title="Cells" icon="cell" barcode />
 
         <twig:Layout:Row>
-            <twig:Live:CellTable>
+            <twig:Live:CellTable limit="{{ app.user ? app.user.settings.param("default_limit", 30).intValue }}">
             </twig:Live:CellTable>
         </twig:Layout:Row>
     </div>

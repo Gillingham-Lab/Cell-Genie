@@ -1,28 +1,43 @@
-<nav{{ attributes }}>
-    <ul class="pagination">
-        <li class="page-item {{ currentPage<=0 ? "disabled" : "" }}">
-            <a class="page-link" data-action="live#action" data-live-action-param="firstPage">First</a>
-        </li>
+<div{{ attributes }}>
+    <div class="d-flex">
+        <nav class="flex-column" role="navigation" aria-label="Pagination Navigation">
+            <ul class="pagination">
+                <li class="page-item {{ currentPage<=0 ? "disabled" : "" }}">
+                    <a class="page-link" data-action="live#action" data-live-action-param="firstPage" aria-label="Go to first page">First</a>
+                </li>
 
-        <li class="page-item {{ currentPage<=0 ? "disabled" : "" }}">
-            <a class="page-link" data-action="live#action" data-live-action-param="previousPage" aria-label="Previous">
-                <span aria-hidden="true">⮜</span>
-            </a>
-        </li>
+                <li class="page-item {{ currentPage<=0 ? "disabled" : "" }}">
+                    <a class="page-link" data-action="live#action" data-live-action-param="previousPage" aria-label="Go to previous page">
+                        <span aria-hidden="true">⮜</span>
+                    </a>
+                </li>
 
-        <li class="page-item active" aria-current="page">
-            <span class="page-link">Page {{ currentPage+1 }}</span>
-        </li>
+                <li class="page-item active" aria-current="true" aria-label="Current page, page {{ currentPage+1 }}">
+                    <span class="page-link">Page {{ currentPage+1 }}</span>
+                </li>
 
-        <li class="page-item {{ currentPage+1 >=lastPage ? "disabled" : "" }}">
-            <a class="page-link" data-action="live#action" data-live-action-param="nextPage" aria-label="Next">
-                <span aria-hidden="true">⮞</span>
-            </a>
-        </li>
+                <li class="page-item {{ currentPage+1 >=lastPage ? "disabled" : "" }}">
+                    <a class="page-link" data-action="live#action" data-live-action-param="nextPage" aria-label="Go to next page">
+                        <span aria-hidden="true">⮞</span>
+                    </a>
+                </li>
 
-        <li class="page-item {{ currentPage+1 >= lastPage ? "disabled" : "" }}">
-            <!-- {{ currentPage }} >= {{ lastPage }} -->
-            <a class="page-link" data-action="live#action" data-live-action-param="lastPage">Last</a>
-        </li>
-    </ul>
-</nav>
+                <li class="page-item {{ currentPage+1 >= lastPage ? "disabled" : "" }}">
+                    <!-- {{ currentPage }} >= {{ lastPage }} -->
+                    <a class="page-link" data-action="live#action" data-live-action-param="lastPage" aria-label="Go to last page">Last</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="ms-5 flex-column flex-grow-0">
+            <label class="input-group">
+                <span class="input-group-text">Page size</span>
+                <select class="form-select" data-model="limit">
+                    {% for i in [10, 30, 50, 75, 100] %}
+                        <option {{ i == limit ? "selected" : "" }}>{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+    </div>
+</div>

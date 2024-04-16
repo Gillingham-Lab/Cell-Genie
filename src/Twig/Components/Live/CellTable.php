@@ -5,6 +5,7 @@ namespace App\Twig\Components\Live;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Table\Column;
 use App\Entity\Table\Table;
 use App\Entity\Table\ToggleColumn;
@@ -23,6 +24,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
