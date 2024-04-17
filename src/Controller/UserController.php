@@ -4,14 +4,27 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Param\ParamBag;
+use App\Entity\Toolbox\Tool;
+use App\Entity\Toolbox\Toolbox;
+use App\Form\User\UserSettingsType;
 use App\Form\User\UserType;
 use Doctrine\ORM\EntityManagerInterface;
+use MongoDB\BSON\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\UidNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class UserController extends AbstractController
 {
@@ -28,6 +41,9 @@ class UserController extends AbstractController
 
         return $this->render("ucp/user.main.html.twig", [
             "user" => $user,
+            "toolbox" => new Toolbox([
+                new Tool($this->generateUrl("app_user_edit")),
+            ]),
         ]);
     }
 
@@ -116,6 +132,32 @@ class UserController extends AbstractController
             "user" => $user,
             "form" => $form,
             "returnTo" => $returnTo,
+        ]);
+    }
+
+    #[Route("/user/settings/change", name: "app_user_settings", priority: 10)]
+    public function settings(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        #[CurrentUser]
+        User $user,
+    ) {
+        $data = $user->getSettings() ?? new ParamBag();
+        $form = $this->createForm(UserSettingsType::class, $data);
+        $form->handleRequest($request);
+
+        $serializer = new \Dunglas\DoctrineJsonOdm\Serializer([new BackedEnumNormalizer(), new UidNormalizer(), new DateTimeNormalizer(), new ArrayDenormalizer(), new ObjectNormalizer()], [new JsonEncoder()]);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            $user->setSettings(clone $data);
+            $entityManager->flush();
+            $this->addFlash("success", "Settings were saved.");
+            return $this->redirectToRoute("app_user_settings");
+        }
+
+        return $this->render("ucp/settings.html.twig", [
+            "user" => $user,
+            "form" => $form,
         ]);
     }
 }

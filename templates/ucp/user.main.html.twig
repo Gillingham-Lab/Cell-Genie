@@ -7,6 +7,14 @@
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
+            <twig:PageHeader title="User information" icon="user" />
+
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox" />
+                </twig:Layout:Col>
+            </twig:Layout:Row>
+
             {{ layout.header("User information", false, false) }}
 
             {{ _self.tools(user) }}

@@ -8,7 +8,7 @@
             <twig:PageHeader title="{{ title }}" icon="{{ icon }}" barcode />
 
             <twig:Layout:Row>
-                <twig:Live:SubstanceTable :type="substanceType" loading="defer" />
+                <twig:Live:SubstanceTable :type="substanceType" loading="defer" limit="{{ app.user ? app.user.settings.param("entityPageLimit", 30).asInt }}" />
             </twig:Layout:Row>
         </div>
     </div>
