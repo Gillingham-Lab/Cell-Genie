@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Param\ParamBag;
+use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Tool;
 use App\Entity\Toolbox\Toolbox;
 use App\Form\User\UserSettingsType;
@@ -42,7 +43,16 @@ class UserController extends AbstractController
         return $this->render("ucp/user.main.html.twig", [
             "user" => $user,
             "toolbox" => new Toolbox([
-                new Tool($this->generateUrl("app_user_edit")),
+                new EditTool(
+                    path: $this->generateUrl("app_user_edit_self"),
+                    icon: "user",
+                    iconStack: "edit",
+                ),
+                new Tool(
+                    path: $this->generateUrl("app_user_settings"),
+                    icon: "user",
+                    iconStack: "settings",
+                )
             ]),
         ]);
     }
@@ -61,7 +71,7 @@ class UserController extends AbstractController
     }
 
     #[Route("/user/add", name: "app_user_add", priority: 10)]
-    #[Route("/user/edit", name: "app_user_edit", priority: 10)]
+    #[Route("/user/edit", name: "app_user_edit_self", priority: 10)]
     #[Route("/user/{user}/edit", name: "app_user_edit")]
     public function edit(
         Request $request,
