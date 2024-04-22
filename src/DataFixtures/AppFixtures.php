@@ -6,6 +6,7 @@ namespace App\DataFixtures;
 use App\Entity\Box;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Rack;
@@ -22,46 +23,69 @@ class AppFixtures extends Fixture
         $tissue_kidney = (new Tissue())->setName("Kidney");
         $tissue_cervix = (new Tissue())->setName("Cervix");
 
-        $cell = (new Cell())
+        $cellGroup = (new CellGroup())
             ->setName("HEK293")
+            ->setNumber("C001")
             ->setAge("Fetus")
             ->setIsCancer(false)
-            ->setIsEngineered(false)
             ->setCultureType("adherent")
             ->setMorphology($morphology)
             ->setOrganism($organism)
             ->setTissue($tissue_kidney)
+        ;
+
+        $cell = (new Cell())
+            ->setIsEngineered(false)
+            ->setCellGroup($cellGroup)
+            ->setCellNumber("C001")
         ;
 
         $manager->persist($morphology);
         $manager->persist($organism);
         $manager->persist($tissue_kidney);
         $manager->persist($tissue_cervix);
+        $manager->persist($cellGroup);
         $manager->persist($cell);
 
-        $cell2 = (new Cell())
+        $cellGroup2 = (new CellGroup())
             ->setName("HEK293T")
+            ->setNumber("C002")
             ->setAge("Fetus")
             ->setIsCancer(false)
-            ->setIsEngineered(false)
             ->setCultureType("adherent")
             ->setMorphology($morphology)
             ->setOrganism($organism)
             ->setTissue($tissue_kidney)
+            ->setParent($cellGroup)
+        ;
+
+        $cell2 = (new Cell())
+            ->setName("HEK293T")
+            ->setCellGroup($cellGroup2)
+            ->setIsEngineered(false)
+            ->setCellNumber("C002")
         ;
         $manager->persist($cell2);
+        $manager->persist($cellGroup2);
 
-        $cell3 = (new Cell())
+        $cellGroup3 = (new CellGroup())
             ->setName("HeLa")
-            ->setAge("Adult")
+            ->setNumber("C003")
             ->setIsCancer(true)
-            ->setIsEngineered(false)
             ->setCultureType("adherent")
             ->setMorphology($morphology)
             ->setOrganism($organism)
             ->setTissue($tissue_cervix)
         ;
+
+        $cell3 = (new Cell())
+            ->setName("HeLa")
+            ->setIsEngineered(false)
+            ->setCellGroup($cellGroup3)
+            ->setCellNumber("C003")
+        ;
         $manager->persist($cell3);
+        $manager->persist($cellGroup3);
 
         $rack = (new Rack())
             ->setMaxBoxes(9)
@@ -89,6 +113,7 @@ class AppFixtures extends Fixture
             ->setCell($cell)
             ->setBox($box)
             ->setAliquotedOn(new \DateTime("now"))
+            ->setBoxCoordinate("A1")
             ->setCellCount(2000000)
             ->setVialColor("red")
             ->setVials(18)
@@ -100,6 +125,7 @@ class AppFixtures extends Fixture
             ->setCell($cell)
             ->setBox($secondBox)
             ->setAliquotedOn(new \DateTime("2020-03-25 13:00:00"))
+            ->setBoxCoordinate("A1")
             ->setCellCount(5000000)
             ->setVialColor("green")
             ->setVials(3)
@@ -111,6 +137,7 @@ class AppFixtures extends Fixture
             ->setCell($cell3)
             ->setBox($box)
             ->setAliquotedOn(new \DateTime("now"))
+            ->setBoxCoordinate("C1")
             ->setCellCount(1000000)
             ->setVialColor("yellow")
             ->setVials(5)

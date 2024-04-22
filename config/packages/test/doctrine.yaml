@@ -1,0 +1,3 @@
+doctrine:
+    dbal:
+        use_savepoints: true
