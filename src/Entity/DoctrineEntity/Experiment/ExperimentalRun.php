@@ -40,10 +40,20 @@ class ExperimentalRun
     #[ORM\OneToMany(mappedBy: 'experiment', targetEntity: ExperimentalRunDataSet::class, orphanRemoval: true)]
     private Collection $dataSets;
 
+    /**
+     * @var Collection<string, ExperimentalDatum>
+     */
+    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, indexBy: "name")]
+    #[ORM\JoinTable("new_experimental_run_datum")]
+    #[ORM\JoinColumn("experiment_id", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
+    private Collection $data;
+
     public function __construct()
     {
         $this->conditions = new ArrayCollection();
         $this->dataSets = new ArrayCollection();
+        $this->data = new ArrayCollection();
     }
 
     public function getScientist(): ?User
@@ -126,6 +136,30 @@ class ExperimentalRun
                 $dataSet->setExperiment(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<string, ExperimentalDatum>
+     */
+    public function getData(): Collection
+    {
+        return $this->data;
+    }
+
+    public function addData(ExperimentalDatum $data): static
+    {
+        if (!$this->data->contains($data)) {
+            $this->data->add($data);
+        }
+
+        return $this;
+    }
+
+    public function removeData(ExperimentalDatum $data): static
+    {
+        $this->data->removeElement($data);
 
         return $this;
     }
