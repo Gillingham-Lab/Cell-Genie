@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\Traits\Fields\IdTrait;
 use App\Repository\DoctrineEntity\Experiment\ExperimentalRunDataSetRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunDataSetRepository::class)]
@@ -16,6 +19,20 @@ class ExperimentalRunDataSet
     #[ORM\JoinColumn(nullable: false)]
     private ?ExperimentalRun $experiment = null;
 
+    /**
+     * @var Collection<string, ExperimentalDatum>
+     */
+    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, indexBy: "name")]
+    #[ORM\JoinTable("new_experimental_run_data_set_datum")]
+    #[ORM\JoinColumn("data_set_id", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
+    private Collection $data;
+
+    public function __construct()
+    {
+        $this->data = new ArrayCollection();
+    }
+
     public function getExperiment(): ?ExperimentalRun
     {
         return $this->experiment;
@@ -24,6 +41,30 @@ class ExperimentalRunDataSet
     public function setExperiment(?ExperimentalRun $experiment): static
     {
         $this->experiment = $experiment;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<string, ExperimentalDatum>
+     */
+    public function getData(): Collection
+    {
+        return $this->data;
+    }
+
+    public function addData(ExperimentalDatum $data): static
+    {
+        if (!$this->data->contains($data)) {
+            $this->data->add($data);
+        }
+
+        return $this;
+    }
+
+    public function removeData(ExperimentalDatum $data): static
+    {
+        $this->data->removeElement($data);
 
         return $this;
     }
