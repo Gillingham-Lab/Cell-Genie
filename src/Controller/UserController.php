@@ -11,14 +11,15 @@ use App\Entity\Toolbox\Toolbox;
 use App\Form\User\UserSettingsType;
 use App\Form\User\UserType;
 use Doctrine\ORM\EntityManagerInterface;
-use MongoDB\BSON\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
@@ -29,80 +30,67 @@ use Symfony\Component\Serializer\Serializer;
 
 class UserController extends AbstractController
 {
-    #[Route("/user", name: "app_user")]
     #[Route("/user/{user}", name: "app_user")]
+    #[IsGranted(new Expression("object ? is_granted('view', object) : is_granted('ROLE_USER')"), "user")]
     public function main(
-        Security $security,
+        #[CurrentUser]
+        User $currentUser,
         User $user = null,
     ): Response {
-        if ($user === null) {
-            /** @var User $user */
-            $user = $security->getUser();
-        }
-
         return $this->render("ucp/user.main.html.twig", [
-            "user" => $user,
+            "user" => $user ?? $currentUser,
             "toolbox" => new Toolbox([
                 new EditTool(
-                    path: $this->generateUrl("app_user_edit_self"),
+                    path: $user ? $this->generateUrl("app_user_edit", ["user" => $user->getId()]) : $this->generateUrl("app_user_edit"),
                     icon: "user",
+                    enabled: $this->isGranted("edit", $user ?? $currentUser),
                     iconStack: "edit",
                 ),
                 new Tool(
                     path: $this->generateUrl("app_user_settings"),
                     icon: "user",
+                    enabled: $this->isGranted("edit", $user ?? $currentUser),
                     iconStack: "settings",
                 )
             ]),
         ]);
     }
 
-    public function add(
-        Request $request,
-        Security $security,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $this->denyAccessUnlessGranted("new", "User");
-
-        $newUser = new User();
-        $newUser->setGroup($security->getUser()?->getGroup());
-
-        return $this->edit($request, $security, $entityManager, $newUser);
-    }
-
     #[Route("/user/add", name: "app_user_add", priority: 10)]
-    #[Route("/user/edit", name: "app_user_edit_self", priority: 10)]
-    #[Route("/user/{user}/edit", name: "app_user_edit")]
+    #[Route("/user/edit/{user}", name: "app_user_edit", priority: 10)]
+    #[IsGranted("IS_AUTHENTICATED_FULLY")]
+    #[IsGranted(
+        attribute: new Expression("object['request'].get('_route') === 'app_user_add' ? is_granted('new', 'User') : object['user'] ? is_granted('edit', object['user']) : is_fully_authenticated()"),
+        subject: [
+            "request" => new Expression("request"),
+            "user",
+        ]
+    )]
     public function edit(
         Request $request,
-        Security $security,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
+        #[CurrentUser]
+        User $currentUser,
         User $user = null,
     ): Response {
         $new = false;
-        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
 
-        if ($user === null) {
-            if ($request->get("_route") === "app_user_edit") {
-                $this->denyAccessUnlessGranted("edit", $user);
-
-                /** @var User $user */
-                $user = $security->getUser();
-                $returnTo = $this->generateUrl("app_user", ["user" => $user->getId()]);
-            } else {
-                $this->denyAccessUnlessGranted("new", "User");
-
-                // New user
-                $new = true;
-                $user = new User();
-                $user->setGroup($security->getUser()->getGroup());
-                $user->setIsActive(true);
-                $returnTo = $this->generateUrl("app_homepage");
-            }
+        // Create empty user
+        if ($request->get("_route") === "app_user_add") {
+            // New user
+            $new = true;
+            $user = new User();
+            $user->setGroup($currentUser->getGroup());
+            $user->setIsActive(true);
+            $returnTo = $this->generateUrl("app_homepage");
         } else {
-            $this->denyAccessUnlessGranted("edit", $user);
-            $returnTo = $this->generateUrl("app_user", ["user" => $user->getId()]);
+            if ($user === null) {
+                $user = $currentUser;
+                $returnTo = $this->generateUrl("app_user");
+            } else {
+                $returnTo = $this->generateUrl("app_user", ["user" => $user->getId()]);
+            }
         }
 
         $form = $this->createForm(UserType::class, $user, [
