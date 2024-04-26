@@ -29,7 +29,7 @@ class Vendor
 
     #[ORM\Column(type: "text")]
     #[Gedmo\Versioned]
-    private string $catalogUrl = "";
+    private ?string $catalogUrl = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Assert\Url]
@@ -67,7 +67,7 @@ class Vendor
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -79,10 +79,9 @@ class Vendor
         return $this->catalogUrl;
     }
 
-    public function setCatalogUrl(string $catalogUrl): self
+    public function setCatalogUrl(?string $catalogUrl): static
     {
         $this->catalogUrl = $catalogUrl;
-
         return $this;
     }
 
@@ -91,7 +90,7 @@ class Vendor
         return $this->hasFreeShipping;
     }
 
-    public function setHasFreeShipping(bool $hasFreeShipping): self
+    public function setHasFreeShipping(bool $hasFreeShipping): static
     {
         $this->hasFreeShipping = $hasFreeShipping;
 
@@ -103,7 +102,7 @@ class Vendor
         return $this->hasDiscount;
     }
 
-    public function setHasDiscount(bool $hasDiscount): self
+    public function setHasDiscount(bool $hasDiscount): static
     {
         $this->hasDiscount = $hasDiscount;
 
@@ -115,7 +114,7 @@ class Vendor
         return $this->comment;
     }
 
-    public function setComment(?string $comment): self
+    public function setComment(?string $comment): static
     {
         $this->comment = $comment;
 
@@ -127,7 +126,7 @@ class Vendor
         return $this->isPreferred;
     }
 
-    public function setIsPreferred(bool $isPreferred): self
+    public function setIsPreferred(bool $isPreferred): static
     {
         $this->isPreferred = $isPreferred;
 
@@ -139,7 +138,7 @@ class Vendor
         return $this->homepage;
     }
 
-    public function setHomepage(?string $homepage): self
+    public function setHomepage(?string $homepage): static
     {
         $this->homepage = $homepage;
         return $this;
