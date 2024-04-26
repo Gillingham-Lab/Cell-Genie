@@ -29,6 +29,7 @@ class Vendor
 
     #[ORM\Column(type: "text")]
     #[Gedmo\Versioned]
+    #[Assert\NotNull(message: "You must provide a catalog url.")]
     private ?string $catalogUrl = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
