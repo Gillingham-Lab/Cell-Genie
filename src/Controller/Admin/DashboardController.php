@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Box;
 use App\Entity\CultureFlask;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
@@ -11,6 +10,8 @@ use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
+use App\Entity\DoctrineEntity\Storage\Box;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
@@ -28,7 +29,6 @@ use App\Entity\ExperimentType;
 use App\Entity\Message;
 use App\Entity\Morphology;
 use App\Entity\Organism;
-use App\Entity\Rack;
 use App\Entity\Recipe;
 use App\Entity\Tissue;
 use App\Entity\Vocabulary;

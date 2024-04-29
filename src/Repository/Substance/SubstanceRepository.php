@@ -2,7 +2,7 @@
 
 namespace App\Repository\Substance;
 
-use App\Entity\Box;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\Substance\SubstanceLot;
 use App\Entity\Lot;

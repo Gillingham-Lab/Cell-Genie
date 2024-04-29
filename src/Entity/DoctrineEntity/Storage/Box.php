@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Storage;
 
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Fields\NewIdTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
-use App\Repository\BoxRepository;
+use App\Repository\Storage\BoxRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,7 +22,7 @@ class Box implements PrivacyAwareInterface
     #[Assert\Length(
         min: 3,
         max: 255,
-        minMessage: "Bux name must contain at least 3 characters",
+        minMessage: "Box name must contain at least 3 characters",
         maxMessage: "Only 255 characters allowed"
     )]
     #[Assert\NotBlank]
@@ -59,10 +59,11 @@ class Box implements PrivacyAwareInterface
 
     public function getFullLocation(): string
     {
+        $name = $this->name ?? "no name";
         if ($this->rack) {
-            return "{$this->rack->getPathName()} | {$this->name}";
+            return "{$this->rack->getPathName()} | {$name}";
         } else {
-            return "no-rack | {$this->name}";
+            return "no rack | {$name}";
         }
     }
 
@@ -71,7 +72,7 @@ class Box implements PrivacyAwareInterface
         if ($this->rack) {
             return $this->rack->getPathName();
         } else {
-            return "no-rack";
+            return "no rack";
         }
     }
 
@@ -87,7 +88,7 @@ class Box implements PrivacyAwareInterface
         return $this;
     }
 
-    public function getRows(): ?int
+    public function getRows(): int
     {
         return $this->rows;
     }
@@ -99,7 +100,7 @@ class Box implements PrivacyAwareInterface
         return $this;
     }
 
-    public function getCols(): ?int
+    public function getCols(): int
     {
         return $this->cols;
     }
@@ -119,6 +120,7 @@ class Box implements PrivacyAwareInterface
     public function setRack(?Rack $rack): static
     {
         $this->rack = $rack;
+        $rack?->addBox($this);
 
         return $this;
     }

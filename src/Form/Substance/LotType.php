@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Substance;
 
-use App\Entity\Box;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Lot;
 use App\Form\Collection\AttachmentCollectionType;

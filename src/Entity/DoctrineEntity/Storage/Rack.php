@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\Storage;
 
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\NewIdTrait;
 use App\Entity\Traits\Fields\VisualisationTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
-use App\Repository\RackRepository;
+use App\Repository\Storage\RackRepository;
 use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,10 +28,10 @@ class Rack implements PrivacyAwareInterface
     use CommentTrait;
 
     #[ORM\Column(type: "string", length: 255)]
-    #[Assert\Length(min: 5, max: 255)]
+    #[Assert\Length(min: 1, max: 255)]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
-    private ?string $name = "";
+    private ?string $name = null;
 
     #[ORM\Column(type: "integer")]
     #[Gedmo\Versioned]
@@ -87,14 +87,13 @@ class Rack implements PrivacyAwareInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
-    public function getMaxBoxes(): ?int
+    public function getMaxBoxes(): int
     {
         return $this->maxBoxes;
     }
@@ -102,7 +101,6 @@ class Rack implements PrivacyAwareInterface
     public function setMaxBoxes(int $maxBoxes): self
     {
         $this->maxBoxes = $maxBoxes;
-
         return $this;
     }
 
@@ -144,10 +142,7 @@ class Rack implements PrivacyAwareInterface
     public function setParent(?Rack $parent): self
     {
         $this->parent = $parent;
-
-        if ($parent !== null) {
-            $parent->addChild($this);
-        }
+        $parent?->addChild($this);
 
         return $this;
     }

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Repository\Cell;
 
-use App\Entity\Box;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Storage\Box;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;

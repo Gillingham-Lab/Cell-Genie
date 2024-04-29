@@ -3,16 +3,13 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Box;
-use App\Entity\DoctrineEntity\Substance\Oligo;
-use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
 use App\Genie\Enums\Availability;
 use App\Genie\Enums\PrivacyLevel;
+use App\Repository\Storage\BoxRepository;
 use App\Repository\Substance\UserGroupRepository;
 use App\Repository\Substance\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
 

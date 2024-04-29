@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
-use App\Entity\Box;
+use App\Entity\DoctrineEntity\Storage\Box;
 use Doctrine\ORM\Mapping as ORM;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 

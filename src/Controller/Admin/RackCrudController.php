@@ -3,16 +3,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Rack;
-use App\Repository\RackRepository;
-use Doctrine\ORM\QueryBuilder;
+use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Repository\Storage\RackRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class RackCrudController extends AbstractCrudController
 {

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Entity\Box;
 use App\Entity\BoxMap;
+use App\Entity\DoctrineEntity\Storage\Box;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

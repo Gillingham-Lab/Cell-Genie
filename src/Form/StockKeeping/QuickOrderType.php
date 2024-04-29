@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\StockKeeping;
 
-use App\Entity\Rack;
-use App\Form\PriceType;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Form\SaveableType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
@@ -13,7 +12,6 @@ use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;

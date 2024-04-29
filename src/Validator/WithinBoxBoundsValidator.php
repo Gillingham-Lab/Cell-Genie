@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-use App\Entity\Box;
 use App\Entity\BoxCoordinate;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Validator\Constraint\WithinBoxBounds;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Form\Cell;
 
-use App\Entity\Box;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
