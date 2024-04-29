@@ -20,7 +20,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
     public function load(ObjectManager $manager): void
     {
         /** @var User $scientist */
-        $scientist = $this->getReference(UserFixtures::SCIENTIST_USER_REFERENCE);
+        $scientist = $this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE);
 
         $condition1 = (new ExperimentalRunCondition())
             ->setName("Condition 1")

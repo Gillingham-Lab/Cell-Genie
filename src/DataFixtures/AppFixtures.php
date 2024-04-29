@@ -3,19 +3,28 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Entity\Box;
+use App\DataFixtures\Storage\RackFixtures;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
+use App\Entity\DoctrineEntity\Storage\Box;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\Morphology;
 use App\Entity\Organism;
-use App\Entity\Rack;
 use App\Entity\Tissue;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class AppFixtures extends Fixture
+class AppFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function getDependencies()
+    {
+        return [
+            RackFixtures::class,
+        ];
+    }
+
     public function load(ObjectManager $manager)
     {
         $morphology = (new Morphology())->setName("epithelial");
@@ -87,11 +96,7 @@ class AppFixtures extends Fixture
         $manager->persist($cell3);
         $manager->persist($cellGroup3);
 
-        $rack = (new Rack())
-            ->setMaxBoxes(9)
-            ->setName("Rack 1")
-        ;
-        $manager->persist($rack);
+        $rack = $this->getReference(RackFixtures::RACK_1);
 
         $box = (new Box())
             ->setCols(9)

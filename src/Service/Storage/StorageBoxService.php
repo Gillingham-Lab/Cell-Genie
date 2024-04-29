@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Service\Storage;
 
-use App\Entity\Box;
 use App\Entity\BoxMap;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
 use Doctrine\Common\Collections\Collection;

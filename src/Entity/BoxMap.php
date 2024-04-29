@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\Storage\Box;
+
 class BoxMap implements \JsonSerializable
 {
     private array $map;

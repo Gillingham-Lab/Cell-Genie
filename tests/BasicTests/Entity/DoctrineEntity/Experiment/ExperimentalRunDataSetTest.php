@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Entity\DoctrineEntity\Experiment;
+namespace App\Tests\BasicTests\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;

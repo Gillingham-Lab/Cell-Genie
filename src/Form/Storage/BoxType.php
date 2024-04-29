@@ -3,16 +3,14 @@ declare(strict_types=1);
 
 namespace App\Form\Storage;
 
-use App\Entity\Box;
-use App\Entity\Rack;
+use App\Entity\DoctrineEntity\Storage\Box;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
-use App\Repository\RackRepository;
+use App\Repository\Storage\RackRepository;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

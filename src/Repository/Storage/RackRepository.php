@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Storage;
 
-use App\Entity\Rack;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -86,7 +86,7 @@ SQL, $rsm);
             $entity = $res[0];
 
             $entity->setDepth($res["depth"]);
-            $entity->setUlidTree(explode('","', substr($res["path"], 2, strlen($res["path"])-4)));
+            $entity->setUlidTree(explode(',', substr($res["path"], 1, strlen($res["path"])-2)));
             $entity->setNameTree(explode('","', substr($res["sort_path"], 2, strlen($res["sort_path"])-4)));
         }
 

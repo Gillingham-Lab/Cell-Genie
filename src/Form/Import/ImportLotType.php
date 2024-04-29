@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Import;
 
-use App\Entity\Box;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Form\User\PrivacyAwareType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
@@ -12,7 +12,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;

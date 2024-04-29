@@ -36,7 +36,7 @@ class CompoundFixtures extends Fixture implements DependentFixtureInterface
 
     public function getPenicillins(): array
     {
-        $scientist = $this->getReference(UserFixtures::SCIENTIST_USER_REFERENCE);
+        $scientist = $this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE);
 
         return [
             (new Chemical())

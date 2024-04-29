@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Repository\StockKeeping;
 
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
-use App\Entity\Rack;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Genie\Enums\Availability;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\StockManagement;
 
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\Embeddable\Price;
-use App\Entity\Rack;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 

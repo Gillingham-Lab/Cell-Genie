@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Box;
 use App\Entity\BoxMap;
+use App\Entity\DoctrineEntity\Storage\Box;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Rack;
 use App\Form\Storage\BoxType;
 use App\Form\Storage\RackType;
 use App\Genie\Enums\PrivacyLevel;
-use App\Repository\BoxRepository;
 use App\Repository\Cell\CellAliquotRepository;
-use App\Repository\RackRepository;
 use App\Repository\StockKeeping\ConsumableLotRepository;
+use App\Repository\Storage\BoxRepository;
+use App\Repository\Storage\RackRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;

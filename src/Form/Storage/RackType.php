@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Form\Storage;
 
-use App\Entity\Rack;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Form\SaveableType;
 use App\Form\User\PrivacyAwareType;
 use App\Form\VisualisationType;
-use App\Repository\RackRepository;
+use App\Repository\Storage\RackRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;

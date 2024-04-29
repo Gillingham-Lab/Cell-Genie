@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-use App\Repository\RackRepository;
 use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\Collection;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
