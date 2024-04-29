@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait TimestampTrait
 {
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
     private ?DateTimeInterface $createdAt = null;
 
@@ -21,7 +21,7 @@ trait TimestampTrait
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
-    public function updateTimestamps()
+    public function updateTimestamps(): void
     {
         if ($this->getCreatedAt() === null) {
             $this->setCreatedAt(new DateTime("now"));

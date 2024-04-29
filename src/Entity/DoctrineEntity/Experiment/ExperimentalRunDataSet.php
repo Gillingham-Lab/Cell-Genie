@@ -8,6 +8,7 @@ use App\Repository\DoctrineEntity\Experiment\ExperimentalRunDataSetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunDataSetRepository::class)]
 #[ORM\Table("new_experimental_run_data_set")]
@@ -19,10 +20,18 @@ class ExperimentalRunDataSet
     #[ORM\JoinColumn(nullable: false)]
     private ?ExperimentalRun $experiment = null;
 
+    #[ORM\ManyToOne(targetEntity: ExperimentalRunCondition::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    private ?ExperimentalRunCondition $condition = null;
+
+    #[ORM\ManyToOne(targetEntity: ExperimentalRunCondition::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
+    private ?ExperimentalRunCondition $controlCondition = null;
+
     /**
      * @var Collection<string, ExperimentalDatum>
      */
-    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, indexBy: "name")]
+    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, cascade: ["persist", "remove"], indexBy: "name")]
     #[ORM\JoinTable("new_experimental_run_data_set_datum")]
     #[ORM\JoinColumn("data_set_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
@@ -41,6 +50,7 @@ class ExperimentalRunDataSet
     public function setExperiment(?ExperimentalRun $experiment): static
     {
         $this->experiment = $experiment;
+        $experiment?->addDataSet($this);
 
         return $this;
     }
@@ -53,19 +63,48 @@ class ExperimentalRunDataSet
         return $this->data;
     }
 
+    public function getDatum(string $name)
+    {
+        if (!$this->data->containsKey($name)) {
+            throw new InvalidArgumentException("Datum with key {$name} does not exist in this collection.");
+        }
+
+        return $this->data[$name];
+    }
+
     public function addData(ExperimentalDatum $data): static
     {
-        if (!$this->data->contains($data)) {
-            $this->data->add($data);
-        }
+        $this->data[$data->getName()] = $data;
 
         return $this;
     }
 
     public function removeData(ExperimentalDatum $data): static
     {
-        $this->data->removeElement($data);
+        $this->data->remove($data->getName());
 
+        return $this;
+    }
+
+    public function getCondition(): ?ExperimentalRunCondition
+    {
+        return $this->condition;
+    }
+
+    public function setCondition(?ExperimentalRunCondition $condition): static
+    {
+        $this->condition = $condition;
+        return $this;
+    }
+
+    public function getControlCondition(): ?ExperimentalRunCondition
+    {
+        return $this->controlCondition;
+    }
+
+    public function setControlCondition(?ExperimentalRunCondition $controlCondition): static
+    {
+        $this->controlCondition = $controlCondition;
         return $this;
     }
 }

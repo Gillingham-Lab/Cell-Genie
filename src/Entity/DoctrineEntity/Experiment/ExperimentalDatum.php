@@ -7,6 +7,7 @@ use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\DatumEnum;
 use App\Repository\DoctrineEntity\Experiment\ExperimentalDatumRepository;
 use App\Service\Doctrine\Type\Ulid;
+use App\Service\Doctrine\Type\UlidType;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,6 +18,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ExperimentalDatumRepository::class)]
 #[ORM\Table("new_experimental_datum")]
+#[ORM\Index(fields: ["referenceUuid"])]
 final class ExperimentalDatum
 {
     use IdTrait;
@@ -30,6 +32,9 @@ final class ExperimentalDatum
     /** @var ?resource */
     #[ORM\Column(type: Types::BINARY)]
     private $value = null;
+
+    #[ORM\Column(type: UlidType::NAME, nullable: true, insertable: false, updatable: false, columnDefinition: "uuid GENERATED ALWAYS AS (CASE WHEN type = 'entityReference' OR type = 'uuid' THEN CAST(ENCODE(substring(value from 0 for 17), 'hex') AS uuid) ELSE null END) STORED", generated: "ALWAYS")]
+    private ?Ulid $referenceUuid = null;
 
     public function getName(): ?string
     {
@@ -188,5 +193,10 @@ final class ExperimentalDatum
 
         $className = substr($value, 16);
         return [$id, $className];
+    }
+
+    public function getReferenceUuid(): ?Ulid
+    {
+        return $this->referenceUuid;
     }
 }
