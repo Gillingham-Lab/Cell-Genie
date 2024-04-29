@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Experiment;
+namespace App\Tests\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
@@ -12,7 +12,6 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use LogicException;
-use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
@@ -169,7 +168,7 @@ class ExperimentDatumTest extends KernelTestCase
         $this->assertSame($value->toHex(), $datum->getValue()->toHex());
     }
 
-    public function entityReferenceDatumProvider()
+    public function entityReferenceDatumProvider(): array
     {
         return [
             ["substance", DatumEnum::EntityReference, Antibody::class, ["number" => "AB001"]],
@@ -214,6 +213,16 @@ class ExperimentDatumTest extends KernelTestCase
 
         $this->assertSame((string)$id, (string)$datum->getValue()[0]);
         $this->assertSame($realClassName, $datum->getValue()[1]);
+
+        if ($id instanceof AbstractUid) {
+            $this->assertSame((string)$id, (string)$datum->getReferenceUuid());
+        } else {
+            // Some entities (cells ...) still have numeric ids
+            // thus, their ID does not match the ulid returned by getReferenceUuid
+            // We need to check that differently
+            $pseudoUuid = Uuid::fromBinary(pack("P", 0) . pack("P", $id));
+            $this->assertSame((string)$pseudoUuid, (string)$datum->getReferenceUuid());
+        }
     }
 
     public function testThrowsExceptionIfEntityDoesNotHaveGetIdMethod()

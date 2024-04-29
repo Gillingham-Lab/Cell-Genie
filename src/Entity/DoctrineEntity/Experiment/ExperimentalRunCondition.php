@@ -8,6 +8,8 @@ use App\Repository\DoctrineEntity\Experiment\ExperimentalRunConditionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunConditionRepository::class)]
 #[ORM\Table("new_experimental_run_condition")]
@@ -17,18 +19,20 @@ class ExperimentalRunCondition
 
     #[ORM\ManyToOne(inversedBy: 'conditions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank()]
     private ?ExperimentalRun $experimentalRun = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?bool $control = null;
+    private bool $control = false;
 
     /**
      * @var Collection<string, ExperimentalDatum>
      */
-    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, indexBy: "name")]
+    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, cascade: ["persist", "remove"], indexBy: "name")]
     #[ORM\JoinTable("new_experimental_run_condition_datum")]
     #[ORM\JoinColumn("condition_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
@@ -47,6 +51,7 @@ class ExperimentalRunCondition
     public function setExperimentalRun(?ExperimentalRun $experimentalRun): static
     {
         $this->experimentalRun = $experimentalRun;
+        $experimentalRun?->addCondition($this);
 
         return $this;
     }
@@ -83,18 +88,25 @@ class ExperimentalRunCondition
         return $this->data;
     }
 
+    public function getDatum(string $name)
+    {
+        if (!$this->data->containsKey($name)) {
+            throw new InvalidArgumentException("Datum with key {$name} does not exist in this collection.");
+        }
+
+        return $this->data[$name];
+    }
+
     public function addData(ExperimentalDatum $data): static
     {
-        if (!$this->data->contains($data)) {
-            $this->data->add($data);
-        }
+        $this->data[$data->getName()] = $data;
 
         return $this;
     }
 
     public function removeData(ExperimentalDatum $data): static
     {
-        $this->data->removeElement($data);
+        $this->data->remove($data->getName());
 
         return $this;
     }

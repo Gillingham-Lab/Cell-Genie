@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use InvalidArgumentException;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunRepository::class)]
 #[ORM\Table("new_experimental_run")]
@@ -34,16 +35,16 @@ class ExperimentalRun
     #[Gedmo\Versioned]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'experimentalRun', targetEntity: ExperimentalRunCondition::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'experimentalRun', targetEntity: ExperimentalRunCondition::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $conditions;
 
-    #[ORM\OneToMany(mappedBy: 'experiment', targetEntity: ExperimentalRunDataSet::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'experiment', targetEntity: ExperimentalRunDataSet::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $dataSets;
 
     /**
      * @var Collection<string, ExperimentalDatum>
      */
-    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, indexBy: "name")]
+    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, cascade: ["persist", "remove"], indexBy: "name")]
     #[ORM\JoinTable("new_experimental_run_datum")]
     #[ORM\JoinColumn("experiment_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
@@ -148,18 +149,25 @@ class ExperimentalRun
         return $this->data;
     }
 
+    public function getDatum(string $name)
+    {
+        if (!$this->data->containsKey($name)) {
+            throw new InvalidArgumentException("Datum with key {$name} does not exist in this collection.");
+        }
+
+        return $this->data[$name];
+    }
+
     public function addData(ExperimentalDatum $data): static
     {
-        if (!$this->data->contains($data)) {
-            $this->data->add($data);
-        }
+        $this->data[$data->getName()] = $data;
 
         return $this;
     }
 
     public function removeData(ExperimentalDatum $data): static
     {
-        $this->data->removeElement($data);
+        $this->data->remove($data->getName());
 
         return $this;
     }
