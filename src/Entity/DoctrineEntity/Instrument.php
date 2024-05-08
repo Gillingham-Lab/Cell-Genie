@@ -122,8 +122,7 @@ class Instrument implements PrivacyAwareInterface
     private ?float $defaultReservationLength = 1;
 
     #[ORM\Column(type: "text", nullable: true)]
-    #[Assert\NotBlank]
-    private ?string $citationText;
+    private ?string $citationText = null;
 
     #[ORM\ManyToMany(targetEntity: Consumable::class, inversedBy: 'instruments')]
     private Collection $consumables;

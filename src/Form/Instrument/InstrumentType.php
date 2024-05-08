@@ -50,7 +50,7 @@ class InstrumentType extends SaveableType
                 ])
                 ->add("instrumentNumber", TextType::class, [
                     "label" => "Instrument Number",
-                    "help" => "An internal number for referencing the instrument.",
+                    "help" => "An internal number for referencing the instrument. Please use the following naming scheme: XX-YY-ZZ, where X notes a instrument type (LC for HPLCs, PC for PCR), YY denotes the vendor (AG for Agilent, TF for Thermo Fisher) and ZZ an increasing number.",
                 ])
                 ->add("location", TextType::class, [
                     "label" => "Location",
@@ -59,7 +59,7 @@ class InstrumentType extends SaveableType
                 ])
                 ->add("registrationNumber", TextType::class, [
                     "label" => "Registration Number",
-                    "help" => "The internal registration number of the machine (if given)",
+                    "help" => "The internal registration number of the machine (the number on the university sticker if applicable)",
                     "required" => false,
                 ])
                 ->add("description", CKEditorType::class, [
