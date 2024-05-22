@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Valid;
 use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
 class CellularProteinCollectionType extends AbstractType
@@ -33,14 +34,16 @@ class CellularProteinCollectionType extends AbstractType
                 "help" => "Context or details about the protein."
             ])
             ->add("detection", type: CollectionJsType::class, options: [
+                "prototype" => true,
                 "allow_add" => true,
                 "allow_delete" => true,
                 "allow_move_up" => true,
                 "allow_move_down" => true,
+                "delete_empty" => true,
                 "by_reference" => false,
                 "entry_type" => DetectionEntryType::class,
                 "label" => "Detectable",
-                "help" => "Add experiments which have been confirmed that the protein is present."
+                "help" => "Add experiments which have been confirmed that the protein is present.",
             ])
         ;
     }

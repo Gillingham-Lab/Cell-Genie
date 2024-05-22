@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellProteinRepository::class)]
 class CellProtein
@@ -34,6 +35,10 @@ class CellProtein
     #[ORM\Column(type: Types::INTEGER, nullable: false, options: ["default" => 0])]
     private int $orderValue = 0;
 
+    #[Assert\Valid]
+    #[Assert\All([
+        new Assert\NotNull(),
+    ])]
     private ?Collection $detectionCollection = null;
 
     #[ORM\Column(length: 20, nullable: true, enumType: GeneRegulation::class)]

@@ -19,7 +19,7 @@ class DetectionEntry
 
     public function __toString(): string
     {
-        return $this->method;
+        return $this->method ?? "unknown";
     }
 
     public function __serialize(): array

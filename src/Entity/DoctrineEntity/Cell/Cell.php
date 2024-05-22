@@ -154,6 +154,7 @@ class Cell implements PrivacyAwareInterface
 
     #[ORM\OneToMany(mappedBy: 'cellLine', targetEntity: CellProtein::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\OrderBy(["orderValue" => "ASC"])]
+    #[Assert\Valid()]
     private Collection $cellProteins;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ["default" => true])]
