@@ -1,6 +1,6 @@
 <div{{ attributes }}>
     <div class="progress" role="progressbar" aria-valuenow="{{ current }}" aria-valuemax="{{ max }}">
-        <div class="progress-bar bg-primary" style="width: {{ current/max*100|round }}%;">
+        <div class="progress-bar bg-primary" style="width: {{ (max > 0 ? current/max*100 : 0)|round }}%;">
             {% if showNumbers %}{{ current }}/{{ max }}{% endif %}
         </div>
     </div>
