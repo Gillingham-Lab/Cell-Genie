@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\User;
 
 use App\Entity\Traits\Fields\IdTrait;
-use App\Entity\Traits\ShortNameTrait;
+use App\Entity\Traits\Fields\ShortNameTrait;
 use App\Repository\Substance\UserGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

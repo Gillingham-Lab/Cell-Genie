@@ -6,7 +6,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Fields\IdTrait;
-use App\Entity\Traits\NumberTrait;
+use App\Entity\Traits\Fields\NumberTrait;
 use App\Entity\Traits\Privacy\GroupOwnerTrait;
 use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Repository\Cell\CellCultureRepository;

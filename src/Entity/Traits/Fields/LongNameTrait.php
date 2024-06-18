@@ -12,17 +12,16 @@ trait LongNameTrait
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
     #[Gedmo\Versioned]
-    private ?string $longName = "";
+    private ?string $longName = null;
 
     public function getLongName(): ?string
     {
         return $this->longName;
     }
 
-    public function setLongName(?string $longName): self
+    public function setLongName(?string $longName): static
     {
         $this->longName = $longName;
-
         return $this;
     }
 }
