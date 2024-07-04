@@ -8,6 +8,7 @@ use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Fields\NameTrait;
 use App\Entity\Traits\Fields\NumberTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
+use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalDesignRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -32,6 +33,18 @@ final class ExperimentalDesign implements PrivacyAwareInterface
 
     #[ORM\OneToMany(mappedBy: "design", targetEntity: ExperimentalRun::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $runs;
+
+    #[ORM\Column(type: "string", length: 10, nullable: false, options: ["default" => "???"])]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 10,
+    )]
+    private ?string $number = null;
+
+    #[ORM\Column(type: "smallint", nullable: false, enumType: PrivacyLevel::class, options: ["default" => PrivacyLevel::Group])]
+    #[Assert\NotBlank]
+    private PrivacyLevel $privacyLevel = PrivacyLevel::Group;
 
     public function __construct()
     {

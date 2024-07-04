@@ -4,30 +4,35 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\LabJournalTrait;
+use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\TimestampTrait;
+use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalRunRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunRepository::class)]
 #[ORM\Table("new_experimental_run")]
 #[ORM\HasLifecycleCallbacks]
 #[Gedmo\Loggable()]
-class ExperimentalRun
+class ExperimentalRun implements PrivacyAwareInterface
 {
     use IdTrait;
     use TimestampTrait;
     use LabJournalTrait;
     use CommentTrait;
+    use PrivacyAwareTrait;
 
     #[ORM\ManyToOne()]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?ExperimentalDesign $design = null;
 
     #[ORM\ManyToOne]
@@ -52,6 +57,10 @@ class ExperimentalRun
     #[ORM\JoinColumn("experiment_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
     private Collection $data;
+
+    #[ORM\Column(type: "smallint", nullable: false, enumType: PrivacyLevel::class, options: ["default" => PrivacyLevel::Group])]
+    #[Assert\NotBlank]
+    private PrivacyLevel $privacyLevel = PrivacyLevel::Group;
 
     public function __construct()
     {
