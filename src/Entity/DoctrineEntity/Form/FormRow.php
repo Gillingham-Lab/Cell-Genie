@@ -5,14 +5,14 @@ namespace App\Entity\DoctrineEntity\Form;
 
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\FormRowTypeEnum;
+use App\Repository\Form\FormRowRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity()]
+#[ORM\Entity(repositoryClass: FormRowRepository::class)]
 #[Gedmo\Loggable()]
 final class FormRow
 {
