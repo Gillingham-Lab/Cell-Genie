@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FormRowRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, string $entityClass)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, FormRow::class);
     }
