@@ -1,0 +1,14 @@
+<li{{ attributes.defaults({
+    "class": "nav-item",
+    "role": "presentation",
+}) }}>
+    <a
+        class="nav-link {% if active %}active{% endif %}"
+        id="form-tab-navigation-tab-{{ key }}"
+        data-bs-toggle="tab"
+        href="#form-tab-navigation-tab-{{ key }}-content"
+        role="tab"
+        aria-controls="form-tab-navigation-tab-{{ key }}-content"
+        aria-selected="{{ active ? "true" : "false" }}"
+    >{{ label }}</a>
+</li>

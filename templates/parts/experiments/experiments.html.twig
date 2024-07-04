@@ -1,88 +1,24 @@
 {% extends 'homepage.html.twig' %}
-{% import 'layout.html.twig' as layout %}
 
 {% block title %}Gin :: Experiments{% endblock %}
 
-{% macro show_children(type) %}
-    {% if type.children|length > 0 %}
-        <div class="row">
-            {% for child_type in type.children %}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse(child_type.name, child_type.id, "sm") }}
+{% block body_main %}
+    <div class="row">
+        <div class="container container-fluid w-100 p-0 m-0">
+            <twig:PageHeader title="Cells" icon="cell" barcode />
 
+            <twig:Layout:Row>
+                <twig:Live:Experiment:ExperimentalDesignTable limit="{{ app.user ? app.user.settings.param("entityPageLimit", 30).asInt }}">
 
-                        {{ layout.card_body_collapse_start(child_type.id, "sm") }}
-                        {% if child_type.description %}
-                            <div class="card-body border-bottom">
-                                {{ child_type.description }}
-                            </div>
-                        {% endif %}
-
-                        {% if child_type.experiments|length > 0 %}
-                            <div class="card-body border-bottom">
-                                {{ _self.show_table(child_type) }}
-                            </div>
-                        {% endif %}
-
-                        <div class="card-body">
-                            {{ _self.show_children(child_type) }}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-            {% endfor %}
+                </twig:Live:Experiment:ExperimentalDesignTable>
+                {# <twig:Live:CellTable limit="{{ app.user ? app.user.settings.param("entityPageLimit", 30).asInt }}">
+                </twig:Live:CellTable> #}
+            </twig:Layout:Row>
         </div>
-    {% endif %}
-{% endmacro %}
+    </div>
+{% endblock %}
 
-{% macro show_table(type) %}
-    {% if type.experiments|length > 0 %}
-        <table class="table table-sm full table-borderless table-hover fancyTable">
-            <thead>
-                <tr>
-                    <th>
-                        <span class="btn-group mr-3" style="visibility: hidden;">
-                            <a class="btn btn-sm btn-primary"><span class="fa fa-eye"></span></a>
-                            <a class="btn btn-sm btn-primary"><span class="fa fa-plus"></span></a>
-                            <a class="btn btn-sm btn-primary"><span class="fa fa-download"></span></a>
-                        </span>
-                    </th>
-                    <th>
-                        Experiment
-                    </th>
-                    <th># Runs</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for experiment in type.experiments -%}
-                    <tr>
-                        <td>
-                            <span class="btn-group mr-3">
-                                <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="List runs"
-                                   href="{{ url("app_experiments_view", {"experiment": experiment.id}) }}"
-                                ><span class="fa fa-eye"></span></a>
-                                <a class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Create a new run"
-                                   href="{{ url("app_experiments_new_run", {"experiment": experiment.id}) }}"
-                                ><span class="fa fa-plus"></span></a>
-                                <a class="btn btn-sm btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Get raw data"
-                                   href="{{ url("api_runs", {"experiment": experiment.id}) }}"
-                                ><span class="fas fa-fw fa-download"></span></a>
-                            </span>
-                        </td>
-                        <td>
-                            {{ experiment.name }}
-                        </td>
-                        <td>
-                            {{ experiment.experimentalRuns|length }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-{% endmacro %}
-
+{#
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
@@ -129,3 +65,4 @@
         </div>
     </div>
 {% endblock %}
+#}

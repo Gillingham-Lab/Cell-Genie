@@ -2,20 +2,24 @@
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Experiment;
 use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
+use App\Form\Experiment\ExperimentalDesignType;
 use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
+use App\Genie\Enums\PrivacyLevel;
 use App\Repository\ExperimentalRunRepository;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\LotRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
+use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,7 +27,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ExperimentController extends AbstractController
 {
@@ -44,6 +50,37 @@ class ExperimentController extends AbstractController
         return $this->render('parts/experiments/experiments.html.twig', [
             'controller_name' => 'ExperimentController',
             'experiment_types' => $experimentTypes,
+        ]);
+    }
+
+    #[Route("/experiment/design/new", name: 'app_experiments_new')]
+    public function newExperiment(
+        #[CurrentUser]
+        User $user,
+    ): Response {
+        return $this->render("parts/forms/component_form.html.twig", [
+            "returnTo" => $this->generateUrl("app_experiments"),
+            "title" => "Create Experimental Design",
+            "subtitle" => "",
+            "formComponent" => ExperimentalDesignForm::class,
+            "formEntity" => (new ExperimentalDesign())
+                ->setOwner($user)
+                ->setGroup($user->getGroup())
+                ->setPrivacyLevel(PrivacyLevel::Group),
+        ]);
+    }
+
+    #[Route("/experiment/design/edit/{design}", name: "app_experiments_edit")]
+    #[IsGranted("edit", "design")]
+    public function editExperiment(
+        ExperimentalDesign $design,
+    ): Response {
+        return $this->render("parts/forms/component_form.html.twig", [
+            "returnTo" => $this->generateUrl("app_experiments"),
+            "title" => "Edit Experimental Design",
+            "subtitle" => "{$design->getNumber()} | {$design->getShortName()}",
+            "formComponent" => ExperimentalDesignForm::class,
+            "formEntity" => $design,
         ]);
     }
 

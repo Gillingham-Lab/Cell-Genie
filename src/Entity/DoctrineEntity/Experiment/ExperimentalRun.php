@@ -8,10 +8,9 @@ use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\LabJournalTrait;
 use App\Entity\Traits\TimestampTrait;
-use App\Repository\DoctrineEntity\Experiment\ExperimentalRunRepository;
+use App\Repository\Experiment\ExperimentalRunRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use InvalidArgumentException;
@@ -26,6 +25,10 @@ class ExperimentalRun
     use TimestampTrait;
     use LabJournalTrait;
     use CommentTrait;
+
+    #[ORM\ManyToOne()]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ExperimentalDesign $design = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -168,6 +171,30 @@ class ExperimentalRun
     public function removeData(ExperimentalDatum $data): static
     {
         $this->data->remove($data->getName());
+
+        return $this;
+    }
+
+    public function getDesign(): ?ExperimentalDesign
+    {
+        return $this->design;
+    }
+
+    public function setDesign(?ExperimentalDesign $design): static
+    {
+        if ($design === null) {
+            if ($this->design !== null) {
+                $this->design->removeRun($this);
+            }
+        } else {
+            if ($this->design !== null) {
+                $this->design->removeRun($this);
+            }
+
+            $design->addRun($this);
+        }
+
+        $this->design = $design;
 
         return $this;
     }

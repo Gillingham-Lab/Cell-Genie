@@ -41,10 +41,10 @@ class PrivacyAwareType extends AbstractType
                     assert($user instanceof User);
 
                     if (!$security->isGranted("ROLE_ADMIN")) {
-                        if ($user->getGroup()) {
+                        if ($user?->getGroup()) {
                             $qb = $qb->where("u.group = :group")
                                 ->setParameter("group", $user->getGroup()->getId(), "ulid");
-                        } else {
+                        } elseif ($user) {
                             $qb = $qb->where("u.id = :id")
                                 ->setParameter("id", $user->getId(), "ulid");
                         }
@@ -79,10 +79,10 @@ class PrivacyAwareType extends AbstractType
                     assert($user instanceof User);
 
                     if (!$security->isGranted("ROLE_ADMIN")) {
-                        if ($user->getGroup()) {
+                        if ($user?->getGroup()) {
                             $qb = $qb->where("g.id = :group")
                                 ->setParameter("group", $user->getGroup()->getId(), "ulid");
-                        } else {
+                        } elseif ($user) {
                             $qb = $qb->where("g.id iS NULL");
                         }
                     }

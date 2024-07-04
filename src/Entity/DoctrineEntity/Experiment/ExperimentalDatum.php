@@ -5,7 +5,7 @@ namespace App\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\DatumEnum;
-use App\Repository\DoctrineEntity\Experiment\ExperimentalDatumRepository;
+use App\Repository\Experiment\ExperimentalDatumRepository;
 use App\Service\Doctrine\Type\Ulid;
 use App\Service\Doctrine\Type\UlidType;
 use Doctrine\Common\Util\ClassUtils;
