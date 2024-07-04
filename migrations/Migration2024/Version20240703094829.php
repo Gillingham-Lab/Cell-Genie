@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DoctrineMigrations2024;
 
 use App\Doctrine\Migration\AddIdColumnTrait;
+use App\Genie\Enums\PrivacyLevel;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
@@ -33,9 +34,9 @@ final class Version20240703094829 extends AbstractMigration
         $experimentalDesignTable->addColumn("owner_id", Types::GUID)->setNotnull(false)->setComment("(DC2Type:ulid)");
         $experimentalDesignTable->addColumn("group_id", Types::GUID)->setNotnull(false)->setComment("(DC2Type:ulid)");
         $experimentalDesignTable->addColumn("short_name", Types::STRING)->setLength(50)->setNotnull(true);
-        $experimentalDesignTable->addColumn("long_name", Types::STRING)->setLength(250)->setNotnull(true);
+        $experimentalDesignTable->addColumn("long_name", Types::STRING)->setLength(255)->setNotnull(true);
         $experimentalDesignTable->addColumn("number", Types::STRING)->setLength(10)->setNotnull(true)->setDefault("???");
-        $experimentalDesignTable->addColumn("privacy_level", Types::SMALLINT)->setNotnull(true);
+        $experimentalDesignTable->addColumn("privacy_level", Types::SMALLINT)->setNotnull(true)->setDefault(PrivacyLevel::Group);
 
         $experimentalDesignTable->addUniqueIndex(["short_name"], "UNIQ_388F12B53EE4B093");
         $experimentalDesignTable->addIndex(["owner_id"], "IDX_388F12B57E3C61F9");
