@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Twig\Components\Live\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Form\Experiment\ExperimentalDesignType;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
+use App\Form\Experiment\ExperimentalRunDataType;
+use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -15,16 +17,27 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
-#[AsLiveComponent(template: "Components/Form/TabbedForm.html.twig")]
-class ExperimentalDesignForm extends AbstractController
+#[AsLiveComponent(template: "Components/Form/CompartmentForm.html.twig")]
+class ExperimentalRunDataForm extends AbstractController
 {
     use DefaultActionTrait;
     use ComponentWithFormTrait;
     use LiveCollectionTrait;
 
+    #[LiveProp()]
+    public ?ExperimentalRun $initialFormData = null;
+
     #[LiveProp]
-    public ?ExperimentalDesign $initialFormData = null;
+    public ?ExperimentalRun $run = null;
+
+    #[LiveProp]
+    public ?ExperimentalDesign $design = null;
+
+    ##[LiveProp(writable: true, fieldName: 'getFormName()', useSerializerForHydration: true)]
+    #public array $formValues = [];
 
     #[LiveProp]
     public string $submitButtonLabel = "Save and return";
@@ -41,35 +54,22 @@ class ExperimentalDesignForm extends AbstractController
     #[LiveAction]
     public function submit(): Response
     {
-        $success = $this->save();
-
-        if ($success) {
-            // ToDo: Jump to Experimental Design
-            return $this->redirectToRoute("app_experiments");
-        } else {
-            throw new \Exception("There was an error with this form.");
-        }
+        $formEntity = $this->save();
+        return $this->redirectToRoute("app_experiments");
     }
 
     #[LiveAction]
-    public function save(): ?ExperimentalDesign
+    public function save(): ?ExperimentalRun
     {
         $this->submitForm();
+        $formEntity = $this->getForm()->getData();
+        $formEntity->updateTimestamps();
 
         try {
-            $formEntity = $this->getForm()->getData();
-
-            if ($formEntity->getId() === null) {
-                $this->entityManager->persist($formEntity);
-            }
-
             $this->entityManager->flush();
-
-            $this->addFlash("success", "Saved");
-
             return $formEntity;
         } catch (\Exception $e) {
-            $this->addFlash("error", "Failed to save properly due to an error: {$e->getMessage()}.");
+            $this->addFlash("error", "Saving was not possible: {$e->getMessage()}");
             return null;
         }
     }
@@ -77,8 +77,11 @@ class ExperimentalDesignForm extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(
-            ExperimentalDesignType::class,
+            ExperimentalRunDataType::class,
             $this->initialFormData,
+            [
+                "design" => $this->design,
+            ]
         );
     }
 }

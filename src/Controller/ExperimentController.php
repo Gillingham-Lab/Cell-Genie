@@ -9,7 +9,6 @@ use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
-use App\Form\Experiment\ExperimentalDesignType;
 use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
 use App\Genie\Enums\PrivacyLevel;
@@ -20,6 +19,8 @@ use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
+use App\Twig\Components\Live\Experiment\ExperimentalRunDataForm;
+use App\Twig\Components\Live\Experiment\ExperimentalRunForm;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,6 +55,7 @@ class ExperimentController extends AbstractController
     }
 
     #[Route("/experiment/design/new", name: 'app_experiments_new')]
+    #[IsGranted("ROLE_USER")]
     public function newExperiment(
         #[CurrentUser]
         User $user,
@@ -81,6 +83,49 @@ class ExperimentController extends AbstractController
             "subtitle" => "{$design->getNumber()} | {$design->getShortName()}",
             "formComponent" => ExperimentalDesignForm::class,
             "formEntity" => $design,
+        ]);
+    }
+
+    #[Route("/experiment/design/newRun/{design}", name: "app_experiments_run_new")]
+    #[IsGranted("edit", "design")]
+    public function newExperimentalRun(
+        #[CurrentUser]
+        User $user,
+        ExperimentalDesign $design,
+    ): Response {
+        return $this->render("parts/forms/component_form.html.twig", [
+            "returnTo" => $this->generateUrl("app_experiments"),
+            "title" => "Add experimental Run",
+            "subtitle" => "{$design->getNumber()} | {$design->getShortName()}",
+            "formComponent" => ExperimentalRunForm::class,
+            "formEntity" => (new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun())
+                ->setOwner($user)
+                ->setGroup($user->getGroup())
+                ->setPrivacyLevel(PrivacyLevel::Group)
+                ->setScientist($user)
+                ->setDesign($design),
+            "formComponentData" => [
+                "design" => $design,
+            ],
+        ]);
+    }
+
+    #[Route("/experiment/design/addDataToRun/{run}", "app_experiments_run_addData")]
+    #[IsGranted("edit", "run")]
+    public function addDataToRun(
+        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
+    ): Response {
+        return $this->render("parts/forms/component_form.html.twig", [
+            "returnTo" => $this->generateUrl("app_experiments"),
+            "title" => "Add data",
+            "subtitle" => "{$run->getDesign()} - {$run->getName()}",
+            "no_structure" => true,
+            "formComponent" => ExperimentalRunDataForm::class,
+            "formEntity" => $run,
+            "formComponentData" => [
+                "run" => $run,
+                "design" => $run->getDesign(),
+            ],
         ]);
     }
 

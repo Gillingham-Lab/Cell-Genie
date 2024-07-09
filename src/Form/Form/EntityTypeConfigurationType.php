@@ -32,11 +32,11 @@ class EntityTypeConfigurationType extends AbstractType
                         "Protein" => Protein::class,
                     ],
                     "Lots" => [
-                        "Antibody Lot" => Antibody::class,
-                        "Chemical Lot" => Chemical::class,
-                        "Oligo Lot" => Oligo::class,
-                        "Plasmid Lot" => Plasmid::class,
-                        "Protein Lot" => Protein::class,
+                        "Antibody Lot" => Lot::class . "|" . Antibody::class,
+                        "Chemical Lot" => Lot::class . "|" . Chemical::class,
+                        "Oligo Lot" => Lot::class . "|" . Oligo::class,
+                        "Plasmid Lot" => Lot::class . "|" . Plasmid::class,
+                        "Protein Lot" => Lot::class . "|" . Protein::class,
                     ],
                     "Other" => [
                         "User" => User::class,

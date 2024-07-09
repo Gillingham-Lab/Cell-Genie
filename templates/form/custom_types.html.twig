@@ -49,3 +49,36 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{%- block experimental_conditions_widget -%}
+    {% form_theme form 'form/table_collection.html.twig' %}
+
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <td></td>
+            {% for child in form|last %}
+                {% if "hidden" in child.vars.block_prefixes %}
+                    <td></td>
+                {% elseif child|length > 0 %}
+                    <!-- Data -->
+                    {% for subChild in child %}
+                        <th>{{ subChild.vars.label }}</th>
+                    {% endfor %}
+                {% else %}
+                    <th>
+                        {{ child.vars.label }}
+                    </th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {{ block("form_widget") }}
+        </tbody>
+    </table>
+
+    {% if skip_add_button|default(false) is same as(false) and button_add is defined and not button_add.rendered %}
+        {{ form_widget(button_add) }}
+    {% endif %}
+{%- endblock -%}

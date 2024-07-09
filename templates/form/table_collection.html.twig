@@ -1,0 +1,16 @@
+{%- block live_collection_entry_row -%}
+    <tr>
+        <td>
+            {{ form_row(button_delete) }}
+        </td>
+        {% for child in form %}
+            {% if child.children|length > 0 %}
+                {% for subChild in child.children %}
+                    <td>{{ form_row(subChild, {label: false}) }}</td>
+                {% endfor %}
+            {% else %}
+                <td>{{ form_row(child, {label: false}) }}</td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+{%- endblock -%}

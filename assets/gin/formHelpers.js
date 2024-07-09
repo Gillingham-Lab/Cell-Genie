@@ -32,7 +32,6 @@ const formHelpers = (target = null) => {
     // Fancy
     let fancySelections = target.querySelectorAll("select.gin-fancy-select");
     fancySelections.forEach((elm) => {
-        elm.data
         let tomElm = new TomSelect(elm, {
             plugins: {
                 dropdown_input: true,

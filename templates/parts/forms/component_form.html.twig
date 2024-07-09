@@ -7,13 +7,26 @@
     <div class="container container-fluid w-100 p-0 m-0">
         <twig:PageHeader :title="title" :subTitle="subtitle" icon="experiment" :barcode="false"  />
 
+        {% set content %}
+            {% set component_data = {
+                initialFormData: formEntity,
+            } %}
+            {% if formComponentData is defined %}
+                {% set component_data = formComponentData|merge(component_data) %}
+            {% endif %}
+
+            {{ component(formComponent, component_data) }}
+        {% endset %}
+
+        {% if no_structure is defined %}
+            {{ content }}
+        {% else %}
         <twig:Layout:Row>
             <twig:Layout:Col type="inner" class="col-12">
-                {{ component(formComponent, {
-                    initialFormData: formEntity,
-                }) }}
+                {{ content }}
             </twig:Layout:Col>
         </twig:Layout:Row>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
