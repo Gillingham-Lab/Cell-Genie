@@ -88,7 +88,10 @@
                     <twig:Layout:NavDropdownItem label="Must-Order list" icon="consumable" iconStack="search" href="{{ url("app_consumables_to_order_critical") }}" />
                 </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavItem label="Experiments" icon="experiment" href="{{ url("app_experiments") }}" />
+                <twig:Layout:NavDropdown id="gin-navbar-experiments" label="Experiments" icon="experiment" href="{{ url("app_experiments") }}">
+                    <twig:Layout:NavDropdownItem label="Design new experiment" icon="experiment" iconStack="design" href="{{ url("app_experiments_new") }}" />
+                    {# <twig:Layout:NavDropdownDivider /> #}
+                </twig:Layout:NavDropdown>
 
                 <twig:Layout:NavDropdown id="gin-navbar-other" label="Other" icon="other">
                     <twig:Layout:NavDropdownItem label="Recipe" icon="recipe" href="{{ url("app_recipes") }}" />
