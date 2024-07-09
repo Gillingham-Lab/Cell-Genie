@@ -46,7 +46,6 @@ class ExperimentalRunForm extends AbstractController
         $success = $this->save();
 
         if ($success) {
-            // ToDo: Jump to Experimental Run (!)
             return $this->redirectToRoute("app_experiments_run_addData", ["run" => $success->getId()]);
         } else {
             throw new \Exception("There was an error with this form.");

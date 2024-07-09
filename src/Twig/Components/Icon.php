@@ -35,6 +35,8 @@ class Icon
             "cell" => "icon icon-mammalian-cell",
             "cellCulture", "experiment" => "fas fa-fw fa-flask",
 
+            "design" => "fa-fw fas fa-pen-fancy",
+
             "lot" => "icon icon-Lot",
 
             "view" => "far fa-fw fa-eye",

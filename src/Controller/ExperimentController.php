@@ -46,11 +46,17 @@ class ExperimentController extends AbstractController
     #[Route('/experiment', name: 'app_experiments')]
     public function index(): Response
     {
-        $experimentTypes = $this->experimentTypeRepository->findAllWithExperiments();
+        return $this->render('parts/experiments/design_list.html.twig', [
+        ]);
+    }
 
-        return $this->render('parts/experiments/experiments.html.twig', [
-            'controller_name' => 'ExperimentController',
-            'experiment_types' => $experimentTypes,
+    #[Route("/experiment/design/view/{design}", name: "app_experiments_view")]
+    #[IsGranted("view", "design")]
+    public function viewDesign(
+        ExperimentalDesign $design,
+    ): Response {
+        return $this->render("parts/experiments/design_view.html.twig", [
+            "design" => $design,
         ]);
     }
 
@@ -129,7 +135,7 @@ class ExperimentController extends AbstractController
         ]);
     }
 
-    #[Route("/experiment/view/{experiment}", name: "app_experiments_view")]
+    ##[Route("/experiment/view/{experiment}", name: "app_experiments_view")]
     public function viewExperiment(
         Experiment $experiment,
     ): Response {

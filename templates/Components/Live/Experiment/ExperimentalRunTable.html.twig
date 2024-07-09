@@ -1,0 +1,15 @@
+<div{{ attributes.defaults({class: "p-0 m-0"}) }}>
+    {% set block_content %}
+        <p class="text-muted">{{ computed.table.maxNumberOfRows }} runs have been found.</p>
+
+        <twig:Pagination :currentPage="page" :lastPage="computed.lastPageNumber" :limit="limit "/>
+
+        <twig:Table table="{{ computed.table }}" data-loading="addClass(opacity-50)" />
+    {% endset %}
+
+    <twig:Layout:Col class="p-0 m-0 mb-3">
+        <twig:ElementCard title="Runs">
+            {{ block_content }}
+        </twig:ElementCard>
+    </twig:Layout:Col>
+</div>

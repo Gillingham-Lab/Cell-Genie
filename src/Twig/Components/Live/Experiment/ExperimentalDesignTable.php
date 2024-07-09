@@ -12,8 +12,7 @@ use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
 use App\Repository\Experiment\ExperimentalDesignRepository;
-use App\Twig\Components\Trait\PaginatedTrait;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use App\Twig\Components\Trait\PaginatedRepositoryTrait;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -24,22 +23,13 @@ use UnhandledMatchError;
 class ExperimentalDesignTable extends AbstractController
 {
     use DefaultActionTrait;
-    use PaginatedTrait;
+    use PaginatedRepositoryTrait;
 
     public function __construct(
-       private ExperimentalDesignRepository $designRepository,
+       ExperimentalDesignRepository $repository,
     ) {
-
-    }
-
-    public function getNumberOfRows(): ?int
-    {
-        if ($this->numberOfRows === null) {
-            $numberOfRows = $this->getPaginatedResults()->count();
-            $this->setNumberOfRows($numberOfRows);
-        }
-
-        return $this->numberOfRows;
+        $this->setRepository($repository);
+        $this->setPaginatedOrderBy(["number" => "ASC"]);
     }
 
     /**
@@ -48,14 +38,14 @@ class ExperimentalDesignTable extends AbstractController
      */
     public function getTable(): array
     {
-        $paginatedDesigns = $this->getPaginatedResults(false);
+        $paginatedDesigns = $this->getPaginatedResults();
 
         $table = new Table(
             data: $paginatedDesigns,
             columns: [
                 new ToolboxColumn("", fn(ExperimentalDesign $design) => new Toolbox([
                     new ViewTool(
-                        path: $this->generateUrl("app_experiments"),
+                        path: $this->generateUrl("app_experiments_view", ["design" => $design->getId()]),
                         tooltip: "View experiment",
                     ),
                     new EditTool(
@@ -74,20 +64,5 @@ class ExperimentalDesignTable extends AbstractController
         );
 
         return $table->toArray();
-    }
-
-    private function getPaginatedResults(bool $omitAliquots = true): Paginator
-    {
-        try {
-            $paginatedDesigns = $this->designRepository->getPaginatedExperiments(
-                orderBy: ["number" => "ASC"],
-                page: $this->page,
-                limit: $this->limit,
-            );
-        } catch (UnhandledMatchError $e) {
-            throw new Exception("An error occured during the query.");
-        }
-
-        return $paginatedDesigns;
     }
 }
