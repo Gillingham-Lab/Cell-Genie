@@ -31,7 +31,7 @@ class ExperimentalRun implements PrivacyAwareInterface
     use CommentTrait;
     use PrivacyAwareTrait;
 
-    #[ORM\ManyToOne()]
+    #[ORM\ManyToOne(targetEntity: ExperimentalDesign::class, inversedBy: "runs")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?ExperimentalDesign $design = null;
 
@@ -44,9 +44,11 @@ class ExperimentalRun implements PrivacyAwareInterface
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'experimentalRun', targetEntity: ExperimentalRunCondition::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $conditions;
 
     #[ORM\OneToMany(mappedBy: 'experiment', targetEntity: ExperimentalRunDataSet::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[Assert\Valid]
     private Collection $dataSets;
 
     /**
@@ -56,11 +58,8 @@ class ExperimentalRun implements PrivacyAwareInterface
     #[ORM\JoinTable("new_experimental_run_datum")]
     #[ORM\JoinColumn("experiment_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
+    #[Assert\Valid]
     private Collection $data;
-
-    #[ORM\Column(type: "smallint", nullable: false, enumType: PrivacyLevel::class, options: ["default" => PrivacyLevel::Group])]
-    #[Assert\NotBlank]
-    private PrivacyLevel $privacyLevel = PrivacyLevel::Group;
 
     public function __construct()
     {
@@ -196,10 +195,7 @@ class ExperimentalRun implements PrivacyAwareInterface
                 $this->design->removeRun($this);
             }
         } else {
-            if ($this->design !== null) {
-                $this->design->removeRun($this);
-            }
-
+            $this->design?->removeRun($this);
             $design->addRun($this);
         }
 

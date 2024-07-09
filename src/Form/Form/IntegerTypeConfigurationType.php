@@ -21,10 +21,11 @@ class IntegerTypeConfigurationType extends AbstractType
                 "choices" => [
                     "8 Bit (char, -128 to 127)" => 1,
                     "16 Bit (short, -32 768 to 32 767)" => 2,
-                    "32 Bit (long, -2 147 483 648 to 2 147 483 647)" => 3,
-                    "64 Bit (long long, -9 223 372 036 854 775 808 to 9 223 372 036 854 775 807)" => 4,
+                    "32 Bit (long, -2 147 483 648 to 2 147 483 647)" => 4,
+                    "64 Bit (long long, -9 223 372 036 854 775 808 to 9 223 372 036 854 775 807)" => 8,
                 ],
                 "required" => true,
+                "empty_data" => 1,
             ])
             ->add("unsigned", CheckboxType::class, [
                 "label" => "Unsigned integer",

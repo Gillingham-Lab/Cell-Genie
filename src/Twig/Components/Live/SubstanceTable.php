@@ -356,7 +356,7 @@ final class SubstanceTable extends AbstractController
         #[LiveArg] ?string $shortName = null,
         #[LiveArg] ?string $anyName = null,
         #[LiveArg] ?string $casNumber = null,
-        #[LiveArg] ?string $hasEpitope = null,
+        #[LiveArg] ?string $hasAvailableLots = null,
     ): void {
         $this->search = [
             "shortName" => $shortName,

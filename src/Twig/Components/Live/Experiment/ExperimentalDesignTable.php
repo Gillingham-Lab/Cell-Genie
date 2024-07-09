@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\Table\Column;
 use App\Entity\Table\Table;
 use App\Entity\Table\ToolboxColumn;
+use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
@@ -61,6 +62,10 @@ class ExperimentalDesignTable extends AbstractController
                         path: $this->generateUrl("app_experiments_edit", ["design" => $design->getId()]),
                         tooltip: "Edit experiment",
                     ),
+                    new AddTool(
+                        path: $this->generateUrl("app_experiments_run_new", ["design" => $design->getId()]),
+                        tooltip: "Add experiment",
+                    )
                 ])),
                 new Column("Nr", fn(ExperimentalDesign $design) => $design->getNumber(), bold: true),
                 new Column("Name", fn(ExperimentalDesign $design) => $design->getShortName()),

@@ -67,13 +67,19 @@ class FormRowType extends AbstractType
         );
     }
 
-    private function modifyFormOnType(FormBuilderInterface $builder, FormInterface $form, ?array $formRow): void
+    private function modifyFormOnType(FormBuilderInterface $builder, FormInterface $form, null|array|FormRow $formRow): void
     {
         if ($formRow === null) {
             return;
         }
 
-        $formType = match ($formRow["type"]) {
+        if (is_array($formRow)) {
+            $type = $formRow["type"];
+        } else {
+            $type = $formRow->getType()->value;
+        }
+
+        $formType = match ($type) {
             FormRowTypeEnum::TextType->value => TextTypeConfigurationType::class,
             FormRowTypeEnum::TextAreaType->value => TextAreaTypeConfigurationType::class,
             FormRowTypeEnum::IntegerType->value => IntegerTypeConfigurationType::class,

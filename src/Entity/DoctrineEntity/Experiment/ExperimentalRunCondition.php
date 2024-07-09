@@ -27,12 +27,13 @@ class ExperimentalRunCondition
     private ?string $name = null;
 
     #[ORM\Column]
-    private bool $control = false;
+    #[Assert\NotNull]
+    private ?bool $control = false;
 
     /**
      * @var Collection<string, ExperimentalDatum>
      */
-    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, cascade: ["persist", "remove"], indexBy: "name")]
+    #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, cascade: ["persist", "remove"], orphanRemoval: true, indexBy: "name")]
     #[ORM\JoinTable("new_experimental_run_condition_datum")]
     #[ORM\JoinColumn("condition_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
@@ -73,7 +74,7 @@ class ExperimentalRunCondition
         return $this->control;
     }
 
-    public function setControl(bool $control): static
+    public function setControl(?bool $control): static
     {
         $this->control = $control;
 

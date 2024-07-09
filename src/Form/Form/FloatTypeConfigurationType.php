@@ -12,7 +12,7 @@ class FloatTypeConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add("datatype", ChoiceType::class, [
+            ->add("datatype_float", ChoiceType::class, [
                 "label" => "Float Size",
                 "help" => "Choose the float size. All types support negative values.",
                 "choices" => [
@@ -20,6 +20,7 @@ class FloatTypeConfigurationType extends AbstractType
                     "64 Bit (double, ca 15 significant digits)" => 2,
                 ],
                 "required" => true,
+                "empty_data" => 1,
             ])
         ;
     }

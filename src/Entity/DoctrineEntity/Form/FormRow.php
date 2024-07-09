@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FormRowRepository::class)]
 #[Gedmo\Loggable()]
-final class FormRow
+class FormRow
 {
     use IdTrait;
 
@@ -46,11 +46,8 @@ final class FormRow
     public function getFieldName(): ?string
     {
         $label = preg_replace("/[^[:alnum:]]/u", "", $this->getLabel());
-        $match = preg_match("/^[0-9]/");
 
-        if ($match === 0) {
-            $label = "_" . $label;
-        }
+        $label = "_" . $label;
 
         return $label;
     }

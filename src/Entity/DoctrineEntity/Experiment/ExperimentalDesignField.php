@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(ExperimentalDesignRepository::class)]
 #[ORM\Table("new_experimental_design_field")]
-final class ExperimentalDesignField
+class ExperimentalDesignField
 {
     use IdTrait;
 

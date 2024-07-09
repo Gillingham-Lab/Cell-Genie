@@ -19,7 +19,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: ExperimentalDatumRepository::class)]
 #[ORM\Table("new_experimental_datum")]
 #[ORM\Index(fields: ["referenceUuid"])]
-final class ExperimentalDatum
+class ExperimentalDatum
 {
     use IdTrait;
 
@@ -67,7 +67,9 @@ final class ExperimentalDatum
 
     public function setValue(mixed $value): self
     {
-        $this->value = $this->encode($value);
+        if ($value !== null) {
+            $this->value = $this->encode($value);
+        }
 
         return $this;
     }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace App\Twig\Components\Live\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Form\Experiment\ExperimentalDesignType;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
+use App\Form\Experiment\ExperimentalRunType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -14,20 +15,21 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\LiveComponent\LiveCollectionTrait;
 
 #[AsLiveComponent(template: "Components/Form/TabbedForm.html.twig")]
-class ExperimentalDesignForm extends AbstractController
+class ExperimentalRunForm extends AbstractController
 {
     use DefaultActionTrait;
     use ComponentWithFormTrait;
-    use LiveCollectionTrait;
 
     #[LiveProp]
-    public ?ExperimentalDesign $initialFormData = null;
+    public ?ExperimentalRun $initialFormData = null;
 
     #[LiveProp]
-    public string $submitButtonLabel = "Save and return";
+    public ?ExperimentalDesign $design = null;
+
+    #[LiveProp]
+    public string $submitButtonLabel = "Save and continue";
 
     #[LiveProp]
     public string $saveButtonLabel = "Save";
@@ -44,15 +46,15 @@ class ExperimentalDesignForm extends AbstractController
         $success = $this->save();
 
         if ($success) {
-            // ToDo: Jump to Experimental Design
-            return $this->redirectToRoute("app_experiments");
+            // ToDo: Jump to Experimental Run (!)
+            return $this->redirectToRoute("app_experiments_run_addData", ["run" => $success->getId()]);
         } else {
             throw new \Exception("There was an error with this form.");
         }
     }
 
     #[LiveAction]
-    public function save(): ?ExperimentalDesign
+    public function save(): ?ExperimentalRun
     {
         $this->submitForm();
 
@@ -60,6 +62,10 @@ class ExperimentalDesignForm extends AbstractController
             $formEntity = $this->getForm()->getData();
 
             if ($formEntity->getId() === null) {
+                if ($this->design) {
+                    $formEntity->setDesign($this->design);
+                }
+
                 $this->entityManager->persist($formEntity);
             }
 
@@ -77,7 +83,7 @@ class ExperimentalDesignForm extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(
-            ExperimentalDesignType::class,
+            ExperimentalRunType::class,
             $this->initialFormData,
         );
     }

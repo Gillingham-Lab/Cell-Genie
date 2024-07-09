@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ExperimentalDesignRepository::class)]
 #[ORM\Table("new_experimental_design")]
 #[Gedmo\Loggable()]
-final class ExperimentalDesign implements PrivacyAwareInterface
+class ExperimentalDesign implements PrivacyAwareInterface
 {
     use IdTrait;
     use NameTrait;
@@ -41,10 +41,6 @@ final class ExperimentalDesign implements PrivacyAwareInterface
         max: 10,
     )]
     private ?string $number = null;
-
-    #[ORM\Column(type: "smallint", nullable: false, enumType: PrivacyLevel::class, options: ["default" => PrivacyLevel::Group])]
-    #[Assert\NotBlank]
-    private PrivacyLevel $privacyLevel = PrivacyLevel::Group;
 
     public function __construct()
     {
