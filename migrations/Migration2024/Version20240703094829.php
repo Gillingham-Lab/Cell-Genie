@@ -36,7 +36,7 @@ final class Version20240703094829 extends AbstractMigration
         $experimentalDesignTable->addColumn("short_name", Types::STRING)->setLength(50)->setNotnull(true);
         $experimentalDesignTable->addColumn("long_name", Types::STRING)->setLength(255)->setNotnull(true);
         $experimentalDesignTable->addColumn("number", Types::STRING)->setLength(10)->setNotnull(true)->setDefault("???");
-        $experimentalDesignTable->addColumn("privacy_level", Types::SMALLINT)->setNotnull(true)->setDefault(PrivacyLevel::Group);
+        $experimentalDesignTable->addColumn("privacy_level", Types::SMALLINT)->setNotnull(true)->setDefault(PrivacyLevel::Public->value);
 
         $experimentalDesignTable->addUniqueIndex(["short_name"], "UNIQ_388F12B53EE4B093");
         $experimentalDesignTable->addIndex(["owner_id"], "IDX_388F12B57E3C61F9");

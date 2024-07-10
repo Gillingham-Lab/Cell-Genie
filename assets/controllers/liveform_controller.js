@@ -22,16 +22,29 @@ export default class extends Controller {
 
                 localStorage.removeItem("_tmp_active_tab");
             }
+
+            // Restore focused element
+            if (localStorage.getItem("_tmp_focused_element")) {
+                let focusedElement = document.getElementById(localStorage.getItem("_tmp_focused_element"));
+                if (focusedElement) {
+                    focusedElement.focus();
+                }
+            }
         });
 
         this.component.on('render:started', () => {
+            // Save the active tab
             let nav_items = c.element.querySelectorAll("#form-tab-navigation .nav-link");
-
             nav_items.forEach((elm) => {
                 if (elm.classList.contains("active")) {
                     localStorage.setItem("_tmp_active_tab", elm.id);
                 }
-            })
+            });
+
+            // Save the focused element
+            if (document.activeElement) {
+                localStorage.setItem("_tmp_focused_element", document.activeElement.id);
+            }
         });
     }
 }

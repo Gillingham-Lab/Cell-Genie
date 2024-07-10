@@ -6,6 +6,7 @@ namespace App\Form\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Form\Form\FormRowType;
 use App\Genie\Enums\ExperimentalFieldRole;
+use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -26,7 +27,11 @@ class ExperimentalDesignFieldType extends AbstractType
     {
         $builder
             ->add("role", EnumType::class, [
-                "class" => ExperimentalFieldRole::class
+                "class" => ExperimentalFieldRole::class,
+            ])
+            ->add("variableRole", EnumType::class, [
+                "class" => ExperimentalFieldVariableRoleEnum::class,
+                "empty_data" => ExperimentalFieldVariableRoleEnum::Group,
             ])
             ->add("weight", IntegerType::class, [
                 "required" => true,

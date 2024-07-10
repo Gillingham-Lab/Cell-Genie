@@ -35,10 +35,18 @@ trait PaginatedRepositoryTrait
         $this->repository = $repository;
     }
 
-    public function getNumberOfRows(): ?int
+    public function getNumberOfRows(... $args): ?int
     {
         if ($this->numberOfRows === null) {
-            $numberOfRows = $this->getPaginatedResults()->count();
+            $arguments = [
+                "orderBy" => $this->paginatedOrderBy,
+                "searchFields" => $this->paginatedSearchFields,
+                "page" => $this->page,
+                "limit" => $this->limit,
+                ... $args,
+            ];
+
+            $numberOfRows = $this->getPaginatedResults(... $arguments)->count();
             $this->setNumberOfRows($numberOfRows);
         }
 

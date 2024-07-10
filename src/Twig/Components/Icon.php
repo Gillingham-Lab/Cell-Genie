@@ -67,6 +67,8 @@ class Icon
             "tag", "annotation" => "fa-fw fas fa-tag",
             "tags", "annotations" => "fa-fw fas fa-tags",
 
+            "data" => "fa-fw fas fa-list",
+
             "up" => "fas fa-fw fa-arrow-up",
             "down" => "fas fa-fw fa-arrow-down",
 

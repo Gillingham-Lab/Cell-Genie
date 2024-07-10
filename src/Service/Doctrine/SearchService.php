@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service\Doctrine;
 
 use App\Service\Doctrine\Type\Ulid;
+use Closure;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -93,5 +94,46 @@ class SearchService
         } else {
             return $qb->expr()->eq($field, $value === "true" ? "true" : "false");
         }
+    }
+
+    public function addExpressionsToSearchQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
+    {
+        return match (count($expressions)) {
+            0 => $queryBuilder,
+            1 => $queryBuilder->andWhere($expressions[0]),
+            default => $queryBuilder->andWhere($queryBuilder->expr()->andX(...$expressions)),
+        };
+    }
+
+    public function addExpressionsToHavingQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
+    {
+        return match(count($expressions)) {
+            0 => $queryBuilder,
+            1 => $queryBuilder->andHaving($expressions[0]),
+            default => $queryBuilder->andHaving($queryBuilder->expr()->andX(...$expressions))
+        };
+    }
+
+    /**
+     * @param array $searchFields
+     * @param Closure $match
+     * @return array
+     */
+    public function createExpressions(array $searchFields, Closure $match): array
+    {
+        $expressions = [];
+        foreach ($searchFields as $searchField => $searchValue) {
+            if ($searchValue === null or (is_string($searchValue) and strlen($searchValue) === 0)) {
+                continue;
+            }
+
+            $expression = $match($searchField ,$searchValue);
+
+            if ($expression !== null) {
+                $expressions[] = $expression;
+            }
+        }
+
+        return $expressions;
     }
 }

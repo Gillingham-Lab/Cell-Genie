@@ -6,13 +6,14 @@ namespace App\Entity\DoctrineEntity\Experiment;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\ExperimentalFieldRole;
-use App\Repository\Experiment\ExperimentalDesignRepository;
+use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
+use App\Repository\Experiment\ExperimentalDesignFieldRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(ExperimentalDesignRepository::class)]
+#[ORM\Entity(ExperimentalDesignFieldRepository::class)]
 #[ORM\Table("new_experimental_design_field")]
 class ExperimentalDesignField
 {
@@ -22,13 +23,17 @@ class ExperimentalDesignField
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?ExperimentalDesign $design = null;
 
-    #[ORM\OneToOne(targetEntity: FormRow::class, cascade: ["persist", "remove"])]
+    #[ORM\OneToOne(targetEntity: FormRow::class, cascade: ["persist", "remove"], fetch: "EAGER")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\Valid]
     private ?FormRow $formRow = null;
 
     #[ORM\Column(enumType: ExperimentalFieldRole::class)]
     private ?ExperimentalFieldRole $role = ExperimentalFieldRole::Top;
+
+    #[ORM\Column(nullable: true, enumType: ExperimentalFieldVariableRoleEnum::class)]
+    #[Assert\NotBlank]
+    private ?ExperimentalFieldVariableRoleEnum $variableRole = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true, options: ["default" => 0])]
     #[Assert\Range(min: -32768, max: 32767)]
@@ -85,6 +90,17 @@ class ExperimentalDesignField
     public function setWeight(?int $weight): self
     {
         $this->weight = $weight;
+        return $this;
+    }
+
+    public function getVariableRole(): ?ExperimentalFieldVariableRoleEnum
+    {
+        return $this->variableRole;
+    }
+
+    public function setVariableRole(?ExperimentalFieldVariableRoleEnum $variableRole): static
+    {
+        $this->variableRole = $variableRole;
         return $this;
     }
 }
