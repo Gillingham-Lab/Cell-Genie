@@ -20,12 +20,12 @@ final class Version20240704074151 extends AbstractMigration
         $runTable = $schema->getTable('new_experimental_run');
         $runTable->addColumn("owner_id", Types::GUID)->setNotnull(false)->setComment("(DC2Type:ulid)");
         $runTable->addColumn("group_id", Types::GUID)->setNotnull(false)->setComment("(DC2Type:ulid)");
-        $runTable->addColumn("privacy_level", Types::SMALLINT)->setNotnull(true)->setDefault(PrivacyLevel::Group->value);
+        $runTable->addColumn("privacy_level", Types::SMALLINT)->setNotnull(true)->setDefault(PrivacyLevel::Public->value);
         $runTable->addColumn("design_id", Types::GUID)->setNotnull(false)->setComment("(DC2Type:ulid)");
 
         $runTable->addForeignKeyConstraint("new_experimental_design", ["design_id"], ["id"], ["onDelete" => "CASCADE"], "FK_14F2646AE41DC9B2");
-        $runTable->addForeignKeyConstraint("user_accounts", ["owner_id"], ["id"], ["onDelete" => "CASCADE"], "FK_14F2646A7E3C61F9");
-        $runTable->addForeignKeyConstraint("user_group", ["group_id"], ["id"], ["onDelete" => "CASCADE"], "FK_14F2646AFE54D947");
+        $runTable->addForeignKeyConstraint("user_accounts", ["owner_id"], ["id"], ["onDelete" => "SET NULL"], "FK_14F2646A7E3C61F9");
+        $runTable->addForeignKeyConstraint("user_group", ["group_id"], ["id"], ["onDelete" => "SET NULL"], "FK_14F2646AFE54D947");
 
         $runTable->addIndex(["design_id"], "IDX_14F2646AE41DC9B2");
         $runTable->addIndex(["owner_id"], "IDX_14F2646A7E3C61F9");

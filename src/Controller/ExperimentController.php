@@ -9,6 +9,9 @@ use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
+use App\Entity\Toolbox\Tool;
+use App\Entity\Toolbox\Toolbox;
+use App\Entity\Toolbox\ViewTool;
 use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
 use App\Genie\Enums\PrivacyLevel;
@@ -99,17 +102,50 @@ class ExperimentController extends AbstractController
         User $user,
         ExperimentalDesign $design,
     ): Response {
-        return $this->render("parts/forms/component_form.html.twig", [
-            "returnTo" => $this->generateUrl("app_experiments"),
-            "title" => "Add experimental Run",
-            "subtitle" => "{$design->getNumber()} | {$design->getShortName()}",
-            "formComponent" => ExperimentalRunForm::class,
-            "formEntity" => (new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun())
+        return $this->newOrEditExperimentalRun(
+            (new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun())
                 ->setOwner($user)
                 ->setGroup($user->getGroup())
                 ->setPrivacyLevel(PrivacyLevel::Group)
                 ->setScientist($user)
                 ->setDesign($design),
+            $design,
+            title: "Add experimental run",
+        );
+    }
+
+    #[Route("/experiment/design/editRun/{run}", name: "app_experiments_run_edit")]
+    #[IsGranted("edit", "run")]
+    public function editExperimentalRun(
+        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run
+    ): Response {
+        return $this->newOrEditExperimentalRun(
+            $run,
+            $run->getDesign(),
+            title: "Edit experimental run",
+            onSubmitRedirectTo: $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()])
+        );
+    }
+
+    private function newOrEditExperimentalRun(
+        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
+        ExperimentalDesign $design,
+        string $title,
+        ?string $onSubmitRedirectTo = null,
+    ): Response {
+        return $this->render("parts/forms/component_form.html.twig", [
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_experiments_view", ["design" => $design->getId()]),
+                    icon: "up",
+                    tooltip: "Return to the run",
+                )
+            ]),
+            "onSubmitRedirectTo" => $onSubmitRedirectTo,
+            "title" => $title,
+            "subtitle" => "{$design->getNumber()} | {$design->getShortName()}",
+            "formComponent" => ExperimentalRunForm::class,
+            "formEntity" => $run,
             "formComponentData" => [
                 "design" => $design,
             ],
@@ -122,7 +158,13 @@ class ExperimentController extends AbstractController
         \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
     ): Response {
         return $this->render("parts/forms/component_form.html.twig", [
-            "returnTo" => $this->generateUrl("app_experiments"),
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()]),
+                    icon: "up",
+                    tooltip: "Return to the run",
+                )
+            ]),
             "title" => "Add data",
             "subtitle" => "{$run->getDesign()} - {$run->getName()}",
             "no_structure" => true,

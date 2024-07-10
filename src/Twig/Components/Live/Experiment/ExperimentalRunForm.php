@@ -32,6 +32,9 @@ class ExperimentalRunForm extends AbstractController
     public string $submitButtonLabel = "Save and continue";
 
     #[LiveProp]
+    public ?string $onSubmitRedirectTo = null;
+
+    #[LiveProp]
     public string $saveButtonLabel = "Save";
 
     public function __construct(
@@ -46,7 +49,11 @@ class ExperimentalRunForm extends AbstractController
         $success = $this->save();
 
         if ($success) {
-            return $this->redirectToRoute("app_experiments_run_addData", ["run" => $success->getId()]);
+            if ($this->onSubmitRedirectTo) {
+                return $this->redirect($this->onSubmitRedirectTo);
+            } else {
+                return $this->redirectToRoute("app_experiments_run_addData", ["run" => $success->getId()]);
+            }
         } else {
             throw new \Exception("There was an error with this form.");
         }

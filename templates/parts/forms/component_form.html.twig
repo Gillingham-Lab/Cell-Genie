@@ -7,10 +7,22 @@
     <div class="container container-fluid w-100 p-0 m-0">
         <twig:PageHeader :title="title" :subTitle="subtitle" icon="experiment" :barcode="false"  />
 
+        {% if toolbox is defined %}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox" />
+                </twig:Layout:Col>
+            </twig:Layout:Row>
+        {% endif %}
+
         {% set content %}
             {% set component_data = {
                 initialFormData: formEntity,
+                key: formEntity.id,
             } %}
+            {% if onSubmitRedirectTo is defined and onSubmitRedirectTo is not same as(null) %}
+                {% set component_data = component_data|merge({"onSubmitRedirectTo": onSubmitRedirectTo}) %}
+            {% endif %}
             {% if formComponentData is defined %}
                 {% set component_data = formComponentData|merge(component_data) %}
             {% endif %}

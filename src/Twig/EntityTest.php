@@ -48,6 +48,9 @@ class EntityTest extends AbstractExtension
 
             new TwigTest("box", fn(?object $box) => $box instanceof Box),
             new TwigTest("rack", fn(?object $rack) => $rack instanceof Rack),
+
+            new TwigTest("float", fn(mixed $x) => is_float($x)),
+            new TwigTest("int", fn(mixed $x) => is_int($x)),
         ];
     }
 }

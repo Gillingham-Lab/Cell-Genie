@@ -1,0 +1,15 @@
+<div{{ attributes.defaults({}) }}>
+    {% if this.isComponent %}
+        {% if datum is substanceChemical %}
+                <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
+        {% endif %}
+
+        <twig:EntityReference entity="{{ datum }}"/>
+    {% else %}
+        {% if datum is float %}
+            {{ datum|roundScientifically }}
+        {% else %}
+            {{ datum }}
+        {% endif %}
+    {% endif %}
+</div>

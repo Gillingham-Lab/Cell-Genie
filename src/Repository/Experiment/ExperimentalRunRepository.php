@@ -5,6 +5,7 @@ namespace App\Repository\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\PaginatedRepositoryTrait;
+use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -22,8 +23,10 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
 {
     use PaginatedRepositoryTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SearchService $searchService,
+    ) {
         parent::__construct($registry, ExperimentalRun::class);
     }
 
@@ -69,6 +72,14 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
 
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
+        $searchService = $this->searchService;
+
+        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+            "design" => $searchService->searchWithUlid($queryBuilder, "exr.design", $searchValue),
+        });
+
+        $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
+
         return $queryBuilder;
     }
 }

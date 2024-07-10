@@ -65,25 +65,25 @@
                 {% endfor %}
             {% endif %}
         </twig:Layout:Row>
-    </div>
 
-    <twig:Layout:Row cols="1">
-        <twig:Layout:Col type="inner">
-            {% block content %}
-                <div>
+        <twig:Layout:Row cols="1">
+            <twig:Layout:Col type="inner">
+                {% block content %}
                     <div>
-                        {{ form_rest(form) }}
-                    </div>
+                        <div>
+                            {{ form_rest(form) }}
+                        </div>
 
-                    <div>
-                        <button class="btn btn-primary">{{ submitButtonLabel }}</button>
-                        {# <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="remember">Remember</button>  #}
-                        <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="save">{{ saveButtonLabel }}</button>
+                        <div>
+                            <button class="btn btn-primary">{{ submitButtonLabel }}</button>
+                            {# <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="remember">Remember</button>  #}
+                            <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="save">{{ saveButtonLabel }}</button>
+                        </div>
                     </div>
-                </div>
-            {% endblock %}
-        </twig:Layout:Col>
-    </twig:Layout:Row>
+                {% endblock %}
+            </twig:Layout:Col>
+        </twig:Layout:Row>
 
     {{ form_end(form) }}
+    </div>
 </div>
