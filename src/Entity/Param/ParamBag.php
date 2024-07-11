@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace App\Entity\Param;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 class ParamBag implements \ArrayAccess
 {
     /** @var Param[] */
+    #[Ignore]
     public array $paramArray = [];
 
     public function getParam($offset, string|float|int|bool $default = null): ?Param
