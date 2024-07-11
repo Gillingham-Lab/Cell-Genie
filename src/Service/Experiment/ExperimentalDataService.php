@@ -169,6 +169,7 @@ class ExperimentalDataService
 
         $nameParamName = "name_".$fieldRow->getFormRow()->getFieldName();
         $referencesParamName = "references_".$fieldRow->getFormRow()->getFieldName();
+        $abbreviation_suffix = $fieldRow->getFormRow()->getFieldName();
 
         if ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::EntityType) {
             $queryBuilder->setParameter($nameParamName, $searchField);
@@ -177,11 +178,11 @@ class ExperimentalDataService
             return $queryBuilder->expr()->in(
                 "exrc.id",
                 $this->entityManager->createQueryBuilder()
-                    ->from(ExperimentalRunCondition::class, "nerc2")
-                    ->select("nerc2.id")
-                    ->leftJoin("nerc2.data", "ned2")
-                    ->where("ned2.name = :$nameParamName")
-                    ->andWhere("ned2.referenceUuid IN (:$referencesParamName)")
+                    ->from(ExperimentalRunCondition::class, "nerc2$abbreviation_suffix")
+                    ->select("nerc2$abbreviation_suffix.id")
+                    ->leftJoin("nerc2$abbreviation_suffix.data", "ned2$abbreviation_suffix")
+                    ->where("ned2$abbreviation_suffix.name = :$nameParamName")
+                    ->andWhere("ned2$abbreviation_suffix.referenceUuid IN (:$referencesParamName)")
                     ->getDQL()
             );
         } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::TextType) {
