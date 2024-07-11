@@ -5,9 +5,17 @@
 
     <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
         {% for child in form.children %}
-            <twig:Layout:Col type="none">
-                {{ form_row(child) }}
-            </twig:Layout:Col>
+            {% if child|length > 0 %}
+                {% for subChild in child %}
+                    <twig:Layout:Col type="none">
+                        {{ form_row(subChild) }}
+                    </twig:Layout:Col>
+                {% endfor %}
+            {% else %}
+                <twig:Layout:Col type="none">
+                    {{ form_row(child) }}
+                </twig:Layout:Col>
+            {% endif %}
         {% endfor %}
     </twig:Layout:Row>
 

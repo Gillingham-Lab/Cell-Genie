@@ -7,8 +7,10 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
+use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
+use App\Genie\Enums\FormRowTypeEnum;
 use App\Repository\Experiment\ExperimentalDesignRepository;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\PaginatedRepositoryTrait;
@@ -17,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Collection\CollectionInterface;
@@ -58,7 +61,7 @@ class ExperimentalDataService
         $queryBuilder = $this->getBaseQuery($design);
 
         if (!empty($searchFields)) {
-            $queryBuilder = $this->addSearchFields($queryBuilder, $searchFields);
+            $queryBuilder = $this->addSearchFields($queryBuilder, $searchFields, $design);
         }
 
         return $queryBuilder;
@@ -142,16 +145,61 @@ class ExperimentalDataService
         return (new Paginator($this->getResults($orderBy, $searchFields, $design)))->count();
     }
 
-    private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields = []): QueryBuilder
+    private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields = [], ExperimentalDesign $design = null): QueryBuilder
     {
         $searchService = $this->searchService;
 
         $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "design" => $searchService->searchWithUlid($queryBuilder, "exr.design", $searchValue->getId()->toRfc4122()),
+            default => $this->addVariableSearchField($queryBuilder, $searchField, $searchValue, $design)
         });
+
+        // Remove null elements
+        $expressions = array_filter($expressions, fn($x) => $x !== null);
 
         $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
 
         return $queryBuilder;
+    }
+
+    private function addVariableSearchField(QueryBuilder $queryBuilder, string $searchField, mixed $searchValue, ExperimentalDesign $design): ?Func
+    {
+        /** @var ExperimentalDesignField $fieldRow */
+        $fieldRow = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $searchField)->first();
+
+        $nameParamName = "name_".$fieldRow->getFormRow()->getFieldName();
+        $referencesParamName = "references_".$fieldRow->getFormRow()->getFieldName();
+
+        if ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::EntityType) {
+            $queryBuilder->setParameter($nameParamName, $searchField);
+            $queryBuilder->setParameter($referencesParamName, $searchValue);
+
+            return $queryBuilder->expr()->in(
+                "exrc.id",
+                $this->entityManager->createQueryBuilder()
+                    ->from(ExperimentalRunCondition::class, "nerc2")
+                    ->select("nerc2.id")
+                    ->leftJoin("nerc2.data", "ned2")
+                    ->where("ned2.name = :$nameParamName")
+                    ->andWhere("ned2.referenceUuid IN (:$referencesParamName)")
+                    ->getDQL()
+            );
+        } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::TextType) {
+            $queryBuilder->setParameter($nameParamName, $searchField);
+            $queryBuilder->setParameter($referencesParamName, $this->searchService->parse($searchValue));
+
+            return $queryBuilder->expr()->in(
+                "exrc.id",
+                $this->entityManager->createQueryBuilder()
+                    ->from(ExperimentalRunCondition::class, "nerc2")
+                    ->select("nerc2.id")
+                    ->leftJoin("nerc2.data", "ned2")
+                    ->where("ned2.name = :$nameParamName")
+                    ->andWhere("lower(convert_from(ned2.value, 'UTF-8')) LIKE lower(:$referencesParamName)")
+                    ->getDQL()
+            );
+        }
+
+        return null;
     }
 }

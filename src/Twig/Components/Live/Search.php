@@ -7,6 +7,8 @@ use App\Entity\DoctrineEntity\User\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -31,6 +33,10 @@ class Search extends AbstractController
     #[LiveProp]
     public ?array $formData = null;
 
+    #[LiveProp(hydrateWith: "hydrateFormOptions", dehydrateWith: "dehydrateFormOptions")]
+    ##[Ignore]
+    public array $formOptions = [];
+
     #[LiveProp]
     public string $title;
 
@@ -40,8 +46,27 @@ class Search extends AbstractController
     public function __construct(
         #[CurrentUser]
         private ?User $user,
+        private readonly SerializerInterface $serializer,
     ) {
 
+    }
+
+    public function hydrateFormOptions(array $data)
+    {
+        if (method_exists($this->formType, "deserialize")) {
+            return $this->formType::deserialize($this->serializer, $data);
+        } else {
+            return [];
+        }
+    }
+
+    public function dehydrateFormOptions(array $data)
+    {
+        if (method_exists($this->formType, "serialize")) {
+            return $this->formType::serialize($this->serializer, $data);
+        } else {
+            return [];
+        }
     }
 
     protected function instantiateForm(): FormInterface
@@ -49,6 +74,7 @@ class Search extends AbstractController
         return $this->createForm(
             $this->formType,
             $this->formData,
+            $this->formOptions,
         );
     }
 
