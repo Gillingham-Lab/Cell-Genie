@@ -66,14 +66,35 @@ class ExperimentalRunDataTable extends AbstractController
         foreach ($fields as $field) {
             $formRow = $field->getFormRow();
 
-            $columns[] = new ComponentColumn($field->getLabel(), fn ($x) => [
-                Datum::class,
-                [
-                    "field" => $field,
-                    "formRow" => $formRow,
-                    "datum" => $x[$formRow->getFieldName()],
-                ]
-            ]);
+            $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field) {
+                $value = $x[$field->getFormRow()->getFieldName()];
+
+                if ($field->getFormRow()->getType() === FormRowTypeEnum::FloatType) {
+                    if (is_infinite($value) or is_nan($value)) {
+                        $configuration = $field->getFormRow()->getConfiguration();
+                        if ($configuration["floattype_inactive_label"] ?? null) {
+                            $valueInstead = $configuration["floattype_inactive_label"];
+
+                            if (
+                                ($configuration["floattype_inactive"] === "Inf" and is_infinite($value) and $value > 0) or
+                                ($configuration["floattype_inactive"] === "-Inf" and is_infinite($value) and $value > 0) or
+                                ($configuration["floattype_inactive"] === "NaN" and is_nan($value))
+                            ) {
+                                $value = $valueInstead;
+                            }
+                        }
+                    }
+                }
+
+                return [
+                    Datum::class,
+                    [
+                        "field" => $field,
+                        "formRow" => $field->getFormRow(),
+                        "datum" => $value,
+                    ]
+                ];
+            });
         }
 
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\BasicTests\Entity\DoctrineEntity\Form;
 
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Genie\Enums\FormRowTypeEnum;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -33,15 +34,15 @@ class FormRowTest extends TestCase
 
         $this->assertNull($formRow->getType());
 
-        $formRow->setType(TextType::class);
-        $this->assertSame(TextType::class, $formRow->getType());
+        $formRow->setType(FormRowTypeEnum::TextType);
+        $this->assertSame(FormRowTypeEnum::TextType, $formRow->getType());
     }
 
     public function testTypePropertyThrowsExceptionIfClassDoesNotExist()
     {
         $formRow = new FormRow();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $formRow->setType('SpamAndEggs');
     }
 
@@ -49,7 +50,7 @@ class FormRowTest extends TestCase
     {
         $formRow = new FormRow();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $formRow->setType(self::class);
     }
 }

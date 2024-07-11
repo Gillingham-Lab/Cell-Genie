@@ -5,6 +5,7 @@ namespace App\Form\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class FloatTypeConfigurationType extends AbstractType
@@ -21,6 +22,24 @@ class FloatTypeConfigurationType extends AbstractType
                 ],
                 "required" => true,
                 "empty_data" => 1,
+            ])
+            ->add("floattype_inactive", ChoiceType::class, [
+                "label" => "Inactive values are safed as",
+                "choices" => [
+                    "NaN" => "NaN",
+                    "Inf" => "Inf",
+                    "-Inf" => "-Inf",
+                ],
+                "empty_data" => "Inf",
+                "help" => "NaN is 'not a number' and is typically used to represent missing or illegal values. Instead, Inf represents positive infinity, " .
+                            "and -Inf represents negative infinity. If a value is expected to be larger than the sensitivity of the assay can detect, it " .
+                            "makes sense to use +Inf to present inactive values (eg, when the IC50 is too large or was not measurable).",
+            ])
+            ->add("floattype_inactive_label", TextType::class, [
+                "label" => "Inactive values are displayed as",
+                "empty_data" => null,
+                "help" => "Use this to decide what string is used to reflect inactive compounds. This will internally get converted into whatever special number " .
+                        "you set above. If you leave this empty, inactive compounds are not specially marked.",
             ])
         ;
     }

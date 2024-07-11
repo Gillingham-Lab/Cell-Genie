@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
 use Doctrine\Common\Collections\Collection;
@@ -243,9 +244,30 @@ class ExperimentConditionRowType extends AbstractType
         $configuration = $formRow->getConfiguration();
 
         $datumType = ($configuration["datatype_float"] ?? 1) === 1 ? DatumEnum::Float32 : DatumEnum::Float64;
+        $inactiveFloatTypeLabel = $configuration["floattype_inactive_label"] ?? null;
+
+        if ($inactiveFloatTypeLabel) {
+            switch ($configuration["floattype_inactive"]) {
+                case "NaN":
+                    $options["nan_values"] = ["NaN", "NA", "<NA>", $inactiveFloatTypeLabel];
+                    $options["na_value"] = $inactiveFloatTypeLabel;
+                    break;
+
+                case "-Inf":
+                    $options["-inf_values"] = ["-Inf", $inactiveFloatTypeLabel];
+                    $options["-inf_value"] = $inactiveFloatTypeLabel;
+                    break;
+
+                default:
+                case "Inf":
+                    $options["+inf_values"] = ["+Inf", "Inf", $inactiveFloatTypeLabel];
+                    $options["+inf_value"] = $inactiveFloatTypeLabel;
+                    break;
+            }
+        }
 
         return [
-            NumberType::class,
+            ScientificNumberType::class,
             $options,
             $datumType,
         ];
