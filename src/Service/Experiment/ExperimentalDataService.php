@@ -48,7 +48,7 @@ class ExperimentalDataService
             ->addSelect("exrcd")
 
             ->setParameter("design", $design->getId()->toRfc4122())
-        ;
+            ;
     }
 
     public function getFields(ExperimentalDesign $design): Collection

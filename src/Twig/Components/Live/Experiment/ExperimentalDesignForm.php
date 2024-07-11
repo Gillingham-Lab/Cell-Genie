@@ -44,7 +44,7 @@ class ExperimentalDesignForm extends AbstractController
         $success = $this->save();
 
         if ($success) {
-            return $this->redirectToRoute("app_experiments_view", ["design" => $this->success->getId()]);
+            return $this->redirectToRoute("app_experiments_view", ["design" => $success->getId()]);
         } else {
             throw new \Exception("There was an error with this form.");
         }
