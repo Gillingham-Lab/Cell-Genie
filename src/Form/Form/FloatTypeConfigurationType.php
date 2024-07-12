@@ -34,12 +34,14 @@ class FloatTypeConfigurationType extends AbstractType
                 "help" => "NaN is 'not a number' and is typically used to represent missing or illegal values. Instead, Inf represents positive infinity, " .
                             "and -Inf represents negative infinity. If a value is expected to be larger than the sensitivity of the assay can detect, it " .
                             "makes sense to use +Inf to present inactive values (eg, when the IC50 is too large or was not measurable).",
+                "required" => false,
             ])
             ->add("floattype_inactive_label", TextType::class, [
                 "label" => "Inactive values are displayed as",
                 "empty_data" => null,
                 "help" => "Use this to decide what string is used to reflect inactive compounds. This will internally get converted into whatever special number " .
                         "you set above. If you leave this empty, inactive compounds are not specially marked.",
+                "required" => false,
             ])
         ;
     }

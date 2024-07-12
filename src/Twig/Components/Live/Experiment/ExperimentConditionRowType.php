@@ -7,11 +7,17 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Form\LinkedEntityType;
 use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
+use App\Service\Experiment\ExperimentalDataFormRowService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -36,6 +42,7 @@ class ExperimentConditionRowType extends AbstractType
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private readonly ExperimentalDataFormRowService $formRowService,
     ) {
 
     }
@@ -290,6 +297,26 @@ class ExperimentConditionRowType extends AbstractType
         $options["constraints"] = [
             new NotNull()
         ];
+
+        if (count($classes) > 1) {
+            if (is_subclass_of($classes[1], Substance::class)) {
+                $query = $this->entityManager->getRepository($classes[1])->createQueryBuilder("s")
+                    ->select("s")
+                    ->leftJoin("s.lots", "l")
+                    ->addSelect("l")
+                    ->addOrderBy(method_exists($classes[1], "getNumber") ? "s.number": "s.shortName", "ASC")
+                ;
+
+                $entries = $query->getQuery()->getResult();
+
+                $choices = [];
+                foreach ($entries as $substance) {
+                    $choices[(string)$substance] = $substance->getLots()->toArray();
+                }
+
+                $options["choices"] = $choices;
+            }
+        }
 
         return [
             EntityType::class,

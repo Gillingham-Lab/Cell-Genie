@@ -60,11 +60,21 @@ const formHelpers = (target = null) => {
     });
 }
 
+const removeTom = () => {
+    let fancySelections = target.querySelectorAll("select.gin-fancy-select");
+    fancySelections.forEach((elm) => {
+        if (elm.tomselect) {
+            elm.tomselect.destroy();
+        }
+    });
+}
+
 //
 document.addEventListener("turbo:frame-load", (e => formHelpers(e.target)));
 document.addEventListener("turbo:load", (e => formHelpers()));
 document.addEventListener("turbo:render", (e => formHelpers()));
 
+document.documentElement.addEventListener("turbo:morph", (e => removeTom()))
 export default formHelpers
 
 /* Original script

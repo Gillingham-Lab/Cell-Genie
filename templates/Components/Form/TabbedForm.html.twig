@@ -38,6 +38,12 @@
                                 label="{{ group.vars.label }}"
                                 active="{{ loop.index0 == 0 ? true : false }}"
                             >
+                                {% if group.vars.errors|length > 0 %}
+                                    <div class="is-invalid my-3">
+                                        {{ form_errors(group) }}
+                                    </div>
+                                {% endif %}
+
                                 {% for child in group %}
                                     {% if not child.rendered %}
                                         <div class="col">

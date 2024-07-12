@@ -91,7 +91,8 @@ class FormRowType extends AbstractType
         if ($formType !== null) {
             $form->add(
                 "configuration",
-                $formType
+                $formType,
+                ["label" => "Type configuration"]
             );
         }
     }

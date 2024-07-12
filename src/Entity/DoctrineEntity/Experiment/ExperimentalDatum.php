@@ -125,6 +125,7 @@ class ExperimentalDatum
             } elseif (method_exists($value, "getId")) {
                 $id = $value->getId();
             } else {
+                dump($value);
                 throw new InvalidArgumentException("A value for entityReference must have an getId / getUlid method");
             }
 

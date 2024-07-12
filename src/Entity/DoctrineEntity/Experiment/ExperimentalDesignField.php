@@ -44,6 +44,11 @@ class ExperimentalDesignField
         $this->formRow = new FormRow();
     }
 
+    public function __toString(): string
+    {
+        return $this->getLabel() ?? "(new entry)";
+    }
+
     public function getLabel()
     {
         return $this->formRow->getLabel();

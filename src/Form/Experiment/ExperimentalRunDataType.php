@@ -5,13 +5,11 @@ namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
-use App\Entity\ExperimentalCondition;
+use App\Form\Collection\TableLiveCollectionType;
 use App\Genie\Enums\ExperimentalFieldRole;
-use App\Twig\Components\Live\Experiment\ExperimentalConditionsType;
+use App\Twig\Components\Live\Experiment\ExperimentConditionRowType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,7 +31,7 @@ class ExperimentalRunDataType extends AbstractType
         }
 
         $this->addMetadataFields($builder, $options);
-        $this->getConditionFields($builder, $options);
+        $this->addConditionFields($builder, $options);
         $this->addDataFields($builder, $options);
     }
 
@@ -51,13 +49,14 @@ class ExperimentalRunDataType extends AbstractType
         }
 
         $builder->add(
-            $builder->create("metadata", FormType::class, [
+            $builder->create("_metadata", FormType::class, [
                 "label" => "Metadata",
+                "inherit_data" => true,
             ])
         );
     }
 
-    private function getConditionFields(FormBuilderInterface $builder, array $options): void
+    private function addConditionFields(FormBuilderInterface $builder, array $options): void
     {
         /** @var ExperimentalDesign $design */
         $design = $options["design"];
@@ -75,7 +74,7 @@ class ExperimentalRunDataType extends AbstractType
                 "label" => "Conditions",
                 "inherit_data" => true,
             ])
-            ->add("conditions", ExperimentalConditionsType::class, [
+            ->add("conditions", TableLiveCollectionType::class, [
                 "label" => " ",
                 "allow_add" => true,
                 "allow_delete" => true,
@@ -85,6 +84,7 @@ class ExperimentalRunDataType extends AbstractType
                 "button_delete_options" => [
                     "label" => "−",
                 ],
+                "entry_type" => ExperimentConditionRowType::class,
                 "entry_options" => [
                     "fields" => $fields,
                 ],

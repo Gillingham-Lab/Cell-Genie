@@ -7,6 +7,14 @@
         <div class="container container-fluid w-100 p-0 m-0">
             <twig:PageHeader title="Experimental Design: {{ design.number }}" :subTitle="design.longName" icon="experiment" iconStack="design" barcode />
 
+            {% if toolbox is defined %}
+                <twig:Layout:Row>
+                    <twig:Layout:Col type="inner">
+                        <twig:Toolbox :toolbox="toolbox"></twig:Toolbox>
+                    </twig:Layout:Col>
+                </twig:Layout:Row>
+            {% endif %}
+
             <twig:Layout:Row cols="2">
                 <twig:Layout:Col type="outer">
                     <twig:ElementCard title="Overview">
