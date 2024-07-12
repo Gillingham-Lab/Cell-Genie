@@ -1,5 +1,5 @@
 <div
-    class="tab-pane fade show {% if active == "active" %}active{% endif %}"
+    class="{{ attributes.render('class') }} tab-pane fade show {% if active == "active" %}active{% endif %}"
     id="form-tab-navigation-tab-{{ key }}-content"
     role="tabpanel"
     aria-labelledby="form-tab-navigation-tab-{{ key }}"

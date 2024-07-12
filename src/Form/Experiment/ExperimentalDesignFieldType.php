@@ -28,10 +28,11 @@ class ExperimentalDesignFieldType extends AbstractType
         $builder
             ->add("role", EnumType::class, [
                 "class" => ExperimentalFieldRole::class,
+                "empty_data" => ExperimentalFieldRole::Top->value,
             ])
             ->add("variableRole", EnumType::class, [
                 "class" => ExperimentalFieldVariableRoleEnum::class,
-                "empty_data" => ExperimentalFieldVariableRoleEnum::Group,
+                "empty_data" => ExperimentalFieldVariableRoleEnum::Group->value,
             ])
             ->add("weight", IntegerType::class, [
                 "required" => true,

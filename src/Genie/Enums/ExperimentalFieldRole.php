@@ -5,7 +5,8 @@ namespace App\Genie\Enums;
 
 enum ExperimentalFieldRole: string
 {
-    case Top = "top";
-    case Condition = "condition";
-    case Datum = "datum";
+    case Top = "0_top";
+    case Condition = "1_condition";
+    case Comparison = "2_comparison";
+    case Datum = "3_datum";
 }

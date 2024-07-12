@@ -98,8 +98,7 @@ class ExperimentalRunDataTable extends AbstractController
         }
 
 
-        $columns[] = new Column("Run", fn ($x) => $x["run"]->getName());
-        $columns[] = new Column("Condition", fn ($x) => $x["set"]->getName());
+        $columns[] = new Column("Path", fn ($x) => "{$x['run']->getName()}/{$x['set']->getName()}");
 
         return $columns;
     }
@@ -150,9 +149,15 @@ class ExperimentalRunDataTable extends AbstractController
                 $choices[$entityFormRow->getFieldName()] = [];
             }
 
-            if (is_array($entityType)) {
+            // Entity types with subtypes (such as lots) are separated with a |.
+            $entityType = explode("|", $entityType);
+            $entityChoices = [];
+
+            if (count($entityType) > 1) {
                 $result = [];
             } else {
+                $entityType = $entityType[0];
+
                 $queryBuilder = $this->entityManager->createQueryBuilder();
                 $expression = $this->entityManager->getExpressionBuilder();
                 $queryBuilder = $queryBuilder
@@ -173,11 +178,10 @@ class ExperimentalRunDataTable extends AbstractController
                 ;
 
                 $results = $queryBuilder->getQuery()->getResult();
-            }
 
-            $entityChoices = [];
-            foreach ($results as $result) {
-                $entityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
+                foreach ($results as $result) {
+                    $entityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
+                }
             }
 
             $choices[$entityFormRow->getFieldName()] = $entityChoices;

@@ -50,7 +50,7 @@
     </div>
 {% endblock %}
 
-{%- block experimental_conditions_widget -%}
+{%- block table_live_collection_widget -%}
     {% form_theme form 'form/table_collection.html.twig' %}
 
     <table class="table table-borderless">
@@ -63,10 +63,10 @@
                 {% elseif child|length > 0 %}
                     <!-- Data -->
                     {% for subChild in child %}
-                        <th>{{ subChild.vars.label }}</th>
+                        <th style="min-width: 200px">{{ subChild.vars.label }}</th>
                     {% endfor %}
                 {% else %}
-                    <th>
+                    <th style="min-width: 200px">
                         {{ child.vars.label }}
                     </th>
                 {% endif %}
@@ -82,3 +82,73 @@
         {{ form_widget(button_add) }}
     {% endif %}
 {%- endblock -%}
+
+{% block live_collection_widget %}
+    {{ block("form_widget") }}
+
+    {% if button_add is defined and not button_add.rendered %}
+        {{ form_row(button_add) }}
+    {% endif %}
+{% endblock %}
+
+{% block live_collection_entry_row %}
+    <div class="card mb-3">
+        <div class="card-header d-flex">
+            {% if button_delete is defined and not button_delete.rendered %}
+                <div class="me-3">
+                    {{ form_widget(button_delete, {"label": "−", "attr": {"class": "btn btn-outline-danger btn-sm"}}) }}
+                </div>
+            {% endif %}
+
+            <h4>
+                {{ form.vars.value }}
+            </h4>
+        </div>
+        <div class="card-body">
+            <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
+                {% for formElement in form|filter(elm => elm|length == 0) %}
+                    <twig:Layout:Col type="none">
+                        {{ form_row(formElement) }}
+                    </twig:Layout:Col>
+                {% endfor %}
+            </twig:Layout:Row>
+
+            {% for formElement in form|filter(elm => elm|length > 0) %}
+                <twig:Layout:Row cols="1" class="mt-2 pt-2 border-top">
+                    <twig:Layout:Col class="px-2">
+                        <h6><strong>{{ formElement.vars.label }}</strong></h6>
+                    </twig:Layout:Col>
+                </twig:Layout:Row>
+
+                <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
+                    {% for subFormElement in formElement|filter(elm => elm|length == 0) %}
+                        <twig:Layout:Col type="none">
+                            {{ form_row(subFormElement) }}
+                        </twig:Layout:Col>
+                    {% endfor %}
+                </twig:Layout:Row>
+
+                {% for subFormElement in formElement|filter(elm => elm|length > 0) %}
+                    <twig:Layout:Row cols="1" class="mt-2 pt-2 border-top">
+                        <twig:Layout:Col class="px-2">
+                            <h6><strong>{{ subFormElement.vars.label }}</strong></h6>
+                        </twig:Layout:Col>
+                    </twig:Layout:Row>
+
+                    <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
+                        {% for subSubFormElement in subFormElement %}
+                            <twig:Layout:Col type="none">
+                                {{ form_row(subSubFormElement) }}
+                            </twig:Layout:Col>
+                        {% endfor %}
+                    </twig:Layout:Row>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block linked_entity_widget %}
+    {{ form_widget(form.entity) }}
+    {{ form_widget(form.linkedEntity) }}
+{% endblock %}

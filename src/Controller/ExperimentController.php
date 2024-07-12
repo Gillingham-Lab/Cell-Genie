@@ -9,6 +9,8 @@ use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
+use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Tool;
 use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
@@ -59,6 +61,18 @@ class ExperimentController extends AbstractController
         ExperimentalDesign $design,
     ): Response {
         return $this->render("parts/experiments/design_view.html.twig", [
+            "toolbox" => new Toolbox([
+                new EditTool(
+                    path: $this->generateUrl("app_experiments_edit", ["design" => $design->getId()]),
+                    enabled: $this->isGranted("edit", $design),
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_experiments_run_new", ["design" => $design->getId()]),
+                    icon: "experiment",
+                    iconStack: "add",
+                    enabled: $this->isGranted("edit", $design),
+                ),
+            ]),
             "design" => $design,
         ]);
     }

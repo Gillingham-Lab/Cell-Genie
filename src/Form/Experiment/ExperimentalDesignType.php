@@ -54,6 +54,7 @@ class ExperimentalDesignType extends AbstractType
                 ])
                 ->add("fields", LiveCollectionType::class, [
                     "entry_type" => ExperimentalDesignFieldType::class,
+                    "by_reference" => false,
                     "button_delete_options" => [
                         "attr" => [
                             "class" => "btn btn-outline-danger",

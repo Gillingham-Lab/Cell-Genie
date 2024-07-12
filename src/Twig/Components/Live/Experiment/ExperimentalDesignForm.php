@@ -12,9 +12,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\Attribute\PreDehydrate;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsLiveComponent(template: "Components/Form/TabbedForm.html.twig")]
 class ExperimentalDesignForm extends AbstractController
@@ -31,6 +34,12 @@ class ExperimentalDesignForm extends AbstractController
 
     #[LiveProp]
     public string $saveButtonLabel = "Save";
+
+    /**
+     * Holds the raw form values.
+     */
+    //#[LiveProp(writable: true, fieldName: 'getFormName()')]
+    //public array $formValues = [];
 
     public function __construct(
         private EntityManagerInterface $entityManager,

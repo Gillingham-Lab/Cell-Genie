@@ -27,6 +27,7 @@ class ExperimentalDesign implements PrivacyAwareInterface
     use PrivacyAwareTrait;
 
     #[ORM\OneToMany(mappedBy: "design", targetEntity: ExperimentalDesignField::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\OrderBy(["role" => "ASC", "weight" => "ASC"])]
     #[Assert\Valid]
     #[Assert\Count(min: 1, minMessage: "A Experimental design must have at least 1 field")]
     private Collection $fields;
