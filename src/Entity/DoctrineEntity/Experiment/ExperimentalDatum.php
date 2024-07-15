@@ -96,13 +96,13 @@ class ExperimentalDatum
         $value = $this->normalize($value);
 
         $encodedValue = match($this->type) {
-            DatumEnum::Int, DatumEnum::Int64 => pack("P", $value),
-            DatumEnum::Int32, DatumEnum::UInt32 => pack("V", $value),
-            DatumEnum::Int16, DatumEnum::UInt16 => pack("v", $value),
+            DatumEnum::Int, DatumEnum::Int64 => pack("J", $value),
+            DatumEnum::Int32, DatumEnum::UInt32 => pack("N", $value),
+            DatumEnum::Int16, DatumEnum::UInt16 => pack("n", $value),
             DatumEnum::Int8 => pack("c", $value),
             DatumEnum::UInt8 => pack("C", $value),
-            DatumEnum::Float32 => pack("g", $value),
-            DatumEnum::Float64 => pack("e", $value),
+            DatumEnum::Float32 => pack("G", $value),
+            DatumEnum::Float64 => pack("E", $value),
             DatumEnum::Uuid, DatumEnum::EntityReference => $value,
             DatumEnum::String => (string)$value,
         };
@@ -161,13 +161,13 @@ class ExperimentalDatum
         }
 
         $decodedValue = match($this->type) {
-            DatumEnum::Int, DatumEnum::Int64 => unpack("P", $value)[1],
-            DatumEnum::Int32, DatumEnum::UInt32 => unpack("V", $value)[1],
-            DatumEnum::Int16, DatumEnum::UInt16 => unpack("v", $value)[1],
+            DatumEnum::Int, DatumEnum::Int64 => unpack("J", $value)[1],
+            DatumEnum::Int32, DatumEnum::UInt32 => unpack("N", $value)[1],
+            DatumEnum::Int16, DatumEnum::UInt16 => unpack("n", $value)[1],
             DatumEnum::Int8 => unpack("c", $value)[1],
             DatumEnum::UInt8 => unpack("C", $value)[1],
-            DatumEnum::Float32 => unpack("g", $value)[1],
-            DatumEnum::Float64 => unpack("e", $value)[1],
+            DatumEnum::Float32 => unpack("G", $value)[1],
+            DatumEnum::Float64 => unpack("E", $value)[1],
             DatumEnum::String => $value,
             DatumEnum::Uuid => Ulid::fromBinary($value),
             DatumEnum::EntityReference => $this->denormalize($value),
