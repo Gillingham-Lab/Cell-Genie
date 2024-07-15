@@ -7,12 +7,15 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\Lot;
+use App\Entity\SubstanceLot;
 use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -66,6 +69,7 @@ class ExperimentalDataFormRowService
         foreach ($modelData as $datum) {
             if ($datum->getType() === DatumEnum::EntityReference) {
                 [$id, $class] = $datum->getValue();
+
                 $instance = $this->entityManager->getRepository($class)->find($id);
 
                 if ($instance) {
@@ -265,7 +269,6 @@ class ExperimentalDataFormRowService
         $classes = explode("|", $configuration["entityType"]);
 
         $fieldConfig = [
-            "class" => $classes[0],
             "empty_data" => null,
             "attr" => [
                 "class" => "gin-fancy-select",
@@ -288,17 +291,32 @@ class ExperimentalDataFormRowService
 
                 $entries = $query->getQuery()->getResult();
 
+                if (method_exists($classes[1], "getNumber")) {
+                    $toStringCallback = fn($x) => $x->getNumber();
+                } else {
+                    $toStringCallback = fn($x) => $x->getShortName();
+                }
+
                 $choices = [];
                 foreach ($entries as $substance) {
-                    $choices[(string)$substance] = $substance->getLots()->toArray();
+                    $subChoices = [];
+                    /** @var Lot $lot */
+                    foreach ($substance->getLots() as $lot) {
+                        $subChoices[$toStringCallback($substance) . "." . (string)$lot] = $lot;
+                    }
+                    $choices[(string)$substance] = $subChoices;
                 }
 
                 $fieldConfig["choices"] = $choices;
+                $type = ChoiceType::class;
             }
+        } else {
+            $type = EntityType::class;
+            $fieldConfig["class"] = $classes[0];
         }
 
         return [
-            EntityType::class,
+            $type,
             $fieldConfig,
             DatumEnum::EntityReference,
         ];
