@@ -106,8 +106,9 @@ class ExperimentalRunDataType extends AbstractType
         }
 
         $builder->add(
-            $builder->create("conditions", FormType::class, [
+            $builder->create("_dataset", FormType::class, [
                 "label" => "Data",
+                "inherit_data" => true,
             ])
         );
     }
