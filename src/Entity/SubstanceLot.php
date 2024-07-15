@@ -14,6 +14,11 @@ class SubstanceLot
 
     }
 
+    public function __toString(): string
+    {
+        return "{$this->substance}.{$this->lot}";
+    }
+
     public function getSubstance(): Substance {
         return $this->substance;
     }
