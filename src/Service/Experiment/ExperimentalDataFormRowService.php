@@ -159,14 +159,15 @@ class ExperimentalDataFormRowService
         $configuration = $row->getConfiguration();
 
         if ($configuration) {
-            $lengthConstraint = new Length(
-                min: $configuration["length_min"] > 0 ? $configuration["length_min"] : null,
-                max: $configuration["length_max"] > 0 ? $configuration["length_max"] : null,
-            );
+            $constraints = [];
+            if ($configuration["length_min"] > 0 or $configuration["length_max"] > 0) {
+                $constraints[] = new Length(
+                    min: $configuration["length_min"] > 0 ? $configuration["length_min"] : null,
+                    max: $configuration["length_max"] > 0 ? $configuration["length_max"] : null,
+                );
+            }
 
-            $fieldConfig["constraints"] = [
-                $lengthConstraint,
-            ];
+            $fieldConfig["constraints"] = $constraints;
         }
 
         return [
@@ -292,9 +293,9 @@ class ExperimentalDataFormRowService
                 $entries = $query->getQuery()->getResult();
 
                 if (method_exists($classes[1], "getNumber")) {
-                    $toStringCallback = fn($x) => $x->getNumber();
+                    $toStringCallback = fn($x, $lot) => $x->getNumber() . "." . $lot . " ({$x->getShortName()})";
                 } else {
-                    $toStringCallback = fn($x) => $x->getShortName();
+                    $toStringCallback = fn($x, $lot) => $lot . " - " . $x->getShortName();
                 }
 
                 $choices = [];
@@ -302,7 +303,7 @@ class ExperimentalDataFormRowService
                     $subChoices = [];
                     /** @var Lot $lot */
                     foreach ($substance->getLots() as $lot) {
-                        $subChoices[$toStringCallback($substance) . "." . (string)$lot] = $lot;
+                        $subChoices[$toStringCallback($substance, $lot)] = $lot;
                     }
                     $choices[(string)$substance] = $subChoices;
                 }

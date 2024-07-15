@@ -18,9 +18,11 @@ class ScientificNumberTransformer implements DataTransformerInterface
 
     }
 
-    public function transform(mixed $value): string
+    public function transform(mixed $value): ?string
     {
-        if (is_nan($value)) {
+        if ($value === null) {
+            return null;
+        } elseif (is_nan($value)) {
             return $this->nan_value;
         } elseif (is_infinite($value)) {
             if ($value > 0) {
