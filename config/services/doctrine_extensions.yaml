@@ -1,4 +1,7 @@
 services:
+  gedmo.mapping.driver.attribute:
+    class: Gedmo\Mapping\Driver\AttributeReader
+
   Gedmo\Loggable\LoggableListener:
     tags:
       - {
@@ -6,4 +9,4 @@ services:
         connection: default
       }
     calls:
-      - [ setAnnotationReader, [ "@annotation_reader" ] ]
+      - [ setAnnotationReader, [ "@gedmo.mapping.driver.attribute" ] ]

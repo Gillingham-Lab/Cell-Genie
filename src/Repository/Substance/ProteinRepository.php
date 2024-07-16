@@ -54,10 +54,10 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
             ->leftJoin("p.epitopes", "ep", conditionType: Join::ON)
             ->leftJoin("ep.antibodies", "ab", conditionType: Join::ON)
             ->leftJoin("p.children", "pc", conditionType: Join::ON)
-            ->groupBy("p.ulid")
-            ->addGroupBy("ep.id")
-            ->addGroupBy("ab.ulid")
-            ->addGroupBy("pc.ulid")
+            ->groupBy("p")
+            ->addGroupBy("ep")
+            ->addGroupBy("ab")
+            ->addGroupBy("pc")
         ;
 
         if ($epitope) {
@@ -90,10 +90,10 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
             ->leftJoin("p.epitopes", "ep", conditionType: Join::ON)
             ->leftJoin("ep.antibodies", "ab", conditionType: Join::ON)
             ->leftJoin("p.children", "pc", conditionType: Join::ON)
-            ->groupBy("p.ulid")
-            ->addGroupBy("ep.id")
-            ->addGroupBy("ab.ulid")
-            ->addGroupBy("pc.ulid")
+            ->groupBy("p")
+            ->addGroupBy("ep")
+            ->addGroupBy("ab")
+            ->addGroupBy("pc")
         ;
 
         if ($epitope) {
@@ -125,7 +125,7 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
             ->leftJoin("p.lots", "l")
             ->leftJoin("p.epitopes", "ep")
             ->leftJoin("ep.antibodies", "ab")
-            ->groupBy("p.ulid")
+            ->groupBy("p")
             ->addGroupBy("ep")
             ->addGroupBy("ab")
             ->orderBy("p.shortName");

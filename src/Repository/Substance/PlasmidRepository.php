@@ -38,11 +38,8 @@ class PlasmidRepository extends ServiceEntityRepository implements PaginatedRepo
         return $this->createQueryBuilder("p")
             ->addSelect("COUNT(l)")
             ->leftJoin("p.lots", "l")
-            ->groupBy("p.ulid")
+            ->groupBy("p")
             ->addGroupBy("l.id")
-            ->addOrderBy("p.number", "ASC")
-            ->addOrderBy("p.shortName", "ASC")
-            ->addOrderBy("p.longName", "ASC")
             ->getQuery()
             ->getResult()
             ;
@@ -56,7 +53,7 @@ class PlasmidRepository extends ServiceEntityRepository implements PaginatedRepo
             ->addSelect("ep")
             ->leftJoin("p.lots", "l")
             ->leftJoin("p.expressedProteins", "ep")
-            ->groupBy("p.ulid")
+            ->groupBy("p")
             ->addGroupBy("ep")
             ->orderBy("p.number");
 

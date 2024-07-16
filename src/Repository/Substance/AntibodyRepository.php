@@ -45,9 +45,9 @@ class AntibodyRepository extends ServiceEntityRepository implements PaginatedRep
             ->leftJoin("a.epitopeTargets", "ept", conditionType: Join::ON)
             ->leftJoin("a.epitopes", "eph", conditionType: Join::ON)
             ->leftJoin("a.lots", "l")
-            ->groupBy("a.ulid")
-            ->addGroupBy("ept.id")
-            ->addGroupBy("eph.id")
+            ->groupBy("a")
+            ->addGroupBy("ept")
+            ->addGroupBy("eph")
             ->orderBy("a.number");
 
         return $qb;

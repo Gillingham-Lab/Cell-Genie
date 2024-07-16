@@ -101,7 +101,7 @@ class Instrument implements PrivacyAwareInterface
     #[ORM\OrderBy(["instrumentNumber" => "ASC"])]
     private Collection $children;
 
-    #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"], fetch: "EAGER")]
+    #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"])]
     #[Assert\Valid]
     private Collection $users;
 

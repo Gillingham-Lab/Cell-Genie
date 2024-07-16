@@ -18,8 +18,8 @@
         "composer/package-versions-deprecated": "1.11.99.1",
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0",
-        "doctrine/lexer": "^1.2",
-        "doctrine/orm": "dev-DDC-2917-2.23 as 2.13.1",
+        "doctrine/lexer": "^2.0",
+        "doctrine/orm": "^2.19",
         "dunglas/doctrine-json-odm": "^1.4",
         "easycorp/easyadmin-bundle": "^4.0",
         "friendsofsymfony/ckeditor-bundle": "^2.4",
@@ -54,12 +54,6 @@
         "twig/extra-bundle": "^3.6",
         "twig/string-extra": "^3.6"
     },
-    "repositories": [
-        {
-            "type": "github",
-            "url": "https://github.com/Gillingham-Lab/doctrine-orm-fork"
-        }
-    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": {
