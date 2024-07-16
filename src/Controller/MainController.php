@@ -5,7 +5,7 @@ namespace App\Controller;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
