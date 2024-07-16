@@ -291,7 +291,7 @@ class ExperimentDatumTest extends KernelTestCase
         $datum->setType(DatumEnum::UInt16);
         $datum->setValue(16);
 
-        $this->assertSame("EAA=", $datum->asBase64());
+        $this->assertSame("ABA=", $datum->asBase64());
 
         // Persist
         $this->entityManager->persist($datum);
@@ -305,7 +305,7 @@ class ExperimentDatumTest extends KernelTestCase
         $repository = $this->entityManager->getRepository(ExperimentalDatum::class);
         $datum = $repository->find($datumId);
 
-        $this->assertSame("EAA=", $datum->asBase64());
+        $this->assertSame("ABA=", $datum->asBase64());
     }
 
     public function uidDateProvider(): array
