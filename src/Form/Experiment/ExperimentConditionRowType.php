@@ -31,7 +31,7 @@ class ExperimentConditionRowType extends AbstractType
         $resolver->setAllowedTypes("fields", Collection::class);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Add constant fields
         $builder
