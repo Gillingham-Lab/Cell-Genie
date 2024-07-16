@@ -8,6 +8,8 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\Lot;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;

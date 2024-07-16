@@ -85,6 +85,7 @@ class FormRowType extends AbstractType
             FormRowTypeEnum::IntegerType->value => IntegerTypeConfigurationType::class,
             FormRowTypeEnum::FloatType->value => FloatTypeConfigurationType::class,
             FormRowTypeEnum::EntityType->value => EntityTypeConfigurationType::class,
+            FormRowTypeEnum::DateType->value => DateTypeConfigurationType::class,
             default => null,
         };
 

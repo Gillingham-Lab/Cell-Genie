@@ -8,6 +8,7 @@ use App\Genie\Enums\DatumEnum;
 use App\Repository\Experiment\ExperimentalDatumRepository;
 use App\Service\Doctrine\Type\Ulid;
 use App\Service\Doctrine\Type\UlidType;
+use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -105,6 +106,7 @@ class ExperimentalDatum
             DatumEnum::Float64 => pack("E", $value),
             DatumEnum::Uuid, DatumEnum::EntityReference => $value,
             DatumEnum::String => (string)$value,
+            DatumEnum::Date => pack("J", $value),
         };
 
         return $encodedValue;
@@ -143,6 +145,8 @@ class ExperimentalDatum
             // Finally, we add the FQCN
             $className = ClassUtils::getClass($value);
             $value = $normalizedValue . $className;
+        } elseif ($this->type === DatumEnum::Date) {
+            $value = $value->getTimestamp();
         }
 
         return $value;
@@ -170,7 +174,7 @@ class ExperimentalDatum
             DatumEnum::Float64 => unpack("E", $value)[1],
             DatumEnum::String => $value,
             DatumEnum::Uuid => Ulid::fromBinary($value),
-            DatumEnum::EntityReference => $this->denormalize($value),
+            DatumEnum::EntityReference, DatumEnum::Date => $this->denormalize($value),
         };
 
         // We always store as little-endian. As PHP only supports unsigned integers with guaranteed byte order, the
@@ -188,14 +192,20 @@ class ExperimentalDatum
 
     public function denormalize($value)
     {
-        if (str_starts_with($value, "\0\0\0\0\0\0\0\0")) {
-            $id = unpack("P2", $value)[2];
-        } else {
-            $id = Ulid::fromBinary(substr($value, 0, 16));
-        }
+        if ($this->type === DatumEnum::Date) {
+            $timestamp = unpack("J", $value)[1];
+            $datetime = new DateTime();
+            return $datetime->setTimestamp($timestamp);
+        } elseif ($this->type === DatumEnum::EntityReference) {
+            if (str_starts_with($value, "\0\0\0\0\0\0\0\0")) {
+                $id = unpack("P2", $value)[2];
+            } else {
+                $id = Ulid::fromBinary(substr($value, 0, 16));
+            }
 
-        $className = substr($value, 16);
-        return [$id, $className];
+            $className = substr($value, 16);
+            return [$id, $className];
+        }
     }
 
     public function getReferenceUuid(): ?Ulid
