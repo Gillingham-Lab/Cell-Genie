@@ -50,7 +50,7 @@ class ChemicalRepository extends ServiceEntityRepository implements PaginatedRep
             ->addSelect("COUNT(l) AS lotCount")
             ->addSelect($this::LotAvailableQuery . " AS hasAvailableLot")
             ->leftJoin("c.lots", "l")
-            ->groupBy("c.ulid")
+            ->groupBy("c")
             ->orderBy("c.shortName");
 
         return $qb;

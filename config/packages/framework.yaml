@@ -28,4 +28,4 @@ framework:
         time_based_uuid_version: 7
 
     annotations:
-        enabled: true
+        enabled: false
