@@ -32,7 +32,7 @@ class ExperimentalDataSetRowType extends AbstractType
         $resolver->setAllowedTypes("condition_choices", ["array"]);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Add constant fields
         $builder
