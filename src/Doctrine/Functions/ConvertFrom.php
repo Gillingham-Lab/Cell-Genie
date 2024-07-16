@@ -17,7 +17,7 @@ class ConvertFrom extends FunctionNode
     public $field = null;
     public $encoding = null;
 
-    public function parse(Parser $parser)
+    public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
@@ -27,7 +27,7 @@ class ConvertFrom extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    public function getSql(SqlWalker $walker)
+    public function getSql(SqlWalker $walker): string
     {
         return "CONVERT_FROM(" .
             $this->field->dispatch($walker) . ", " .
