@@ -123,6 +123,7 @@
                             md="1"
                             data="{{ {
                                 "Vendor": cell.vendor ? (cell.vendor.catalogUrl ? ["url", {"title": cell.vendor.name, "href": cell.vendor.productUrl(cell.vendorPn ?? "")}] : cell.vendor) : "unknown",
+                                "Product Number": cell.vendorPn ?? "unknown",
                                 "Price": cell.price.priceValue is same as(null) ? "unknown" : (cell.price.priceValue > 0 ? "#{cell.price.priceValue/1000} #{cell.price.priceCurrency}" : "free"),
                                 "Acquired by" : cell.boughtBy ? cell.boughtBy.fullName : "unknown",
                                 "Acquired on": cell.acquiredOn ? cell.acquiredOn|date("m. F Y") : "unknown",
