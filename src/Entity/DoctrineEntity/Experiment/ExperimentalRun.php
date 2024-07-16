@@ -12,6 +12,7 @@ use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\TimestampTrait;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalRunRepository;
+use App\Validator\Constraint\UniqueCollectionField;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,6 +46,7 @@ class ExperimentalRun implements PrivacyAwareInterface
 
     #[ORM\OneToMany(mappedBy: 'experimentalRun', targetEntity: ExperimentalRunCondition::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[Assert\Valid]
+    #[UniqueCollectionField(field: "name")]
     private Collection $conditions;
 
     #[ORM\OneToMany(mappedBy: 'experiment', targetEntity: ExperimentalRunDataSet::class, cascade: ["persist", "remove"], orphanRemoval: true)]

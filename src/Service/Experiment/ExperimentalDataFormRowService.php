@@ -8,7 +8,6 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
-use App\Entity\SubstanceLot;
 use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -16,17 +15,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
 
 class ExperimentalDataFormRowService
 {
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {}
@@ -150,6 +150,7 @@ class ExperimentalDataFormRowService
             FormRowTypeEnum::IntegerType => $this->getIntegerTypeConfig($row),
             FormRowTypeEnum::FloatType => $this->getFloatTypeConfig($row),
             FormRowTypeEnum::EntityType => $this->getEntityTypeConfig($row),
+            FormRowTypeEnum::DateType => $this->getDateTypeConfig($row),
             default => [TextType::class, [], DatumEnum::String],
         };
     }
@@ -264,6 +265,19 @@ class ExperimentalDataFormRowService
         ];
     }
 
+    public function getDateTypeConfig(FormRow $formRow): array
+    {
+        $fieldConfig = [
+            "widget" => "single_text",
+        ];
+
+        return [
+            DateType::class,
+            $fieldConfig,
+            DatumEnum::Date,
+        ];
+    }
+
     public function getEntityTypeConfig(FormRow $formRow): array
     {
         $configuration = $formRow->getConfiguration();
@@ -276,9 +290,6 @@ class ExperimentalDataFormRowService
                 "data-allow-empty" => "true",
             ],
             "required" => false,
-            "constraints" => [
-                new NotNull()
-            ],
         ];
 
         if (count($classes) > 1) {

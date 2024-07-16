@@ -18,7 +18,11 @@
                 <twig:Layout:Row cols="1">
                     <twig:Layout:Col>
                         <twig:ElementCard title="{{ group.vars.label }}">
+                            {{ form_errors(group) }}
+
                             {% for child in group %}
+                                {{ form_errors(child) }}
+
                                 {{ form_row(child) }}
                             {% endfor %}
                         </twig:ElementCard>
@@ -40,7 +44,6 @@
             {% block content %}
                 <div>
                     <div>
-
                         {{ form_rest(form) }}
                     </div>
 

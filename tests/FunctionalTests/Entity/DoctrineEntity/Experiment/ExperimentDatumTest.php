@@ -307,4 +307,44 @@ class ExperimentDatumTest extends KernelTestCase
 
         $this->assertSame("EAA=", $datum->asBase64());
     }
+
+    public function uidDateProvider(): array
+    {
+        return [
+            ["date1", "date", "2020-06-01"],
+            ["date2", "date", "2020-06-01"],
+            ["date2", "date", "2020-06-01"],
+        ];
+    }
+
+    /**
+     * @dataProvider uidDateProvider
+     */
+    public function testDateDatum(string $name, string $type, string $value): void
+    {
+        $date = new \DateTime($value);
+
+        $datum = new ExperimentalDatum();
+        $datum->setName($name);
+        $datum->setType(DatumEnum::from($type));
+        $datum->setValue($date);
+
+        $this->entityManager->persist($datum);
+        $this->entityManager->flush();
+
+        $this->assertInstanceOf(Ulid::class, $datum->getId());
+        $this->assertInstanceOf(\DateTime::class, $datum->getValue());
+        $this->assertSame($date->getTimestamp(), $datum->getValue()->getTimestamp());
+
+        $id = $datum->getId();
+
+        // Retrieve again
+        $this->entityManager->clear();
+        $repository = $this->entityManager->getRepository(ExperimentalDatum::class);
+        $datum = $repository->find($id);
+
+        $this->assertInstanceOf(Ulid::class, $datum->getId());
+        $this->assertInstanceOf(\DateTime::class, $datum->getValue());
+        $this->assertSame($date->getTimestamp(), $datum->getValue()->getTimestamp());
+    }
 }

@@ -18,4 +18,5 @@ enum DatumEnum: string
     case Float64 = "float64";
     case Uuid = "uuid";
     case EntityReference = "entityReference";
+    case Date = "date";
 }
