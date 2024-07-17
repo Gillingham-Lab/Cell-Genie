@@ -6,6 +6,7 @@ namespace App\Form\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Form\FancyChoiceType;
 use App\Genie\Enums\FormRowTypeEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -53,7 +54,7 @@ class ExperimentalSearchDataType extends AbstractType
         /** @var FormRow $field */
         foreach ($options["fields"] as $field) {
             if ($field->getType() === FormRowTypeEnum::EntityType) {
-                $innerForm->add($field->getFieldName(), ChoiceType::class, [
+                $innerForm->add($field->getFieldName(), FancyChoiceType::class, [
                     "label" => $field->getLabel(),
                     "required" => false,
                     "choices" => $options["fieldChoices"][$field->getFieldName()],

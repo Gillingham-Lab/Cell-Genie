@@ -9,6 +9,8 @@ export default class extends Controller {
 
         let c = this.component;
 
+        formHelpers(this.component.element);
+
         this.component.on('render:finished', (component) => {
             formHelpers(component.element);
 
