@@ -7,17 +7,16 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Form\Experiment\ExperimentalDesignType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\Attribute\PreDehydrate;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\LiveCollectionTrait;
-use Symfony\UX\TwigComponent\Attribute\PostMount;
-use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsLiveComponent(template: "Components/Form/TabbedForm.html.twig")]
 class ExperimentalDesignForm extends AbstractController
@@ -35,11 +34,8 @@ class ExperimentalDesignForm extends AbstractController
     #[LiveProp]
     public string $saveButtonLabel = "Save";
 
-    /**
-     * Holds the raw form values.
-     */
-    //#[LiveProp(writable: true, fieldName: 'getFormName()')]
-    //public array $formValues = [];
+    #[LiveProp]
+    public ?string $errors = null;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -48,20 +44,21 @@ class ExperimentalDesignForm extends AbstractController
     }
 
     #[LiveAction]
-    public function submit(): Response
+    public function submit(): ?Response
     {
         $success = $this->save();
 
         if ($success) {
             return $this->redirectToRoute("app_experiments_view", ["design" => $success->getId()]);
-        } else {
-            throw new \Exception("There was an error with this form.");
         }
+
+        return null;
     }
 
     #[LiveAction]
     public function save(): ?ExperimentalDesign
     {
+        $this->errors = null;
         $this->submitForm();
 
         try {
@@ -77,8 +74,8 @@ class ExperimentalDesignForm extends AbstractController
 
             return $formEntity;
         } catch (\Exception $e) {
-            $this->addFlash("error", "Failed to save properly due to an error: {$e->getMessage()}.");
-            return null;
+            $this->errors = "Failed to save properly due to an error (".get_class($e)."): {$e->getMessage()}.";
+            throw new UnprocessableEntityHttpException('Form validation failed in component');
         }
     }
 
