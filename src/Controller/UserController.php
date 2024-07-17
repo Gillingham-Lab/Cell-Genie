@@ -144,10 +144,9 @@ class UserController extends AbstractController
         $form = $this->createForm(UserSettingsType::class, $data);
         $form->handleRequest($request);
 
-        $serializer = new \Dunglas\DoctrineJsonOdm\Serializer([new BackedEnumNormalizer(), new UidNormalizer(), new DateTimeNormalizer(), new ArrayDenormalizer(), new ObjectNormalizer()], [new JsonEncoder()]);
-
         if ($form->isSubmitted() and $form->isValid()) {
-            $user->setSettings(clone $data);
+            $user->setSettings($user->getSettings()->mergeBag($form->getData()));
+
             $entityManager->flush();
             $this->addFlash("success", "Settings were saved.");
             return $this->redirectToRoute("app_user_settings");

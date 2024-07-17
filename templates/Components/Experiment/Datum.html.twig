@@ -9,7 +9,7 @@
         {% if datum is float %}
             {{ datum|roundScientifically }}
         {% elseif datum is instanceof("\\DateTime") %}
-            {{ datum|date }}
+            <twig:Date dateTime="{{ datum }}" />
         {% else %}
             {{ datum }}
         {% endif %}

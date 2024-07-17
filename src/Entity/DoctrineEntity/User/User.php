@@ -97,7 +97,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?UserGroup $group = null;
 
     #[ORM\Column(type: JsonDocumentType::NAME, nullable: true)]
-    private ?ParamBag $settings;
+    private ?ParamBag $settings = null;
 
     public function __construct()
     {

@@ -1,3 +1,9 @@
 <span{{ attributes }}>
-    {{ dateTime|date("d. F Y") }}
+    <!-- {{ app.user.settings.dateFormat }} -->
+    {% set format = "Y-m-d" %}
+    {% if app.user %}
+        {% set format = app.user.settings.dateFormat ?? format %}
+    {% endif %}
+
+    {{ dateTime|date(format) }}
 </span>
