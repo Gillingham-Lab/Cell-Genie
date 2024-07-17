@@ -7,7 +7,8 @@ div.gin-fancy-select.form-select {
 
   div.ts-control {
     border: none;
-  }
+    min-height: 2rem;
+    }
 }
 
 @import '~bootstrap';

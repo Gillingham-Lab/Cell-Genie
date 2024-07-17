@@ -41,18 +41,28 @@ const formHelpers = (target = null) => {
                 dropdown_input: true,
             },
             maxOptions: 1000,
-            sortField: [{field: 'text'}, {field: '$order'}, {field: '$score'}],
+            sortField: [{field:'$order'},{field:'$score'}],
             create: !!elm.dataset["allowAdd"],
-            allowEmptyOption: elm.attributes["allowEmpty"] && elm.attributes["allowEmpty"].value === "true",
+            allowEmptyOption: (elm.attributes["allowEmpty"] && elm.attributes["allowEmpty"].value === "true") || (!!elm.dataset["allowEmpty"]),
             render: {
                 optgroup_header: function (data, escape) {
+                    let label = escape(data.label);
+                    if (label.length === 0) {
+                        label.length = "&nbsp;";
+                    }
+
                     return '<div class="optgroup-header"><strong>' + escape(data.label) + '</strong></div>';
                 },
                 option: function (data, escape) {
+                    let text = escape(data.text);
+                    if (text.length === 0) {
+                        text = "&nbsp;";
+                    }
+
                     if (data.optgroup === undefined) {
-                        return '<div>' + escape(data.text) + '</div>';
+                        return '<div>' + text + '</div>';
                     } else {
-                        return '<div class="ps-3">' + escape(data.text) + '</div>';
+                        return '<div class="ps-3">' + text + '</div>';
                     }
                 },
             }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Param\Param;
+use App\Entity\Param\ParamBag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -118,7 +120,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             ->setIsAdmin(False)
             ->setIsActive(true)
             ->setOffice("P3N-00{$number}")
-            ->setRoles([]);
+            ->setRoles([])
+            ->setSettings((new ParamBag())->setParamArray([
+                "setting1" => new Param(50),
+                "setting2" => new Param("text"),
+            ]))
+        ;
 
         $user->setPassword($this->passwordHasher->hashPassword($user, "Scientist{$number}"));
         return $user;

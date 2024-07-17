@@ -8,8 +8,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 
 class ParamBag implements \ArrayAccess
 {
-    /** @var Param[] */
-    #[Ignore]
+    /** @var array{str: str} */
     public array $paramArray = [];
 
     public function getParam($offset, string|float|int|bool $default = null): ?Param
@@ -52,5 +51,11 @@ class ParamBag implements \ArrayAccess
     {
         $this->paramArray = $paramArray;
         return $this;
+    }
+
+    public function mergeBag(ParamBag $newBag): ParamBag
+    {
+        $paramArray = array_merge($this->paramArray, $newBag->getParamArray());
+        return (new ParamBag())->setParamArray($paramArray);
     }
 }
