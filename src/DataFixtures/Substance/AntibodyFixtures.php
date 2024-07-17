@@ -14,6 +14,7 @@ class AntibodyFixtures extends Fixture
     {
         $antibody = (new Antibody())
             ->setShortName("anti-mouse")
+            ->setLongName("anti-mouse (long)")
             ->setNumber("AB001")
             ->setType(AntibodyType::Primary)
         ;

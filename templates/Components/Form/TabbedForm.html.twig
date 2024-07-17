@@ -11,6 +11,12 @@
 
         {{ form_errors(form) }}
 
+        {% if errors is defined and errors|length > 0 %}
+            <div class="alert alert-danger">
+                {{ errors }}
+            </div>
+        {% endif %}
+
         <twig:Layout:Row cols="1">
             {% set form_groups = form|filter(e => e|length > 0) %}
 

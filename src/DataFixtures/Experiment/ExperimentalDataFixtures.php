@@ -54,6 +54,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
 
         $run = (new ExperimentalRun())
             ->setName("AF001 - Penicillin inhibition")
+            ->setDesign($this->getReference(ExperimentalDesignFixtures::EXPERIMENTAL_DESIGN))
             ->setScientist($scientist)
             ->addCondition($condition1)
             ->addCondition($condition2)
@@ -84,6 +85,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
         return [
             UserFixtures::class,
             CompoundFixtures::class,
+            ExperimentalDesignFixtures::class,
         ];
     }
 }
