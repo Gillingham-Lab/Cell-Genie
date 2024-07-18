@@ -107,6 +107,7 @@ class ExperimentalDatum
             DatumEnum::Uuid, DatumEnum::EntityReference => $value,
             DatumEnum::String => (string)$value,
             DatumEnum::Date => pack("J", $value),
+            DatumEnum::Image => empty($value) ? "" : (string)$value,
         };
 
         return $encodedValue;
@@ -175,6 +176,7 @@ class ExperimentalDatum
             DatumEnum::String => $value,
             DatumEnum::Uuid => Ulid::fromBinary($value),
             DatumEnum::EntityReference, DatumEnum::Date => $this->denormalize($value),
+            DatumEnum::Image => $value,
         };
 
         // We always store as little-endian. As PHP only supports unsigned integers with guaranteed byte order, the

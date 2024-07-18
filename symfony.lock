@@ -555,6 +555,9 @@
             "./config/routes/ux_autocomplete.yaml"
         ]
     },
+    "symfony/ux-cropperjs": {
+        "version": "v2.18.0"
+    },
     "symfony/ux-live-component": {
         "version": "2.16",
         "recipe": {

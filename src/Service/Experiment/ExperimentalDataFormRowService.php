@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
+use App\Form\CropImageType;
 use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -23,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\UX\Cropperjs\Form\CropperType;
 
 class ExperimentalDataFormRowService
 {
@@ -151,6 +153,7 @@ class ExperimentalDataFormRowService
             FormRowTypeEnum::FloatType => $this->getFloatTypeConfig($row),
             FormRowTypeEnum::EntityType => $this->getEntityTypeConfig($row),
             FormRowTypeEnum::DateType => $this->getDateTypeConfig($row),
+            FormRowTypeEnum::ImageType => $this->getImageTypeConfig($row),
             default => [TextType::class, [], DatumEnum::String],
         };
     }
@@ -331,6 +334,17 @@ class ExperimentalDataFormRowService
             $type,
             $fieldConfig,
             DatumEnum::EntityReference,
+        ];
+    }
+
+    public function getImageTypeConfig(FormRow $formRow): array
+    {
+        $fieldConfig = [];
+
+        return [
+            CropImageType::class,
+            $fieldConfig,
+            DatumEnum::Image,
         ];
     }
 }
