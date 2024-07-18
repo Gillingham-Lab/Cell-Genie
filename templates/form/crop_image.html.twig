@@ -11,14 +11,20 @@
             {{ stimulus_target("cropper", "formField") }}
         />
 
-        <div
-            class="gin-cropper-drop-zone"
-            id="{{ form.vars.id }}-drop-zone"
-            {{ stimulus_target("cropper", "dropZone")|stimulus_action("cropper", "onClick", "click")|stimulus_action("cropper", "onDrop", "drop")|stimulus_action("cropper", "onDragOver", "dragover") }}
-        >
-            DropZone
+        <div class="d-flex flex-row align-items-start">
+            <div class="flex-column">
+                <a class="btn d-block btn-sm py-0 px-1" {{ stimulus_action("cropper", "onEditAgain", "click") }}><twig:Icon icon="edit"></twig:Icon></a>
+                <a class="btn d-block btn-sm py-0 px-1" {{ stimulus_action("cropper", "onRemove", "click") }}><twig:Icon icon="trash"></twig:Icon></a>
+            </div>
 
-            <img class="d-none" {{ stimulus_target("cropper", "croppedImageStorage") }}>
+            <div
+                class="gin-cropper-drop-zone flex-column flex-grow-1"
+                id="{{ form.vars.id }}-drop-zone"
+                {{ stimulus_target("cropper", "dropZone")|stimulus_action("cropper", "onClick", "click")|stimulus_action("cropper", "onDrop", "drop")|stimulus_action("cropper", "onDragOver", "dragover") }}
+            >
+                Drop zone
+                <img class="d-none" {{ stimulus_target("cropper", "croppedImageStorage") }}>
+            </div>
         </div>
 
         <div class="modal" {{ stimulus_target("cropper", "cropperModal") }}>
