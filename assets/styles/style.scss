@@ -79,14 +79,23 @@ tr.disabled td {
 }
 
 .gin-cropper {
-  max-width: 100%;
-  max-height: 3rem;
-  border: 1px dashed #{$primary};
-  padding: 1rem 0.2rem 1rem;
+  .gin-cropper-drop-zone {
+    max-width: 100%;
+    max-height: 4rem;
+    border: 1px dashed #{$primary};
+    padding: 1rem 0.2rem 1rem;
+  }
 
   .gin-cropper-drop-zone {
-    img {
+    padding: 0px;
+    min-height: 3rem;
+
+    > div {
       margin-top: -1rem;
+    }
+
+    img {
+      vertical-align: top;
       max-width: 100%;
       max-height: 3rem;
     }

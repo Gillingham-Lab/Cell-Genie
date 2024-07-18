@@ -57,7 +57,7 @@ export default class extends Controller {
         if (event.target.files.length > 0) {
             this.processFile(event.target.files[0]);
         }
-        
+
         event.preventDefault();
     }
 
@@ -84,6 +84,10 @@ export default class extends Controller {
         })
     }
 
+    onEditAgain(event) {
+        this.onFileLoad(this.croppedImageStorageTarget.src);
+    }
+
     processFile(file) {
         this.reader.readAsDataURL(file);
     }
@@ -102,6 +106,12 @@ export default class extends Controller {
         this.croppedImageStorageTarget.src = dataUrl;
         this.croppedImageStorageTarget.classList.remove("d-none");
         this.dropZoneTarget.childNodes.forEach((e) => e.nodeType === 3 ? e.remove() : null);
+    }
+
+    onRemove(event) {
+        this.croppedImageStorageTarget.src = undefined;
+        this.croppedImageStorageTarget.classList.add("d-none");
+        this.updateFormField("");
     }
 
     updateFormField(dataUrl) {
