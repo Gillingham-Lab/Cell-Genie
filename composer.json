@@ -42,6 +42,7 @@
         "symfony/serializer": "^6.1",
         "symfony/uid": "*",
         "symfony/ux-autocomplete": "^2.14",
+        "symfony/ux-cropperjs": "^2.18",
         "symfony/ux-live-component": "^2.16",
         "symfony/ux-turbo": "^2.10",
         "symfony/ux-twig-component": "^2.16",

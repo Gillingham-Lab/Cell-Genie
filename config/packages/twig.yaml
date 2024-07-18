@@ -2,5 +2,6 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     form_themes:
         - 'form/custom_types.html.twig'
+        - 'form/crop_image.html.twig'
         - 'bootstrap_5_layout.html.twig'
         - '@CollectionJs/bootstrap_5_layout.html.twig'

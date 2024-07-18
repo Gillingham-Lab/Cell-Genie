@@ -19,4 +19,5 @@ enum DatumEnum: string
     case Uuid = "uuid";
     case EntityReference = "entityReference";
     case Date = "date";
+    case Image = "image";
 }

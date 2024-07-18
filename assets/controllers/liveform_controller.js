@@ -35,6 +35,14 @@ export default class extends Controller {
         });
 
         this.component.on('render:started', () => {
+            // Destroy "Tom Select"
+            let fancySelections = c.element.querySelectorAll("select.gin-fancy-select");
+            fancySelections.forEach((elm) => {
+                if (elm.tomselect) {
+                    elm.tomselect.destroy();
+                }
+            })
+
             // Save the active tab
             let nav_items = c.element.querySelectorAll("#form-tab-navigation .nav-link");
             nav_items.forEach((elm) => {

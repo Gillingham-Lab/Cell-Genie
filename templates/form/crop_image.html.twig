@@ -1,0 +1,44 @@
+{% block crop_image_widget %}
+    <div {{ stimulus_controller('cropper', {
+        name: form.vars.id,
+    }) }} class="gin-cropper">
+        <input
+            class="d-none" type="file" name="{{ field_name(form.file) }}"
+            {{ stimulus_target("cropper", "uploadField")|stimulus_action("cropper", "onFileUploadChange", "change") }}
+        />
+        <input
+            class="d-none" id="{{ form.vars.id }}" name="{{ field_name(form.data) }}" value="{{ field_value(form.data) }}"
+            {{ stimulus_target("cropper", "formField") }}
+        />
+
+        <div
+            class="gin-cropper-drop-zone"
+            id="{{ form.vars.id }}-drop-zone"
+            {{ stimulus_target("cropper", "dropZone")|stimulus_action("cropper", "onClick", "click")|stimulus_action("cropper", "onDrop", "drop")|stimulus_action("cropper", "onDragOver", "dragover") }}
+        >
+            DropZone
+
+            <img class="d-none" {{ stimulus_target("cropper", "croppedImageStorage") }}>
+        </div>
+
+        <div class="modal" {{ stimulus_target("cropper", "cropperModal") }}>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Resize</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="d-none" {{ stimulus_target("cropper", "imageStorage") }}>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button" class="btn btn-primary" aria-label="Submit"
+                            {{ stimulus_action("cropper", "onCropperSubmit", "click") }}
+                        >OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

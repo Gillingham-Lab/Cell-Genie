@@ -10,6 +10,14 @@
             {{ datum|roundScientifically }}
         {% elseif datum is instanceof("\\DateTime") %}
             <twig:Date dateTime="{{ datum }}" />
+        {% elseif formRow.type.value == "image" %}
+            {% if datum %}
+                <div style="max-width: 20rem; max-height: 2rem;">
+                    <img src="{{ datum }}" style="max-height: 2rem; vertical-align: top;" />
+                </div>
+            {% else %}
+                <p class="text-muted">empty</p>
+            {% endif %}
         {% else %}
             {{ datum }}
         {% endif %}
