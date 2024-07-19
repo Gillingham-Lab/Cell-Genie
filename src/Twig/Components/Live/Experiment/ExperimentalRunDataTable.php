@@ -13,6 +13,9 @@ use App\Entity\SubstanceLot;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\Table;
+use App\Entity\Table\ToolboxColumn;
+use App\Entity\Toolbox\EditTool;
+use App\Entity\Toolbox\Toolbox;
 use App\Form\Experiment\ExperimentalSearchDataType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -62,17 +65,32 @@ class ExperimentalRunDataTable extends AbstractController
 
     private function getTableColumns(ExperimentalDesignField ... $fields): array
     {
-        $columns = [];
+        $columns = [
+            new ToolboxColumn("", function ($x) {
+                return new Toolbox([
+                    new EditTool(
+                        path: $this->generateUrl("app_experiments_run_edit", ["run" => $x["run"]->getId()]),
+                        tooltip: "Edit run"
+                    ),
+                    new EditTool(
+                        path: $this->generateUrl("app_experiments_run_addData", ["run" => $x["run"]->getId()]),
+                        tooltip: "Edit data",
+                        icon: "data",
+                        iconStack: "edit",
+                    ),
+                ]);
+            })
+        ];
 
         foreach ($fields as $field) {
             $formRow = $field->getFormRow();
 
-            $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field) {
-                $value = $x[$field->getFormRow()->getFieldName()];
+            $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field, $formRow) {
+                $value = $x[$formRow->getFieldName()];
 
-                if ($field->getFormRow()->getType() === FormRowTypeEnum::FloatType) {
+                if ($formRow->getType() === FormRowTypeEnum::FloatType) {
                     if (is_infinite($value) or is_nan($value)) {
-                        $configuration = $field->getFormRow()->getConfiguration();
+                        $configuration = $formRow->getConfiguration();
                         if ($configuration["floattype_inactive_label"] ?? null) {
                             $valueInstead = $configuration["floattype_inactive_label"];
 
@@ -91,7 +109,7 @@ class ExperimentalRunDataTable extends AbstractController
                     Datum::class,
                     [
                         "field" => $field,
-                        "formRow" => $field->getFormRow(),
+                        "formRow" => $formRow,
                         "datum" => $value,
                     ]
                 ];

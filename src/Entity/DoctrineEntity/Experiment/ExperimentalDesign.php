@@ -10,6 +10,7 @@ use App\Entity\Traits\Fields\NumberTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalDesignRepository;
+use App\Validator\Constraint\UniqueCollectionField;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,6 +31,8 @@ class ExperimentalDesign implements PrivacyAwareInterface
     #[ORM\OrderBy(["role" => "ASC", "weight" => "ASC"])]
     #[Assert\Valid]
     #[Assert\Count(min: 1, minMessage: "A Experimental design must have at least 1 field")]
+    #[UniqueCollectionField("formRow.label")]
+    #[UniqueCollectionField("formRow.fieldName", errorPath: "formRow.label", localMessage: "This field converts internally to {{value}}, which is not unique. All non-alphanumeric characters are removed. Eg, 'Date' and 'Date_' will both get converted to '_Date'.")]
     private Collection $fields;
 
     #[ORM\OneToMany(mappedBy: "design", targetEntity: ExperimentalRun::class, cascade: ["persist", "remove"], orphanRemoval: true)]

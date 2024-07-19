@@ -38,8 +38,10 @@ class UniqueCollectionFieldValidator extends ConstraintValidator
             $value = $this->accessor->getValue($entity, $constraint->field);
 
             if (in_array($value, $values, true)) {
+                $errorPath = $constraint->errorPath ?? $constraint->field;
                 $this->context->buildViolation($constraint->localMessage)
-                    ->atPath("[{$i}].$constraint->field")
+                    ->setParameter("{{value}}", $value)
+                    ->atPath("[{$i}].{$errorPath}")
                     ->addViolation();
             } else {
                 $values[] = $value;
