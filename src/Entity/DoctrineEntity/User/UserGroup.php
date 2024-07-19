@@ -5,7 +5,7 @@ namespace App\Entity\DoctrineEntity\User;
 
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Fields\ShortNameTrait;
-use App\Repository\Substance\UserGroupRepository;
+use App\Repository\User\UserGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

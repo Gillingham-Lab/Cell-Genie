@@ -6,6 +6,8 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\PaginatedRepositoryTrait;
+use App\Repository\User\UserGroupRepository;
+use App\Repository\User\UserRepository;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

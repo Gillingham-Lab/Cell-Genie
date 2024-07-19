@@ -14,6 +14,7 @@ use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Entity\Lot;
+use App\Entity\SubstanceLot;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,6 +35,10 @@ class EntityResolver
         }
 
         try {
+            if ($object instanceof SubstanceLot) {
+                $object = $object->getLot();
+            }
+
             return $this->entityManager->getClassMetadata(get_class($object))->getName();
         } catch (MappingException $mappingException) {
             return $object::class;
@@ -47,6 +52,10 @@ class EntityResolver
         }
 
         try {
+            if ($object instanceof SubstanceLot) {
+                $object = $object->getLot();
+            }
+
             $class = $this->entityManager->getClassMetadata(get_class($object))->getName();
 
             return match($class) {

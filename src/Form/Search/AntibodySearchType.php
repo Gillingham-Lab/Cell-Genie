@@ -5,7 +5,6 @@ namespace App\Form\Search;
 
 use App\Entity\Epitope;
 use App\Genie\Enums\AntibodyType;
-use App\Repository\Substance\UserGroupRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
