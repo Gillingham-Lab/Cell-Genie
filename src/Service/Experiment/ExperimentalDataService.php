@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Service\Experiment;
 
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
@@ -23,6 +25,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -57,7 +60,13 @@ class ExperimentalDataService
 
     public function getFields(ExperimentalDesign $design): Collection
     {
-        return $design->getFields()->matching((new Criteria())->where(new Comparison("role", "=", ExperimentalFieldRole::Condition)));
+        if (method_exists($design->getFields(), "isInitialized") && $design->getFields()->isInitialized() === false) {
+            $fields = $design->getFields()->matching((new Criteria())->where(new Comparison("exposed", "=", "true")));
+        } else {
+            $fields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed());
+        }
+
+        return $fields;
     }
 
     private function getResults(?array $orderBy = null, array $searchFields = [], ExperimentalDesign $design = null): QueryBuilder
@@ -66,6 +75,10 @@ class ExperimentalDataService
 
         if (!empty($searchFields)) {
             $queryBuilder = $this->addSearchFields($queryBuilder, $searchFields, $design);
+        }
+
+        if (empty($orderBy)) {
+            $queryBuilder->addOrderBy("exr.createdAt", "DESC");
         }
 
         return $queryBuilder;
@@ -77,6 +90,7 @@ class ExperimentalDataService
             throw new \Exception("You must give an experimental design.");
         }
 
+        // Retrieve (paginated) conditions to show in the table.
         $queryBuilder = $this->getResults($orderBy, $searchFields, $design);
         $queryBuilder = $queryBuilder
             ->setFirstResult($limit * $page)
@@ -92,7 +106,7 @@ class ExperimentalDataService
         $entities = $this->fetchEntitiesFromList($entitiesToFetch);
 
         // Create the data array
-        return $this->createDataArray($paginatedConditions, $entities);
+        return $this->createDataArray($paginatedConditions, $entities, $design);
     }
 
     /**
@@ -107,9 +121,8 @@ class ExperimentalDataService
         $entitiesToFetch = [];
         $datumConfiguration = [];
 
-        /** @var ExperimentalRunCondition $condition */
-        foreach ($conditions as $condition) {
-            foreach ($condition->getData() as $datum) {
+        $pushEntity = function(Collection $data, &$entitiesToFetch) use ($design) {
+            foreach ($data as $datum) {
                 if ($datum->getType() === DatumEnum::EntityReference) {
                     /**
                      * @var Uuid $id
@@ -125,6 +138,12 @@ class ExperimentalDataService
                     // Check if the datum configuration has two classes
                     /** @var ExperimentalDesignField $field */
                     $field = $design->getFields()->filter(fn (ExperimentalDesignField $x) => $x->getFormRow()->getFieldName() === $datum->getName())->first();
+
+                    // Nothing to retrieve if the field is not exposed
+                    if (!$field->isExposed()) {
+                        return;
+                    }
+
                     $configuredEntityTypes = explode("|", $field->getFormRow()->getConfiguration()["entityType"] ?? "");
 
                     // Single class
@@ -134,6 +153,20 @@ class ExperimentalDataService
                         $entitiesToFetch[$class][$id->toRfc4122()] = $configuredEntityTypes[1];
                     }
                 }
+            }
+        };
+
+        /** @var ExperimentalRunCondition $condition */
+        foreach ($conditions as $condition) {
+            // Top values
+            $pushEntity($condition->getExperimentalRun()->getData(), $entitiesToFetch);
+
+            // Condition values
+            $pushEntity($condition->getData(), $entitiesToFetch);
+
+            // Datasets
+            foreach ($condition->getExperimentalRun()->getDataSets()->filter(fn (ExperimentalRunDataSet $set) => $set->getCondition() === $condition) as $dataSet) {
+                $pushEntity($dataSet->getData(), $entitiesToFetch);
             }
         }
 
@@ -168,11 +201,22 @@ class ExperimentalDataService
                 }
             } else {
                 /** @var SubstanceRepository $substanceRepository */
-                #$substanceRepository = $this->entityManager->getRepository(Substance::class);
-                $entities = $entityRepository->getLotsWithSubstance(current($entities), array_keys($entities));
+                $entityClasses = [];
 
-                foreach ($entities as $entity) {
-                    $entitiesToFetch[$class][$entity->getLot()->getId()->toRfc4122()] = $entity;
+                foreach ($entities as $id => $entityClass) {
+                    if (!array_key_exists($entityClass, $entityClasses)) {
+                        $entityClasses[$entityClass] = [];
+                    }
+
+                    $entityClasses[$entityClass][] = $id;
+                }
+
+                foreach ($entityClasses as $entityClass => $listOfIds) {
+                    $entities = $entityRepository->getLotsWithSubstance($entityClass, $listOfIds);
+
+                    foreach ($entities as $entity) {
+                        $entitiesToFetch[$class][$entity->getLot()->getId()->toRfc4122()] = $entity;
+                    }
                 }
             }
         }
@@ -185,9 +229,41 @@ class ExperimentalDataService
      * @param array{str: array{str: object}} $entitiesToFetch
      * @return array{str: mixed}
      */
-    public function createDataArray(Paginator $conditions, array $entitiesToFetch): array
+    public function createDataArray(Paginator $conditions, array $entitiesToFetch, ExperimentalDesign $design): array
     {
         $data = [];
+
+        $pushColumn = function (Collection $data, &$row) use ($entitiesToFetch, $design) {
+            /** @var ExperimentalDatum $datum */
+            foreach ($data as $datum) {
+                $field = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed() && $field->getFormRow()->getFieldName() === $datum->getName())->first();
+
+                if ($field === false) {
+                    continue;
+                }
+
+                $key = $datum->getName();
+
+                if ($datum->getType() === DatumEnum::EntityReference) {
+                    /** @var Uuid $id */
+                    [$id, $class] = $datum->getValue();
+
+                    $value = $entitiesToFetch[$class][$id->toRfc4122()];
+                } else {
+                    $value = $datum->getValue();
+                }
+
+                if (array_key_exists($key, $row)) {
+                    if (!is_array($row[$key])) {
+                        $row[$key] = [$row[$key]];
+                    }
+
+                    $row[$key][] = $value;
+                } else {
+                    $row[$key] = $value;
+                }
+            }
+        };
 
         foreach ($conditions as $condition) {
             $row = [
@@ -195,14 +271,22 @@ class ExperimentalDataService
                 "run" => $condition->getExperimentalRun(),
             ];
 
-            foreach ($condition->getData() as $datum) {
-                if ($datum->getType() === DatumEnum::EntityReference) {
-                    /** @var Uuid $id */
-                    [$id, $class] = $datum->getValue();
+            $pushColumn($condition->getExperimentalRun()->getData(), $row);
+            $pushColumn($condition->getData(), $row);
 
-                    $row[$datum->getName()] = $entitiesToFetch[$class][$id->toRfc4122()];
-                } else {
-                    $row[$datum->getName()] = $datum->getValue();
+            $row["data"] = [];
+
+            $maxRows = 10;
+
+            foreach ($condition->getExperimentalRun()->getDataSets() as $dataSet) {
+                $subRow = [];
+                $pushColumn($dataSet->getData(), $subRow);
+                $row["data"][] = $subRow;
+
+                $row["data"] = array_unique($row["data"], SORT_REGULAR);
+
+                if (count($row["data"]) == $maxRows) {
+                    break;
                 }
             }
 
@@ -249,13 +333,9 @@ class ExperimentalDataService
 
             return $queryBuilder->expr()->in(
                 "exrc.id",
-                $this->entityManager->createQueryBuilder()
-                    ->from(ExperimentalRunCondition::class, "nerc2$abbreviation_suffix")
-                    ->select("nerc2$abbreviation_suffix.id")
-                    ->leftJoin("nerc2$abbreviation_suffix.data", "ned2$abbreviation_suffix")
-                    ->where("ned2$abbreviation_suffix.name = :$nameParamName")
-                    ->andWhere("ned2$abbreviation_suffix.referenceUuid IN (:$referencesParamName)")
-                    ->getDQL()
+                $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
+                    ->andWhere("data$abbreviation_suffix.referenceUuid IN (:$referencesParamName)")
+                    ->getDQL(),
             );
         } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::TextType) {
             $queryBuilder->setParameter($nameParamName, $searchField);
@@ -263,16 +343,37 @@ class ExperimentalDataService
 
             return $queryBuilder->expr()->in(
                 "exrc.id",
-                $this->entityManager->createQueryBuilder()
-                    ->from(ExperimentalRunCondition::class, "nerc2")
-                    ->select("nerc2.id")
-                    ->leftJoin("nerc2.data", "ned2")
-                    ->where("ned2.name = :$nameParamName")
-                    ->andWhere("lower(convert_from(ned2.value, 'UTF-8')) LIKE lower(:$referencesParamName)")
-                    ->getDQL()
+                $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
+                    ->andWhere("lower(convert_from(data.value, 'UTF-8')) LIKE lower(:$referencesParamName))")
+                    ->getDQL(),
             );
         }
 
         return null;
+    }
+
+    private function getSearchQueryBuilderForFieldType(ExperimentalFieldRole $role, string $suffix, string $nameParam): QueryBuilder
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder()
+            ->from(ExperimentalRunCondition::class, "nerc2$suffix")
+            ->select("nerc2$suffix.id");
+
+        $queryBuilder = match($role) {
+            ExperimentalFieldRole::Top => $queryBuilder
+                ->leftJoin("nerc2$suffix.experimentalRun", "nerc2r$suffix")
+                ->leftJoin("nerc2r$suffix.data", "data$suffix"),
+
+            ExperimentalFieldRole::Condition => $queryBuilder
+                ->leftJoin("nerc2$suffix.data", "data$suffix"),
+
+            ExperimentalFieldRole::Comparison, ExperimentalFieldRole::Datum => $queryBuilder
+                ->leftJoin("nerc2$suffix.experimentalRun", "nerc2r$suffix")
+                ->leftJoin("nerc2r$suffix.dataSets", "nerc2rds$suffix")
+                ->leftJoin("nerc2rds$suffix.data", "data$suffix"),
+        };
+
+        $queryBuilder = $queryBuilder->where("data$suffix.name = :$nameParam");
+
+        return $queryBuilder;
     }
 }

@@ -1,25 +1,31 @@
 <div{{ attributes.defaults({}) }}>
-    {% if this.isComponent %}
-        {% if datum is substanceChemical %}
-                <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
-        {% endif %}
-
-        <twig:EntityReference entity="{{ datum }}"/>
+    {% if datum is array %}
+        {% for subDatum in datum %}
+            <twig:Experiment:Datum :datum="subDatum" :field="field" :formRow="formRow" />
+        {% endfor %}
     {% else %}
-        {% if datum is float %}
-            {{ datum|roundScientifically }}
-        {% elseif datum is instanceof("\\DateTime") %}
-            <twig:Date dateTime="{{ datum }}" />
-        {% elseif formRow.type.value == "image" %}
-            {% if datum %}
-                <div style="max-width: 20rem; max-height: 2rem;">
-                    <img src="{{ datum }}" style="max-height: 2rem; vertical-align: top;" />
-                </div>
-            {% else %}
-                <p class="text-muted">empty</p>
+        {% if this.isComponent %}
+            {% if datum is substanceChemical %}
+                    <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
             {% endif %}
+
+            <twig:EntityReference entity="{{ datum }}"/>
         {% else %}
-            {{ datum }}
+            {% if datum is float %}
+                {{ datum|roundScientifically }}
+            {% elseif datum is instanceof("\\DateTime") %}
+                <twig:Date dateTime="{{ datum }}" />
+            {% elseif formRow.type.value == "image" %}
+                {% if datum %}
+                    <div style="max-width: 20rem; max-height: 2rem;">
+                        <img src="{{ datum }}" style="max-height: 2rem; vertical-align: top;" />
+                    </div>
+                {% else %}
+                    <p class="text-muted">empty</p>
+                {% endif %}
+            {% else %}
+                {{ datum }}
+            {% endif %}
         {% endif %}
     {% endif %}
 </div>

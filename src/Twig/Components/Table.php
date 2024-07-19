@@ -10,6 +10,7 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 class Table
 {
     public array $table = [];
+    public bool $small = false;
 
     #[PreMount]
     public function preMount($props)
