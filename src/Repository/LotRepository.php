@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
+use App\Entity\SubstanceLot;
 use App\Genie\Enums\Availability;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Storage\BoxRepository;
-use App\Repository\Substance\UserGroupRepository;
-use App\Repository\Substance\UserRepository;
+use App\Repository\User\UserGroupRepository;
+use App\Repository\User\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
@@ -69,5 +71,25 @@ class LotRepository extends ServiceEntityRepository
         }
 
         return $parsedDate !== false ? $parsedDate : null;
+    }
+
+    public function getLotsWithSubstance($class, array $lotIds)
+    {
+        if (!is_subclass_of($class, Substance::class)) {
+            throw new \TypeError("Only subclasses of " . Substance::class ." are accepted for getLotsWithSubstance, {$class} was given.");
+        }
+
+        $query = $this->getEntityManager()->createQuery(
+            "SELECT s, l FROM ". $class ." s LEFT JOIN s.lots l WHERE l.id IN (:ids)"
+        )->setParameter("ids", $lotIds);
+
+        $results = $query->getResult();
+        $substanceLots = [];
+
+        foreach ($results as $result) {
+            $substanceLots[] = new SubstanceLot($result, $result->getLots()->first());
+        }
+
+        return $substanceLots;
     }
 }

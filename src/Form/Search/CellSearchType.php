@@ -6,7 +6,6 @@ namespace App\Form\Search;
 use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\Organism;
 use App\Entity\Tissue;
-use App\Repository\Substance\UserGroupRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
