@@ -39,6 +39,9 @@ class ExperimentalDesignField
     #[Assert\Range(min: -32768, max: 32767)]
     private ?int $weight = 0;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ["default" => false])]
+    private ?bool $exposed = null;
+
     public function __construct()
     {
         $this->formRow = new FormRow();
@@ -106,6 +109,17 @@ class ExperimentalDesignField
     public function setVariableRole(?ExperimentalFieldVariableRoleEnum $variableRole): static
     {
         $this->variableRole = $variableRole;
+        return $this;
+    }
+
+    public function isExposed(): bool
+    {
+        return $this->exposed;
+    }
+
+    public function setExposed(bool $exposed): static
+    {
+        $this->exposed = $exposed;
         return $this;
     }
 }

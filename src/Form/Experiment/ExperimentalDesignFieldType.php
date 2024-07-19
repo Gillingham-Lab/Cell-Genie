@@ -8,6 +8,7 @@ use App\Form\Form\FormRowType;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -37,6 +38,12 @@ class ExperimentalDesignFieldType extends AbstractType
             ->add("weight", IntegerType::class, [
                 "required" => true,
                 "empty_data" => 0,
+            ])
+            ->add("exposed", CheckboxType::class, [
+                "required" => false,
+                "help" => "If turned on, this field will appear in the data list. For fields with the Roles 'Comparison' or 'Datum', "
+                    ." multiple entries will be summarized in the same table cell, for fields the Role 'Top', the value will be "
+                    ."repeated for each condition.",
             ])
             ->add("formRow", FormRowType::class, [
                 "label" => "Field settings",

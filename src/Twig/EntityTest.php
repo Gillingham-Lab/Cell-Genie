@@ -51,6 +51,7 @@ class EntityTest extends AbstractExtension
 
             new TwigTest("float", fn(mixed $x) => is_float($x)),
             new TwigTest("int", fn(mixed $x) => is_int($x)),
+            new TwigTest("array", fn(mixed $x) => is_array($x)),
         ];
     }
 }

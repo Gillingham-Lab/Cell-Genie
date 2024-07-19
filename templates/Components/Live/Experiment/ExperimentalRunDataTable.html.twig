@@ -8,7 +8,7 @@
     {% endset %}
 
     <div class="mb-3">
-        <twig:Live:Search :formId="liveSearchFormType" :formType="liveSearchFormType" title="Search data" :formData="searchResults" :formOptions="this.searchFormOptions" />
+        <twig:Live:Search :formId="liveSearchFormType" :formType="liveSearchFormType" title="Search data" formData="{{ {"search": searchQuery} }}" :formOptions="this.searchFormOptions" />
     </div>
 
     <twig:ElementCard title="Data">
