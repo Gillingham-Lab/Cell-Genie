@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\ExperimentalCondition;
+use App\Entity\SubstanceLot;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\Table;
@@ -153,26 +154,45 @@ class ExperimentalRunDataTable extends AbstractController
             $entityType = explode("|", $entityType);
             $entityChoices = [];
 
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $expression = $this->entityManager->getExpressionBuilder();
+
+            $subQuery = $this->entityManager->createQueryBuilder()
+                ->from(ExperimentalDesign::class, "ed")
+                ->leftJoin("ed.runs", "edr")
+                ->leftJoin("edr.conditions", "edrc")
+                ->leftJoin("edrc.data", "edrcd")
+                ->select("edrcd.referenceUuid")
+                ->where("edrcd.name = :name")
+                ->getDQL()
+            ;
+
             if (count($entityType) > 1) {
-                $result = [];
+                $entityType = $entityType[1];
+
+                $queryBuilder = $queryBuilder
+                    ->from($entityType, "s")
+                    ->select("s")
+                    ->leftJoin("s.lots", "l")
+                    ->addSelect("l")
+                    ->where($expression->in("l.id", $subQuery))
+                    ->setParameter("name", $entityFormRow->getFieldName());
+
+                $results = $queryBuilder->getQuery()->getResult();
+
+                foreach ($results as $result) {
+                    $substanceLot = new SubstanceLot($result, $result->getLots()->first());
+                    $entityChoices[(string)$substanceLot] = $substanceLot->getLot()->getId()->toRfc4122();
+                }
             } else {
                 $entityType = $entityType[0];
 
-                $queryBuilder = $this->entityManager->createQueryBuilder();
-                $expression = $this->entityManager->getExpressionBuilder();
                 $queryBuilder = $queryBuilder
                     ->from($entityType, "e")
                     ->select("e")
                     ->where($expression->in(
                         method_exists($entityType, "getUlid") ? "e.ulid" : "e.id",
-                        $this->entityManager->createQueryBuilder()
-                            ->from(ExperimentalDesign::class, "ed")
-                            ->leftJoin("ed.runs", "edr")
-                            ->leftJoin("edr.conditions", "edrc")
-                            ->leftJoin("edrc.data", "edrcd")
-                            ->select("edrcd.referenceUuid")
-                            ->where("edrcd.name = :name")
-                            ->getDQL()
+                        $subQuery
                     ))
                     ->setParameter("name", $entityFormRow->getFieldName());
                 ;
