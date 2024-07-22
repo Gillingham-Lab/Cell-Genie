@@ -39,7 +39,9 @@ class ExperimentalDataFormRowService
         ExperimentalDesignField ... $designFields,
     ): FormBuilderInterface {
         $dataField = $builder->create($outerFormName, FormType::class, [
+            "label" => " ",
             "mapped" => true,
+            "required" => false,
         ]);
 
         $map = $this->addFields($dataField, $designFields);

@@ -7,8 +7,8 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Form\Collection\TableLiveCollectionType;
 use App\Genie\Enums\ExperimentalFieldRole;
+use App\Service\Experiment\ExperimentalDataFormRowService;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +18,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ExperimentalRunDataType extends AbstractType
 {
+    public function __construct(
+        private readonly ExperimentalDataFormRowService $formRowService,
+    ) {
+
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -51,12 +57,14 @@ class ExperimentalRunDataType extends AbstractType
             return;
         }
 
-        $builder->add(
-            $builder->create("_metadata", FormType::class, [
-                "label" => "Metadata",
-                "inherit_data" => true,
-            ])
-        );
+        $innerBuilder =$builder->create("_metadata", FormType::class, [
+            "label" => "Metadata",
+            "inherit_data" => true,
+        ]);
+
+        $this->formRowService->createBuilder($innerBuilder, "data", ... $fields);
+
+        $builder->add($innerBuilder);
     }
 
     private function addConditionFields(FormBuilderInterface $builder, array $options): void
