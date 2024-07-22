@@ -84,6 +84,10 @@ class ExperimentalRunDataTable extends AbstractController
         ];
 
         $specialFloatToString = function($value, array $configuration): string|float {
+            if (is_float($value) === false) {
+                return "NAN";
+            }
+
             if (is_infinite($value) or is_nan($value)) {
                 if ($configuration["floattype_inactive_label"] ?? null) {
                     $valueInstead = $configuration["floattype_inactive_label"];

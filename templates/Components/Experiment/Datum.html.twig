@@ -9,7 +9,11 @@
                     <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
             {% endif %}
 
-            <twig:EntityReference entity="{{ datum }}"/>
+            {% if datum is object or datum is array %}
+                <twig:EntityReference entity="{{ datum }}"/>
+            {% else %}
+                {{ datum }}
+            {% endif %}
         {% else %}
             {% if datum is float %}
                 {{ datum|roundScientifically }}
