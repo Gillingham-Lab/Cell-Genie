@@ -75,7 +75,7 @@ class ExperimentalRunTable extends AbstractController
                     ]
                 ])
             ],
-            maxRows: $this->getNumberOfRows(),
+            maxRows: $this->getNumberOfRows(searchFields: ["design" => $this->design->getId()->toRfc4122()]),
         );
 
         return $table->toArray();

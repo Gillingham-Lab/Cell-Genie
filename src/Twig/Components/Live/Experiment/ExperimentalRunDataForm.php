@@ -49,7 +49,7 @@ class ExperimentalRunDataForm extends AbstractController
     public function submit(): Response
     {
         $formEntity = $this->save();
-        return $this->redirectToRoute("app_experiments_view", ["design" => $this->design]);
+        return $this->redirectToRoute("app_experiments_view", ["design" => $this->design->getId()->toRfc4122()]);
     }
 
     #[LiveAction]

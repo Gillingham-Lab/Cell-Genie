@@ -27,6 +27,9 @@ class ExperimentalDesign implements PrivacyAwareInterface
     use NumberTrait;
     use PrivacyAwareTrait;
 
+    /**
+     * @var Collection<int, ExperimentalDesignField>
+     */
     #[ORM\OneToMany(mappedBy: "design", targetEntity: ExperimentalDesignField::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\OrderBy(["role" => "ASC", "weight" => "ASC"])]
     #[Assert\Valid]
@@ -35,6 +38,9 @@ class ExperimentalDesign implements PrivacyAwareInterface
     #[UniqueCollectionField("formRow.fieldName", errorPath: "formRow.label", localMessage: "This field converts internally to {{value}}, which is not unique. All non-alphanumeric characters are removed. Eg, 'Date' and 'Date_' will both get converted to '_Date'.")]
     private Collection $fields;
 
+    /**
+     * @var Collection<int, ExperimentalRun>
+     */
     #[ORM\OneToMany(mappedBy: "design", targetEntity: ExperimentalRun::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $runs;
 

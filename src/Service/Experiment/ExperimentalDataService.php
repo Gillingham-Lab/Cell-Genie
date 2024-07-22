@@ -43,16 +43,22 @@ class ExperimentalDataService
 
     private function getBaseQuery(ExperimentalDesign $design): QueryBuilder
     {
-        return $this->entityManager->createQueryBuilder()
+        $dataFieldsToFetch = [];
+        foreach ($design->getFields() as $field) {
+            if ($field->isExposed()) {
+                $dataFieldsToFetch[] = $field->getFormRow()->getFieldName();
+            }
+        }
+
+        $qb = $this->entityManager->createQueryBuilder();
+
+        return $qb
             ->select("exrc")
             ->from(ExperimentalRunCondition::class, "exrc")
 
             ->leftJoin("exrc.experimentalRun", "exr")
             ->addSelect("exr")
             ->where("exr.design = :design")
-
-            ->leftJoin("exrc.data", "exrcd")
-            ->addSelect("exrcd")
 
             ->setParameter("design", $design->getId()->toRfc4122())
             ;

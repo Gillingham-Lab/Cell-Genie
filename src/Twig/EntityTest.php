@@ -30,28 +30,29 @@ class EntityTest extends AbstractExtension
 
             new TwigTest("cell", fn(?object $substance) => $substance instanceof Cell),
 
-            new TwigTest("cellCultureEvent", fn(?object $object) => $object instanceof CellCultureEvent),
-            new TwigTest("cellCultureOtherEvent", fn(?object $object) => $object instanceof CellCultureOtherEvent),
-            new TwigTest("cellCultureTestEvent", fn(?object $object) => $object instanceof CellCultureTestEvent),
-            new TwigTest("cellCultureSplittingEvent", fn(?object $object) => $object instanceof CellCultureSplittingEvent),
+            new TwigTest("cellCultureEvent", fn(mixed $object) => $object instanceof CellCultureEvent),
+            new TwigTest("cellCultureOtherEvent", fn(mixed $object) => $object instanceof CellCultureOtherEvent),
+            new TwigTest("cellCultureTestEvent", fn(mixed $object) => $object instanceof CellCultureTestEvent),
+            new TwigTest("cellCultureSplittingEvent", fn(mixed $object) => $object instanceof CellCultureSplittingEvent),
 
-            new TwigTest("substance", fn(?object $substance) => $substance instanceof Substance),
-            new TwigTest("substanceAntibody", fn(?object $substance) => $substance instanceof Antibody),
-            new TwigTest("substanceChemical", fn(?object $substance) => $substance instanceof Chemical),
-            new TwigTest("substanceProtein", fn(?object $substance) => $substance instanceof Protein),
-            new TwigTest("substanceOligo", fn(?object $substance) => $substance instanceof Oligo),
-            new TwigTest("substancePlasmid", fn(?object $substance) => $substance instanceof Plasmid),
+            new TwigTest("substance", fn(mixed $substance) => $substance instanceof Substance),
+            new TwigTest("substanceAntibody", fn(mixed $substance) => $substance instanceof Antibody),
+            new TwigTest("substanceChemical", fn(mixed $substance) => $substance instanceof Chemical),
+            new TwigTest("substanceProtein", fn(mixed $substance) => $substance instanceof Protein),
+            new TwigTest("substanceOligo", fn(mixed $substance) => $substance instanceof Oligo),
+            new TwigTest("substancePlasmid", fn(mixed $substance) => $substance instanceof Plasmid),
 
-            new TwigTest("lot", fn(?object $lot) => $lot instanceof Lot),
+            new TwigTest("lot", fn(mixed $lot) => $lot instanceof Lot),
 
-            new TwigTest("epitope", fn(?object $epitope) => $epitope instanceof Epitope),
+            new TwigTest("epitope", fn(mixed $epitope) => $epitope instanceof Epitope),
 
-            new TwigTest("box", fn(?object $box) => $box instanceof Box),
-            new TwigTest("rack", fn(?object $rack) => $rack instanceof Rack),
+            new TwigTest("box", fn(mixed $box) => $box instanceof Box),
+            new TwigTest("rack", fn(mixed $rack) => $rack instanceof Rack),
 
             new TwigTest("float", fn(mixed $x) => is_float($x)),
             new TwigTest("int", fn(mixed $x) => is_int($x)),
             new TwigTest("array", fn(mixed $x) => is_array($x)),
+            new TwigTest("object", fn(mixed $x) => is_object($x)),
         ];
     }
 }
