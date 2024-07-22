@@ -149,15 +149,17 @@ class ExperimentalRunDataTable extends AbstractController
             ... $fieldColumns,
         ];
 
-        $columns[] = new ComponentColumn("Data", fn($x) => [
-            \App\Twig\Components\Table::class, [
-                "table" => (new Table(
-                    data: $x["data"] ?? [],
-                    columns: $getColumnsFromFields($dataFields),
-                ))->toArray(),
-                "small" => true,
-            ],
-        ]);
+        if (count($dataFields) > 0) {
+            $columns[] = new ComponentColumn("Data", fn($x) => [
+                \App\Twig\Components\Table::class, [
+                    "table" => (new Table(
+                        data: $x["data"] ?? [],
+                        columns: $getColumnsFromFields($dataFields),
+                    ))->toArray(),
+                    "small" => true,
+                ],
+            ]);
+        }
 
         $columns[] = new Column("Path", fn ($x) => "{$x['run']->getName()}/{$x['set']->getName()}");
 

@@ -19,6 +19,15 @@ class FormRowTest extends TestCase
         $this->assertSame('Label', $formRow->getLabel());
     }
 
+    public function testFieldNameProperty()
+    {
+        $formRow = new FormRow();
+
+        $this->assertNull($formRow->getFieldName());
+        $formRow->setLabel("Label#13 Special Treaty.7");
+        $this->assertSame("_Label13SpecialTreaty7", $formRow->getFieldName());
+    }
+
     public function testHelpProperty()
     {
         $formRow = new FormRow();

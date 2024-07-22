@@ -11,6 +11,7 @@ trait LongNameTrait
 {
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\Length(max: 250)]
+    #[Assert\NotNull]
     #[Gedmo\Versioned]
     private ?string $longName = null;
 

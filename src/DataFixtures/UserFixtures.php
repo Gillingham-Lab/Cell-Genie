@@ -48,12 +48,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $scientist1 = $this->getScientist(1);
         $scientist1->setGroup($this->getReference(GroupFixtures::RESEARCH_GROUP_REFERENCE));
         $manager->persist($scientist1);
-        $this->addReference(self::SCIENTIST_USER_REFERENCE, $headScientist1);
+        $this->addReference(self::SCIENTIST_USER_REFERENCE, $scientist1);
 
         $scientist2 = $this->getScientist(2);
-        $scientist1->setGroup($this->getReference(GroupFixtures::OTHER_GROUP_REFERENCE));
+        $scientist2->setGroup($this->getReference(GroupFixtures::OTHER_GROUP_REFERENCE));
         $manager->persist($scientist2);
-        $this->addReference(self::OTHER_SCIENTIST_USER_REFERENCE, $headScientist1);
+        $this->addReference(self::OTHER_SCIENTIST_USER_REFERENCE, $scientist2);
 
         $manager->flush();
     }

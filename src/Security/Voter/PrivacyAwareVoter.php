@@ -35,8 +35,6 @@ class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
         /** @var User $user */
         $user = $token->getUser();
 
-        return false;
-
         return match($attribute) {
             self::VIEW => $this->canView($user, $subject),
             self::EDIT => $this->canEdit($user, $subject),

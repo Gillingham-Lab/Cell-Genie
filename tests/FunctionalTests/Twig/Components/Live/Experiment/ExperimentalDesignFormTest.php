@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Twig\Components\Live\Experiment;
+namespace App\Tests\FunctionalTests\Twig\Components\Live\Experiment;
 
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;

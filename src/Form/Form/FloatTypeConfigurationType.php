@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class FloatTypeConfigurationType extends AbstractType
 {
@@ -20,7 +21,10 @@ class FloatTypeConfigurationType extends AbstractType
                     "32 Bit (single, ca 7 significant digits)" => 1,
                     "64 Bit (double, ca 15 significant digits)" => 2,
                 ],
-                "required" => true,
+                "constraints" => [
+                    new NotNull(),
+                ],
+                "required" => false,
                 "empty_data" => 1,
             ])
             ->add("floattype_inactive", ChoiceType::class, [
