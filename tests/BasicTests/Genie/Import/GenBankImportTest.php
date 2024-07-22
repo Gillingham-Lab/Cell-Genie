@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Import;
+namespace App\Tests\BasicTests\Genie\Import;
 
 use App\Genie\Import\GenBankImport;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +10,7 @@ class GenBankImportTest extends TestCase
 {
     public function testAddgenePlasmidImport()
     {
-        $content = file_get_contents(__DIR__ . "/../fixtures/import/addgene_plasmid.gbk");
+        $content = file_get_contents(__DIR__ . "/../../../fixtures/import/addgene_plasmid.gbk");
         $import = new GenBankImport($content);
 
         // Assertions
@@ -37,7 +37,7 @@ class GenBankImportTest extends TestCase
 
     public function testBenchlingExport()
     {
-        $content = file_get_contents(__DIR__ . "/../fixtures/import/benchling_export.gb");
+        $content = file_get_contents(__DIR__ . "/../../../fixtures/import/benchling_export.gb");
         $import = new GenBankImport($content);
 
         // Assertions

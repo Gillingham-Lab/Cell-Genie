@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Units;
+namespace App\Tests\BasicTests\Genie\Units;
 
 use App\Genie\Pole\Calculator;
 use App\Genie\Pole\Exception\CalculationNotSupported;

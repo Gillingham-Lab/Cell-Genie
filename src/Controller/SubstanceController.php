@@ -209,7 +209,6 @@ class SubstanceController extends AbstractController
 
                 return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
             } catch (\Exception $e) {
-                var_dump($e);
                 if ($new) {
                     $this->addFlash("error", "Adding a new {$typeName} was not possible. Reason: {$e->getMessage()}.");
                 } else {

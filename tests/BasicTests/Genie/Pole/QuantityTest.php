@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Pole;
+namespace App\Tests\BasicTests\Genie\Pole;
 
 use App\Genie\Pole\Quantity;
 use App\Genie\Pole\Unit\Amount;

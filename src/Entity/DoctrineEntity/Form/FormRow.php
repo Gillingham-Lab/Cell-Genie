@@ -45,9 +45,12 @@ class FormRow
 
     public function getFieldName(): ?string
     {
-        $label = preg_replace("/[^[:alnum:]]/u", "", $this->getLabel());
+        $label = $this->getLabel();
 
-        $label = "_" . $label;
+        if ($label !== null) {
+            $label = preg_replace("/[^[:alnum:]]/u", "", $label);
+            $label = "_" . $label;
+        }
 
         return $label;
     }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\Box;
+namespace App\Tests\BasicTests\Entity\Box;
 
 use App\Entity\BoxCoordinate;
 use PHPUnit\Framework\TestCase;

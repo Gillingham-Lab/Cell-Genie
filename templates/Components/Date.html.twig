@@ -1,8 +1,7 @@
 <span{{ attributes }}>
-    <!-- {{ app.user.settings.dateFormat }} -->
     {% set format = "Y-m-d" %}
     {% if app.user %}
-        {% set format = app.user.settings.dateFormat ?? format %}
+        {% set format = app.user.settings.param('dateFormat', "Y-m-d").asString %}
     {% endif %}
 
     {{ dateTime|date(format) }}
