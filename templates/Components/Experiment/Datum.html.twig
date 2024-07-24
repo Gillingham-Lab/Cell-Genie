@@ -1,4 +1,4 @@
-<div{{ attributes.defaults({}) }}>
+<div {{ attributes.defaults({}) }}>
     {%- if datum is array -%}
         {%- for subDatum in datum -%}
             <twig:Experiment:Datum :datum="subDatum" :field="field" :formRow="formRow" />
@@ -9,7 +9,9 @@
 
             {% set entityReference %}
                 {%- if datum is object or datum is array -%}
-                    <twig:EntityReference entity="{{ datum }}" />
+                    {% cache 'gin-datum' ~ (datum.ulid ?? datum.id) %}
+                        <twig:EntityReference entity="{{ datum }}" />
+                    {% endcache %}
                 {%- else -%}
                     {{ datum }}
                 {%- endif -%}
