@@ -24,6 +24,7 @@ use App\Service\Doctrine\SearchService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Func;
@@ -107,12 +108,68 @@ class ExperimentalDataService
         /** @var Paginator<ExperimentalRunCondition> $paginatedConditions */
         $paginatedConditions = new Paginator($queryBuilder->getQuery(), fetchJoinCollection: true);
 
+        $conditionIds = array_unique(array_map(fn (ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(), $paginatedConditions->getIterator()->getArrayCopy()));
+
+        // Prefetch run and condition data
+        $hydratedConditionDatum = $this->entityManager->createQueryBuilder()
+            ->from(ExperimentalRunCondition::class, "condition", indexBy: "condition.id")
+            ->select("condition")
+            ->addSelect("data")
+            ->addSelect("run")
+            ->addSelect("runData")
+            ->leftJoin("condition.experimentalRun", "run")
+            ->leftJoin("run.data", "runData", indexBy: "runData.name")
+            ->leftJoin("condition.data", "data", indexBy: "data.name")
+            ->where("condition.id IN (:conditions)")
+            ->setParameter("conditions", $conditionIds)
+            ->getQuery()
+            ->getResult();
+
+        // Prefetch run datasets
+        $runIds = array_unique(array_map(fn (ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum));
+        $hydratedDataSets = $this->entityManager->createQueryBuilder()
+            ->from(ExperimentalRun::class, "run", indexBy: "run.id")
+            ->select("run")
+            ->addSelect("dataSet")
+            ->addSelect("data")
+            ->leftJoin("run.dataSets", "dataSet")
+            ->leftJoin("dataSet.data", "data")
+            ->where("run.id IN (:runIds)")
+            ->setParameter("runIds", $runIds)
+            ->getQuery()
+            ->getResult();
+
         // Prefetch entities
         $entitiesToFetch = $this->getListOfEntitiesToFetch($paginatedConditions, $design);
         $entities = $this->fetchEntitiesFromList($entitiesToFetch);
 
         // Create the data array
         return $this->createDataArray($paginatedConditions, $entities, $design);
+
+        $conditionIds = [];
+        foreach ($paginatedConditions as $condition) {
+            $conditionIds[] = $condition->getId()->toRfc4122();
+        }
+
+
+
+        $dataArray = [];
+        foreach ($paginatedConditions as $condition) {
+            $row = [
+                "set" => $condition,
+                "run" => $condition->getExperimentalRun(),
+            ];
+
+            $conditionId = $condition->getId()->toRfc4122();
+
+
+
+            $dataArray[] = $row;
+
+            break;
+        }
+
+        return $dataArray;
     }
 
     /**

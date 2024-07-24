@@ -14,6 +14,11 @@ class SubstanceLot
 
     }
 
+    public function getId()
+    {
+        return $this->lot->getId();
+    }
+
     public function __toString(): string
     {
         return "{$this->substance}.{$this->lot}";

@@ -7,19 +7,27 @@
                 {%- if e is iterable -%}
                     <twig:EntityReference :entity="e" />
                 {%- else -%}
-                    <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
-                        <twig:Icon :icon="icon" />
-                        {{ e }}
-                    </a>
+                    {% cache 'gin-pill-cache ' ~ this.href(e) %}
+                        <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
+                            {% cache "gin-icon-cache-" ~ icon %}
+                                <twig:Icon :icon="icon" />
+                                {{ e }}
+                            {% endcache %}
+                        </a>
+                    {% endcache %}
                 {%- endif -%}
             {%- else -%}
                 none
             {%- endfor -%}
         {%- else -%}
-            <a class="badge {{ this.class(entity) }} rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
-                <twig:Icon :icon="icon" />
-                {{ entity }}
-            </a>
+            {% cache 'gin-pill-cache ' ~ this.href() %}
+                <a class="badge {{ this.class(entity) }} rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
+                    {% cache "gin-icon-cache-" ~ icon %}
+                    <twig:Icon :icon="icon" />
+                    {% endcache %}
+                    {{ entity }}
+                </a>
+            {% endcache %}
         {%- endif -%}
     {%- endif -%}
 </span>
