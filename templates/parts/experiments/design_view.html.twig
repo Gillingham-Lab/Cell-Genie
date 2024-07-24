@@ -1,41 +1,43 @@
 {% extends 'homepage.html.twig' %}
 
-{% block title %}Gin :: Experiment :: {{ design.number }}{% endblock %}
+{%- block title -%}Gin :: Experiment :: {{ design.number }}{%- endblock -%}
 
-{% block body_main %}
+{%- block body_main -%}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
             <twig:PageHeader title="Experimental Design: {{ design.number }}" :subTitle="design.longName" icon="experiment" iconStack="design" barcode />
 
-            {% if toolbox is defined %}
+            {%- if toolbox is defined -%}
                 <twig:Layout:Row>
                     <twig:Layout:Col type="inner">
                         <twig:Toolbox :toolbox="toolbox"></twig:Toolbox>
                     </twig:Layout:Col>
                 </twig:Layout:Row>
-            {% endif %}
+            {%- endif -%}
 
-            <twig:Layout:Row cols="2">
-                <twig:Layout:Col type="outer">
-                    <twig:ElementCard title="Overview">
-                        <twig:Metadata
-                            data="{{ {
-                                "Number": design.number,
-                                "Short Name": design.shortName,
-                                "Long Name": design.longName,
-                            } }}"
-                            />
-                    </twig:ElementCard>
-                </twig:Layout:Col>
+            {%- if not displayData -%}
+                <twig:Layout:Row cols="2">
+                    <twig:Layout:Col type="outer">
+                        <twig:ElementCard title="Overview">
+                            <twig:Metadata
+                                data="{{ {
+                                    "Number": design.number,
+                                    "Short Name": design.shortName,
+                                    "Long Name": design.longName,
+                                } }}"
+                                />
+                        </twig:ElementCard>
+                    </twig:Layout:Col>
 
-                <twig:Live:Experiment:ExperimentalRunTable :design="design" limit="10" />
-            </twig:Layout:Row>
-
-            <twig:Layout:Row cols="1">
-                <twig:Layout:Col type="outer">
-                    <twig:Live:Experiment:ExperimentalRunDataTable :design="design" loading="defer" />
-                </twig:Layout:Col>
-            </twig:Layout:Row>
+                    <twig:Live:Experiment:ExperimentalRunTable :design="design" limit="10" />
+                </twig:Layout:Row>
+            {%- else -%}
+                <twig:Layout:Row cols="1">
+                    <twig:Layout:Col type="outer">
+                        <twig:Live:Experiment:ExperimentalRunDataTable :design="design" />
+                    </twig:Layout:Col>
+                </twig:Layout:Row>
+            {%- endif -%}
         </div>
     </div>
-{% endblock %}
+{%- endblock -%}

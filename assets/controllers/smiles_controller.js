@@ -19,6 +19,7 @@ export default class extends Controller {
 
     draw(event = null) {
         let clientWidth = this.canvasTarget.clientWidth;
+        clientWidth = Math.max(clientWidth, 500);
 
         let canvasOptions = {
             width: clientWidth,
@@ -50,6 +51,6 @@ export default class extends Controller {
     }
 
     connect() {
-        this.draw()
+        this.draw();
     }
 }

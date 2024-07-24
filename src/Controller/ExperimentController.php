@@ -66,8 +66,7 @@ class ExperimentController extends AbstractController
     #[Route('/experiment', name: 'app_experiments')]
     public function index(): Response
     {
-        return $this->render('parts/experiments/design_list.html.twig', [
-        ]);
+        return $this->render('parts/experiments/design_list.html.twig', []);
     }
 
     #[Route("/experiment/design/view/{design}", name: "app_experiments_view")]
@@ -77,6 +76,18 @@ class ExperimentController extends AbstractController
     ): Response {
         return $this->render("parts/experiments/design_view.html.twig", [
             "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_experiments"),
+                    icon: "up",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Experiment overview",
+                ),
+                new ViewTool(
+                    path: $this->generateUrl("app_experiments_view_data", ["design" => $design->getId()]),
+                    icon: "data",
+                    tooltip: "View experiment data",
+                    iconStack: "view",
+                ),
                 new EditTool(
                     path: $this->generateUrl("app_experiments_edit", ["design" => $design->getId()]),
                     enabled: $this->isGranted("edit", $design),
@@ -89,173 +100,41 @@ class ExperimentController extends AbstractController
                 ),
             ]),
             "design" => $design,
+            "displayData" => false,
         ]);
     }
 
-    #[Route("/experiment/upgrade")]
-    public function upgradeDesigns(
-        ExperimentalDesignRepository $designRepository,
-        ExperimentRepository $oldExperiments,
-        \App\Repository\Experiment\ExperimentalRunRepository $runRepository,
-        LotRepository $lotRepository,
-        EntityManagerInterface $entityManager,
+    #[Route("/experiment/design/viewData/{design}", name: "app_experiments_view_data")]
+    #[IsGranted("view", "design")]
+    public function viewDesignData(
+        ExperimentalDesign $design
     ): Response {
-        $newDesign = $designRepository->find("0190d914-4908-5a81-9ee4-ace7dfb7330e");
-        $oldDesign = $oldExperiments->find("0183eb3a-f8e0-cea6-dedd-fd43e67dbb94");
-
-        foreach ($oldDesign->getExperimentalRuns() as $oldRun) {
-            $run = $runRepository->findOneBy(["name" => $oldRun->getName()]);
-
-            if ($run) {
-                continue;
-            }
-
-            $data = $oldRun->getData();
-
-            $newRun = new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun();
-            $newRun->setName($oldRun->getName());
-            $newRun->setDesign($newDesign);
-
-            $dataArray = [];
-            foreach ($data["conditions"] as $values) {
-                $dataArray[$values["title"]]  = $values["value"];
-            }
-
-            $newRun->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Gain")
-                    ->setType(DatumEnum::UInt8)
-                    ->setValue($dataArray["Gain"])
-            );
-
-            $newRun->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Temperature")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue($dataArray["Temperature"])
-            );
-
-            $newRun->addData(
-                (new ExperimentalDatum())
-                    ->setName("_GFactor")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue($dataArray["G-Factor"])
-            );
-
-            $newRun->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Excitation")
-                    ->setType(DatumEnum::String)
-                    ->setValue(substr($dataArray["Excitation"], 0, -3))
-            );
-
-            $newRun->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Emission")
-                    ->setType(DatumEnum::String)
-                    ->setValue(substr($dataArray["Emission"], 0, -3))
-            );
-
-            $condition = (new ExperimentalRunCondition())
-                ->setName("Condition 1")
-                ->setExperimentalRun($newRun);
-
-            $condition->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Probe")
-                    ->setType(DatumEnum::EntityReference)
-                    ->setValue($lotRepository->find(Ulid::fromBase58($dataArray["Probe"])->toRfc4122()))
-            );
-
-            $condition->addData(
-                (new ExperimentalDatum())
-                    ->setName("_ProbeconcentrationnM")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue($dataArray["Probe concentration"])
-            );
-
-            $condition->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Competitor")
-                    ->setType(DatumEnum::EntityReference)
-                    ->setValue($lotRepository->find(Ulid::fromBase58($dataArray["Inhibitor"])->toRfc4122()))
-            );
-
-            $condition->addData(
-                (new ExperimentalDatum())
-                    ->setName("_CompetitorconcentrationnM")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue($dataArray["Inhibitor concentration"])
-            );
-
-            $condition->addData(
-                (new ExperimentalDatum())
-                    ->setName("_Protein")
-                    ->setType(DatumEnum::EntityReference)
-                    ->setValue($lotRepository->find(Ulid::fromBase58($dataArray["Protein batch"])->toRfc4122()))
-            );
-
-            $condition->addData(
-                (new ExperimentalDatum())
-                    ->setName("_KD")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue(NAN)
-            );
-
-            foreach ($oldRun->getWells() as $well) {
-                $wellArray = [];
-                foreach ($well->getWellData() as $type) {
-                    foreach ($type as $values) {
-                        $wellArray[$values["title"]]  = $values["value"];
-                    }
-                }
-
-                if ($wellArray["Protein concentration"] === null) {
-                    continue;
-                }
-
-                $dataSet = (new ExperimentalRunDataSet())
-                    ->setExperiment($newRun)
-                    ->setCondition($condition);
-
-                $dataSet->addData((new ExperimentalDatum())
-                    ->setName("_ProteinconcentrationnM")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue($wellArray["Protein concentration"])
-                );
-
-                $dataSet->addData((new ExperimentalDatum())
-                    ->setName("_FP")
-                    ->setType(DatumEnum::Float32)
-                    ->setValue($wellArray["Fluorescence Polarisation"] ?? NAN)
-                );
-
-                $dataSet->addData((new ExperimentalDatum())
-                    ->setName("_Intensityparallel")
-                    ->setType(DatumEnum::Int32)
-                    ->setValue($wellArray["Intensity (parallel)"] ?? NAN)
-                );
-
-                $dataSet->addData((new ExperimentalDatum())
-                    ->setName("_Intensityperpendicular")
-                    ->setType(DatumEnum::Int32)
-                    ->setValue($wellArray["Intensity (perpendicular)"] ?? NAN)
-                );
-            }
-
-            $newRun->setScientist($oldRun->getOwner());
-            $newRun->setOwner($oldRun->getOwner());
-            $newRun->setGroup($oldRun->getOwner()->getGroup());
-            $newRun->setPrivacyLevel(PrivacyLevel::Group);
-
-            $entityManager->persist($newRun);
-
-            #break;
-        }
-
-        $entityManager->flush();
-
-        return $this->render('parts/experiments/design_list.html.twig', []);
+        return $this->render("parts/experiments/design_view.html.twig", [
+            "toolbox" => new Toolbox([
+                new Tool(
+                    path: $this->generateUrl("app_experiments"),
+                    icon: "up",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Experiment overview",
+                ),
+                new ViewTool(
+                    path: $this->generateUrl("app_experiments_view", ["design" => $design->getId()]),
+                    tooltip: "View experiment details",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_experiments_edit", ["design" => $design->getId()]),
+                    enabled: $this->isGranted("edit", $design),
+                ),
+                new AddTool(
+                    path: $this->generateUrl("app_experiments_run_new", ["design" => $design->getId()]),
+                    icon: "experiment",
+                    iconStack: "add",
+                    enabled: $this->isGranted("edit", $design),
+                ),
+            ]),
+            "design" => $design,
+            "displayData" => true,
+        ]);
     }
 
     #[Route("/experiment/design/new", name: 'app_experiments_new')]
