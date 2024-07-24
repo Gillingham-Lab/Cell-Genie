@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Doctrine\Functions;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\TokenType;
 
 /**
  * ConvertFromFunction ::=
@@ -19,19 +19,19 @@ class ConvertFrom extends FunctionNode
 
     public function parse(Parser $parser): void
     {
-        $parser->match(Lexer::T_IDENTIFIER);
-        $parser->match(Lexer::T_OPEN_PARENTHESIS);
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
         $this->field = $parser->ArithmeticPrimary();
-        $parser->match(Lexer::T_COMMA);
+        $parser->match(TokenType::T_COMMA);
         $this->encoding = $parser->ArithmeticPrimary();
-        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
     }
 
-    public function getSql(SqlWalker $walker): string
+    public function getSql(SqlWalker $sqlWalker): string
     {
         return "CONVERT_FROM(" .
-            $this->field->dispatch($walker) . ", " .
-            $this->encoding->dispatch($walker) .
+            $this->field->dispatch($sqlWalker) . ", " .
+            $this->encoding->dispatch($sqlWalker) .
             ")";
     }
 }

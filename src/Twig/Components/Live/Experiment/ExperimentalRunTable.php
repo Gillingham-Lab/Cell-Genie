@@ -46,7 +46,7 @@ class ExperimentalRunTable extends AbstractController
                 new ToolboxColumn("", fn(ExperimentalRun $run) => new Toolbox([
                     new ViewTool(
                         # ToDo: Change this to lead to the run itself
-                        path: $this->generateUrl("app_experiments"),
+                        path: $this->generateUrl("app_experiments_run_view", ["run" => $run->getId()]),
                         tooltip: "View run",
                     ),
                     new EditTool(

@@ -71,6 +71,8 @@ class Icon
 
             "up" => "fas fa-fw fa-arrow-up",
             "down" => "fas fa-fw fa-arrow-down",
+            "left" => "fas fa-fw fa-arrow-left",
+            "right" => "fas fa-fw fa-arrow-right",
 
             "file", "file.any" => "fas fa-fw fa-file",
             "file.powerpoint" => "fas fa-fw fa-file-powerpoint",

@@ -122,7 +122,7 @@ class ExperimentalDataService
      * @param ExperimentalDesign $design
      * @return array{str: array{str: true|string|object}}
      */
-    public function getListOfEntitiesToFetch(Paginator $conditions, ExperimentalDesign $design): array
+    public function getListOfEntitiesToFetch(iterable $conditions, ExperimentalDesign $design): array
     {
         $entitiesToFetch = [];
         $datumConfiguration = [];
@@ -313,6 +313,7 @@ class ExperimentalDataService
 
         $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "design" => $searchService->searchWithUlid($queryBuilder, "exr.design", $searchValue->getId()->toRfc4122()),
+            "run" => $searchService->searchWithUlid($queryBuilder, "exr", $searchValue->getid()->toRfc4122()),
             default => $this->addVariableSearchField($queryBuilder, $searchField, $searchValue, $design)
         });
 
@@ -350,7 +351,7 @@ class ExperimentalDataService
             return $queryBuilder->expr()->in(
                 "exrc.id",
                 $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
-                    ->andWhere("lower(convert_from(data.value, 'UTF-8')) LIKE lower(:$referencesParamName))")
+                    ->andWhere("lower(convert_from(data$abbreviation_suffix.value, 'UTF-8')) LIKE lower(:$referencesParamName)")
                     ->getDQL(),
             );
         }
