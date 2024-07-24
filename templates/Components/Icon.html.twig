@@ -1,8 +1,10 @@
-<span{{ attributes.defaults({"class": this.iconClass})}}>
+<span {{ attributes.defaults({"class": this.iconClass})}}>
     {%- if stack -%}
-        <twig:Icon :icon="icon" class="gin-icon-left "/>
-        <twig:Icon :icon="stack" class="gin-icon-right" />
+        {%- cache "gin-icon-stack-" ~ icon ~ "-" ~ stack -%}
+            <twig:Icon :icon="icon" class="gin-icon-left "/>
+            <twig:Icon :icon="stack" class="gin-icon-right" />
+        {%- endcache -%}
     {%- else -%}
-        {{ this.iconContent|raw }}
+            {{ this.iconContent|raw }}
     {%- endif -%}
 </span>

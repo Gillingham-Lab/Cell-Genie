@@ -29,95 +29,101 @@
 
             <twig:block name="navsearch">{% block search %}{% endblock %}</twig:block>
 
-            <twig:Layout:NavSeparator />
-            <twig:Layout:NavDropdown id="gin-navbar-cell" label="Cells" icon="cell" href="{{ url("app_cells") }}">
-                <twig:Layout:NavDropdownItem label="Browse cells" href="{{ url("app_cells") }}" icon="cell" iconStack="view" />
-                <twig:Layout:NavDropdownItem label="Search cells" href="{{ url("app_cells_all") }}" icon="cell" iconStack="search" />
-                {% if is_granted("add", "cell") %}
-                    <twig:Layout:NavDropdownItem label="Add cell" href="{{ url("app_cell_add") }}" icon="add" />
-                {% endif %}
 
-                {% if is_granted("ROLE_USER") %}
-                    <twig:Layout:NavDropdownDivider />
-                    <twig:Layout:NavDropdownItem label="Cell Cultures" href="{{ url("app_cell_cultures") }}" icon="cell" iconStack="cellCulture" />
-                {% endif %}
-            </twig:Layout:NavDropdown>
+            {% cache "gin_top_navigation_general" %}
+                <twig:Layout:NavSeparator />
+                <twig:Layout:NavDropdown id="gin-navbar-cell" label="Cells" icon="cell" href="{{ url("app_cells") }}">
+                    <twig:Layout:NavDropdownItem label="Browse cells" href="{{ url("app_cells") }}" icon="cell" iconStack="view" />
+                    <twig:Layout:NavDropdownItem label="Search cells" href="{{ url("app_cells_all") }}" icon="cell" iconStack="search" />
+                    {% if is_granted("add", "cell") %}
+                        <twig:Layout:NavDropdownItem label="Add cell" href="{{ url("app_cell_add") }}" icon="add" />
+                    {% endif %}
+
+                    {% if is_granted("ROLE_USER") %}
+                        <twig:Layout:NavDropdownDivider />
+                        <twig:Layout:NavDropdownItem label="Cell Cultures" href="{{ url("app_cell_cultures") }}" icon="cell" iconStack="cellCulture" />
+                    {% endif %}
+                </twig:Layout:NavDropdown>
+            {% endcache %}
 
             {# Only show this navigation if the user is logged in #}
             {% if is_granted("ROLE_USER") %}
-                <twig:Layout:NavSeparator />
-                <twig:Layout:NavDropdown id="gin-navbar-antibody" label="Antibodies" icon="antibody" href="{{ url("app_antibodies") }}">
-                    <twig:Layout:NavDropdownItem label="All" icon="none" href="{{ url("app_antibodies") }}" />
-                    <twig:Layout:NavDropdownItem label="Primaries" icon="antibody.primary" href="{{ url("app_antibodies", {"search[antibodyType]": "primary"}) }}" />
-                    <twig:Layout:NavDropdownItem label="Secondaries" icon="antibody.secondary" href="{{ url("app_antibodies", {"search[antibodyType]": "secondary"}) }}" />
-                    <twig:Layout:NavDropdownDivider />
-                    <twig:Layout:NavDropdownItem label="New Antibody" icon="antibody" iconStack="add" href="{{ url("app_substance_new", {"type": "antibody"}) }}" />
-                    <twig:Layout:NavDropdownDivider />
-                    <twig:Layout:NavDropdownItem label="Epitopes" icon="epitope" href="{{ url("app_epitopes") }}" />
-                </twig:Layout:NavDropdown>
+                {% cache "gin_top_navigation_user" %}
+                    <twig:Layout:NavSeparator />
+                    <twig:Layout:NavDropdown id="gin-navbar-antibody" label="Antibodies" icon="antibody" href="{{ url("app_antibodies") }}">
+                        <twig:Layout:NavDropdownItem label="All" icon="none" href="{{ url("app_antibodies") }}" />
+                        <twig:Layout:NavDropdownItem label="Primaries" icon="antibody.primary" href="{{ url("app_antibodies", {"search[antibodyType]": "primary"}) }}" />
+                        <twig:Layout:NavDropdownItem label="Secondaries" icon="antibody.secondary" href="{{ url("app_antibodies", {"search[antibodyType]": "secondary"}) }}" />
+                        <twig:Layout:NavDropdownDivider />
+                        <twig:Layout:NavDropdownItem label="New Antibody" icon="antibody" iconStack="add" href="{{ url("app_substance_new", {"type": "antibody"}) }}" />
+                        <twig:Layout:NavDropdownDivider />
+                        <twig:Layout:NavDropdownItem label="Epitopes" icon="epitope" href="{{ url("app_epitopes") }}" />
+                    </twig:Layout:NavDropdown>
 
 
-                <twig:Layout:NavDropdown id="gin-navbar-chemical" label="Chemicals" icon="chemical" href="{{ url("app_compounds") }}">
-                    <twig:Layout:NavDropdownItem label="New Chemical" icon="chemical" iconStack="add" href="{{ url("app_substance_new", {"type": "chemical"}) }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-chemical" label="Chemicals" icon="chemical" href="{{ url("app_compounds") }}">
+                        <twig:Layout:NavDropdownItem label="New Chemical" icon="chemical" iconStack="add" href="{{ url("app_substance_new", {"type": "chemical"}) }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavDropdown id="gin-navbar-oligo" label="Oligos" icon="oligo" href="{{ url("app_oligos") }}">
-                    <twig:Layout:NavDropdownItem label="New Oligo" icon="oligo" iconStack="add" href="{{ url("app_substance_new", {"type": "oligo"}) }}" />
-                    <twig:Layout:NavDropdownItem label="Import" icon="oligo" iconStack="import" href="{{ url("app_substance_import", {"type": "oligo"}) }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-oligo" label="Oligos" icon="oligo" href="{{ url("app_oligos") }}">
+                        <twig:Layout:NavDropdownItem label="New Oligo" icon="oligo" iconStack="add" href="{{ url("app_substance_new", {"type": "oligo"}) }}" />
+                        <twig:Layout:NavDropdownItem label="Import" icon="oligo" iconStack="import" href="{{ url("app_substance_import", {"type": "oligo"}) }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavDropdown id="gin-navbar-plasmid" label="Plasmids" icon="plasmid" href="{{ url("app_plasmids") }}">
-                    <twig:Layout:NavDropdownItem label="New Plasmid" icon="plasmid" iconStack="add" href="{{ url("app_substance_new", {"type": "plasmid"}) }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-plasmid" label="Plasmids" icon="plasmid" href="{{ url("app_plasmids") }}">
+                        <twig:Layout:NavDropdownItem label="New Plasmid" icon="plasmid" iconStack="add" href="{{ url("app_substance_new", {"type": "plasmid"}) }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavDropdown id="gin-navbar-protein" label="Proteins" icon="protein" href="{{ url("app_proteins") }}">
-                    <twig:Layout:NavDropdownItem label="New Protein" icon="protein" iconStack="add" href="{{ url("app_substance_new", {"type": "protein"}) }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-protein" label="Proteins" icon="protein" href="{{ url("app_proteins") }}">
+                        <twig:Layout:NavDropdownItem label="New Protein" icon="protein" iconStack="add" href="{{ url("app_substance_new", {"type": "protein"}) }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavSeparator />
+                    <twig:Layout:NavSeparator />
 
-                <twig:Layout:NavDropdown id="gin-navbar-storage" label="Storage" icon="storage" href="{{ url("app_storage") }}">
-                    <twig:Layout:NavDropdownItem label="New Location" icon="location" iconStack="add" href="{{ url("app_storage_add_rack") }}" />
-                    <twig:Layout:NavDropdownItem label="New Box" icon="box" iconStack="add" href="{{ url("app_storage_add_rack") }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-storage" label="Storage" icon="storage" href="{{ url("app_storage") }}">
+                        <twig:Layout:NavDropdownItem label="New Location" icon="location" iconStack="add" href="{{ url("app_storage_add_rack") }}" />
+                        <twig:Layout:NavDropdownItem label="New Box" icon="box" iconStack="add" href="{{ url("app_storage_add_rack") }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavItem label="Instrument" icon="instrument" href="{{ url("app_instruments") }}" />
+                    <twig:Layout:NavItem label="Instrument" icon="instrument" href="{{ url("app_instruments") }}" />
 
-                <twig:Layout:NavDropdown id="gin-navbar-consumable" label="Consumables" icon="consumable" href="{{ url("app_consumables") }}">
-                    <twig:Layout:NavDropdownItem label="To-Order list" icon="consumable" iconStack="search" href="{{ url("app_consumables_to_order") }}" />
-                    <twig:Layout:NavDropdownItem label="Must-Order list" icon="consumable" iconStack="search" href="{{ url("app_consumables_to_order_critical") }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-consumable" label="Consumables" icon="consumable" href="{{ url("app_consumables") }}">
+                        <twig:Layout:NavDropdownItem label="To-Order list" icon="consumable" iconStack="search" href="{{ url("app_consumables_to_order") }}" />
+                        <twig:Layout:NavDropdownItem label="Must-Order list" icon="consumable" iconStack="search" href="{{ url("app_consumables_to_order_critical") }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavDropdown id="gin-navbar-experiments" label="Experiments" icon="experiment" href="{{ url("app_experiments") }}">
-                    <twig:Layout:NavDropdownItem label="Design new experiment" icon="experiment" iconStack="design" href="{{ url("app_experiments_new") }}" />
-                    {# <twig:Layout:NavDropdownDivider /> #}
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-experiments" label="Experiments" icon="experiment" href="{{ url("app_experiments") }}">
+                        <twig:Layout:NavDropdownItem label="Design new experiment" icon="experiment" iconStack="design" href="{{ url("app_experiments_new") }}" />
+                        {# <twig:Layout:NavDropdownDivider /> #}
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavDropdown id="gin-navbar-other" label="Other" icon="other">
-                    <twig:Layout:NavDropdownItem label="Recipe" icon="recipe" href="{{ url("app_recipes") }}" />
-                    <twig:Layout:NavDropdownItem label="Vendors" icon="vendor" href="{{ url("app_vendors") }}" />
-                    <twig:Layout:NavDropdownItem label="Resources" icon="resource" href="{{ url("app_resources") }}" />
-                </twig:Layout:NavDropdown>
+                    <twig:Layout:NavDropdown id="gin-navbar-other" label="Other" icon="other">
+                        <twig:Layout:NavDropdownItem label="Recipe" icon="recipe" href="{{ url("app_recipes") }}" />
+                        <twig:Layout:NavDropdownItem label="Vendors" icon="vendor" href="{{ url("app_vendors") }}" />
+                        <twig:Layout:NavDropdownItem label="Resources" icon="resource" href="{{ url("app_resources") }}" />
+                    </twig:Layout:NavDropdown>
 
-                <twig:Layout:NavDropdown id="gin-navbar-user" label="User" icon="user" href="{{ url("app_user") }}">
-                    {% if is_granted("new", "User") %}
-                        <twig:Layout:NavDropdownItem label="New User" icon="user" iconStack="add" href="{{ url("app_user_add") }}" />
-                    {% endif %}
+                    <twig:Layout:NavDropdown id="gin-navbar-user" label="User" icon="user" href="{{ url("app_user") }}">
+                        {% if is_granted("new", "User") %}
+                            <twig:Layout:NavDropdownItem label="New User" icon="user" iconStack="add" href="{{ url("app_user_add") }}" />
+                        {% endif %}
 
-                    <twig:Layout:NavDropdownItem label="Group" icon="user.group" href="{{ url("app_group") }}" />
+                        <twig:Layout:NavDropdownItem label="Settings" icon="user" iconStack="settings" href="{{ url("app_user_settings") }}" />
+                        <twig:Layout:NavDropdownItem label="Group" icon="user.group" href="{{ url("app_group") }}" />
 
-                    {% if is_granted("ROLE_ADMIN") %}
-                        <twig:Layout:NavDropdownItem label="New Group" icon="user.group" iconStack="add" href="#" />
-                    {% endif %}
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <twig:Layout:NavDropdownItem label="New Group" icon="user.group" iconStack="add" href="#" />
+                        {% endif %}
 
-                    <twig:Layout:NavDropdownDivider />
+                        <twig:Layout:NavDropdownDivider />
 
-                    {% if is_granted("ROLE_ADMIN") %}
-                        <twig:Layout:NavDropdownItem label="Administration" icon="admin" href="{{ url("admin") }}" />
-                    {% endif %}
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <twig:Layout:NavDropdownItem label="Administration" icon="admin" href="{{ url("admin") }}" />
+                        {% endif %}
 
-                    <twig:Layout:NavDropdownItem label="Log out" icon="logout" href="{{ logout_url(key = null) }}" />
-                </twig:Layout:NavDropdown>
+                        <twig:Layout:NavDropdownItem label="Log out" icon="logout" href="{{ logout_url(key = null) }}" />
+                    </twig:Layout:NavDropdown>
+                {% endcache %}
             {% endif %}
         </twig:Layout:Navbar>
 

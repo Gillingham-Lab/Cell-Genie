@@ -15,6 +15,10 @@
                 {%- endif -%}
             {% endset %}
 
+            {% if not small and app.user.settings.param("hideSmilesInDataOverview", false).asBool() %}
+                {% set small = true %}
+            {% endif %}
+
             {# Only display Smiles normally if "not small" #}
             {%- if chemical -%}
                 {% if small %}<div class="d-none" id="smiles-viewer-tooltip-container-{{ chemical.ulid }}" style="min-width: 20rem">{% endif %}
