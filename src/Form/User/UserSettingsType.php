@@ -6,6 +6,7 @@ namespace App\Form\User;
 use App\Entity\Param\ParamBag;
 use App\Form\FancyChoiceType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,6 +37,11 @@ class UserSettingsType extends AbstractType
                 "choices" => $this->getDateFormats(),
                 "help" => "Y = year, m = month, d = day",
                 "allow_add" => true,
+                "required" => false,
+            ])
+            ->add("hideSmilesInDataOverview", CheckboxType::class, [
+                "label" => "Hide smiles in experimental data overview",
+                "empty_data" => null,
                 "required" => false,
             ])
         ;
