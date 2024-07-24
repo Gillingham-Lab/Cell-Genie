@@ -10,7 +10,7 @@
         </h2>
     </div>
 
-    <div id="collapse-{{ computed.id }}-content" class="collapse {{ collapsed ?"": "show" }}" aria-labelledby="collapse-{{ computed.id }}-header">
+    <div id="collapse-{{ computed.id }}-content" class="collapse {{ collapsed ? "": "show" }}" aria-labelledby="collapse-{{ computed.id }}-header">
         <div class="card-body {% if not noPadding %}p-3 px-lg-5{% else %}p-0{% endif %}">
             {% block content %}{% endblock %}
         </div>

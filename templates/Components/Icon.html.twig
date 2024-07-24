@@ -1,8 +1,8 @@
 <span{{ attributes.defaults({"class": this.iconClass})}}>
-    {% if stack %}
+    {%- if stack -%}
         <twig:Icon :icon="icon" class="gin-icon-left "/>
         <twig:Icon :icon="stack" class="gin-icon-right" />
-    {% else %}
+    {%- else -%}
         {{ this.iconContent|raw }}
-    {% endif %}
+    {%- endif -%}
 </span>

@@ -1,35 +1,35 @@
 <div{{ attributes.defaults({}) }}>
-    {% if datum is array %}
-        {% for subDatum in datum %}
+    {%- if datum is array -%}
+        {%- for subDatum in datum -%}
             <twig:Experiment:Datum :datum="subDatum" :field="field" :formRow="formRow" />
-        {% endfor %}
-    {% else %}
-        {% if this.isComponent %}
-            {% if datum is substanceChemical %}
-                    <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
-            {% endif %}
+        {%- endfor -%}
+    {%- else -%}
+        {%- if this.isComponent -%}
+            {%- if datum is substanceChemical -%}
+                <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
+            {%- endif -%}
 
-            {% if datum is object or datum is array %}
+            {%- if datum is object or datum is array -%}
                 <twig:EntityReference entity="{{ datum }}"/>
-            {% else %}
+            {%- else -%}
                 {{ datum }}
-            {% endif %}
-        {% else %}
-            {% if datum is float %}
+            {%- endif -%}
+        {%- else -%}
+            {%- if datum is float -%}
                 {{ datum|roundScientifically }}
-            {% elseif datum is instanceof("\\DateTime") %}
+            {%- elseif datum is instanceof("\\DateTime") -%}
                 <twig:Date dateTime="{{ datum }}" />
-            {% elseif formRow.type.value == "image" %}
-                {% if datum %}
+            {%- elseif formRow.type.value == "image" -%}
+                {%- if datum -%}
                     <div style="max-width: 20rem; max-height: 2rem;">
                         <img src="{{ datum }}" style="max-height: 2rem; vertical-align: top;" />
                     </div>
-                {% else %}
+                {%- else -%}
                     <p class="text-muted">empty</p>
-                {% endif %}
-            {% else %}
+                {%- endif -%}
+            {%- else -%}
                 {{ datum }}
-            {% endif %}
-        {% endif %}
-    {% endif %}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
 </div>

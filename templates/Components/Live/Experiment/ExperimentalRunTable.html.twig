@@ -7,9 +7,7 @@
         <twig:Table table="{{ computed.table }}" data-loading="addClass(opacity-50)" />
     {% endset %}
 
-    <twig:Layout:Col class="p-0 m-0 mb-3">
-        <twig:ElementCard title="Runs">
-            {{ block_content }}
-        </twig:ElementCard>
-    </twig:Layout:Col>
+    <twig:ElementCard title="Runs">
+        {{ block_content }}
+    </twig:ElementCard>
 </div>

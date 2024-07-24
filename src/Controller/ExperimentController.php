@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\User\User;
@@ -12,6 +13,10 @@ use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWell;
 use App\Entity\ExperimentalRunWellCollectionFormEntity;
+use App\Entity\Table\Column;
+use App\Entity\Table\ComponentColumn;
+use App\Entity\Table\Table;
+use App\Entity\Table\ToggleColumn;
 use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Tool;
@@ -20,6 +25,7 @@ use App\Entity\Toolbox\ViewTool;
 use App\Form\ExperimentalRunType;
 use App\Form\ExperimentalRunWellCollectionType;
 use App\Genie\Enums\DatumEnum;
+use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalDesignRepository;
 use App\Repository\ExperimentalRunRepository;
@@ -30,6 +36,8 @@ use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Service\Doctrine\Type\Ulid;
+use App\Service\Experiment\ExperimentalDataService;
+use App\Twig\Components\Experiment\Datum;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunDataForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunForm;
@@ -325,8 +333,15 @@ class ExperimentController extends AbstractController
                 new Tool(
                     path: $this->generateUrl("app_experiments_view", ["design" => $design->getId()]),
                     icon: "up",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Return to the run overview",
+                ),
+                new Tool(
+                    path: $this->generateUrl("app_experiments_run_view", ["run" => $run->getId()]),
+                    icon: "left",
+                    buttonClass: "btn-secondary",
                     tooltip: "Return to the run",
-                )
+                ),
             ]),
             "onSubmitRedirectTo" => $onSubmitRedirectTo,
             "title" => $title,
@@ -349,8 +364,15 @@ class ExperimentController extends AbstractController
                 new Tool(
                     path: $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()]),
                     icon: "up",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Return to the run overview",
+                ),
+                new Tool(
+                    path: $this->generateUrl("app_experiments_run_view", ["run" => $run->getId()]),
+                    icon: "left",
+                    buttonClass: "btn-secondary",
                     tooltip: "Return to the run",
-                )
+                ),
             ]),
             "title" => "Add data",
             "subtitle" => "{$run->getDesign()} - {$run->getName()}",
@@ -374,19 +396,95 @@ class ExperimentController extends AbstractController
         ]);
     }
 
-    #[Route("/experiment/run/{experimentalRun}", name: "app_experiments_view_run", methods: ["GET"])]
+    #[Route("/experiment/run/{run}", name: "app_experiments_run_view", methods: ["GET"])]
     public function viewRun(
         Request $request,
-        ExperimentalRun $experimentalRun,
+        ExperimentalDataService $dataService,
+        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
     ): Response {
-        return $this->render("parts/experiments/experiments_view_run.html.twig", [
-            "controller_name" => "ExperimentController",
-            "run" => $experimentalRun,
-            "substances" => $this->substanceRepository,
-            "lots" => $this->lotRepository,
-            "chemicals" => $this->chemicalRepository,
-            "proteins" => $this->proteinRepository,
-            "experiment" => $experimentalRun->getExperiment(),
+        $entitiesToFetch = $dataService->getListOfEntitiesToFetch($run->getConditions(), $run->getDesign());
+        $entities = $dataService->fetchEntitiesFromList($entitiesToFetch);
+
+        $getComponentColumn = function(ExperimentalDesignField $field, array $entities) {
+            return new ComponentColumn($field->getLabel(), function (ExperimentalRunCondition|ExperimentalRunDataSet $condition) use ($field, $entities) {
+                /** @var ExperimentalDatum $datum */
+                $datum = $condition->getData()[$field->getFormRow()->getFieldName()];
+                $value = $datum->getValue();
+
+                if ($datum->getType() === DatumEnum::EntityReference) {
+                    $value = $entities[$value[1]][$value[0]->toRfc4122()];
+                }
+
+                return [
+                    Datum::class,
+                    [
+                        "field" => $field,
+                        "formRow" => $field->getFormRow(),
+                        "datum" => $value,
+                    ]
+                ];
+            });
+        };
+
+        $conditionColumns = [];
+        $dataSetColumns = [];
+        $comparisonColumns = [];
+
+        /** @var ExperimentalDesignField $field */
+        foreach ($run->getDesign()->getFields() as $field) {
+            if ($field->getRole() === ExperimentalFieldRole::Condition) {
+                $conditionColumns[] = $getComponentColumn($field, $entities);
+            } elseif ($field->getRole() === ExperimentalFieldRole::Datum) {
+                $dataSetColumns[] = $getComponentColumn($field, $entities);
+            } elseif ($field->getRole() === ExperimentalFieldRole::Comparison) {
+                $comparisonColumns[] = $getComponentColumn($field, $entities);
+            }
+        }
+
+        return $this->render("parts/experiments/experiment_view.html.twig", [
+            "design" => $run->getDesign(),
+            "run" => $run,
+            "toolbox" => new Toolbox([
+                new Tool(
+                    $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()]),
+                    icon: "up",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Return to run overview",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_experiments_run_edit", ["run" => $run->getId()]),
+                    tooltip: "Edit run",
+                ),
+                new EditTool(
+                    path: $this->generateUrl("app_experiments_run_addData", ["run" => $run->getId()]),
+                    icon: "data",
+                    tooltip: "Edit run data",
+                    iconStack: "edit",
+                )
+            ]),
+            "conditionTable" => new Table(
+                data: $run->getConditions(),
+                columns: [
+                    new Column("Name", fn (ExperimentalRunCondition $condition) => $condition->getName()),
+                    new ToggleColumn("Control", fn (ExperimentalRunCondition $condition) => $condition->isControl()),
+                    ... $conditionColumns,
+                ],
+            ),
+            "datasetTable" => new Table(
+                data: $run->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition() === null),
+                columns: [
+                    new Column("Condition", fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition()->getName()),
+                    ... $dataSetColumns,
+                ],
+            ),
+            "comparisonTable" => new Table(
+                data: $run->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition() !== null),
+                columns: [
+                    new Column("Condition", fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition()->getName()),
+                    new Column("Control", fn (ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition()?->getName()),
+                    ... $comparisonColumns,
+                ],
+            ),
         ]);
     }
 

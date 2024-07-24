@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
+use App\Twig\Components\Experiment\Datum;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
@@ -37,6 +38,8 @@ class Metadata
                         "boolean" => [Toggle::class, ["value" => $value[1]]],
                         "raw" => [Raw::class, ["body" => $value[1]]],
                         "date" => [Date::class, ["dateTime" => $value[1]]],
+                        "datum" => [Datum::class, $value[1]],
+                        "component" => [$value[1]["component"], $value[1]["props"]],
                         default => $value[1],
                     };
                 }

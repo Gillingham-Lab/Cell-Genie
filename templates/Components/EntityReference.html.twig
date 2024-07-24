@@ -1,25 +1,25 @@
 <span{{ attributes }}>
-    {% if entity is same as(null) %}
+    {%- if entity is same as(null) -%}
             none
-    {% else %}
-        {% if entity is iterable %}
-            {% for e in entity %}
-                {% if e is iterable %}
+    {%- else -%}
+        {%- if entity is iterable -%}
+            {%- for e in entity -%}
+                {%- if e is iterable -%}
                     <twig:EntityReference :entity="e" />
-                {% else %}
+                {%- else -%}
                     <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
                         <twig:Icon :icon="icon" />
                         {{ e }}
                     </a>
-                {% endif %}
-            {% else %}
+                {%- endif -%}
+            {%- else -%}
                 none
-            {% endfor %}
-        {% else %}
+            {%- endfor -%}
+        {%- else -%}
             <a class="badge {{ this.class(entity) }} rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
                 <twig:Icon :icon="icon" />
                 {{ entity }}
             </a>
-        {% endif %}
-    {% endif %}
+        {%- endif -%}
+    {%- endif -%}
 </span>

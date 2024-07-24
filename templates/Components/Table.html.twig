@@ -2,50 +2,50 @@
     <table class="table table-hover {{ small ? 'table-sm small' : '' }}">
         <thead>
             <tr>
-                {% for column in table.columns %}
-                    {% set width = "" %}
-                    {% if column.widthRecommendation %}
-                        {% set width = "width: " ~ column.widthRecommendation ~ "rem;" %}
-                    {% endif %}
+                {% for column in table.columns -%}
+                    {%- set width = "" -%}
+                    {%- if column.widthRecommendation -%}
+                        {%- set width = "width: " ~ column.widthRecommendation ~ "rem;" -%}
+                    {%- endif -%}
 
                     <th scope="col" style="{{ width }}">{{ column.label }}</th>
-                {% endfor %}
+                {% endfor -%}
             </tr>
         </thead>
         <tbody>
-            {% for row in table.rows %}
+            {% for row in table.rows -%}
                 <tr class="{{ row[0].isActive ? "table-active" : "" }} align-middle {{ row[0].isDisabled ? "disabled":"" }}">
-                    {% for rowColumn in row %}
-                        {% set currentColumn = table.columns[loop.index0] %}
+                    {% for rowColumn in row -%}
+                        {%- set currentColumn = table.columns[loop.index0] -%}
 
                         <td class="{{ currentColumn.bold ? "fw-bold" }}">
-                            {% if rowColumn.raw %}
+                            {%- if rowColumn.raw -%}
                                 {{ rowColumn.value|raw }}
-                            {% elseif rowColumn.component %}
+                            {%- elseif rowColumn.component -%}
                                 {{ component(rowColumn.value.component, rowColumn.value.props) }}
-                            {% elseif table.columns[loop.index0].type == "App\\Entity\\Table\\UrlColumn" %}
-                                {% if not rowColumn.value %}
+                            {%- elseif table.columns[loop.index0].type == "App\\Entity\\Table\\UrlColumn" -%}
+                                {%- if not rowColumn.value -%}
                                     -
-                                {% elseif rowColumn.value is isarray %}
+                                {%- elseif rowColumn.value is isarray -%}
                                     <a href="{{ rowColumn.value.href }}">{{ rowColumn.value.label }} <twig:Icon icon="external" /></a>
-                                {% else %}
+                                {%- else -%}
                                     <a href="{{ rowColumn.value }}">{{ rowColumn.value }} <twig:Icon icon="external" /></a>
-                                {% endif %}
-                            {% elseif currentColumn.type == "App\\Entity\\Table\\ToolboxColumn"%}
+                                {%- endif -%}
+                            {%- elseif currentColumn.type == "App\\Entity\\Table\\ToolboxColumn" -%}
                                 <twig:Toolbox size="sm" toolbox="{{ rowColumn.value }}" />
-                            {% else %}
-                                {% if rowColumn.tooltip %}
+                            {%- else -%}
+                                {%- if rowColumn.tooltip -%}
                                     <span data-toggle="tooltip" data-placement="bottom" title="{{ rowColumn.tooltip|escape("html_attr") }}">{{ rowColumn.value }}</span>
-                                {% else %}
-                                    {% if rowColumn.value is same as(null) %}
+                                {%- else -%}
+                                    {%- if rowColumn.value is same as(null) -%}
                                         <span class="text-muted">empty</span>
-                                    {% else %}
+                                    {%- else -%}
                                         {{ rowColumn.value }}
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
+                                    {%- endif -%}
+                                {%- endif -%}
+                            {%- endif -%}
                         </td>
-                    {% endfor %}
+                    {% endfor -%}
                 </tr>
             {% else %}
                 <tr>

@@ -7,9 +7,11 @@
         <twig:Table table="{{ computed.table }}" data-loading="addClass(opacity-50)" />
     {% endset %}
 
+    {% if not run %}
     <div class="mb-3">
         <twig:Live:Search :formId="liveSearchFormType" :formType="liveSearchFormType" title="Search data" formData="{{ {"search": searchQuery} }}" :formOptions="this.searchFormOptions" />
     </div>
+    {% endif %}
 
     <twig:ElementCard title="Data">
         {{ block_content }}

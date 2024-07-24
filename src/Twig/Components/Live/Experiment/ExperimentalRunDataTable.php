@@ -6,6 +6,7 @@ namespace App\Twig\Components\Live\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\ExperimentalCondition;
@@ -41,6 +42,9 @@ class ExperimentalRunDataTable extends AbstractController
 
     #[LiveProp]
     public ?ExperimentalDesign $design;
+
+    #[LiveProp]
+    public ?ExperimentalRun $run = null;
 
     #[LiveProp]
     public string $liveSearchFormType = ExperimentalSearchDataType::class;
@@ -173,14 +177,22 @@ class ExperimentalRunDataTable extends AbstractController
     public function getTable(): array
     {
         $conditionFields = $this->dataService->getFields($this->design);
-        $dataRows = $this->dataService->getPaginatedResults(searchFields: $this->searchQuery, design: $this->design, page: $this->page, limit: $this->limit);
+
+        $searchQuery = $this->searchQuery;
+
+        if ($this->run) {
+            $searchQuery["run"] = $this->run;
+        }
+
+
+        $dataRows = $this->dataService->getPaginatedResults(searchFields: $searchQuery, design: $this->design, page: $this->page, limit: $this->limit);
 
         $columns = $this->getTableColumns(... $conditionFields);
 
         $table = new Table(
             data: $dataRows,
             columns: $columns,
-            maxRows: $this->dataService->getPaginatedResultCount(searchFields: $this->searchQuery, design: $this->design)
+            maxRows: $this->dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $this->design)
         );
 
         return $table->toArray();

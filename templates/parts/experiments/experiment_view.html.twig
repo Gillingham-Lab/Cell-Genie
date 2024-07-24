@@ -1,0 +1,71 @@
+{%- extends 'homepage.html.twig' -%}
+
+{%- block title -%}Gin :: Experiment :: {{ design.number }}{%- endblock -%}
+
+{%- block body_main -%}
+<div class="row">
+    <div class="container container-fluid w-100 p-0 m-0">
+        <twig:PageHeader title="{{ design.number }} - {{ design.shortName }}" :subTitle="run.name" icon="experiment" barcode />
+
+        {% if toolbox is defined %}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox"></twig:Toolbox>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
+        {% endif %}
+
+        <twig:Layout:Row cols="1">
+            <twig:Layout:Col type="outer">
+                <twig:ElementCard title="Overview" class="mb-3">
+                    <twig:Metadata
+                        columns="4"
+                        data="{{ {
+                            "ID": run.id.toRfc4122,
+                            "Name": run.name,
+                            "Scientist": run.scientist,
+                            "LabJournal": (run.labJournal ? ["ExternalUrl", {
+                                "title": "Link",
+                                "href": run.labjournal
+                            }] : ""),
+                            "Created at": ["date", run.createdAt],
+                            "Modified at": ["date", run.modifiedAt],
+                        } }}"
+                    />
+
+                    {{ run.comment }}
+                </twig:ElementCard>
+
+                <twig:ElementCard title="Run data" class="mb-3">
+                    {%- set metaData = {} -%}
+                    {%- for field in design.fields|filter((f) => f.role.name == "Top") -%}
+                        {%- set metaData = metaData|merge({(field.label): ["datum", {
+                            "field": field,
+                            "formRow": field.formRow,
+                            "datum": run.data[field.formRow.fieldName].value,
+                        }]}) -%}
+                    {%- endfor -%}
+                    <twig:Metadata
+                        columns="4"
+                        :data="metaData"
+                    />
+                </twig:ElementCard>
+
+                <twig:ElementCard title="Conditions" class="mb-3">
+                    <twig:Table :table="conditionTable" />
+                </twig:ElementCard>
+
+                {%- if comparisonTable.data|length > 0 -%}
+                <twig:ElementCard title="Comparisons" class="mb-3">
+                    <twig:Table :table="comparisonTable" />
+                </twig:ElementCard>
+                {%- endif -%}
+
+                <twig:ElementCard title="Data" class="mb-3">
+                    <twig:Table :table="datasetTable" />
+                </twig:ElementCard>
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+    </div>
+</div>
+{%- endblock -%}
