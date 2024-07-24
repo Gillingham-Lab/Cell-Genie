@@ -31,6 +31,16 @@ $enable-negative-margins: true;
   --bs-pagination-disabled-color: #{$gray-300};
 }
 
+.white-tooltip {
+  --bs-tooltip-color: black;
+  --bs-tooltip-bg: white;
+  --bs-tooltip-opacity: 1.0;
+  --bs-tooltip-max-width: 20rem;
+
+  border: 1px solid #777777;
+  border-radius: var(--bs-tooltip-border-radius);
+}
+
 // Stacked icons
 .dropdown-item {
   --left-icon-opacity: 1.0;

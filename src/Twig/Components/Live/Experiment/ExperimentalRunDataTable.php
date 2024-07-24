@@ -109,17 +109,18 @@ class ExperimentalRunDataTable extends AbstractController
             return $value;
         };
 
-        $getColumnsFromFields = function ($fields) use ($specialFloatToString): array {
+        $getColumnsFromFields = function ($fields, bool $small = false) use ($specialFloatToString): array {
             $columns = [];
             foreach ($fields as $field) {
                 $formRow = $field->getFormRow();
-                $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field, $formRow, $specialFloatToString) {
+                $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field, $formRow, $specialFloatToString, $small) {
                     if (!array_key_exists($formRow->getFieldName(), $x)) {
                         return [
                             Datum::class, [
                                 "field" => $field,
                                 "formRow" => $formRow,
                                 "datum" => null,
+                                "small" => $small,
                             ]
                         ];
                     }
@@ -141,6 +142,7 @@ class ExperimentalRunDataTable extends AbstractController
                             "field" => $field,
                             "formRow" => $formRow,
                             "datum" => $value,
+                            "small" => $small,
                         ]
                     ];
                 });
@@ -162,7 +164,7 @@ class ExperimentalRunDataTable extends AbstractController
                 \App\Twig\Components\Table::class, [
                     "table" => (new Table(
                         data: $x["data"] ?? [],
-                        columns: $getColumnsFromFields($dataFields),
+                        columns: $getColumnsFromFields($dataFields, true),
                     ))->toArray(),
                     "small" => true,
                 ],

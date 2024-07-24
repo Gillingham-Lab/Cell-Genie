@@ -5,14 +5,27 @@
         {%- endfor -%}
     {%- else -%}
         {%- if this.isComponent -%}
-            {%- if datum is substanceChemical -%}
-                <twig:SmilesViewer key="{{ datum.ulid }}" smiles="{{ datum.smiles }}" size="15" />
-            {%- endif -%}
+            {%- set chemical = this.getChemical() -%}
 
-            {%- if datum is object or datum is array -%}
-                <twig:EntityReference entity="{{ datum }}"/>
-            {%- else -%}
-                {{ datum }}
+            {% set entityReference %}
+                {%- if datum is object or datum is array -%}
+                    <twig:EntityReference entity="{{ datum }}" />
+                {%- else -%}
+                    {{ datum }}
+                {%- endif -%}
+            {% endset %}
+
+            {# Only display Smiles normally if "not small" #}
+            {%- if chemical -%}
+                {% if small %}<div class="d-none" id="smiles-viewer-tooltip-container-{{ chemical.ulid }}" style="min-width: 20rem">{% endif %}
+                    <twig:SmilesViewer key="{{ chemical.ulid }}" smiles="{{ chemical.smiles }}" size="20" />
+                {% if small %}</div>{% endif %}
+
+                {% if small %}<div class="d-inline" data-bs-toggle="tooltip" data-tooltip-reference="smiles-viewer-tooltip-container-{{ chemical.ulid }}">{% endif %}
+                    {{ entityReference|raw }}
+                {% if small %}</div>{% endif %}
+            {% else %}
+                {{ entityReference|raw }}
             {%- endif -%}
         {%- else -%}
             {%- if datum is float -%}

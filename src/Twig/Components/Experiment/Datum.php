@@ -5,6 +5,8 @@ namespace App\Twig\Components\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\SubstanceLot;
 use App\Genie\Enums\FormRowTypeEnum;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
@@ -15,6 +17,7 @@ class Datum
     public ?ExperimentalDesignField $field = null;
     public ?FormRow $formRow = null;
     public mixed $datum = null;
+    public bool $small = false;
 
     #[PreMount]
     private function preMount($values)
@@ -32,5 +35,18 @@ class Datum
             FormRowTypeEnum::EntityType => true,
             default => false,
         };
+    }
+
+    public function getChemical(): false|Chemical
+    {
+        if ($this->isComponent()) {
+            if ($this->datum instanceof Chemical) {
+                return $this->datum;
+            } elseif ($this->datum instanceof SubstanceLot and $this->datum->getSubstance() instanceof Chemical) {
+                return $this->datum->getSubstance();
+            }
+        }
+
+        return false;
     }
 }
