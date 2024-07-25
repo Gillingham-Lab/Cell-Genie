@@ -1,23 +1,25 @@
-<a{{ attributes.defaults({
+<a {{ attributes.defaults({
     class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
 }) }}
-    {% if tool.path %}
+    {%- if tool.path -%}
         href="{{ tool.path }}"
-    {% endif %}
+    {%- endif -%}
 
-    {% if tool.tooltip %}
+    {%- if tool.tooltip -%}
         data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
-    {% endif %}
+    {%- endif -%}
 
-    {% if tool.confirmationRequired %}
+    {%- if tool.confirmationRequired -%}
         onclick='return confirm("{{ tool.confirmationText }}")'
-    {% endif %}
+    {%- endif -%}
 
-    {% if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
+    {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") -%}
         data-clipboard-text="{{ tool.clipboardText }}"
-    {% endif %}
+    {%- endif -%}
 >
-    {% if tool.icon %}
-        <twig:Icon :icon="tool.icon" :stack="tool.iconStack"/>
-    {% endif %}
+    {%- if tool.icon -%}
+        {%- cache "gin-icon-" ~ tool.icon ~ "-" ~ tool.iconStack -%}
+            <twig:Icon :icon="tool.icon" :stack="tool.iconStack"/>
+        {%- endcache -%}
+    {%- endif -%}
 </a>
