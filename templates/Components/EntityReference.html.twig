@@ -11,8 +11,8 @@
                         <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
                             {% cache "gin-icon-cache-" ~ icon %}
                                 <twig:Icon :icon="icon" />
-                                {{ e }}
                             {% endcache %}
+                            {{ e }}
                         </a>
                     {% endcache %}
                 {%- endif -%}

@@ -12,9 +12,11 @@ use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Repository\Cell\CellRepository;
+use App\Service\Doctrine\Type\Ulid;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,12 +37,7 @@ class Cell implements PrivacyAwareInterface
     use VendorTrait;
     use HasAttachmentsTrait;
     use PrivacyAwareTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    #[Groups(["cell"])]
-    private ?int $id = null;
+    use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: CellGroup::class, cascade: ["persist"], fetch: "LAZY", inversedBy: "cells")]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
@@ -173,11 +170,6 @@ class Cell implements PrivacyAwareInterface
     public function __toString()
     {
         return "{$this->cellNumber} | {$this->getName()}";
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string
