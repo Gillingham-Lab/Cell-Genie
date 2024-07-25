@@ -87,33 +87,12 @@ class ExperimentalRunDataTable extends AbstractController
             })
         ];
 
-        $specialFloatToString = function($value, array $configuration): string|float {
-            if (is_float($value) === false) {
-                return "NAN";
-            }
-
-            if (is_infinite($value) or is_nan($value)) {
-                if ($configuration["floattype_inactive_label"] ?? null) {
-                    $valueInstead = $configuration["floattype_inactive_label"];
-
-                    if (
-                        ($configuration["floattype_inactive"] === "Inf" and is_infinite($value) and $value > 0) or
-                        ($configuration["floattype_inactive"] === "-Inf" and is_infinite($value) and $value > 0) or
-                        ($configuration["floattype_inactive"] === "NaN" and is_nan($value))
-                    ) {
-                        $value = $valueInstead;
-                    }
-                }
-            }
-
-            return $value;
-        };
-
-        $getColumnsFromFields = function ($fields, bool $small = false) use ($specialFloatToString): array {
+        $dataService = $this->dataService;
+        $getColumnsFromFields = function ($fields, bool $small = false) use ($dataService): array {
             $columns = [];
             foreach ($fields as $field) {
                 $formRow = $field->getFormRow();
-                $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field, $formRow, $specialFloatToString, $small) {
+                $columns[] = new ComponentColumn($field->getLabel(), function ($x) use ($field, $formRow, $small, $dataService) {
                     if (!array_key_exists($formRow->getFieldName(), $x)) {
                         return [
                             Datum::class, [
@@ -130,9 +109,9 @@ class ExperimentalRunDataTable extends AbstractController
                     if ($formRow->getType() === FormRowTypeEnum::FloatType) {
                         $configuration = $formRow->getConfiguration();
                         if (is_array($value)) {
-                            $value = array_map(fn($x) => $specialFloatToString($x, $configuration), $value);
+                            $value = array_map(fn($x) => $dataService->convertFloatToString($x, $formRow), $value);
                         } else {
-                            $value = $specialFloatToString($value, $configuration);
+                            $value = $dataService->convertFloatToString($value, $formRow);
                         }
                     }
 

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\User\User;
@@ -19,6 +20,7 @@ use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
+use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\ExperimentTypeRepository;
 use App\Repository\LotRepository;
@@ -33,6 +35,7 @@ use App\Twig\Components\Live\Experiment\ExperimentalRunForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -120,6 +123,173 @@ class ExperimentController extends AbstractController
             "design" => $design,
             "displayData" => true,
         ]);
+    }
+
+
+    #[Route('/api/experiment/design/viewData/{design}', name: "app_api_experiments_view_data")]
+    #[IsGranted("view", "design")]
+    public function downloadDesignData(
+        ExperimentalDataService $dataService,
+        ExperimentalDesign $design,
+        #[MapQueryParameter] int $limit = 100,
+        #[MapQueryParameter] int $page = 0,
+        #[MapQueryParameter] bool $onlyExposed = true,
+        #[MapQueryParameter] array $searchQuery = [],
+        #[MapQueryParameter] bool $entitiesAsId = false,
+    ) {
+        $response = new Response(null, Response::HTTP_OK);
+        $response->headers->set("Content-Type", "text/plain");
+
+        /** @var ExperimentalDesignField[] $conditionFields */
+        $conditionFields = $dataService
+            ->getFields($design, $onlyExposed)
+            ->filter(fn (ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition]))
+        ;
+
+        $dataRows = $dataService->getPaginatedResults(searchFields: $searchQuery, design: $design, page: $page, limit: $limit);
+
+        $columns = [
+            new Column("Run", fn ($x) => $x["run"]->getId()),
+            new Column("Condition", fn ($x) => $x["set"]->getId()),
+        ];
+
+        foreach ($conditionFields as $field) {
+            $formRow = $field->getFormRow();
+
+            $columns[] = new Column($field->getLabel(), function ($x) use ($field, $formRow, $dataService, $entitiesAsId) {
+                if (!array_key_exists($formRow->getFieldName(), $x)) {
+                    return "NAN";
+                }
+
+                $value = $x[$formRow->getFieldName()];
+
+                if ($formRow->getType() === FormRowTypeEnum::FloatType) {
+                    if (is_array($value)) {
+                        $value = array_map(fn($x) => $dataService->convertFloatToString($x, $formRow), $value);
+                    } else {
+                        $value = $dataService->convertFloatToString($value, $formRow);
+                    }
+                } elseif ($formRow->getType() === FormRowTypeEnum::EntityType and $entitiesAsId === true) {
+                    return method_exists($value, "getId") ? $value->getId() : $value->getUlid();
+                }
+
+                return $value;
+            });
+        }
+
+        $table = new Table(
+            data: $dataRows,
+            columns: $columns,
+            maxRows: $dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $design)
+        );
+
+        $array = $table->toArray();
+
+        $content = "#TotalNumberOfRows\t{$array['maxNumberOfRows']}\n";
+
+        $content .= implode("\t", array_map(fn ($column) => $column["label"], $array["columns"])). "\n";
+
+        foreach ($array["rows"] as $row) {
+            $content .= implode("\t", array_map(fn ($cell) => $cell["value"], $row)) . "\n";
+        }
+
+        $response->setContent($content);
+
+        return $response;
+    }
+
+    #[Route('/api/experiment/run/viewData/{run}', name: "app_api_experiments_run_view_data")]
+    #[IsGranted("view", "run")]
+    public function downloadConditionData(
+        ExperimentalDataService $dataService,
+        ExperimentalRun $run,
+        #[MapQueryParameter] int $limit = 100,
+        #[MapQueryParameter] int $page = 0,
+        #[MapQueryParameter] array $searchQuery = [],
+        #[MapQueryParameter] bool $entitiesAsId = false,
+    ): Response {
+        $response = new Response(null, Response::HTTP_OK);
+        $response->headers->set("Content-Type", "text/plain");
+
+        $design = $run->getDesign();
+
+        /** @var ExperimentalDesignField[] $conditionFields */
+        $conditionFields = $dataService
+            ->getFields($design, false)
+            ->filter(fn (ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Datum]))
+        ;
+
+        $searchQuery = array_merge(
+            ["run" => $run],
+            $searchQuery,
+        );
+        $dataRows = $dataService->getPaginatedResults(searchFields: $searchQuery, design: $design, page: $page, limit: $limit);
+
+        # "Up end" data array
+        $newDataRows = [];
+        foreach ($dataRows as $dataRow) {
+            foreach ($dataRow["data"] as $dataSubRow) {
+                $newRow = array_merge($dataRow, $dataSubRow);
+
+                $newDataRows[] = $newRow;
+            }
+        }
+
+        $columns = [
+            new Column("Run", fn ($x) => $x["run"]->getId()),
+            new Column("Condition", fn ($x) => $x["set"]->getId()),
+        ];
+
+        foreach ($conditionFields as $field) {
+            $formRow = $field->getFormRow();
+
+            $columns[] = new Column($field->getLabel(), function ($x) use ($field, $formRow, $dataService, $entitiesAsId) {
+
+                if ($field->getRole() === ExperimentalFieldRole::Comparison) {
+                    if (!array_key_exists($formRow->getFieldName(), $x["data"])) {
+                        return "NAN";
+                    }
+
+                    $value = $x["data"][$formRow->getFieldName()];
+                } else {
+                    if (!array_key_exists($formRow->getFieldName(), $x)) {
+                        return "NAN";
+                    }
+
+                    $value = $x[$formRow->getFieldName()];
+                }
+
+                if ($formRow->getType() === FormRowTypeEnum::FloatType) {
+                    if (is_array($value)) {
+                        $value = array_map(fn($x) => $dataService->convertFloatToString($x, $formRow), $value);
+                    } else {
+                        $value = $dataService->convertFloatToString($value, $formRow);
+                    }
+                } elseif ($formRow->getType() === FormRowTypeEnum::EntityType and $entitiesAsId === true) {
+                    return method_exists($value, "getId") ? $value->getId() : $value->getUlid();
+                }
+
+                return $value;
+            });
+        }
+
+        $table = new Table(
+            data: $newDataRows,
+            columns: $columns,
+            maxRows: $dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $design)
+        );
+
+        $array = $table->toArray();
+
+        $content = implode("\t", array_map(fn ($column) => $column["label"], $array["columns"])). "\n";
+
+        foreach ($array["rows"] as $row) {
+            $content .= implode("\t", array_map(fn ($cell) => $cell["value"], $row)) . "\n";
+        }
+
+        $response->setContent($content);
+
+        return $response;
     }
 
     #[Route("/experiment/design/new", name: 'app_experiments_new')]
@@ -305,6 +475,12 @@ class ExperimentController extends AbstractController
                     icon: "up",
                     buttonClass: "btn-secondary",
                     tooltip: "Return to run overview",
+                ),
+                new Tool(
+                    $this->generateUrl("app_api_experiments_run_view_data", ["run" => $run->getId()]),
+                    icon: "download",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Download data as tsv"
                 ),
                 new EditTool(
                     path: $this->generateUrl("app_experiments_run_edit", ["run" => $run->getId()]),

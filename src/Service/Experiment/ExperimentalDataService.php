@@ -65,12 +65,16 @@ class ExperimentalDataService
             ;
     }
 
-    public function getFields(ExperimentalDesign $design): Collection
+    public function getFields(ExperimentalDesign $design, $onlyExposed = true): Collection
     {
-        if (method_exists($design->getFields(), "isInitialized") && $design->getFields()->isInitialized() === false) {
-            $fields = $design->getFields()->matching((new Criteria())->where(new Comparison("exposed", "=", "true")));
+        if ($onlyExposed) {
+            if (method_exists($design->getFields(), "isInitialized") && $design->getFields()->isInitialized() === false) {
+                $fields = $design->getFields()->matching((new Criteria())->where(new Comparison("exposed", "=", "true")));
+            } else {
+                $fields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed());
+            }
         } else {
-            $fields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed());
+            $fields = $design->getFields();
         }
 
         return $fields;
@@ -145,31 +149,6 @@ class ExperimentalDataService
 
         // Create the data array
         return $this->createDataArray($paginatedConditions, $entities, $design);
-
-        $conditionIds = [];
-        foreach ($paginatedConditions as $condition) {
-            $conditionIds[] = $condition->getId()->toRfc4122();
-        }
-
-
-
-        $dataArray = [];
-        foreach ($paginatedConditions as $condition) {
-            $row = [
-                "set" => $condition,
-                "run" => $condition->getExperimentalRun(),
-            ];
-
-            $conditionId = $condition->getId()->toRfc4122();
-
-
-
-            $dataArray[] = $row;
-
-            break;
-        }
-
-        return $dataArray;
     }
 
     /**
@@ -299,7 +278,7 @@ class ExperimentalDataService
         $pushColumn = function (Collection $data, &$row) use ($entitiesToFetch, $design) {
             /** @var ExperimentalDatum $datum */
             foreach ($data as $datum) {
-                $field = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed() && $field->getFormRow()->getFieldName() === $datum->getName())->first();
+                $field = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $datum->getName())->first();
 
                 if ($field === false) {
                     continue;
@@ -439,5 +418,30 @@ class ExperimentalDataService
         $queryBuilder = $queryBuilder->where("data$suffix.name = :$nameParam");
 
         return $queryBuilder;
+    }
+
+    public function convertFloatToString($value, FormRow $formRow): string
+    {
+        $configuration = $formRow->getConfiguration();
+
+        if (is_float($value) === false) {
+            return "NAN";
+        }
+
+        if (is_infinite($value) or is_nan($value)) {
+            if ($configuration["floattype_inactive_label"] ?? null) {
+                $valueInstead = $configuration["floattype_inactive_label"];
+
+                if (
+                    ($configuration["floattype_inactive"] === "Inf" and is_infinite($value) and $value > 0) or
+                    ($configuration["floattype_inactive"] === "-Inf" and is_infinite($value) and $value > 0) or
+                    ($configuration["floattype_inactive"] === "NaN" and is_nan($value))
+                ) {
+                    $value = $valueInstead;
+                }
+            }
+        }
+
+        return (string)$value;
     }
 }
