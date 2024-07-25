@@ -54,6 +54,13 @@ class ExperimentalDesignTable extends AbstractController
                         tooltip: "View data",
                         iconStack: "view",
                     ),
+                    new ViewTool(
+                        path: $this->generateUrl("app_api_experiments_view_data", ["design" => $design->getId()]),
+                        icon: "data",
+                        buttonClass: "btn-secondary",
+                        tooltip: "Download data",
+                        iconStack: "download",
+                    ),
                     new EditTool(
                         path: $this->generateUrl("app_experiments_edit", ["design" => $design->getId()]),
                         tooltip: "Edit experiment",

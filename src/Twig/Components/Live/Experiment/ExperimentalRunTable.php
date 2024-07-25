@@ -10,6 +10,7 @@ use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\Table;
 use App\Entity\Table\ToolboxColumn;
 use App\Entity\Toolbox\EditTool;
+use App\Entity\Toolbox\Tool;
 use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
 use App\Repository\Experiment\ExperimentalRunRepository;
@@ -48,6 +49,12 @@ class ExperimentalRunTable extends AbstractController
                         # ToDo: Change this to lead to the run itself
                         path: $this->generateUrl("app_experiments_run_view", ["run" => $run->getId()]),
                         tooltip: "View run",
+                    ),
+                    new Tool(
+                        $this->generateUrl("app_api_experiments_run_view_data", ["run" => $run->getId()]),
+                        icon: "download",
+                        buttonClass: "btn-secondary",
+                        tooltip: "Download data as tsv"
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_experiments_run_edit", ["run" => $run->getId()]),
