@@ -263,13 +263,6 @@ class CellController extends AbstractController
         // Get corresponding box maps
         $boxMaps = $boxService->getBoxMaps($cell, $boxes);
 
-        // Get associated chemicals
-        $chemicals = $this->chemicalRepository->findByCell($cell);
-        // Get associated proteins
-        $proteins = $this->proteinRepository->findByCell($cell);
-        // Get associated experiment types
-        $experimentTypes = $this->experimentTypeRepository->findByCell($cell);
-
         $toolBox = new Toolbox([
             new Tool(
                 path: $this->generateUrl("app_cells", ["cellGroup" => $cell->getCellGroup()->getId()]),
@@ -301,9 +294,6 @@ class CellController extends AbstractController
             "currentAliquot" => $aliquot,
             "boxMaps" => $boxMaps,
             "aliquote" => $aliquot,
-            "chemicals" => $chemicals,
-            "proteins" => $proteins,
-            "experimentTypes" => $experimentTypes,
         ]);
     }
 
