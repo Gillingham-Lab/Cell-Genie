@@ -10,8 +10,8 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent]
 class PlasmidViewer
 {
-    public string $sequence;
-    public int $length;
+    public ?string $sequence;
+    public ?int $length;
     public array $annotations;
 
     #[PreMount]
