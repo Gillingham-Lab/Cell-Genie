@@ -434,9 +434,9 @@ class ExperimentController extends AbstractController
             return new ComponentColumn($field->getLabel(), function (ExperimentalRunCondition|ExperimentalRunDataSet $condition) use ($field, $entities) {
                 /** @var ExperimentalDatum $datum */
                 $datum = $condition->getData()[$field->getFormRow()->getFieldName()];
-                $value = $datum->getValue();
+                $value = $datum?->getValue();
 
-                if ($datum->getType() === DatumEnum::EntityReference) {
+                if ($datum?->getType() === DatumEnum::EntityReference) {
                     $value = $entities[$value[1]][$value[0]->toRfc4122()];
                 }
 
