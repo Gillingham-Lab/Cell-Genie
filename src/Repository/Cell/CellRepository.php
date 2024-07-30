@@ -36,14 +36,15 @@ class CellRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder("c");
 
-        $qb = $qb->select("c")
-            ->addSelect("CASE WHEN c.id = :id THEN 1 ELSE 0 END AS HIDDEN sortCondition")
-            ->where("c.id = :id")
-            ->orWhere("c.cellNumber = :number")
-            ->orderBy("sortCondition", "DESC")
+        if (Ulid::isValid($numberOrId)) {
+            $qb = $qb->where("c.id = :query");
+        } else {
+            $qb = $qb->where("c.cellNumber = :query");
+        }
+
+        $qb = $qb
+            ->setParameter("query", $numberOrId)
             ->setMaxResults(1)
-            ->setParameter("id", intval($numberOrId), "integer")
-            ->setParameter("number", $numberOrId, "string")
         ;
 
         return $qb->getQuery()->getOneOrNullResult();

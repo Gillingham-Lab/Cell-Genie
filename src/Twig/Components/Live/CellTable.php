@@ -159,7 +159,7 @@ class CellTable extends AbstractController
 
                     return "Total: {$total}, Unique: {$unique}";
                 }),
-                new Column("Group", fn(Cell $cell) => $cell->getGroup()->getShortName()),
+                new Column("Group", fn(Cell $cell) => $cell->getGroup()?->getShortName()),
                 new Column("Organism", fn(Cell $cell) => $cell->getOrganism()?->getName() ?? "Unknown"),
                 new Column("Tissue", fn(Cell $cell) => $cell->getTissue()?->getName() ?? "Unknown"),
                 new ToggleColumn("Cancer", fn(Cell $cell) => $cell->getIsCancer()),

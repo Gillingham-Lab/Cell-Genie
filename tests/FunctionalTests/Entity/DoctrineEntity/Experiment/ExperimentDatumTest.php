@@ -172,7 +172,7 @@ class ExperimentDatumTest extends KernelTestCase
     {
         return [
             ["substance", DatumEnum::EntityReference, Antibody::class, ["number" => "AB001"]],
-            ["cell", DatumEnum::EntityReference, Cell::class, ["cellNumber" => "C001"]],
+            ["cell", DatumEnum::EntityReference, Cell::class, ["cellNumber" => "CL001"]],
         ];
     }
 

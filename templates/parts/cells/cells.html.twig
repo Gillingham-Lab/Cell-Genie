@@ -151,9 +151,9 @@
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
             {% if app.request.get("_route") == "app_cells_search" %}
-                {{ layout.header("Cells", "Search results for: " ~ searchTerm ~ ", found " ~ cellGroups|length ~ " groups and " ~ cells|length ~ " cells", true, icon.cell(false)) }}
+                {{ layout.header("Browse Cells", "Search results for: " ~ searchTerm ~ ", found " ~ cellGroups|length ~ " groups and " ~ cells|length ~ " cells", true, icon.cell(false)) }}
             {% else %}
-                {{ layout.header("Cells", false, true, icon.cell(true)) }}
+                {{ layout.header("Browse Cells", false, true, icon.cell(true)) }}
             {% endif %}
 
             <div class="row row-cols-1 row-cols-lg-2">
