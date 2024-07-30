@@ -80,7 +80,11 @@ class StorageBoxService
         // Fill the maps
         /** @var CellAliquot|Lot $entry */
         foreach ($this->getEntries($entity) as $entry) {
-            $boxId = $entry->getBox()->getUlid()->toBase58();
+            $boxId = $entry->getBox()?->getUlid()->toBase58();
+            if (!$boxId) {
+                continue;
+            }
+
             $coordinate = $entry->getBoxCoordinate();
             $vialCount = $entry instanceof CellAliquot ? $entry->getVials() : $entry->getNumberOfAliquotes();
 

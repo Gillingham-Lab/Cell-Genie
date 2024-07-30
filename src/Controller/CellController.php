@@ -25,14 +25,9 @@ use App\Form\Cell\CellCultureType;
 use App\Form\Cell\CellGroupType;
 use App\Form\Cell\CellType;
 use App\Form\Search\CellSearchType;
-use App\Repository\Cell\CellAliquotRepository;
 use App\Repository\Cell\CellCultureRepository;
 use App\Repository\Cell\CellGroupRepository;
 use App\Repository\Cell\CellRepository;
-use App\Repository\ExperimentTypeRepository;
-use App\Repository\Storage\BoxRepository;
-use App\Repository\Substance\ChemicalRepository;
-use App\Repository\Substance\ProteinRepository;
 use App\Security\Voter\Cell\CellAliquotVoter;
 use App\Security\Voter\Cell\CellCultureVoter;
 use App\Security\Voter\Cell\CellGroupVoter;
@@ -59,21 +54,9 @@ class CellController extends AbstractController
     private ?User $user = null;
 
     public function __construct(
-        readonly private Security                 $security,
-        readonly private CellRepository           $cellRepository,
-        readonly private BoxRepository            $boxRepository,
-        readonly private CellAliquotRepository    $cellAliquotRepository,
-        readonly private ChemicalRepository       $chemicalRepository,
-        readonly private ProteinRepository        $proteinRepository,
-        readonly private ExperimentTypeRepository $experimentTypeRepository,
         readonly private EntityManagerInterface   $entityManager,
         readonly private CellCultureRepository    $cellCultureRepository,
     ) {
-        $user = $this->security->getUser();
-
-        if ($user instanceof User) {
-            $this->user = $user;
-        }
     }
 
     #[Route("/cells", name: "app_cells")]
@@ -89,46 +72,8 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/all", name: "app_cells_all")]
-    public function allCells(
-        CellRepository $cellRepository
-    ) {
-        $cells = $this->cellRepository->getCellsWithAliquotes(
-            orderBy: ["cellNumber" => "ASC"],
-        );
-
-        return $this->render("parts/cells/cells_list.html.twig", [
-            "cells" => $cells,
-            "entityClass" => Cell::class,
-            "entityContext" => "cell",
-            "liveSearchFormType" => CellSearchType::class,
-       ]) ;
-    }
-
-    #[Route("/cells/search", name: "app_cells_search")]
-    public function searchCell(
-        CellGroupRepository $cellGroupRepository,
-        CellRepository $cellRepository,
-        Request $request,
-    ): Response {
-        $searchTerm = $request->request->get("search", null);
-
-        if (!$searchTerm) {
-            $this->addFlash("error", "Search term was empty.");
-            return $this->redirectToRoute("app_cells");
-        } elseif (strlen($searchTerm) < 3) {
-            $this->addFlash("error", "Search term must contain at least 3 characters");
-            return $this->redirectToRoute("app_cells");
-        }
-
-        $cellGroups = $cellGroupRepository->searchGroupsWithCellsAndAliquots($searchTerm, ["name" => "ASC"]);
-        $cells = $cellRepository->searchCellsWithAliquots($searchTerm, ["cellNumber" => "ASC"]);
-
-        return $this->render("parts/cells/cells.html.twig", [
-            "cellGroups" => $cellGroups,
-            "cells" => $cells,
-            "currentGroup" => null,
-            "searchTerm" => $searchTerm,
-        ]);
+    public function allCells() {
+        return $this->render("parts/cells/cells_list.html.twig") ;
     }
 
     #[Route("/cells/group/remove/{cellGroup}", name: "app_cells_group_remove")]
@@ -137,8 +82,6 @@ class CellController extends AbstractController
         EntityManagerInterface $entityManager,
         CellGroup $cellGroup = null,
     ): Response {
-        $this->denyAccessUnlessGranted(CellGroupVoter::REMOVE, $cellGroup);
-
         if ($cellGroup) {
             try {
                 $entityManager->remove($cellGroup);
@@ -196,7 +139,7 @@ class CellController extends AbstractController
                 $groupParent = $cellGroup->getParent();
 
                 if ($groupParent !== null) {
-                    $fields = ["organism", "morphology", "tissue", "isCancer", "age", "sex", "ethnicity", "disease"];
+                    $fields = ["organism", "morphology", "tissue", "age", "sex", "ethnicity", "disease"];
 
                     foreach ($fields as $field) {
                         $setter = "set$field";
@@ -301,18 +244,22 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addCell(
         Request $request,
+        #[CurrentUser]
+        User $currentUser,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
     ): Response {
         $this->denyAccessUnlessGranted(CellVoter::NEW, "Cell");
 
-        return $this->addNewOrEditCell($request, $entityManager, $fileUploader);
+        return $this->addNewOrEditCell($request, $currentUser, $entityManager, $fileUploader);
     }
 
     #[Route("/cells/edit/{cell}", name: "app_cell_edit")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewOrEditCell(
         Request $request,
+        #[CurrentUser]
+        User $currentUser,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         #[MapEntity(expr: "repository.findCellByIdOrNumber(cell)")]
@@ -323,8 +270,8 @@ class CellController extends AbstractController
             $new = true;
 
             // Set owner and owner group
-            $cell->setOwner($this->user);
-            $cell->setGroup($this->user?->getGroup());
+            $cell->setOwner($currentUser);
+            $cell->setGroup($currentUser?->getGroup());
         } elseif (!$cell) {
             throw $this->createNotFoundException("Cell has not been found");
         } else {
@@ -379,26 +326,29 @@ class CellController extends AbstractController
 
     #[Route("/cells/addAliquot/{cell}", name: "app_cell_aliquot_add")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellVoter::ADD_ALIQUOT, "cell")]
     public function addNewCellAliquot(
         Request $request,
+        #[CurrentUser]
+        User $currentUser,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         #[MapEntity(expr: 'repository.findCellByIdOrNumber(cell)')]
-        Cell $cell = null,
+        Cell $cell,
     ): Response {
         if (!$cell) {
             throw $this->createNotFoundException("The request cell was not found");
         }
 
-        $this->denyAccessUnlessGranted(CellVoter::ADD_ALIQUOT, $cell);
-
-        return $this->addNewOrEditCellAliquot($request, $entityManager, $fileUploader, $cell, null);
+        return $this->addNewOrEditCellAliquot($request, $currentUser, $entityManager, $fileUploader, $cell, null);
     }
 
     #[Route("/cells/editAliquot/{cell}/{cellAliquot}", name: "app_cell_aliquot_edit")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addNewOrEditCellAliquot(
         Request $request,
+        #[CurrentUser]
+        User $currentUser,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         #[MapEntity(expr: 'repository.findCellByIdOrNumber(cell)')]
@@ -412,8 +362,8 @@ class CellController extends AbstractController
         if (!$cellAliquot and $request->get("_route") === "app_cell_aliquot_add") {
             $cellAliquot = new CellAliquot();
             $cellAliquot->setCell($cell);
-            $cellAliquot->setOwner($this->user);
-            $cellAliquot->setGroup($this->user?->getGroup());
+            $cellAliquot->setOwner($currentUser);
+            $cellAliquot->setGroup($currentUser?->getGroup());
             $new = true;
         } elseif (!$cellAliquot) {
             throw $this->createNotFoundException("Cell aliquot has not been found.");
@@ -476,7 +426,6 @@ class CellController extends AbstractController
 
     #[Route("/cells/consume/{aliquotId}", name: "app_cell_consume_aliquot")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
-    // #ToDo: Change this so that a form to create the cell culture is shown instead of silently adding a culture.
     public function consumeAliquot(
         #[MapEntity(mapping: ["aliquotId"  => "id"])]
         CellAliquot $aliquot,
@@ -638,6 +587,8 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function addCellCultureEvent(
         Request $request,
+        #[CurrentUser]
+        User $currentUser,
         CellCulture $cellCulture,
         ?string $eventType = null,
         ?CellCultureEvent $cellCultureEvent = null
@@ -672,9 +623,7 @@ class CellController extends AbstractController
             };
         }
 
-        // Set owner if null
-        $currentUser = $this->security->getUser();
-        if ($currentUser instanceof User and $cellCultureEvent->getOwner() === null) {
+        if ($cellCultureEvent->getOwner() === null) {
             $cellCultureEvent->setOwner($currentUser);
         }
 

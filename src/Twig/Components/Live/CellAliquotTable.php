@@ -86,7 +86,7 @@ class CellAliquotTable extends AbstractController
                 new Column("Aliquoted by", fn (CellAliquot $aliquot) => $aliquot->getAliquotedBy() ?? "unknown"),
                 new ComponentColumn("Aliquoted on", fn (CellAliquot $aliquot) => [Date::class, ["dateTime" => $aliquot->getAliquotedOn()]]),
                 new ColorColumn("Vial", fn (CellAliquot $aliquot) => $aliquot->getVialColor()),
-                new Column("Box", fn (CellAliquot $aliquot) => $aliquot->getBox()->getName()),
+                new Column("Box", fn (CellAliquot $aliquot) => $aliquot->getBox()?->getName()),
                 new Column("Position", fn (CellAliquot $aliquot) => $aliquot->getBoxCoordinate() ?? "?"),
                 new ProgressColumn("Vials", fn (CellAliquot $aliquot) => [
                     $aliquot->getVials(),

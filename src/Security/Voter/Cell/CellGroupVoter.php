@@ -36,11 +36,11 @@ class CellGroupVoter extends Voter
         }
 
         if ($attribute === self::NEW and $subject === "CellGroup") {
-            return in_array("ROLE_ADMIN", $user->getRoles());
+            return in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_GROUP_ADMIN", $user->getRoles());
         } elseif ($subject instanceof CellGroup) {
             return match ($attribute) {
-                self::EDIT => in_array("ROLE_ADMIN", $user->getRoles()),
-                self::REMOVE => in_array("ROLE_ADMIN", $user->getRoles()) && $subject->getCells()->count() === 0,
+                self::EDIT => in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_GROUP_ADMIN", $user->getRoles()),
+                self::REMOVE => (in_array("ROLE_ADMIN", $user->getRoles())  or in_array("ROLE_GROUP_ADMIN", $user->getRoles())) && $subject->getCells()->count() === 0,
             };
         }
 
