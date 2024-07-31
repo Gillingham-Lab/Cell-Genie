@@ -5,6 +5,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
+use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\HasBoxTrait;
 use App\Entity\Traits\Privacy\GroupOwnerTrait;
 use App\Entity\Traits\Privacy\OwnerTrait;
@@ -20,20 +21,16 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellAliquotRepository::class)]
-#[ORM\Table("cell_aliquote")]
+#[ORM\Table("cell_aliquot")]
 #[Gedmo\Loggable]
 #[WithinBoxBounds("boxCoordinate", "box")]
 class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
 {
+    use IdTrait;
     use HasBoxTrait;
     use OwnerTrait;
     use GroupOwnerTrait;
     use PrivacyLevelTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private ?int $id = 0;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Gedmo\Versioned]
@@ -138,12 +135,12 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     public function jsonSerialize(): mixed
     {
         return [
-            "id" => $this->getId(),
+            "id" => $this->getId()->toRfc4122(),
             "vialColor" => $this->getVialColor(),
             "numberOfAliquots" => $this->getVials(),
             "maxNumberOfAliquots" => $this->getMaxVials() ?? $this->getVials(),
             "number" => $this->getId(),
-            "name" => $this->getAliquotName() ?? $this->getId(),
+            "name" => $this->getAliquotName() ?? $this->getId()->toRfc4122(),
             "passage" => $this->getPassage(),
             "mycoplasmaResult" => $this->getMycoplasmaResult(),
             "aliquotedOn" => $this->getAliquotedOn()?->format("c"),
@@ -152,16 +149,11 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
             "cellCount" => $this->getCellCount(),
 
             "cell" => [
-                "id" => $this->getCell()->getId(),
+                "id" => $this->getCell()->getId()->toRfc4122(),
                 "number" => $this->getCell()->getCellNumber(),
                 "name" => $this->getCell()->getName(),
             ]
         ];
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getAliquotedOn(): ?DateTimeInterface

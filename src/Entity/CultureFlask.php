@@ -48,7 +48,7 @@ class CultureFlask
     private ?Vendor $vendor = null;
 
     #[ORM\Column(type: "integer", nullable: true)]
-    private ?string $vendorId = null;
+    private ?int $vendorId = null;
 
     #[Pure]
     public function __toString(): string

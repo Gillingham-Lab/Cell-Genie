@@ -74,13 +74,13 @@ class StorageBoxService
         // Create a list of maps
         $maps = [];
         foreach ($boxes as $box) {
-            $maps[$box->getUlid()->toBase58()] = BoxMap::fromBox($box);
+            $maps[$box->getUlid()->toRfc4122()] = BoxMap::fromBox($box);
         }
 
         // Fill the maps
         /** @var CellAliquot|Lot $entry */
         foreach ($this->getEntries($entity) as $entry) {
-            $boxId = $entry->getBox()?->getUlid()->toBase58();
+            $boxId = $entry->getBox()?->getUlid()->toRfc4122();
             if (!$boxId) {
                 continue;
             }
