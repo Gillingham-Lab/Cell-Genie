@@ -24,14 +24,14 @@
                         <div class="mx-0"
                             {% if currentCellAliquot %}
                                     {{ stimulus_controller("box", {
-                                            boxMap: boxMaps[box.ulid.toBase58],
+                                            boxMap: boxMaps[box.ulid.toRfc4122],
                                             substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
                                             cellTarget: url("app_cell_aliquot_view_number", {"cellNumber": "placeholder-cell-numer", "aliquotId": "placeholder-aliquot-id"}),
                                             currentAliquot: currentCellAliquot|json_encode,
                                     }) }}
                             {% else %}
                                     {{ stimulus_controller("box", {
-                                            boxMap: boxMaps[box.ulid.toBase58],
+                                            boxMap: boxMaps[box.ulid.toRfc4122],
                                             substanceTarget: url("app_substance_view", {"substance": "placeholder-substance-id"}),
                                             cellTarget: url("app_cell_aliquot_view_number", {"cellNumber": "placeholder-cell-numer", "aliquotId": "placeholder-aliquot-id"}),
                                     }) }}

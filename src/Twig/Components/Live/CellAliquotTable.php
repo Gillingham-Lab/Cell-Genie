@@ -71,9 +71,6 @@ class CellAliquotTable extends AbstractController
                         tooltip: "Trash aliquot",
                     ),
                 ])),
-                new Column("ID", function (CellAliquot $aliquot) {
-                    return $aliquot->getId();
-                }),
                 new Column("Nr", function (CellAliquot $aliquot) {
                     if ($aliquot->getAliquotName()) {
                         return $aliquot->getAliquotName();

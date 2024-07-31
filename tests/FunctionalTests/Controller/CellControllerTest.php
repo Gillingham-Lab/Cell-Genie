@@ -339,7 +339,7 @@ class CellControllerTest extends WebTestCase
 
         # Refetch aliquot
         $refetchedCellAliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("AL013");
-        $this->assertSame($cellAliquot->getId(), $refetchedCellAliquot->getId());
+        $this->assertSame($cellAliquot->getId()->toRfc4122(), $refetchedCellAliquot->getId()->toRfc4122());
     }
 
     public function testConsumeAliquot()
