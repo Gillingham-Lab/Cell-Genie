@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Form\Form;
 
+use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
@@ -24,6 +26,10 @@ class EntityTypeConfigurationType extends AbstractType
             ->add("entityType", ChoiceType::class, [
                 "label" => "Entity type",
                 "choices" => [
+                    "Cells" => [
+                        "Cell line" => Cell::class,
+                        "Cell aliquot" => CellAliquot::class,
+                    ],
                     "Substances" => [
                         "Antibody" => Antibody::class,
                         "Chemical" => Chemical::class,
