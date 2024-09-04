@@ -10,7 +10,7 @@
 }) %}
 
 <div class="{{ column_type.apply({type}, attributes.render("class") ?? "") }}"
-    {{ attributes.defaults({"class": "col"}) }}
+    {{ attributes.without("class") }}
 >
     {% block content %}{% endblock %}
 </div>
