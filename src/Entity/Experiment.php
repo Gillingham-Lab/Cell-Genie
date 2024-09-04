@@ -43,10 +43,6 @@ class Experiment
     #[Assert\Valid]
     private Collection $measurements;
 
-    #[ORM\ManyToOne(targetEntity: CultureFlask::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
-    private ?CultureFlask $wellplate = null;
-
     #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "experiments")]
     #[ORM\JoinColumn(name: "experiment_id", nullable: true, onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(name: "protein_ulid", referencedColumnName: "ulid")]
@@ -100,18 +96,6 @@ class Experiment
     public function setExperimentType(?ExperimentType $experimentType): self
     {
         $this->experimentType = $experimentType;
-
-        return $this;
-    }
-
-    public function getWellplate(): ?CultureFlask
-    {
-        return $this->wellplate;
-    }
-
-    public function setWellplate(?CultureFlask $wellplate): self
-    {
-        $this->wellplate = $wellplate;
 
         return $this;
     }
