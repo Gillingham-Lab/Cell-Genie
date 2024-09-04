@@ -17,7 +17,7 @@ class Vendor
     use PrivacyAwareTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
