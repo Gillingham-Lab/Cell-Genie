@@ -15,6 +15,18 @@ if (file_exists(dirname(__DIR__).'/config/bootstrap.php')) {
 (new \Symfony\Component\Filesystem\Filesystem())->remove(__DIR__.'/../var/cache/test');
 
 passthru(sprintf(
+    "php %s/../bin/console doctrine:database:drop --quiet --force -e %s",
+    __DIR__,
+    $_ENV["APP_ENV"],
+));
+
+passthru(sprintf(
+    "php %s/../bin/console doctrine:database:create --quiet -e %s",
+    __DIR__,
+    $_ENV["APP_ENV"],
+));
+
+passthru(sprintf(
     "php %s/../bin/console doctrine:schema:update --quiet --complete --force -e %s",
     __DIR__,
     $_ENV["APP_ENV"],
