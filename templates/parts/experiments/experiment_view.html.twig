@@ -36,6 +36,7 @@
                     {{ run.comment }}
                 </twig:ElementCard>
 
+                {%- if design.fields|filter((f) => f.role.name == "Top" and f.isExposed == true)|length > 0 -%}
                 <twig:ElementCard title="Run data" class="mb-3">
                     {%- set metaData = {} -%}
                     {%- for field in design.fields|filter((f) => f.role.name == "Top") -%}
@@ -50,10 +51,13 @@
                         :data="metaData"
                     />
                 </twig:ElementCard>
+                {%- endif -%}
 
+                {%- if conditionTable.data|length > 0 -%}
                 <twig:ElementCard title="Conditions" class="mb-3">
                     <twig:Table :table="conditionTable" />
                 </twig:ElementCard>
+                {%- endif -%}
 
                 {%- if comparisonTable.data|length > 0 -%}
                 <twig:ElementCard title="Comparisons" class="mb-3">
@@ -61,9 +65,11 @@
                 </twig:ElementCard>
                 {%- endif -%}
 
-                <twig:ElementCard title="Data" class="mb-3">
-                    <twig:Table :table="datasetTable" />
-                </twig:ElementCard>
+                {%- if datasetTable.data|length > 0 -%}
+                    <twig:ElementCard title="Data" class="mb-3">
+                        <twig:Table :table="datasetTable" />
+                    </twig:ElementCard>
+                {%- endif -%}
             </twig:Layout:Col>
         </twig:Layout:Row>
     </div>

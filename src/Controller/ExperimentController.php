@@ -461,7 +461,7 @@ class ExperimentController extends AbstractController
         $comparisonColumns = [];
 
         /** @var ExperimentalDesignField $field */
-        foreach ($run->getDesign()->getFields() as $field) {
+        foreach ($run->getDesign()->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed()) as $field) {
             if ($field->getRole() === ExperimentalFieldRole::Condition) {
                 $conditionColumns[] = $getComponentColumn($field, $entities);
             } elseif ($field->getRole() === ExperimentalFieldRole::Datum) {
