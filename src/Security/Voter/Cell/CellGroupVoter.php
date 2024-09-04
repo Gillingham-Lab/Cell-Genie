@@ -20,11 +20,15 @@ class CellGroupVoter extends Voter
             return false;
         }
 
-        if (!($subject === "CellGroup" or $subject instanceof CellGroup)) {
-            return false;
+        if ($subject === "CellGroup" and $attribute === self::NEW) {
+            return true;
         }
 
-        return true;
+        if ($subject instanceof CellGroup and $attribute !== self::NEW) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -36,14 +40,12 @@ class CellGroupVoter extends Voter
         }
 
         if ($attribute === self::NEW and $subject === "CellGroup") {
-            return in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_GROUP_ADMIN", $user->getRoles());
-        } elseif ($subject instanceof CellGroup) {
+            return in_array("ROLE_USER", $user->getRoles());
+        } else {
             return match ($attribute) {
-                self::EDIT => in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_GROUP_ADMIN", $user->getRoles()),
-                self::REMOVE => (in_array("ROLE_ADMIN", $user->getRoles())  or in_array("ROLE_GROUP_ADMIN", $user->getRoles())) && $subject->getCells()->count() === 0,
+                self::EDIT => in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_USER", $user->getRoles()),
+                self::REMOVE => in_array("ROLE_ADMIN", $user->getRoles()) or (in_array("ROLE_USER", $user->getRoles()) && $subject->getCells()->count() === 0),
             };
         }
-
-        return false;
     }
 }

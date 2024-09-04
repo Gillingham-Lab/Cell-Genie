@@ -104,6 +104,18 @@ class CellControllerTest extends WebTestCase
         $cellGroup = self::getContainer()->get(CellGroupRepository::class)->findOneByName("Empty");
 
         $crawler = $client->request("GET", "/cells/group/remove/{$cellGroup->getId()}");
+        $this->assertResponseStatusCodeSame(302);
+    }
+
+    public function testCellGroupRemovalRouteIfNotGroupAdminAndGroupIsNotEmpty()
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $cellGroup = self::getContainer()->get(CellGroupRepository::class)->findOneByNumber("CVCL_0291");
+
+        $crawler = $client->request("GET", "/cells/group/remove/{$cellGroup->getId()}");
         $this->assertResponseStatusCodeSame(403);
     }
 
