@@ -362,21 +362,26 @@ class ExperimentController extends AbstractController
         string $title,
         ?string $onSubmitRedirectTo = null,
     ): Response {
+        $tools = [
+            new Tool(
+                path: $this->generateUrl("app_experiments_view", ["design" => $design->getId()]),
+                icon: "up",
+                buttonClass: "btn-secondary",
+                tooltip: "Return to the run overview",
+            )
+        ];
+
+        if ($run->getId()) {
+            $tools[] = new Tool(
+                path: $this->generateUrl("app_experiments_run_view", ["run" => $run->getId()->toRfc4122()]),
+                icon: "left",
+                buttonClass: "btn-secondary",
+                tooltip: "Return to the run",
+            );
+        }
+
         return $this->render("parts/forms/component_form.html.twig", [
-            "toolbox" => new Toolbox([
-                new Tool(
-                    path: $this->generateUrl("app_experiments_view", ["design" => $design->getId()]),
-                    icon: "up",
-                    buttonClass: "btn-secondary",
-                    tooltip: "Return to the run overview",
-                ),
-                new Tool(
-                    path: $this->generateUrl("app_experiments_run_view", ["run" => $run->getId()]),
-                    icon: "left",
-                    buttonClass: "btn-secondary",
-                    tooltip: "Return to the run",
-                ),
-            ]),
+            "toolbox" => new Toolbox($tools),
             "onSubmitRedirectTo" => $onSubmitRedirectTo,
             "title" => $title,
             "subtitle" => "{$design->getNumber()} | {$design->getShortName()}",
