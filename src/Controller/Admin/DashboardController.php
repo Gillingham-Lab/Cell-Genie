@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\CultureFlask;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
@@ -21,9 +20,6 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Epitope;
-use App\Entity\EpitopeHost;
-use App\Entity\EpitopeProtein;
-use App\Entity\EpitopeSmallMolecule;
 use App\Entity\Experiment;
 use App\Entity\ExperimentType;
 use App\Entity\Message;
@@ -91,16 +87,12 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud("Epitopes", "icon icon-epitope", Epitope::class),
 
             MenuItem::section("Experimental"),
-            MenuItem::linkToCrud("Experiment types", 'fas fa-flask', ExperimentType::class),
-            MenuItem::linkToCrud("Experiments", 'fas', Experiment::class),
-            #MenuItem::linkToCrud("Antibody hosts", "fas fa-horse", AntibodyHost::class),
             MenuItem::linkToCrud("Recipes", "fas fa-list-alt", Recipe::class),
 
             MenuItem::section("Inventory"),
             MenuItem::linkToCrud("Racks", 'fas fa-boxes', Rack::class),
             MenuItem::linkToCrud("Boxes", "fas fa-box", Box::class),
             MenuItem::linkToCrud("Vendors", "fas fa-store-alt", Vendor::class),
-            MenuItem::linkToCrud("Culture flasks", 'fas', CultureFlask::class),
 
             MenuItem::section("Administration"),
             MenuItem::linkToCrud("Messages", 'fas fa-envelope', Message::class),

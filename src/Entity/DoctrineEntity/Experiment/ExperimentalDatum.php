@@ -34,7 +34,14 @@ class ExperimentalDatum
     #[ORM\Column(type: Types::BINARY)]
     private $value = null;
 
-    #[ORM\Column(type: UlidType::NAME, nullable: true, insertable: false, updatable: false, columnDefinition: "uuid GENERATED ALWAYS AS (CASE WHEN type = 'entityReference' OR type = 'uuid' THEN CAST(ENCODE(substring(value from 0 for 17), 'hex') AS uuid) ELSE null END) STORED", generated: "ALWAYS")]
+    #[ORM\Column(
+        type: UlidType::NAME,
+        nullable: true,
+        insertable: false,
+        updatable: false,
+        columnDefinition: "uuid GENERATED ALWAYS AS (CASE WHEN type = 'entityReference' OR type = 'uuid' THEN CAST(ENCODE(substring(value from 0 for 17), 'hex') AS uuid) ELSE null END) STORED",
+        generated: "ALWAYS"
+    )]
     private ?Ulid $referenceUuid = null;
 
     public function getName(): ?string
