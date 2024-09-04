@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Message
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 

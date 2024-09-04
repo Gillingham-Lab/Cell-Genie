@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Morphology
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
