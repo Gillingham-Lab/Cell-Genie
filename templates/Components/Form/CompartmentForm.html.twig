@@ -30,13 +30,14 @@
                 </twig:Layout:Row>
             {% endfor %}
         {% else %}
-            {% for child in form.children %}
-                <twig:Layout:Col type="none">
-                    {{ form_row(child) }}
-                </twig:Layout:Col>
-            {% endfor %}
+            <twig:Layout:Row cols="1">
+                {% for child in form.children %}
+                    <twig:Layout:Col type="none">
+                        {{ form_row(child) }}
+                    </twig:Layout:Col>
+                {% endfor %}
+            </twig:Layout:Row>
         {% endif %}
-        </twig:Layout:Row>
     </div>
 
     <twig:Layout:Row cols="1">

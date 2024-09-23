@@ -290,7 +290,7 @@ class ExperimentalDataService
                     /** @var Uuid $id */
                     [$id, $class] = $datum->getValue();
 
-                    $value = $entitiesToFetch[$class][$id->toRfc4122()];
+                    $value = $entitiesToFetch[$class][$id->toRfc4122()] ?? null;
                 } else {
                     $value = $datum->getValue();
                 }

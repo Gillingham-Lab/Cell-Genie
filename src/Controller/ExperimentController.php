@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
+use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
@@ -76,6 +77,13 @@ class ExperimentController extends AbstractController
                     tooltip: "View experiment data",
                     iconStack: "view",
                 ),
+                new ViewTool(
+                    path: $this->generateUrl("app_api_experiments_view_data", ["design" => $design->getId()]),
+                    icon: "data",
+                    buttonClass: "btn-secondary",
+                    tooltip: "Download data",
+                    iconStack: "download",
+                ),
                 new EditTool(
                     path: $this->generateUrl("app_experiments_edit", ["design" => $design->getId()]),
                     enabled: $this->isGranted("edit", $design),
@@ -126,8 +134,8 @@ class ExperimentController extends AbstractController
     }
 
 
-    #[Route('/api/experiment/design/viewData/{design}', name: "app_api_experiments_view_data")]
-    #[IsGranted("view", "design")]
+    #[Route('/api/public/experiment/design/viewData/{design}', name: "app_api_experiments_view_data")]
+    ##[IsGranted("view", "design")]
     public function downloadDesignData(
         ExperimentalDataService $dataService,
         ExperimentalDesign $design,
@@ -136,6 +144,7 @@ class ExperimentController extends AbstractController
         #[MapQueryParameter] bool $onlyExposed = true,
         #[MapQueryParameter] array $searchQuery = [],
         #[MapQueryParameter] bool $entitiesAsId = false,
+        #[MapQueryParameter] bool $hideComments = false,
     ) {
         $response = new Response(null, Response::HTTP_OK);
         $response->headers->set("Content-Type", "text/plain");
@@ -175,6 +184,29 @@ class ExperimentController extends AbstractController
 
                 return $value;
             });
+
+            if ($field->getFormRow()->getType() === FormRowTypeEnum::EntityType and $entitiesAsId === false) {
+                $config = $field->getFormRow()->getConfiguration();
+
+                if (!array_key_exists("entityType", $config)) {
+                    continue;
+                }
+
+                if ($config["entityType"] !== "App\Entity\DoctrineEntity\Substance\Chemical") {
+                    continue;
+                }
+
+                $columns[] = new Column($field->getLabel() . " (SMILES)", function ($x) use ($field, $formRow, $dataService, $entitiesAsId) {
+                    if (!array_key_exists($formRow->getFieldName(), $x)) {
+                        return "NAN";
+                    }
+
+                    /** @var Chemical $value */
+                    $value = $x[$formRow->getFieldName()];
+
+                    return $value->getSmiles();
+                });
+            }
         }
 
         $table = new Table(
@@ -185,7 +217,11 @@ class ExperimentController extends AbstractController
 
         $array = $table->toArray();
 
-        $content = "#TotalNumberOfRows\t{$array['maxNumberOfRows']}\n";
+        if ($hideComments) {
+            $content = "";
+        } else {
+            $content = "#TotalNumberOfRows\t{$array['maxNumberOfRows']}\n";
+        }
 
         $content .= implode("\t", array_map(fn ($column) => $column["label"], $array["columns"])). "\n";
 
