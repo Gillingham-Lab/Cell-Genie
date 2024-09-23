@@ -73,8 +73,10 @@
             {% endfor %}
         </tr>
         </thead>
-        <tbody>
-        {{ block("form_widget") }}
+        <tbody id="{{ form.vars.id }}">
+        {% for child in form %}
+            {{ form_row(child) }}
+        {% endfor %}
         </tbody>
     </table>
 

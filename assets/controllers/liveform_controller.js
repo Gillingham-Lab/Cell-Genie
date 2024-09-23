@@ -1,6 +1,7 @@
 import { getComponent } from '@symfony/ux-live-component';
 import {Controller} from '@hotwired/stimulus';
 import formHelpers from './../gin/formHelpers.js';
+import toggleHelper from './../gin/toggleHelper';
 const bootstrap = require("bootstrap");
 
 export default class extends Controller {
@@ -10,9 +11,11 @@ export default class extends Controller {
         let c = this.component;
 
         formHelpers(this.component.element);
+        toggleHelper();
 
         this.component.on('render:finished', (component) => {
             formHelpers(component.element);
+            toggleHelper();
 
             let active_item = localStorage.getItem("_tmp_active_tab");
             if (active_item) {

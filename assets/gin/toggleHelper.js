@@ -87,3 +87,5 @@ const toggleHelper = () => {
 
 document.addEventListener("turbo:load", (e => toggleHelper()));
 document.addEventListener("turbo:frame-load", (e => toggleHelper(e)));
+
+export default toggleHelper
