@@ -182,7 +182,7 @@ class ExperimentalDataService
                     $field = $design->getFields()->filter(fn (ExperimentalDesignField $x) => $x->getFormRow()->getFieldName() === $datum->getName())->first();
 
                     // Nothing to retrieve if the field is not exposed
-                    if (!$field->isExposed()) {
+                    if (!($field instanceof ExperimentalDesignField) or !$field->isExposed()) {
                         return;
                     }
 

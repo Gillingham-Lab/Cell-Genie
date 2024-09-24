@@ -55,4 +55,25 @@ class ExperimentControllerTest extends WebTestCase
 
         $this->assertSame(200, $response->getStatusCode());
     }
+
+    public function testViewDesignData()
+    {
+        $crawler = $this->client->request("GET", "/experiment/design/viewData/0");
+        $response = $this->client->getResponse();
+        $this->assertSame(404, $response->getStatusCode());
+
+        // Test that an existing design returns 200.
+        $design = $this->client->getContainer()->get(ExperimentalDesignRepository::class)->findOneBy(["number" => "EXP001"]);
+        $this->assertNotNull($design);
+
+        $security = $this->client->getContainer()->get("security.helper");
+        $this->assertTrue($security->isGranted("view", $design));
+
+        $crawler = $this->client->request("GET", "/experiment/design/viewData/" . $design->getId());
+        $response = $this->client->getResponse();
+
+        dump($response->getContent());
+
+        $this->assertSame(200, $response->getStatusCode());
+    }
 }
