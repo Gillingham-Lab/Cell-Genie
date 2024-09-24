@@ -8,6 +8,9 @@ use App\Entity\DoctrineEntity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @phpstan-extends Voter<'new', CellGroup>|Voter<'edit'|'remove', CellGroup>
+ */
 class CellGroupVoter extends Voter
 {
     const NEW = "new";
@@ -31,6 +34,12 @@ class CellGroupVoter extends Voter
         return false;
     }
 
+    /**
+     * @param self::NEW|self::EDIT|self::REMOVE $attribute
+     * @param ($attribute is self::NEW ? 'CellGroup' : CellGroup) $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
@@ -39,7 +48,7 @@ class CellGroupVoter extends Voter
             return false;
         }
 
-        if ($attribute === self::NEW and $subject === "CellGroup") {
+        if ($attribute === self::NEW) {
             return in_array("ROLE_USER", $user->getRoles());
         } else {
             return match ($attribute) {

@@ -27,7 +27,7 @@ class ExperimentControllerTest extends WebTestCase
         $this->client = $client;
     }
 
-    public function testIndexRoute()
+    public function testIndexRoute(): void
     {
         $crawler = $this->client->request("GET", "/experiment");
         $response = $this->client->getResponse();
@@ -35,7 +35,7 @@ class ExperimentControllerTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testViewDesign()
+    public function testViewDesign(): void
     {
         // Test that a non-existing design returns 404
         $crawler = $this->client->request("GET", "/experiment/design/view/0");
@@ -56,7 +56,7 @@ class ExperimentControllerTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testViewDesignData()
+    public function testViewDesignData(): void
     {
         $crawler = $this->client->request("GET", "/experiment/design/viewData/0");
         $response = $this->client->getResponse();
@@ -71,8 +71,6 @@ class ExperimentControllerTest extends WebTestCase
 
         $crawler = $this->client->request("GET", "/experiment/design/viewData/" . $design->getId());
         $response = $this->client->getResponse();
-
-        dump($response->getContent());
 
         $this->assertSame(200, $response->getStatusCode());
     }

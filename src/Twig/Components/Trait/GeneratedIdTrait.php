@@ -9,7 +9,7 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 trait GeneratedIdTrait
 {
     #[ExposeInTemplate("id")]
-    public function getId()
+    public function getId(): string
     {
         return (new Ulid())->toRfc4122();
     }

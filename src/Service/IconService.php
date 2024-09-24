@@ -46,6 +46,7 @@ class IconService
                 Antibody::class => match ($object->getType()) {
                     AntibodyType::Primary => "antibody.primary",
                     AntibodyType::Secondary => "antibody.secondary",
+                    default => "antibody",
                 },
                 Epitope::class => "epitope",
                 Box::class => "box",

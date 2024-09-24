@@ -70,7 +70,6 @@ class Experiment
         $this->proteinTargets = new ArrayCollection();
         $this->chemicals = new ArrayCollection();
         $this->cells = new ArrayCollection();
-        $this->antibodyDilutions = new ArrayCollection();
         $this->conditions = new ArrayCollection();
         $this->measurements = new ArrayCollection();
         $this->experimentalRuns = new ArrayCollection();

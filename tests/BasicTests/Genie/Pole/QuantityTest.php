@@ -10,7 +10,14 @@ use PHPUnit\Framework\TestCase;
 
 class QuantityTest extends TestCase
 {
-    protected function getQuantity(float $value = 1.0, string $unit = "mol", string $class = MolarAmount::class)
+    /**
+     * @param float $value
+     * @param string $unit
+     * @param class-string $class
+     * @return Quantity
+     * @throws \App\Genie\Pole\Exception\UnitNotSupportedException
+     */
+    protected function getQuantity(float $value = 1.0, string $unit = "mol", string $class = MolarAmount::class): Quantity
     {
         $quantity = $class::create($value, $unit);
         return $quantity;
@@ -36,9 +43,9 @@ class QuantityTest extends TestCase
 
     }*/
 
-    public function testSignificantDigits()
+    public function testSignificantDigits(): void
     {
-        $quantity = $this->getQuantity();
+        $quantity = $this->getQuantity(class: MolarAmount::class);
 
         $this->assertSame("1.0000", $quantity->significantDigits(1.0, 5));
         $this->assertSame("1.000", $quantity->significantDigits(1.0, 4));
@@ -57,14 +64,14 @@ class QuantityTest extends TestCase
         $this->assertSame("10", $quantity->significantDigits(11.2, 1));
     }
 
-    public function testFormatNormal()
+    public function testFormatNormal(): void
     {
         $quantity = $this->getQuantity(12.3456);
 
         $this->assertSame("12.3", $quantity->format(3, Quantity::FORMAT_NORMAL));
     }
 
-    public function testFormatScientific()
+    public function testFormatScientific(): void
     {
         $quantity = $this->getQuantity(12.3456);
         $this->assertSame("1.235e1", $quantity->format(4, Quantity::FORMAT_SCIENTIFICALLY));
@@ -77,7 +84,7 @@ class QuantityTest extends TestCase
         $this->assertSame("1.2e-2", $quantity->format(2, Quantity::FORMAT_SCIENTIFICALLY));
     }
 
-    public function testFormatEngineering()
+    public function testFormatEngineering(): void
     {
         $quantity = $this->getQuantity(12.3456);
         $this->assertSame("12.35", $quantity->format(4, Quantity::FORMAT_ENGINEERING));
@@ -100,7 +107,7 @@ class QuantityTest extends TestCase
         $this->assertSame("12e3", $quantity->format(2, Quantity::FORMAT_ENGINEERING));
     }
 
-    public function testFormatAdjustUnit()
+    public function testFormatAdjustUnit(): void
     {
         $quantity = $this->getQuantity(12.3456, "mol");
         $this->assertSame("12.35 mol", $quantity->format(4, Quantity::FORMAT_ADJUST_UNIT));

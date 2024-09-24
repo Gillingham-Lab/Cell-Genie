@@ -90,7 +90,7 @@ class SubstanceRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array{int: SubstanceLot}
+     * @return array<int, SubstanceLot>
      */
     public function findSubstanceLotsByLots(array $lots): array
     {

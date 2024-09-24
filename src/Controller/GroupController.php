@@ -8,15 +8,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class GroupController extends AbstractController
 {
     #[Route("/group", "app_group")]
     public function main(
-        Security $security,
-        UserGroupRepository $groupRepository
+        #[CurrentUser]
+        $currentUser,
     ): Response {
-        $group = $security->getUser()->getGroup();
+        $group = $currentUser->getGroup();
 
         return $this->render("ucp/group.main.html.twig", [
             "group" => $group,

@@ -1,0 +1,15 @@
+parameters:
+    level: 6
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+    doctrine:
+        objectManagerLoader: tests/object-manager.php
+    ignoreErrors:
+        - '#type mapping mismatch: property can contain .+\|null but database expects .+#'
+    excludePaths:
+        - src/Entity/Experiment.php
+        - src/Entity/Experimental*

@@ -78,9 +78,4 @@ class ExperimentalRunDataForm extends AbstractController
             ]
         );
     }
-
-    private function getDataModelValue(): ?string
-    {
-        return 'debounce(1000)|*';
-    }
 }

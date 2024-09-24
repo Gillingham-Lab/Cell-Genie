@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 trait HasUlidAttachmentsTrait
 {
     use HasAttachmentsTrait;
+
+    /** @var Collection<int, File> */
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable]
     #[ORM\JoinColumn(referencedColumnName: "ulid")]

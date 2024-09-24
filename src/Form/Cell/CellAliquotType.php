@@ -31,10 +31,7 @@ class CellAliquotType extends SaveableType
     use VocabularyTrait;
 
     public function __construct(
-        private VocabularyRepository $vocabularyRepository,
-        private CellRepository $cellRepository,
-        private CellAliquotRepository $cellAliquotRepository,
-        private Security $security,
+        private readonly VocabularyRepository $vocabularyRepository,
     ) {
     }
 

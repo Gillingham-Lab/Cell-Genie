@@ -21,7 +21,7 @@ class FileBlob
     private mixed $content;
 
     #[ORM\OneToOne(mappedBy: "fileBlob", targetEntity: File::class, cascade: ["persist", "remove"])]
-    private File $fileData;
+    private ?File $fileData;
 
     public function getId(): ?Ulid
     {

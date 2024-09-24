@@ -42,7 +42,7 @@ class FileUploader
             /** @var ?File $entity */
             $entity = $child->getData();
 
-            /** @var UploadedFile $uploadedFile */
+            /** @var ?UploadedFile $uploadedFile */
             $uploadedFile = $child->get("uploadedFile")->getData();
 
             // Check if a file has actually been uploaded.
@@ -76,7 +76,7 @@ class FileUploader
             /** @var File $visualisation */
             $visualisation = $object->getVisualisation();
 
-            if ($visualisation->getTitle() === null or $visualisation->getFileBlob() === null) {
+            if (method_exists($object, "setVisualisation") && ($visualisation->getTitle() === null or $visualisation->getFileBlob() === null)) {
                 $object->setVisualisation(null);
             }
         }

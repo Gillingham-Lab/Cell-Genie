@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use ValueError;
 
 #[AsTwigComponent]
 class Icon
@@ -84,6 +85,8 @@ class Icon
 
             "other" => "fas fa-fw fa-ellipsis-v",
             "none" => "fas fa-fw",
+
+            default => throw new ValueError("Icon {$this->icon} does not exist."),
         };
     }
 

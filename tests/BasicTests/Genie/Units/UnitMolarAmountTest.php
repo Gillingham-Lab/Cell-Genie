@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class UnitMolarAmountTest extends TestCase
 {
-    public function testMol()
+    public function testMol(): void
     {
         $quantity = MolarAmount::create(1, "mol");
 
@@ -17,7 +17,7 @@ class UnitMolarAmountTest extends TestCase
         $this->assertSame(MolarAmount::getInstance(), $quantity->getUnit());
     }
 
-    public function testMolInterconversionToAmount()
+    public function testMolInterconversionToAmount(): void
     {
         $quantityMolarAmount = MolarAmount::create(1, "mol");
         $quantityAmount = $quantityMolarAmount->getUnit()->interconvertTo($quantityMolarAmount->getValue(), Amount::getInstance());
@@ -25,7 +25,7 @@ class UnitMolarAmountTest extends TestCase
         $this->assertEqualsWithDelta(6.02214076e23, $quantityAmount->getValue(), 0.00001e23);
     }
 
-    public function testMolInterconversionFromAmount()
+    public function testMolInterconversionFromAmount(): void
     {
         $quantityAmount = Amount::create(1);
         $quantityMolarAmount = MolarAmount::getInstance()->interconvertFrom($quantityAmount);

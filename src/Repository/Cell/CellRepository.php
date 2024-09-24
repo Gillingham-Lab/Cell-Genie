@@ -14,6 +14,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use ValueError;
 
 /**
  * @method Cell|null find($id, $lockMode = null, $lockVersion = null)
@@ -97,6 +98,7 @@ class CellRepository extends ServiceEntityRepository
                 "group" => "go.group",
                 "cellNumber" => "c.cellNumber",
                 "name" => "c.name",
+                default => throw new ValueError("{$fieldName} is not supported."),
             };
 
             $order = match($order) {
@@ -130,6 +132,7 @@ class CellRepository extends ServiceEntityRepository
                 "isEngineered" => ["c.isEngineered", "bool"],
                 "organism" => ["cg.organism", "int"],
                 "tissue" => ["cg.tissue", "int"],
+                default => throw new ValueError("{$searchField} is not supported."),
             };
 
             $expressions[] = $this->searchService->searchWith($queryBuilder, $searchField, $searchType, $searchValue);

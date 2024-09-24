@@ -48,7 +48,7 @@ abstract class ExtendedAbstractCrudController extends AbstractCrudController
             /** @var File $entity */
             $entity = $child->getData();
 
-            /** @var UploadedFile $uploadedFile */
+            /** @var ?UploadedFile $uploadedFile */
             $uploadedFile = $child->get("uploadedFile")->getData();
 
             # Check if a file has actually been uploaded.

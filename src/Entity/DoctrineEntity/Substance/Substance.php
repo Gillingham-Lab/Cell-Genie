@@ -34,6 +34,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
     use HasUlidAttachmentsTrait;
     use PrivacyAwareTrait;
 
+    /** @var Collection<int, Lot> */
     #[ORM\ManyToMany(targetEntity: Lot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "substance_lots")]
     #[ORM\JoinColumn(name: "substance_ulid", referencedColumnName: "ulid")]
@@ -42,10 +43,8 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
     #[Assert\Valid]
     private Collection $lots;
 
+    /** @var Collection<int, Epitope> */
     #[ORM\ManyToMany(targetEntity: Epitope::class, mappedBy: "substances", cascade: ["persist"])]
-    /*#[ORM\JoinTable(name: "substance_epitope")]
-    #[ORM\JoinColumn(name: "substance_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
-    #[ORM\InverseJoinColumn(name: "epitope_id", referencedColumnName: "id")]*/
     private Collection $epitopes;
 
     public function __construct()
@@ -76,7 +75,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         return $this->lots->matching((new Criteria())->where(new Comparison("availability", "=", Availability::Available->value)));
     }
 
-    public function addLot(Lot $lot): self
+    public function addLot(Lot $lot): static
     {
         if (!$this->lots->contains($lot)) {
             $this->lots[] = $lot;
@@ -85,7 +84,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         return $this;
     }
 
-    public function removeLot(Lot $lot): self
+    public function removeLot(Lot $lot): static
     {
         $this->lots->removeElement($lot);
         return $this;
@@ -96,7 +95,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         return $this->epitopes;
     }
 
-    public function addEpitope(Epitope $epitope): self
+    public function addEpitope(Epitope $epitope): static
     {
         var_dump("Add epitope");
         if (!$this->epitopes->contains($epitope)) {
@@ -107,7 +106,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         return $this;
     }
 
-    public function removeEpitope(Epitope $epitope): self
+    public function removeEpitope(Epitope $epitope): static
     {
         var_dump("Remove epitope");
         if ($this->epitopes->contains($epitope)) {

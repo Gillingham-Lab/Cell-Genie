@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
@@ -79,4 +80,8 @@ abstract class InputType
 
         return $this;
     }
+
+    abstract public function getTitle(): string;
+    abstract public function getDescription(): ?string;
+    abstract public function getId(): ?Ulid;
 }

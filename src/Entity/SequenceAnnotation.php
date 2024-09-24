@@ -42,7 +42,7 @@ class SequenceAnnotation implements \JsonSerializable
     private ?int $annotationEnd;
 
     #[ORM\Column(type: "array", nullable: true)]
-    private array $annotations = [];
+    private ?array $annotations = [];
 
     public function __toString(): string
     {

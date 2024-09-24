@@ -61,11 +61,13 @@ class Consumable implements PrivacyAwareInterface
     #[ORM\Column]
     private ?string $expectedDeliveryTime = "2 weeks";
 
+    /** @var Collection<int, ConsumableLot>  */
     #[ORM\OneToMany(mappedBy: "consumable", targetEntity: ConsumableLot::class, cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
     #[ORM\OrderBy(["boughtOn" => "ASC"])]
     #[Assert\Valid]
     private Collection $lots;
 
+    /** @var Collection<int, Instrument> */
     #[ORM\ManyToMany(targetEntity: Instrument::class, mappedBy: 'consumables')]
     private Collection $instruments;
 
@@ -190,7 +192,7 @@ class Consumable implements PrivacyAwareInterface
     public function removeLot(ConsumableLot $lot): self
     {
         if ($this->lots->contains($lot)) {
-            $this->lots->remove($lot);
+            $this->lots->removeElement($lot);
             $lot->setConsumable(null);
         }
         return $this;

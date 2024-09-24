@@ -23,14 +23,17 @@ class Protein extends Substance
     #[Assert\Url]
     private ?string $proteinAtlasUri = null;
 
+    /** @var Collection<int, Protein> */
     #[ORM\ManyToMany(targetEntity: Protein::class, mappedBy: "parents")]
     private Collection $children;
 
+    /** @var Collection<int, Protein> */
     #[ORM\ManyToMany(targetEntity: Protein::class, inversedBy: "children")]
     #[ORM\JoinColumn(name: "protein_parent_ulid", referencedColumnName: "ulid", nullable: true, onDelete: "SET NULL")]
     #[ORM\InverseJoinColumn(name: "protein_child_ulid", referencedColumnName: "ulid", onDelete: "SET NULL")]
     private Collection $parents;
 
+    /** @var Collection<int, Experiment> */
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "proteinTargets")]
     #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
     private Collection $experiments;
@@ -55,7 +58,6 @@ class Protein extends Substance
     {
         parent::__construct();
         $this->experiments = new ArrayCollection();
-        $this->epitopes = new ArrayCollection();
         $this->parents = new ArrayCollection();
         $this->children = new ArrayCollection();
     }
@@ -170,33 +172,6 @@ class Protein extends Substance
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, EpitopeProtein>
-     */
-    /*public function getSubstanceEpitope(): Collection
-    {
-        return $this->substanceEpitope;
-    }
-
-    public function addEpitope(EpitopeProtein $epitope): self
-    {
-        if (!$this->substanceEpitope->contains($epitope)) {
-            $this->substanceEpitope[] = $epitope;
-            $epitope->addProtein($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEpitope(EpitopeProtein $epitope): self
-    {
-        if ($this->substanceEpitope->removeElement($epitope)) {
-            $epitope->removeProtein($this);
-        }
-
-        return $this;
-    }*/
 
     public function getProteinType(): ?string
     {

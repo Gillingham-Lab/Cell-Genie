@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class BoxCoordinateTest extends TestCase
 {
-    public function testSimpleCoordinates()
+    public function testSimpleCoordinates(): void
     {
         $testList = [
             "A1" => [1, 1],

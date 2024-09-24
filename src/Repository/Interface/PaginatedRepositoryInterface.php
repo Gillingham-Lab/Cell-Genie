@@ -7,6 +7,12 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface PaginatedRepositoryInterface
 {
+    /**
+     * @param array|null $orderBy
+     * @param array $searchFields
+     * @param int $page
+     * @param int $limit
+     */
     public function getPaginatedResults(
         ?array $orderBy = null,
         array $searchFields = [],

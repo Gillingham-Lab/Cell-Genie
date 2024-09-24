@@ -22,6 +22,7 @@ class UserGroup
     use IdTrait;
     use ShortNameTrait;
 
+    /** @var Collection<int, User> */
     #[ORM\OneToMany(mappedBy: 'group', targetEntity: User::class)]
     private Collection $users;
 

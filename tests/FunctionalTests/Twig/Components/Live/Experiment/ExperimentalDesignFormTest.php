@@ -19,17 +19,12 @@ class ExperimentalDesignFormTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
 
-    private KernelBrowser $client;
-
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()
-            ->get("doctrine")
-            ->getManager();
     }
 
-    public function testCanRender()
+    public function testCanRender(): void
     {
         $testComponent = $this->createLiveComponent(
             name: ExperimentalDesignForm::class,
@@ -41,7 +36,7 @@ class ExperimentalDesignFormTest extends WebTestCase
         $this->assertStringContainsString("Save", $testComponent->render()->toString());
     }
 
-    public function testFormCanSubmit()
+    public function testFormCanSubmit(): void
     {
         $testComponent = $this->createLiveComponent(
             name: ExperimentalDesignForm::class,
@@ -83,7 +78,7 @@ class ExperimentalDesignFormTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testFormCanSubmitAndReturn()
+    public function testFormCanSubmitAndReturn(): void
     {
         $testComponent = $this->createLiveComponent(
             name: ExperimentalDesignForm::class,
@@ -125,7 +120,7 @@ class ExperimentalDesignFormTest extends WebTestCase
         $this->assertSame(302, $response->getStatusCode());
     }
 
-    public function testIncompleteFormGivesValidationErrors()
+    public function testIncompleteFormGivesValidationErrors(): void
     {
         $testComponent = $this->createLiveComponent(
             name: ExperimentalDesignForm::class,
@@ -155,7 +150,7 @@ class ExperimentalDesignFormTest extends WebTestCase
         ;
     }
 
-    public function testThatErrorDuringSavingGivesAnError()
+    public function testThatErrorDuringSavingGivesAnError(): void
     {
         $testComponent = $this->createLiveComponent(
             name: ExperimentalDesignForm::class,

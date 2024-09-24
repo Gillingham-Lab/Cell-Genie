@@ -19,12 +19,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BoxType extends SaveableType
 {
-    public function __construct(
-        private RackRepository $rackRepository,
-    ) {
-
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

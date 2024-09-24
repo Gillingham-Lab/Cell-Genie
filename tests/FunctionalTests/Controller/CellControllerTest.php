@@ -17,7 +17,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class CellControllerTest extends WebTestCase
 {
 
-    public function testCellBrowseRouteForAllCells()
+    public function testCellBrowseRouteForAllCells(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -40,6 +40,9 @@ class CellControllerTest extends WebTestCase
         $this->assertStringContainsString("HeLa", $content);
     }
 
+    /**
+     * @return array<array{string}>
+     */
     public function cellGroupNames(): array
     {
         return [
@@ -54,7 +57,7 @@ class CellControllerTest extends WebTestCase
     /**
      * @dataProvider cellGroupNames
      */
-    public function testCellBrowseRouteForSpecificCellGroup(string $cellGroupName)
+    public function testCellBrowseRouteForSpecificCellGroup(string $cellGroupName): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -73,7 +76,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapseCellsContent .card-body h3", $cellGroupName);
     }
 
-    public function testCellSearchRouteWorks()
+    public function testCellSearchRouteWorks(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -83,7 +86,7 @@ class CellControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function testCellGroupRemovalRouteIfGroupAdmin()
+    public function testCellGroupRemovalRouteIfGroupAdmin(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("flemming@example.com");
@@ -95,7 +98,7 @@ class CellControllerTest extends WebTestCase
         $this->assertResponseRedirects("/cells");
     }
 
-    public function testCellGroupRemovalRouteIfNotGroupAdmin()
+    public function testCellGroupRemovalRouteIfNotGroupAdmin(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -107,7 +110,7 @@ class CellControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(302);
     }
 
-    public function testCellGroupRemovalRouteIfNotGroupAdminAndGroupIsNotEmpty()
+    public function testCellGroupRemovalRouteIfNotGroupAdminAndGroupIsNotEmpty(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -119,7 +122,7 @@ class CellControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testAccessOfRouteForAddingCellGroupsIsSuccessful()
+    public function testAccessOfRouteForAddingCellGroupsIsSuccessful(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("flemming@example.com");
@@ -153,7 +156,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapseCellsContent .card-body h3", "New Cell Line");
     }
 
-    public function testAccessOfRouteForAddingCellGroupsAndParentCellGroupInformationGetsProperlyAdded()
+    public function testAccessOfRouteForAddingCellGroupsAndParentCellGroupInformationGetsProperlyAdded(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("flemming@example.com");
@@ -192,14 +195,17 @@ class CellControllerTest extends WebTestCase
         $this->assertSame($parentCellGroup, $newCellGroup->getParent());
     }
 
-    public function testAccessOfRouteForEditingCellGroupsAndParentCellGroupInformationGetsProperlyAdded()
+    public function testAccessOfRouteForEditingCellGroupsAndParentCellGroupInformationGetsProperlyAdded(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("flemming@example.com");
         $client->loginUser($user);
 
-        /** @var CellGroup $parentCellGroup */
-        $cellGroup = self::getContainer()->get(CellGroupRepository::class)->findOneByName("HeLa");
+        /** @var CellGroupRepository $cellGroupRepository */
+        $cellGroupRepository = self::getContainer()->get(CellGroupRepository::class);
+
+        /** @var CellGroup $cellGroup */
+        $cellGroup = $cellGroupRepository->findOneBy(["name" => "HeLa"]);
 
         $this->assertNotNull($cellGroup);
 
@@ -216,13 +222,13 @@ class CellControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(302);
 
         // Refetch
-        /** @var CellGroup $parentCellGroup */
-        $cellGroup = self::getContainer()->get(CellGroupRepository::class)->findOneByName("HeLa");
+        /** @var CellGroup $cellGroup */
+        $cellGroup = $cellGroupRepository->findOneBy(["name" => "HeLa"]);
 
         $this->assertSame("NEWNUMBER_3", $cellGroup->getNumber());
     }
 
-    public function testViewCellByNumberRouteWithoutAliquot()
+    public function testViewCellByNumberRouteWithoutAliquot(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -239,7 +245,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapse-Cellmetadata-content section h3", "Aliquots");
     }
 
-    public function testAddCellRoute()
+    public function testAddCellRoute(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -270,7 +276,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapse-Cellmetadata-content section h3", "Aliquots");
     }
 
-    public function testEditCellRoute()
+    public function testEditCellRoute(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -299,7 +305,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapse-Cellmetadata-content section h3", "Aliquots");
     }
 
-    public function testAddNewCellAliquot()
+    public function testAddNewCellAliquot(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -328,7 +334,7 @@ class CellControllerTest extends WebTestCase
         // Inside of aliquots is not testable as it is a live component with lazy loading.
     }
 
-    public function testEditCellAliquot()
+    public function testEditCellAliquot(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -354,7 +360,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSame($cellAliquot->getId()->toRfc4122(), $refetchedCellAliquot->getId()->toRfc4122());
     }
 
-    public function testConsumeAliquot()
+    public function testConsumeAliquot(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
@@ -371,7 +377,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSame(17, $aliquotRefetched->getVials());
     }
 
-    public function trashAliquot()
+    public function trashAliquot(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class PrivacyAwareTraitTest extends TestCase
 {
-    public function testPrivacyAwareTraitWrapsOwnerTraits()
+    public function testPrivacyAwareTraitWrapsOwnerTraits(): void
     {
         $testClass = $this->getObjectForTrait(PrivacyAwareTrait::class);
 
@@ -22,7 +22,7 @@ class PrivacyAwareTraitTest extends TestCase
         }
     }
 
-    public function testPrivacyAwareTraitWrapsGroupOwnerTraits()
+    public function testPrivacyAwareTraitWrapsGroupOwnerTraits(): void
     {
         $testClass = $this->getObjectForTrait(PrivacyAwareTrait::class);
 
@@ -33,7 +33,7 @@ class PrivacyAwareTraitTest extends TestCase
         }
     }
 
-    public function testPrivacyAwareTraitWrapsPrivacyLevelTraits()
+    public function testPrivacyAwareTraitWrapsPrivacyLevelTraits(): void
     {
         $testClass = $this->getObjectForTrait(PrivacyAwareTrait::class);
 

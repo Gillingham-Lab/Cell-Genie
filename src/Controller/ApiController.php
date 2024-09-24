@@ -79,14 +79,16 @@ class ApiController extends AbstractController
         $response = new JsonResponse(null, Response::HTTP_OK);
 
         if ($request->isMethod("get")) {
-            $volumeDesired = floatval($request->query->get("volume", 1000.0));
-            $concentrationFactor = floatval($request->query->get("concentrationFactor", $recipe->getConcentrationFactor()));
+            $volumeDesired = floatval($request->query->get("volume", "1000.0"));
+            $concentrationFactor = floatval($request->query->get("concentrationFactor", (string)$recipe->getConcentrationFactor()));
         } else {
             $content = json_decode($request->getContent(), true);
 
             if ($content) {
-                $volumeDesired = floatval($content["volume"]) ?? 1000.0;
-                $concentrationFactor = floatval($content["concentrationFactor"]) ?? $recipe->getConcentrationFactor();
+                $volumeDesired = is_null($content["volume"]) ? 1000.0 :floatval($content["volume"]);
+                $concentrationFactor = is_null($content["concentrationFactor"]) ? $recipe->getConcentrationFactor() : floatval($content["concentrationFactor"]);
+            } else {
+                throw new \Exception("Content is empty. JSON request was probably malformed or empty.");
             }
         }
 

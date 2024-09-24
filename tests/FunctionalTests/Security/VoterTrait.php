@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 trait VoterTrait
 {
-    public function getTokenForUser($email): TokenInterface
+    public function getTokenForUser(string $email): TokenInterface
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneByEmail($email);

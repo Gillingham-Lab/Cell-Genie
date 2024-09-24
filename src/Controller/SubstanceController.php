@@ -114,17 +114,41 @@ class SubstanceController extends AbstractController
     }
 
     #[Route("/substance/new/{type}", name: "app_substance_new")]
-    #[Route("/substance/edit/{substance}", name: "app_substance_edit")]
     public function addSubstance(
         Request $request,
-        SubstanceRepository $substanceRepository,
+        GeneBankImporter $geneBankImporter,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        string $type,
+    ): Response {
+        return $this->addOrEditSubstance(
+            $request, $geneBankImporter, $entityManager, $fileUploader, null, $type,
+        );
+    }
+
+    #[Route("/substance/edit/{substance}", name: "app_substance_edit")]
+    #[IsGranted("edit", "substance")]
+    public function editSubstance(
+        Request $request,
         GeneBankImporter $geneBankImporter,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         Substance $substance = null,
-        string $type = null,
     ): Response {
-        $new = !$substance;
+        return $this->addOrEditSubstance(
+            $request, $geneBankImporter, $entityManager, $fileUploader, $substance, null,
+        );
+    }
+
+    private function addOrEditSubstance(
+        Request $request,
+        GeneBankImporter $geneBankImporter,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        ?Substance $substance = null,
+        ?string $type = null,
+    ): Response {
+        $new = is_null($substance);
 
         if ($type === null and $substance === null) {
             throw $this->createNotFoundException();
@@ -146,10 +170,6 @@ class SubstanceController extends AbstractController
             $substance->setGroup($this->user?->getGroup());
         } else {
             $this->denyAccessUnlessGranted("edit", $substance);
-        }
-
-        if ($substance === null) {
-            throw $this->createNotFoundException("Substance type '{$type}' has not been found.");
         }
 
         [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam, $icon] = match($substance::class) {
@@ -780,6 +800,7 @@ class SubstanceController extends AbstractController
             default => $this->createNotFoundException("Unsupported substance type"),
         };
 
+        /** @var OligoRepository $substanceRepository */
         $substanceRepository = $entityManager->getRepository($substanceClass);
 
         $answer = [
@@ -847,12 +868,6 @@ class SubstanceController extends AbstractController
             } catch (UniqueConstraintViolationException $e) {
                 $answer["db_errors"] = [
                     "type" => "UniqueConstraintViolation",
-                    "message" => $e->getMessage()
-                ];
-                $answer["numRowsCreated"] = 0;
-            } catch (ServerException $e) {
-                $answer["db_errors"] = [
-                    "type" => "ServerException",
                     "message" => $e->getMessage()
                 ];
                 $answer["numRowsCreated"] = 0;

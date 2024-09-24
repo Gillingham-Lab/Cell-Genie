@@ -3,13 +3,9 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Live\Experiment;
 
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
-use App\Entity\DoctrineEntity\Form\FormRow;
-use App\Entity\ExperimentalCondition;
 use App\Entity\SubstanceLot;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
@@ -18,7 +14,6 @@ use App\Entity\Table\ToolboxColumn;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Form\Experiment\ExperimentalSearchDataType;
-use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Service\Experiment\ExperimentalDataService;
@@ -268,7 +263,7 @@ class ExperimentalRunDataTable extends AbstractController
         ];
     }
 
-    private function getDQLForFieldRole(ExperimentalFieldRole $role): ?string
+    private function getDQLForFieldRole(ExperimentalFieldRole $role): string
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->from(ExperimentalDesign::class, "ed")

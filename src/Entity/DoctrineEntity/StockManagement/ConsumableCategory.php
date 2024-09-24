@@ -28,6 +28,7 @@ class ConsumableCategory implements PrivacyAwareInterface
     use PrivacyAwareTrait;
     use CommentTrait;
 
+    /** @var Collection<int, Consumable>  */
     #[ORM\OneToMany(mappedBy: "category", targetEntity: Consumable::class, cascade: ["persist", "remove"], fetch: "EAGER")]
     #[ORM\OrderBy(["longName" => "ASC"])]
     #[Assert\Valid]
@@ -76,7 +77,7 @@ class ConsumableCategory implements PrivacyAwareInterface
     public function removeConsumable(Consumable $consumable): self
     {
         if ($this->consumables->contains($consumable)) {
-            $this->consumables->remove($consumable);
+            $this->consumables->removeElement($consumable);
             $consumable->setCategory(null);
         }
         return $this;
@@ -129,7 +130,6 @@ class ConsumableCategory implements PrivacyAwareInterface
     public function getCurrentStock(): int
     {
         $stock = 0;
-        /** @var ConsumableCommons $consumable */
         foreach ($this->consumables as $consumable) {
             $stock += $consumable->getCurrentStock();
         }

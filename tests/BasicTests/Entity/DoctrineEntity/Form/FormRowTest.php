@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class FormRowTest extends TestCase
 {
-    public function testLabelProperty()
+    public function testLabelProperty(): void
     {
         $formRow = new FormRow();
 
@@ -19,7 +19,7 @@ class FormRowTest extends TestCase
         $this->assertSame('Label', $formRow->getLabel());
     }
 
-    public function testFieldNameProperty()
+    public function testFieldNameProperty(): void
     {
         $formRow = new FormRow();
 
@@ -28,7 +28,7 @@ class FormRowTest extends TestCase
         $this->assertSame("_Label13SpecialTreaty7", $formRow->getFieldName());
     }
 
-    public function testHelpProperty()
+    public function testHelpProperty(): void
     {
         $formRow = new FormRow();
 
@@ -37,7 +37,7 @@ class FormRowTest extends TestCase
         $this->assertSame('Help', $formRow->getHelp());
     }
 
-    public function testTypeProperty()
+    public function testTypeProperty(): void
     {
         $formRow = new FormRow();
 
@@ -47,19 +47,19 @@ class FormRowTest extends TestCase
         $this->assertSame(FormRowTypeEnum::TextType, $formRow->getType());
     }
 
-    public function testTypePropertyThrowsExceptionIfClassDoesNotExist()
+    public function testTypePropertyThrowsExceptionIfClassDoesNotExist(): void
     {
         $formRow = new FormRow();
 
         $this->expectException(\TypeError::class);
-        $formRow->setType('SpamAndEggs');
+        $formRow->setType('SpamAndEggs'); // @phpstan-ignore argument.type
     }
 
-    public function testTypePropertyThrowExceptionIfClassDoesNotImplementInterface()
+    public function testTypePropertyThrowExceptionIfClassDoesNotImplementInterface(): void
     {
         $formRow = new FormRow();
 
         $this->expectException(\TypeError::class);
-        $formRow->setType(self::class);
+        $formRow->setType(self::class); // @phpstan-ignore argument.type
     }
 }

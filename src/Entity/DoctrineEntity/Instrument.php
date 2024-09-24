@@ -97,10 +97,12 @@ class Instrument implements PrivacyAwareInterface
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
+    /** @var Collection<int, Instrument> */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Instrument::class)]
     #[ORM\OrderBy(["instrumentNumber" => "ASC"])]
     private Collection $children;
 
+    /** @var Collection<int, InstrumentUser> */
     #[ORM\OneToMany(mappedBy: "instrument", targetEntity: InstrumentUser::class, cascade: ["persist", "remove"])]
     #[Assert\Valid]
     private Collection $users;
@@ -124,6 +126,7 @@ class Instrument implements PrivacyAwareInterface
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $citationText = null;
 
+    /** @var Collection<int, Consumable> */
     #[ORM\ManyToMany(targetEntity: Consumable::class, inversedBy: 'instruments')]
     private Collection $consumables;
 

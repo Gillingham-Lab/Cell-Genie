@@ -5,10 +5,10 @@ namespace App\Entity;
 
 use App\Repository\ExperimentalConditionRepository;
 use App\Repository\ExperimentalMeasurementRepository;
+use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalMeasurementRepository::class)]

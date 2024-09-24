@@ -9,14 +9,14 @@ use PHPUnit\Framework\TestCase;
 
 class OwnerTraitTest extends TestCase
 {
-    public function testGetOwnerReturnsNullIfNoneWasSet()
+    public function testGetOwnerReturnsNullIfNoneWasSet(): void
     {
         $testClass = $this->getObjectForTrait(OwnerTrait::class);
 
         $this->assertNull($testClass->getOwner());
     }
 
-    public function testGetOwnerReturnsOwnerIfOwnerWasSetWithSetOwner()
+    public function testGetOwnerReturnsOwnerIfOwnerWasSetWithSetOwner(): void
     {
         $testClass = $this->getObjectForTrait(OwnerTrait::class);
         $user = $this->createMock(User::class);

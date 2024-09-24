@@ -31,21 +31,29 @@ class CellAliquotVoter extends Voter
         return true;
     }
 
+    /**
+     * @param self::VIEW|self::EDIT|self::CONSUME|self::REMOVE|self::OWNS|self::ADD_CULTURE $attribute
+     * @param CellAliquot $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
+        $aliquot = $subject;
 
-        if (!$user instanceof User and $attribute !== self::VIEW) {
-            return false;
+        if (!$user instanceof User) {
+            if ($attribute === self::VIEW) {
+                return $this->canView($subject, null);
+            } else {
+                return false;
+            }
         }
 
         // Admins can do anything (for now)
-        if ($user and $user->getIsAdmin()) {
+        if ($user->getIsAdmin()) {
             return true;
         }
-
-        /** @var CellAliquot $cell */
-        $aliquot = $subject;
 
         return match ($attribute) {
             self::VIEW => $this->canView($aliquot, $user),

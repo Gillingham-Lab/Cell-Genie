@@ -17,7 +17,7 @@ trait OwnerTrait
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): self
+    public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
 

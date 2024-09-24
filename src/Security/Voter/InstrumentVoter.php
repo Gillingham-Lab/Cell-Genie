@@ -45,8 +45,12 @@ class InstrumentVoter extends Voter
         $user = $token->getUser();
 
         // If the attribute is not VIEW, the user is always instanceof User
-        if (!$user instanceof User and $attribute !== self::VIEW) {
-            return false;
+        if (!$user instanceof User) {
+            if ($attribute !== self::VIEW) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         // Admins have always access, for now at least.
@@ -57,9 +61,9 @@ class InstrumentVoter extends Voter
         if (is_array($subject)) {
             [$instrument, $log] = $subject;
         } else {
-            /** @var Instrument $cell */
+            /** @var Instrument $instrument */
             $instrument = $subject;
-            /** @var Log $cell */
+            /** @var Log $log */
             $log = null;
         }
 
@@ -80,7 +84,7 @@ class InstrumentVoter extends Voter
             return true;
         }
 
-        // Machines should never be pricate or group, but they can
+        // Machines should never be private or group, but they can
         // No one except group-members will have access to non-public instruments.
         return match($instrument->getPrivacyLevel()) {
             PrivacyLevel::Public => true,
@@ -124,8 +128,9 @@ class InstrumentVoter extends Voter
 
     private function canChange(Instrument $instrument, User $user): bool
     {
-        // For booking an instrument that doesn't require training, you must be a group member
         if ($instrument->getRequiresTraining() === false) {
+            // For booking an instrument that doesn't require training, you must be a group member
+
             if ($instrument->getGroup() === null or $instrument->getGroup() === $user->getGroup()) {
                 return true;
             } else {
@@ -133,16 +138,12 @@ class InstrumentVoter extends Voter
                 $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
                 return $instrumentUsers->count() > 0;
             }
-        }
-
-        // For booking an instrument that requires training, you must have been trained
-        if ($instrument->getRequiresTraining() === true) {
-            // Unless you have role unlike "untrained
+        } else {
+            // For booking an instrument that requires training, you must have been trained
+            // Unless you have role unlike "untrained"
             $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
             return $instrumentUsers->count() > 0;
         }
-
-        return false;
     }
 
     private function canEditLogs(Instrument $instrument, ?Log $log, User $user): bool

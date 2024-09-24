@@ -5,9 +5,9 @@ namespace App\Genie\Pole;
 
 abstract class CompositeUnit extends BaseUnit
 {
-    /** @var array<int, BaseUnit>  */
+    /** @var array<int, class-string<BaseUnit>>  */
     protected array $factorial_units = [];
-    /** @var array<int, BaseUnit>  */
+    /** @var array<int, class-string<BaseUnit>>  */
     protected array $reciprocal_units = [];
 
     /**

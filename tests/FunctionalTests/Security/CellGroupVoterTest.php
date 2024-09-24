@@ -19,6 +19,9 @@ class CellGroupVoterTest extends KernelTestCase
 {
     use VoterTrait;
 
+    /**
+     * @return array<array{string, int, int, int, int}>
+     */
     public function getTestCases(): array
     {
         return [
@@ -32,11 +35,11 @@ class CellGroupVoterTest extends KernelTestCase
     /**
      * @dataProvider getTestCases
      */
-    public function testRights(string $email, int $new, int $edit, int $removeFull, int $removeEmpty)
+    public function testRights(string $email, int $new, int $edit, int $removeFull, int $removeEmpty): void
     {
         $token = $this->getTokenForUser($email);
 
-        /** @var Voter $voter */
+        /** @var CellGroupVoter $voter */
         $voter = static::getContainer()->get(CellGroupVoter::class);
 
         $this->assertSame($new, $voter->vote($token, "CellGroup", [CellGroupVoter::NEW]), message: "For user {$email}:");
@@ -59,12 +62,12 @@ class CellGroupVoterTest extends KernelTestCase
         $this->assertSame($removeEmpty, $voter->vote($token, $cellGroup, [CellGroupVoter::REMOVE]), message: "For user {$email}:");
     }
 
-    public function testVoterVotesDeniedIfTokenUserIsNotUser()
+    public function testVoterVotesDeniedIfTokenUserIsNotUser(): void
     {
         $token = $this->createMock(TokenInterface::class);
         $token->method("getUser")->willReturnCallback(fn () => $this->createMock(UserInterface::class));
 
-        /** @var Voter $voter */
+        /** @var CellGroupVoter $voter */
         $voter = static::getContainer()->get(CellGroupVoter::class);
 
         $this->assertSame(Voter::ACCESS_DENIED, $voter->vote($token, "CellGroup", [CellGroupVoter::NEW]));

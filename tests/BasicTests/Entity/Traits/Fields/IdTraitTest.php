@@ -9,14 +9,14 @@ use PHPUnit\Framework\TestCase;
 
 class IdTraitTest extends TestCase
 {
-    public function testIfGetIdWithoutAnIdReturnsNull()
+    public function testIfGetIdWithoutAnIdReturnsNull(): void
     {
         $testClass = $this->getObjectForTrait(IdTrait::class);
 
         $this->assertNull($testClass->getId());
     }
 
-    public function testIfGenerateIdSetsAnIdAndIsReturnedByGetId()
+    public function testIfGenerateIdSetsAnIdAndIsReturnedByGetId(): void
     {
         $testClass = new class {
             use IdTrait;

@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\FileType;
 use App\Repository\FileRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use LogicException;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
@@ -53,7 +54,7 @@ class File
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
-    private ?DateTime $uploadedOn = null;
+    private ?DateTimeInterface $uploadedOn = null;
 
     private bool $freshlyUploaded = false;
 

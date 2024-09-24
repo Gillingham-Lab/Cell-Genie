@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 
 class ParamBag implements \ArrayAccess
 {
-    /** @var array{str: str} */
+    /** @var array<string, Param> */
     public array $paramArray = [];
 
     public function getParam($offset, string|float|int|bool $default = null): ?Param

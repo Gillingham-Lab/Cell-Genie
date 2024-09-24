@@ -24,19 +24,33 @@ class CellVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Cell and $subject !== "Cell") {
+        if ($subject instanceof Cell and $attribute !== self::NEW) {
+            return true;
+        }
+
+        if ($subject !== "Cell" and $attribute === self::NEW) {
             return false;
         }
 
         return true;
     }
 
+    /**
+     * @param self::VIEW|self::EDIT|self::NEW|self::ADD_ALIQUOT|self::REMOVE|self::OWNS $attribute
+     * @param ($attribute is self::NEW ? 'Cell' : Cell) $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User and $attribute !== self::VIEW) {
-            return false;
+        if (!$user instanceof User) {
+            if ($attribute !== self::VIEW) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         if ($subject instanceof Cell) {
@@ -47,10 +61,10 @@ class CellVoter extends Voter
                 self::REMOVE => $this->canRemove($subject, $user),
                 self::OWNS => $subject->getOwner() === $user,
             };
+        } elseif ($attribute === self::NEW) {
+            return $this->canCreate($user);
         } else {
-            return match($attribute) {
-                self::NEW => $this->canCreate($user),
-            };
+            return false;
         }
     }
 

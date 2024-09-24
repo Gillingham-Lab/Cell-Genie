@@ -170,6 +170,8 @@ class StorageController extends AbstractController
             $entity = $rack;
             $formType = RackType::class;
             $returnTo = function(Rack $rack) {return $this->generateUrl("app_storage");};
+        } else {
+            throw new \Exception("Route name is not handled by this controller.");
         }
 
         $formOptions = [

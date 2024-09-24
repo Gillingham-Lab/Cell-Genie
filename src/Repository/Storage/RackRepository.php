@@ -39,7 +39,17 @@ class RackRepository extends ServiceEntityRepository
             ;
     }
 
-    public function getTree(?Rack $exludeRack = null)
+    /**
+     * @param Rack|null $exludeRack
+     * @return array<array{
+     *     0: Rack,
+     *     "depth": int,
+     *     "sort_path": string,
+     *     "path": string,
+     *     "cycle": bool,
+     * }>
+     */
+    public function getTree(?Rack $exludeRack = null): array
     {
         $entityManager = $this->getEntityManager();
 

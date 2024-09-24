@@ -29,7 +29,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class BarcodeType extends AbstractType
 {
     public function __construct(
-        private LotRepository $lotRepository,
         private SubstanceRepository $substanceRepository,
     ) {
     }
@@ -121,7 +120,7 @@ class BarcodeType extends AbstractType
                 "choices" => $this->getLotChoices(),
                 "choice_label" => function ($choice) {
                     if ($choice?->getSubstance() instanceof Antibody) {
-                        return $choice?->getSubstance()?->getNumber() . "." . $choice?->getLot()?->getNumber() . " (" . $choice?->getLot()?->getLotNumber() .")";
+                        return $choice->getSubstance()->getNumber() . "." . $choice->getLot()?->getNumber() . " (" . $choice->getLot()?->getLotNumber() .")";
                     } else {
                         return $choice?->getSubstance()?->getShortName() . "." . $choice?->getLot()?->getNumber() . " (" . $choice?->getLot()?->getLotNumber() .")";
                     }

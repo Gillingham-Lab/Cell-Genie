@@ -66,7 +66,8 @@ class BarcodeController extends AbstractController
                     "params" => [
                         "lot" => $barcodeEntity->getReferencedId(),
                     ]
-                ]
+                ],
+                default => throw new \Exception("Unknown barcode entity type.")
             };
 
             // Redirect to target

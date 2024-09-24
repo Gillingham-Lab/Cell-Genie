@@ -40,10 +40,6 @@ class LoggerListener implements EventSubscriberInterface
             return;
         }
 
-        if ($this->tokenStorage === null or $this->authorizationChecker === null) {
-            return;
-        }
-
         $token = $this->tokenStorage->getToken();
 
         if ($token !== null and $this->authorizationChecker->isGranted("IS_AUTHENTICATED_REMEMBERED")) {

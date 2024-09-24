@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait HasLogsTrait
 {
+    /** @var Collection<int, Log> */
     #[ORM\ManyToMany(targetEntity: Log::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable]
     #[ORM\InverseJoinColumn(name: "log_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]

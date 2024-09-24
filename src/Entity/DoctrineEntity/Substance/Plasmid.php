@@ -31,6 +31,7 @@ class Plasmid extends Substance implements AnnotateableInterface
     use SequenceAnnotationTrait;
     use HasRRID;
 
+    /** @var Collection<int, Protein> */
     #[ORM\ManyToMany(targetEntity: Protein::class)]
     #[ORM\JoinTable(name: "plasmid_expressed_proteins")]
     #[ORM\JoinColumn(name: "plasmid_ulid", referencedColumnName: "ulid", onDelete: "CASCADE")]
@@ -39,6 +40,7 @@ class Plasmid extends Substance implements AnnotateableInterface
     #[Assert\Valid]
     private Collection $expressedProteins;
 
+    /** @var Collection<int, Plasmid> */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Plasmid::class)]
     private Collection $children;
 

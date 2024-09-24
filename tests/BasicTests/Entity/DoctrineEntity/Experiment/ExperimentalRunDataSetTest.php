@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExperimentalRunDataSetTest extends TestCase
 {
-    public function testExperimentalRun()
+    public function testExperimentalRun(): void
     {
         $set = new ExperimentalRunDataSet();
         $run = $this->createMock(ExperimentalRun::class);
@@ -35,7 +35,7 @@ class ExperimentalRunDataSetTest extends TestCase
         $this->assertNull($set->getExperiment());
     }
 
-    public function testCondition()
+    public function testCondition(): void
     {
         $set = new ExperimentalRunDataSet();
         $condition = $this->createMock(ExperimentalRunCondition::class);
@@ -52,7 +52,7 @@ class ExperimentalRunDataSetTest extends TestCase
         $this->assertNull($set->getCondition());
     }
 
-    public function testControlCondition()
+    public function testControlCondition(): void
     {
         $set = new ExperimentalRunDataSet();
         $condition = $this->createMock(ExperimentalRunCondition::class);
@@ -69,7 +69,7 @@ class ExperimentalRunDataSetTest extends TestCase
         $this->assertNull($set->getControlCondition());
     }
 
-    public function testData()
+    public function testData(): void
     {
         $set = new ExperimentalRunDataSet();
 

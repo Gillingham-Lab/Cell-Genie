@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class UnitAmountTest extends TestCase
 {
-    public function testEmptyAmount()
+    public function testEmptyAmount(): void
     {
         $quantity = Amount::create(1);
 
@@ -16,37 +16,37 @@ class UnitAmountTest extends TestCase
         $this->assertSame(Amount::getInstance(), $quantity->getUnit());
     }
 
-    public function testPercentAmount()
+    public function testPercentAmount(): void
     {
         $quantity = Amount::create(1, Amount::PERCENT);
         $this->assertEqualsWithDelta(0.01, $quantity->getValue(), 1e-18);
     }
 
-    public function testPermilleAmount()
+    public function testPermilleAmount(): void
     {
         $quantity = Amount::create(1, Amount::PERMILLE);
         $this->assertEqualsWithDelta(0.001, $quantity->getValue(), 1e-18);
     }
 
-    public function testPpmAmount()
+    public function testPpmAmount(): void
     {
         $quantity = Amount::create(1, Amount::PARTSPERMILLION);
         $this->assertEqualsWithDelta(1e-6, $quantity->getValue(), 1e-18);
     }
 
-    public function testPpbAmount()
+    public function testPpbAmount(): void
     {
         $quantity = Amount::create(1, Amount::PARTSPERBILLION);
         $this->assertEqualsWithDelta(1e-9, $quantity->getValue(), 1e-18);
     }
 
-    public function testPptAmount()
+    public function testPptAmount(): void
     {
         $quantity = Amount::create(1, Amount::PARTSPERTRILLION);
         $this->assertEqualsWithDelta(1e-12, $quantity->getValue(), 1e-18);
     }
 
-    public function testUnitConversions()
+    public function testUnitConversions(): void
     {
         $quantity = Amount::create(0.1);
 

@@ -17,11 +17,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class UserGroupCrudController extends AbstractCrudController
 {
-    public function __construct(
-        private UserPasswordHasherInterface $passwordHasher,
-    ) {
-    }
-
     public static function getEntityFqcn(): string
     {
         return UserGroup::class;

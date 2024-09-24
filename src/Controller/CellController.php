@@ -51,8 +51,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CellController extends AbstractController
 {
-    private ?User $user = null;
-
     public function __construct(
         readonly private EntityManagerInterface   $entityManager,
         readonly private CellCultureRepository    $cellCultureRepository,
@@ -271,7 +269,7 @@ class CellController extends AbstractController
 
             // Set owner and owner group
             $cell->setOwner($currentUser);
-            $cell->setGroup($currentUser?->getGroup());
+            $cell->setGroup($currentUser->getGroup());
         } elseif (!$cell) {
             throw $this->createNotFoundException("Cell has not been found");
         } else {
@@ -336,10 +334,6 @@ class CellController extends AbstractController
         #[MapEntity(expr: 'repository.findCellByIdOrNumber(cell)')]
         Cell $cell,
     ): Response {
-        if (!$cell) {
-            throw $this->createNotFoundException("The request cell was not found");
-        }
-
         return $this->addNewOrEditCellAliquot($request, $currentUser, $entityManager, $fileUploader, $cell, null);
     }
 
@@ -355,15 +349,11 @@ class CellController extends AbstractController
         Cell $cell,
         CellAliquot $cellAliquot = null,
     ): Response {
-        if (!$cell) {
-            throw $this->createNotFoundException("The request cell was not found");
-        }
-
         if (!$cellAliquot and $request->get("_route") === "app_cell_aliquot_add") {
             $cellAliquot = new CellAliquot();
             $cellAliquot->setCell($cell);
             $cellAliquot->setOwner($currentUser);
-            $cellAliquot->setGroup($currentUser?->getGroup());
+            $cellAliquot->setGroup($currentUser->getGroup());
             $new = true;
         } elseif (!$cellAliquot) {
             throw $this->createNotFoundException("Cell aliquot has not been found.");
@@ -388,8 +378,8 @@ class CellController extends AbstractController
         $form->handleRequest($request);
 
         if ($new) {
-            $cellAliquot->setGroup($this->getUser()->getGroup());
-            $cellAliquot->setOwner($this->getUser());
+            $cellAliquot->setGroup($currentUser->getGroup());
+            $cellAliquot->setOwner($currentUser);
         }
 
         if ($form->isSubmitted() and $form->isValid()) {
@@ -601,16 +591,10 @@ class CellController extends AbstractController
         }
 
         if ($eventType !== null) {
-            $formType = match($eventType) {
-                "test" => CellCultureEventTestType::class,
-                "split" => CellCultureSplittingType::class,
-                "other" => CellCultureOtherType::class,
-            };
-
-            $entityType = match($eventType) {
-                "test" => CellCultureTestEvent::class,
-                "split" => CellCultureSplittingEvent::class,
-                "other" => CellCultureOtherEvent::class,
+            [$formType, $entityType] = match($eventType) {
+                "test" => [CellCultureEventTestType::class, CellCultureTestEvent::class],
+                "split" => [CellCultureSplittingType::class, CellCultureSplittingEvent::class],
+                default => [CellCultureOtherType::class, CellCultureOtherEvent::class],
             };
 
             /** @var CellCultureEvent $cellCultureEvent */
@@ -619,7 +603,7 @@ class CellController extends AbstractController
             $formType = match(get_class($cellCultureEvent)) {
                 CellCultureTestEvent::class => CellCultureEventTestType::class,
                 CellCultureSplittingEvent::class => CellCultureSplittingType::class,
-                CellCultureOtherEvent::class => CellCultureOtherType::class,
+                default => CellCultureOtherType::class,
             };
         }
 
@@ -636,7 +620,7 @@ class CellController extends AbstractController
             "save_button" => true,
         ];
 
-        if ($eventType === "split") {
+        if ($cellCultureEvent instanceof CellCultureSplittingEvent) {
             $formOptions["show_splits"] = true;
         }
 
@@ -646,7 +630,7 @@ class CellController extends AbstractController
 
         if ($form->isSubmitted() and $form->isValid()) {
             // $eventType is only set if a new entity is created. Therefore, this should not get called during an edit.
-            if ($eventType === "split") {
+            if ($cellCultureEvent instanceof CellCultureSplittingEvent) {
                 // Create new cell cultures if requested.
                 if ($form["newCultures"]->getData() > 0) {
                     $numberOfNewCultures = min(10, $form["newCultures"]->getData());

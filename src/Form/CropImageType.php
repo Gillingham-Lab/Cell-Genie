@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CropImageType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "compound" => true,
@@ -22,7 +22,7 @@ class CropImageType extends AbstractType
         ]);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add("file");
         $builder->add("data");
@@ -40,12 +40,12 @@ class CropImageType extends AbstractType
         ));
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars["empty_data"] = ["data" => null];
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return "crop_image";
     }

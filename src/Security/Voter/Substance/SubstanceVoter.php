@@ -43,8 +43,12 @@ class SubstanceVoter extends AbstractPrivacyAwareVoter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User and $attribute !== self::VIEW) {
-            return false;
+        if (!$user instanceof User) {
+            if ($attribute !== self::VIEW) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         if ($subject instanceof Substance) {

@@ -39,6 +39,7 @@ class CellGroup
     #[Gedmo\Versioned]
     private string $name = "";
 
+    /** @var Collection<int, CellGroup> */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: CellGroup::class, cascade: ["persist", "refresh"])]
     private Collection $children;
 
@@ -95,6 +96,7 @@ class CellGroup
     #[Gedmo\Versioned]
     private ?Tissue $tissue = null;
 
+    /** @var Collection<int, Cell> */
     #[ORM\OneToMany(mappedBy: "cellGroup", targetEntity: Cell::class, cascade: ["persist"], orphanRemoval: false)]
     private Collection $cells;
 
@@ -305,13 +307,17 @@ class CellGroup
         return $this->cells;
     }
 
+    /**
+     * @param Cell $cell
+     * @return $this
+     */
     public function addCell(Cell $cell): self
     {
         if (!$this->cells->contains($cell)) {
             $this->cells->add($cell);
 
             if ($cell->getCellGroup() !== $this) {
-                $cell->getCellGroup()->removeCell($this);
+                $cell->getCellGroup()->removeCell($cell);
                 $cell->setCellGroup($this);
             }
         }
@@ -319,6 +325,10 @@ class CellGroup
         return $this;
     }
 
+    /**
+     * @param Cell $cell
+     * @return $this
+     */
     public function removeCell(Cell $cell): self
     {
         if ($this->cells->contains($cell)) {
@@ -328,5 +338,7 @@ class CellGroup
                 $cell->setCellGroup(null);
             }
         }
+
+        return $this;
     }
 }

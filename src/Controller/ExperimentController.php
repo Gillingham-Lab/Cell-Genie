@@ -43,15 +43,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ExperimentController extends AbstractController
 {
-    public function __construct(
-        readonly private ExperimentTypeRepository $experimentTypeRepository,
-        readonly private ChemicalRepository $chemicalRepository,
-        readonly private ProteinRepository $proteinRepository,
-        readonly private SubstanceRepository $substanceRepository,
-        readonly private LotRepository $lotRepository,
-    ) {
-    }
-
     #[Route('/experiment', name: 'app_experiments')]
     public function index(): Response
     {
@@ -165,7 +156,7 @@ class ExperimentController extends AbstractController
         foreach ($conditionFields as $field) {
             $formRow = $field->getFormRow();
 
-            $columns[] = new Column($field->getLabel(), function ($x) use ($field, $formRow, $dataService, $entitiesAsId) {
+            $columns[] = new Column($field->getLabel(), function ($x) use ($formRow, $dataService, $entitiesAsId) {
                 if (!array_key_exists($formRow->getFieldName(), $x)) {
                     return "NAN";
                 }
@@ -196,7 +187,7 @@ class ExperimentController extends AbstractController
                     continue;
                 }
 
-                $columns[] = new Column($field->getLabel() . " (SMILES)", function ($x) use ($field, $formRow, $dataService, $entitiesAsId) {
+                $columns[] = new Column($field->getLabel() . " (SMILES)", function ($x) use ($formRow) {
                     if (!array_key_exists($formRow->getFieldName(), $x)) {
                         return "NAN";
                     }
@@ -223,7 +214,10 @@ class ExperimentController extends AbstractController
             $content = "#TotalNumberOfRows\t{$array['maxNumberOfRows']}\n";
         }
 
-        $content .= implode("\t", array_map(fn ($column) => $column["label"], $array["columns"])). "\n";
+        $content .= implode("\t", array_map(
+            callback: fn ($column) => $column["label"],
+            array: $array["columns"]
+        )). "\n";
 
         foreach ($array["rows"] as $row) {
             $content .= implode("\t", array_map(fn ($cell) => $cell["value"], $row)) . "\n";
@@ -473,7 +467,7 @@ class ExperimentController extends AbstractController
 
         $getComponentColumn = function(ExperimentalDesignField $field, array $entities) {
             return new ComponentColumn($field->getLabel(), function (ExperimentalRunCondition|ExperimentalRunDataSet $condition) use ($field, $entities) {
-                /** @var ExperimentalDatum $datum */
+                /** @var ?ExperimentalDatum $datum */
                 $datum = $condition->getData()[$field->getFormRow()->getFieldName()];
                 $value = $datum?->getValue();
 

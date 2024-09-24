@@ -113,7 +113,7 @@ class ExperimentalDataFormRowService
     /**
      * @param FormBuilderInterface $builder
      * @param ExperimentalDesignField[] $fields
-     * @return array<string>
+     * @return array<string, DatumEnum>
      */
     public function addFields(FormBuilderInterface $builder, array $fields): array
     {
@@ -143,7 +143,7 @@ class ExperimentalDataFormRowService
     }
 
     /**
-     * @param ExperimentalDesignField $field
+     * @param FormRow $row
      * @return array{0: string, 1: array, 2: DatumEnum}
      */
     public function getFieldConfiguration(FormRow $row): array
@@ -220,7 +220,7 @@ class ExperimentalDataFormRowService
                 1 => $unsigned ? DatumEnum::UInt8 : DatumEnum::Int8,
                 2 => $unsigned ? DatumEnum::UInt16 : DatumEnum::Int16,
                 4 => $unsigned ? DatumEnum::UInt32 : DatumEnum::Int32,
-                8 => DatumEnum::Int64,
+                default => DatumEnum::Int64,
             };
 
             $fieldConfig["constraints"] = [
@@ -326,6 +326,8 @@ class ExperimentalDataFormRowService
 
                 $fieldConfig["choices"] = $choices;
                 $type = ChoiceType::class;
+            } else {
+                throw new \Exception("Double-classes are not supported outside of Substances.");
             }
         } else {
             $type = EntityType::class;

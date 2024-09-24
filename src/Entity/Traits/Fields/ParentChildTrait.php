@@ -12,6 +12,7 @@ trait ParentChildTrait
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?self $parent = null;
 
+    /** @var Collection<int, self> */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: self::class)]
     private Collection $children;
 

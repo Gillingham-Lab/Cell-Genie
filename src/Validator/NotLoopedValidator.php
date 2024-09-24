@@ -68,7 +68,7 @@ class NotLoopedValidator extends ConstraintValidator
 
         // Check childdren side
 
-        /** @var Collection $currentChildren */
+        /** @var Collection<int, mixed> $currentChildren */
         $currentChildren = $this->accessor->getValue($entity, $constraint->childrenField);
 
         $result = $this->checkChildrenTree($this->accessor->getValue($entity, $constraint->parentField), $constraint, $currentChildren, 0, $constraint->maxNestingLevel);
@@ -81,7 +81,11 @@ class NotLoopedValidator extends ConstraintValidator
         }
     }
 
-    private function checkChildrenTree($entity, NotLooped $constraint, Collection $children, $level, $maxLevel = 10): bool {
+    /**
+     * @param Collection<int, mixed> $children
+     * @return bool
+     */
+    private function checkChildrenTree(mixed $entity, NotLooped $constraint, Collection $children, int $level, int $maxLevel = 10): bool {
         if ($level === $maxLevel) {
             return true;
         }

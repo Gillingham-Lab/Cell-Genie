@@ -44,11 +44,13 @@ class ExperimentalRun implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?string $name = null;
 
+    /** @var Collection<int, ExperimentalRunCondition> */
     #[ORM\OneToMany(mappedBy: 'experimentalRun', targetEntity: ExperimentalRunCondition::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[Assert\Valid]
     #[UniqueCollectionField(field: "name")]
     private Collection $conditions;
 
+    /** @var Collection<int, ExperimentalRunDataSet> */
     #[ORM\OneToMany(mappedBy: 'experiment', targetEntity: ExperimentalRunDataSet::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[Assert\Valid]
     private Collection $dataSets;

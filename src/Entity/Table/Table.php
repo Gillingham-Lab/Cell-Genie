@@ -54,13 +54,13 @@ class Table
      * @return array{
      *     numberOfRows: int,
      *     maxNumberOfRows: int,
-     *     columns: array{
+     *     columns: array<int, array{
      *         label: string,
      *         type: string,
      *         showLabel: bool,
      *         widthRecommendation: int,
      *         bold: bool,
-     *     },
+     *     }>,
      *     rows: array<int, array{
      *         value: mixed,
      *         tooltip: mixed,

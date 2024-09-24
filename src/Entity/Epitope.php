@@ -15,8 +15,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: EpitopeRepository::class)]
-##[ORM\InheritanceType("JOINED")]
-##[ORM\DiscriminatorColumn(name: "epitope_type", type: "string")]
 #[ORM\UniqueConstraint(fields: ["shortName"])]
 #[UniqueEntity(fields: ["shortName"], message: "The short name of the epitope must be unique.")]
 #[Gedmo\Loggable]
@@ -25,9 +23,11 @@ class Epitope
     use IdTrait;
     use ShortNameTrait;
 
+    /** @var Collection<int, Antibody> */
     #[ORM\ManyToMany(targetEntity: Antibody::class, mappedBy: "epitopeTargets")]
     private Collection $antibodies;
 
+    /** @var Collection<int, Substance> */
     #[ORM\ManyToMany(targetEntity: Substance::class, inversedBy: "epitopes", cascade: ["persist"])]
     #[ORM\JoinTable(name: "substance_epitopes")]
     #[ORM\JoinColumn(name: "epitope_id", referencedColumnName: "id", onDelete: "CASCADE")]

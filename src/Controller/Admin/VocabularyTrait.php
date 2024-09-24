@@ -16,7 +16,7 @@ trait VocabularyTrait
         return $vocabEntry?->getVocabulary();
     }
 
-    private function textFieldOrChoices(string $field, ?string $databaseField = null): FieldInterface
+    private function textFieldOrChoices(string $field, ?string $databaseField = null): ChoiceField|TextField
     {
         $databaseField ??= $field;
         $vocab = $this->getVocabularyChoices($databaseField);

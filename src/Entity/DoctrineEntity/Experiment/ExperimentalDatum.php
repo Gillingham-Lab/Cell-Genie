@@ -30,7 +30,7 @@ class ExperimentalDatum
     #[ORM\Column(length: 255, enumType: DatumEnum::class)]
     private ?DatumEnum $type = null;
 
-    /** @var ?resource */
+    /** @var resource|string|null */
     #[ORM\Column(type: Types::BINARY)]
     private $value = null;
 
