@@ -69,7 +69,7 @@ class SearchService
         $value = $this->parse($value);
 
         $qb->setParameter($fieldName, $value);
-        return $qb->expr()->like($qb->expr()->lower($field), ":$fieldName");
+        return $qb->expr()->like((string)$qb->expr()->lower($field), ":$fieldName");
     }
 
     public function searchWithInteger(QueryBuilder $qb, string $field, int|string $value): Query\Expr\Comparison

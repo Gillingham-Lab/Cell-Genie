@@ -48,9 +48,11 @@ class CellCulture implements PrivacyAwareInterface
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private ?CellCulture $parentCellCulture = null;
 
+    /** @var Collection<int, self>  */
     #[ORM\OneToMany(mappedBy: 'parentCellCulture', targetEntity: self::class)]
     private Collection $subCellCultures;
 
+    /** @var Collection<int, CellCultureEvent>  */
     #[ORM\OneToMany(mappedBy: 'cellCulture', targetEntity: CellCultureEvent::class, fetch: "EAGER", orphanRemoval: true)]
     #[ORM\OrderBy(["date" => "ASC"])]
     private Collection $events;
@@ -105,7 +107,7 @@ class CellCulture implements PrivacyAwareInterface
         if ($this->aliquot) {
             $currentPassage = $this->aliquot->getPassage() ?? 0;
         } else {
-            $currentPassage = $this->parentCellCulture->getCurrentPassage($this->unfrozenOn) ?? 0;
+            $currentPassage = $this->parentCellCulture->getCurrentPassage($this->unfrozenOn);
         }
 
         foreach ($this->events as $event) {
@@ -125,13 +127,13 @@ class CellCulture implements PrivacyAwareInterface
 
     public function isAbandoned(): bool
     {
-        # Trashed cells cannot be abandoned
+        // Trashed cells cannot be abandoned
         if ($this->getTrashedOn()) {
             return false;
         }
 
-        /** @var DateTimeInterface $lastChange */
         $currentDate = new DateTime();
+        /** @var DateTimeInterface $lastChange */
         $lastChange = $this->getUnfrozenOn();
 
         foreach ($this->getEvents() as $event) {

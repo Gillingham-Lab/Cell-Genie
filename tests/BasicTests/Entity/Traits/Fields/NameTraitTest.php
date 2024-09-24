@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class NameTraitTest extends TestCase
 {
-    public function testNameTraitHasAllShortNameTraitMethods()
+    public function testNameTraitHasAllShortNameTraitMethods(): void
     {
         $testClass = $this->getObjectForTrait(NameTrait::class);
 
@@ -20,7 +20,7 @@ class NameTraitTest extends TestCase
         }
     }
 
-    public function testNameTraitHasAllLongNameTraitMethods()
+    public function testNameTraitHasAllLongNameTraitMethods(): void
     {
         $testClass = $this->getObjectForTrait(NameTrait::class);
 

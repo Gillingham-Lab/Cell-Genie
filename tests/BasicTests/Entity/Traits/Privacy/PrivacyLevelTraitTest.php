@@ -11,14 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class PrivacyLevelTraitTest extends TestCase
 {
-    public function testGetPrivacyLevelReturnsPublicIfNoneWasGiven()
+    public function testGetPrivacyLevelReturnsPublicIfNoneWasGiven(): void
     {
         $testClass = $this->getObjectForTrait(PrivacyLevelTrait::class);
 
         $this->assertSame(PrivacyLevel::Public, $testClass->getPrivacyLevel());
     }
 
-    public function testGetPrivacyLevelReturnsPrivacyLevelThatWasSetWithSetPrivacyLevel()
+    public function testGetPrivacyLevelReturnsPrivacyLevelThatWasSetWithSetPrivacyLevel(): void
     {
         $testClass = $this->getObjectForTrait(PrivacyLevelTrait::class);
 

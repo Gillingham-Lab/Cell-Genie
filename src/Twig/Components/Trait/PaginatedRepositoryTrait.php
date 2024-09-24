@@ -13,17 +13,28 @@ trait PaginatedRepositoryTrait
 {
     use PaginatedTrait;
 
-    private readonly PaginatedRepositoryInterface $repository;
+    private PaginatedRepositoryInterface $repository;
 
+    /** @var array<string, 'ASC'|'DESC'> */
     private array $paginatedOrderBy = [];
+
+    /** @var array<string, mixed> */
     private array $paginatedSearchFields = [];
 
+    /**
+     * @param array<string, 'ASC'|'DESC'> $paginatedOrderBy
+     * @return $this
+     */
     public function setPaginatedOrderBy(array $paginatedOrderBy): static
     {
         $this->paginatedOrderBy = $paginatedOrderBy;
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $paginatedSearchFields
+     * @return $this
+     */
     public function setPaginatedSearchFields(array $paginatedSearchFields): static
     {
         $this->paginatedSearchFields = $paginatedSearchFields;
@@ -32,10 +43,15 @@ trait PaginatedRepositoryTrait
 
     private function setRepository(PaginatedRepositoryInterface $repository): void
     {
-        $this->repository = $repository;
+        $this->repository = $repository; // @phpstan-ignore-line
     }
 
-    public function getNumberOfRows(... $args): ?int
+    /**
+     * @param array<string, mixed> ...$args
+     * @return int|null
+     * @throws Exception
+     */
+    public function getNumberOfRows(mixed ... $args): ?int
     {
         if ($this->numberOfRows === null) {
             $arguments = [
@@ -53,7 +69,7 @@ trait PaginatedRepositoryTrait
         return $this->numberOfRows;
     }
 
-    private function getPaginatedResults(... $args): Paginator
+    private function getPaginatedResults(mixed ... $args): Paginator
     {
         try {
             $arguments = [
@@ -65,7 +81,7 @@ trait PaginatedRepositoryTrait
             ];
 
             $paginatedDesigns = $this->repository->getPaginatedResults(... $arguments);
-        } catch (UnhandledMatchError $e) {
+        } catch (UnhandledMatchError) {
             throw new Exception("An error occured during the query.");
         }
 

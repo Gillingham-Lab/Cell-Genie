@@ -42,8 +42,12 @@ class ConsumableVoter extends Voter
         $user = $token->getUser();
 
         // If the attribute is not VIEW, the user is always instanceof User
-        if (!$user instanceof User and $attribute !== self::VIEW) {
-            return false;
+        if (!$user instanceof User) {
+            if ($attribute !== self::VIEW) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         // Admins have always access, for now at least.
@@ -144,7 +148,6 @@ class ConsumableVoter extends Voter
             return match ($subject->getConsumable()->getPrivacyLevel()) {
                 PrivacyLevel::Group, PrivacyLevel::Public => $this->isGroupMember($user, $subject->getConsumable()),
                 PrivacyLevel::Private => $this->isOwner($user, $subject->getConsumable()),
-                default => false,
             };
         } else {
             return false;

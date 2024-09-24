@@ -29,7 +29,7 @@ class Organism
 
     public function __toString(): string
     {
-        return $this->getFullName() ?? "unknown";
+        return $this->getFullName();
     }
 
     public function getId(): ?int
@@ -39,7 +39,13 @@ class Organism
 
     public function getFullName(): string
     {
-        return "{$this->name}, {$this->type}";
+        if ($this->name === null and $this->type === null) {
+            return "unknown";
+        } elseif ($this->name !== null) {
+            return "unknown, {$this->type}";
+        } else {
+            return "{$this->name}, {$this->type}";
+        }
     }
 
     public function getName(): ?string

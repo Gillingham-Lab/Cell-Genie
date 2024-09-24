@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Tests\FunctionalTests\Repository\Storage;
 
 use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Repository\Storage\RackRepository;
+use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
@@ -29,11 +31,11 @@ class RackRepositoryTest extends KernelTestCase
         $this->entityManager = null;
     }
 
-    public function testRackTree()
+    public function testRackTree(): void
     {
-        $repository = $this->entityManager->getRepository(Rack::class);
+        /** @var RackRepository $repository */
+        $repository = static::getContainer()->get(RackRepository::class);
 
-        /** @var Rack[[Rack, int, string, string]] $tree */
         $tree = $repository->getTree();
 
         $this->assertCount(8, $tree);
@@ -63,9 +65,11 @@ class RackRepositoryTest extends KernelTestCase
         $this->assertContains((string)$tree[2][0]->getUlid(), $tree[2][0]->getUlidTree());
     }
 
-    public function testRackTreeWithExclusion()
+    public function testRackTreeWithExclusion(): void
     {
-        $repository = $this->entityManager->getRepository(Rack::class);
+        /** @var RackRepository $repository */
+        $repository = static::getContainer()->get(RackRepository::class);
+
         $otherRack = $repository->findOneBy(["name" => "Rack 1.1.2"]);
 
         /** @var Rack[] $tree */
@@ -73,37 +77,45 @@ class RackRepositoryTest extends KernelTestCase
         $this->assertCount(7, $tree);
     }
 
-    public function testPathName()
+    public function testPathName(): void
     {
-        $repository = $this->entityManager->getRepository(Rack::class);
+        /** @var RackRepository $repository */
+        $repository = static::getContainer()->get(RackRepository::class);
+
         $rack = $repository->findOneBy(["name" => "Rack 1.1.1"]);
 
         $this->assertSame("Rack 1 | Rack 1.1 | Rack 1.1.1", $rack->getPathName());
     }
 
-    public function testNormalBoxRetrieval()
+    public function testNormalBoxRetrieval(): void
     {
-        $repository = $this->entityManager->getRepository(Rack::class);
-        /** @var Rack[] $racksWithBoxes */
+        /** @var RackRepository $repository */
+        $repository = static::getContainer()->get(RackRepository::class);
+
+        /** @var Rack[] $racksWithoutBoxes */
         $racksWithoutBoxes = $repository->findAll();
 
         // Should still be 8 entries
         $this->assertCount(8, $racksWithoutBoxes);
 
-        // Lets make sure the collection is not loaded
+        // Let's make sure the collection is not loaded
+        $this->assertInstanceOf(PersistentCollection::class, $racksWithoutBoxes[0]->getBoxes());
         $this->assertFalse($racksWithoutBoxes[0]->getBoxes()->isInitialized());
     }
 
-    public function testPreloadedBoxRetrieval()
+    public function testPreloadedBoxRetrieval(): void
     {
-        $repository = $this->entityManager->getRepository(Rack::class);
+        /** @var RackRepository $repository */
+        $repository = static::getContainer()->get(RackRepository::class);
+
         /** @var Rack[] $racksWithBoxes */
         $racksWithBoxes = $repository->findAllWithBoxes();
 
         // Should still be 8 entries
         $this->assertCount(8, $racksWithBoxes);
 
-        // Lets make sure we've loaded the collection already
+        // Let's make sure we've loaded the collection already
+        $this->assertInstanceOf(PersistentCollection::class, $racksWithBoxes[0]->getBoxes());
         $this->assertTrue($racksWithBoxes[0]->getBoxes()->isInitialized());
     }
 }

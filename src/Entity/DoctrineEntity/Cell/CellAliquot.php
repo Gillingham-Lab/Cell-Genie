@@ -110,6 +110,7 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?self $parentAliquot = null;
 
+    /** @var Collection<int, self>  */
     #[ORM\OneToMany(mappedBy: 'parentAliquot', targetEntity: self::class)]
     private Collection $childAliquots;
 
@@ -119,7 +120,7 @@ class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
     private ?string $boxCoordinate = null;
 
     #[ORM\Column(type: "string", length: 30, nullable: true)]
-    #[Assert\length(min: 2, max: 30)]
+    #[Assert\Length(min: 2, max: 30)]
     private ?string $aliquotName = null;
 
     public function __construct()

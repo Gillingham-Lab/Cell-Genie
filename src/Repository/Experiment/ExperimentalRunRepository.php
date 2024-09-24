@@ -10,6 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use ValueError;
 
 /**
  * @extends ServiceEntityRepository<ExperimentalRun>
@@ -37,6 +38,7 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
                 "name" => "exr.name",
                 "createdAt" => "exr.createdAt",
                 "modifiedAt" => "expr.modifiedAt",
+                default => throw new ValueError("{$fieldName} is not supported."),
             };
 
             $order = match($order) {
@@ -76,6 +78,7 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
 
         $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "design" => $searchService->searchWithUlid($queryBuilder, "exr.design", $searchValue),
+            default => throw new ValueError("{$searchField} is not supported."),
         });
 
         $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);

@@ -18,7 +18,7 @@ class DataSet
     private array $conditions = [];
     /** @var array<string, ExperimentalMeasurement> */
     private array $measurements = [];
-    /** @var array<string, ExperimentalMeasurement> */
+    /** @var array<string, Ulid|string> */
     private array $internalStandardMeasurements = [];
 
     public function __construct(

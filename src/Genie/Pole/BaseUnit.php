@@ -12,9 +12,9 @@ abstract class BaseUnit implements UnitInterface
     protected array $unitStringFactors = [];
     protected array $interconversionFactors = [];
 
-    private static array $instance = [];
+    protected static array $instance = [];
 
-    protected function __construct()
+    final protected function __construct()
     {
 
     }
@@ -28,6 +28,12 @@ abstract class BaseUnit implements UnitInterface
         return static::$instance[static::class];
     }
 
+    /**
+     * @param float $value
+     * @param string|null $unitString
+     * @return Quantity
+     * @throws UnitNotSupportedException
+     */
     public static function create(float $value, ?string $unitString = null): Quantity
     {
         $t = self::getInstance();

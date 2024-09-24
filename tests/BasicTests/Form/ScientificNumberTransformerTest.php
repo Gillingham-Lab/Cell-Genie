@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class ScientificNumberTransformerTest extends TestCase
 {
+    /**
+     * @return array<string, string|array<string>>
+     */
     private function getTransformerDefaults(): array
     {
         return [
@@ -19,7 +22,7 @@ class ScientificNumberTransformerTest extends TestCase
             "ninf_value" => "-Inf",
         ];
     }
-    public function testNormToViewTransformationWorksForNaNs()
+    public function testNormToViewTransformationWorksForNaNs(): void
     {
         $arguments = $this->getTransformerDefaults();
 
@@ -33,7 +36,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testNormToViewTransformationWorksForPositiveInf()
+    public function testNormToViewTransformationWorksForPositiveInf(): void
     {
         $arguments = $this->getTransformerDefaults();
 
@@ -47,7 +50,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testNormToViewTransformationWorksForNegativeInf()
+    public function testNormToViewTransformationWorksForNegativeInf(): void
     {
         $arguments = $this->getTransformerDefaults();
 
@@ -61,7 +64,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testNormToViewTransformationWorksForNormalFloats()
+    public function testNormToViewTransformationWorksForNormalFloats(): void
     {
         $arguments = $this->getTransformerDefaults();
         $transformer = new ScientificNumberTransformer(... $arguments);
@@ -77,7 +80,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testViewToNormTransformationWorksForNaNs()
+    public function testViewToNormTransformationWorksForNaNs(): void
     {
         $arguments = $this->getTransformerDefaults();
 
@@ -93,7 +96,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testViewToNormTransformationWorksForPositiveInfinity()
+    public function testViewToNormTransformationWorksForPositiveInfinity(): void
     {
         $arguments = $this->getTransformerDefaults();
 
@@ -112,7 +115,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testViewToNormTransformationWorksForNegativeInfinity()
+    public function testViewToNormTransformationWorksForNegativeInfinity(): void
     {
         $arguments = $this->getTransformerDefaults();
 
@@ -131,7 +134,7 @@ class ScientificNumberTransformerTest extends TestCase
         }
     }
 
-    public function testViewToNormTransformationReturnsNanForUnknownParameters()
+    public function testViewToNormTransformationReturnsNanForUnknownParameters(): void
     {
         $arguments = $this->getTransformerDefaults();
         $transformer = new ScientificNumberTransformer(... $arguments);
@@ -139,7 +142,7 @@ class ScientificNumberTransformerTest extends TestCase
         $this->assertNan($transformer->reverseTransform("n.d."));
     }
 
-    public function testViewToNormTransformationWorksForNormalFloats()
+    public function testViewToNormTransformationWorksForNormalFloats(): void
     {
         $arguments = $this->getTransformerDefaults();
         $transformer = new ScientificNumberTransformer(... $arguments);

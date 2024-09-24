@@ -85,6 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "boolean", nullable: true)]
     private ?bool $isActive = false;
 
+    /** @var Collection<int, CellCulture> */
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: CellCulture::class)]
     private Collection $cellCultures;
 

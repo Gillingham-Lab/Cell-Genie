@@ -28,7 +28,7 @@ trait ShortNameTrait
         return $this->shortName;
     }
 
-    public function setShortName(?string $shortName): self
+    public function setShortName(?string $shortName): static
     {
         $this->shortName = $shortName;
         return $this;

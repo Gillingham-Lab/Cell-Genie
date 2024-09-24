@@ -33,6 +33,7 @@ class Chemical extends Substance
     #[ORM\Column(type: "string", nullable: true)]
     private ?string $casNumber = null;
 
+    /** @var Collection<int, Experiment> */
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "chemicals")]
     private Collection $experiments;
 

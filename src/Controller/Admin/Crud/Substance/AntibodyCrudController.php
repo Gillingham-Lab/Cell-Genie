@@ -30,7 +30,6 @@ class AntibodyCrudController extends ExtendedAbstractCrudController
     use VocabularyTrait;
 
     public function __construct(
-        readonly private Security $security,
         readonly private VocabularyRepository $vocabularyRepository,
     ) {
     }

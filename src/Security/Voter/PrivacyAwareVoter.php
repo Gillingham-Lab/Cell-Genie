@@ -27,6 +27,12 @@ class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
         return false;
     }
 
+    /**
+     * @param self::VIEW|self::EDIT|self::REMOVE $attribute
+     * @param PrivacyAwareInterface $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(
         string $attribute,
         mixed $subject,

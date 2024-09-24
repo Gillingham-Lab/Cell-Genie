@@ -23,7 +23,6 @@ class PlasmidCrudController extends AbstractCrudController
     use VocabularyTrait;
 
     public function __construct(
-        readonly private Security $security,
         readonly private VocabularyRepository $vocabularyRepository,
     ) {
     }

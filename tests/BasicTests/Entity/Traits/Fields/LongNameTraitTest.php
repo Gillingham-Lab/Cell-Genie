@@ -8,14 +8,14 @@ use PHPUnit\Framework\TestCase;
 
 class LongNameTraitTest extends TestCase
 {
-    public function testGetLongNameWithoutAnySetNameReturnsNull()
+    public function testGetLongNameWithoutAnySetNameReturnsNull(): void
     {
         $testClass = $this->getObjectForTrait(LongNameTrait::class);
 
         $this->assertNull($testClass->getLongName());
     }
 
-    public function testSetLongNameWillHaveGetNameReturningSameValue()
+    public function testSetLongNameWillHaveGetNameReturningSameValue(): void
     {
         $testClass = $this->getObjectForTrait(LongNameTrait::class);
 
@@ -23,7 +23,7 @@ class LongNameTraitTest extends TestCase
         $this->assertSame("Long Name", $testClass->getLongName());
     }
 
-    public function testSetLongNameToNullWillNotCauseException()
+    public function testSetLongNameToNullWillNotCauseException(): void
     {
         $testClass = $this->getObjectForTrait(LongNameTrait::class);
 

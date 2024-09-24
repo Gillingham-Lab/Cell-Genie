@@ -27,13 +27,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class InstrumentType extends SaveableType
 {
-
-    public function __construct(
-        private InstrumentRepository $instrumentRepository,
-    ) {
-
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entity = $builder->getData();

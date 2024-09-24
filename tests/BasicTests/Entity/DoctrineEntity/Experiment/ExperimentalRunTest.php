@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExperimentalRunTest extends TestCase
 {
-    public function testScientist()
+    public function testScientist(): void
     {
         $mockScientist = $this->createMock(User::class);
         $dataset = new ExperimentalRun();
@@ -27,7 +27,7 @@ class ExperimentalRunTest extends TestCase
         $this->assertSame($mockScientist, $dataset->getScientist());
     }
 
-    public function testName()
+    public function testName(): void
     {
         $dataset = new ExperimentalRun();
 
@@ -40,7 +40,7 @@ class ExperimentalRunTest extends TestCase
         $this->assertSame($name, $dataset->getName());
     }
 
-    public function testConditions()
+    public function testConditions(): void
     {
         $dataset = new ExperimentalRun();
 
@@ -86,7 +86,7 @@ class ExperimentalRunTest extends TestCase
         $this->assertContains($mockConditions[1], $dataset->getConditions());
     }
 
-    public function testDataSet()
+    public function testDataSet(): void
     {
         $dataset = new ExperimentalRun();
 
@@ -133,7 +133,7 @@ class ExperimentalRunTest extends TestCase
         $this->assertContains($mockDataSets[1], $dataset->getDataSets());
     }
 
-    public function testData()
+    public function testData(): void
     {
         $run = new ExperimentalRun();
 

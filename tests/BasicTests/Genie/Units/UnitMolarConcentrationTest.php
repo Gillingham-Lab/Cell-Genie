@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class UnitMolarConcentrationTest extends TestCase
 {
-    public function testIfMolarGetsAccepted()
+    public function testIfMolarGetsAccepted(): void
     {
         $quantity = MolarConcentration::create(1, "M");
 
@@ -16,7 +16,7 @@ class UnitMolarConcentrationTest extends TestCase
         $this->assertSame(1000.0, $quantity->getValueAs("mM"));
     }
 
-    public function testIfMolePerLiterGetsAccepted()
+    public function testIfMolePerLiterGetsAccepted(): void
     {
         $quantity = MolarConcentration::create(1, "mol/L");
 

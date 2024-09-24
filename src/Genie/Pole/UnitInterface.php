@@ -13,6 +13,8 @@ interface UnitInterface
 
     public function convertToBaseValue(float $value, ?string $unitString): float;
 
+    public function convertValueTo(float $value, ?string $unitString): float;
+
     /**
      * Converts
      * @param float $value

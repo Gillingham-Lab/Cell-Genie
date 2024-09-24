@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait HasAttachmentsTrait
 {
+    /** @var Collection<int, File> */
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable]
     #[ORM\InverseJoinColumn(name: "file_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]

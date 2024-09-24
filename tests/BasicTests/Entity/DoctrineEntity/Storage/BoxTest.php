@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class BoxTest extends TestCase
 {
-    public function testToString()
+    public function testToString(): void
     {
         $box = new Box();
         $name = "Box 1";
@@ -32,7 +32,7 @@ class BoxTest extends TestCase
         $this->assertSame("Rack 1 | {$name} (1 × 1)", (string)$box);
     }
 
-    public function testToPathname()
+    public function testToPathname(): void
     {
         $box = new Box();
         $rack = $this->createMock(Rack::class);
@@ -46,7 +46,7 @@ class BoxTest extends TestCase
         $this->assertSame("Rack 1", $box->getPathName());
     }
 
-    public function testName()
+    public function testName(): void
     {
         $box = new Box();
         $name = "Box 1";
@@ -57,7 +57,7 @@ class BoxTest extends TestCase
         $this->assertSame($name, $box->getName());
     }
 
-    public function testRows()
+    public function testRows(): void
     {
         $box = new Box();
         $rows = 6;
@@ -68,7 +68,7 @@ class BoxTest extends TestCase
         $this->assertSame($rows, $box->getRows());
     }
 
-    public function testCols()
+    public function testCols(): void
     {
         $box = new Box();
         $cols = 6;
@@ -79,7 +79,7 @@ class BoxTest extends TestCase
         $this->assertSame($cols, $box->getCols());
     }
 
-    public function testDescription()
+    public function testDescription(): void
     {
         $box = new Box();
         $description = "This is a nice box.";
@@ -90,7 +90,7 @@ class BoxTest extends TestCase
         $this->assertSame($description, $box->getDescription());
     }
 
-    public function testRack()
+    public function testRack(): void
     {
         $box = new Box();
         $rack = $this->createMock(Rack::class);

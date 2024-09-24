@@ -46,6 +46,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
+use ValueError;
 
 #[AsLiveComponent]
 final class SubstanceTable extends AbstractController
@@ -54,6 +55,7 @@ final class SubstanceTable extends AbstractController
     use ValidatableComponentTrait;
     use PaginatedTrait;
 
+    /** @var 'antibody'|'chemical'|'oligo'|'plasmid'|'protein' */
     #[LiveProp]
     #[Assert\Choice(choices: ["antibody", "chemical", "oligo", "plasmid", "protein"])]
     public string $type;
@@ -77,24 +79,17 @@ final class SubstanceTable extends AbstractController
     #[PreMount]
     public function preMount($props)
     {
-        $props["entityType"] = match ($props["type"]) {
-            "antibody" => Antibody::class,
-            "chemical" => Chemical::class,
-            "oligo" => Oligo::class,
-            "plasmid" => Plasmid::class,
-            "protein" => Protein::class,
-            default => null,
+        [$props["entityType"], $props["liveSearchFormType"]] = match ($props["type"]) {
+            "antibody" => [Antibody::class, AntibodySearchType::class],
+            "chemical" => [Chemical::class, ChemicalSearchType::class],
+            "oligo" => [Oligo::class, OligoSearchType::class],
+            "plasmid" => [Plasmid::class, PlasmidSearchType::class],
+            "protein" => [Protein::class, ProteinSearchType::class],
+            default => throw new ValueError("Unsupported type for SubstanceTable component."),
         };
 
         $props["entityRepository"] = $props["entityType"] == null ? null : $this->entityManager->getRepository($props["entityType"]);
 
-        $props["liveSearchFormType"] = match($props["type"]) {
-            "antibody" => AntibodySearchType::class,
-            "chemical" => ChemicalSearchType::class,
-            "oligo" => OligoSearchType::class,
-            "plasmid" => PlasmidSearchType::class,
-            "protein" => ProteinSearchType::class,
-        };
 
         return $props;
     }
@@ -163,7 +158,6 @@ final class SubstanceTable extends AbstractController
                 "oligo" => Oligo::class,
                 "plasmid" => Plasmid::class,
                 "protein" => Protein::class,
-                default => null,
             };
         }
 

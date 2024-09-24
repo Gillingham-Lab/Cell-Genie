@@ -24,8 +24,7 @@ class CellGroupType extends SaveableType
     use VocabularyTrait;
 
     public function __construct(
-        private VocabularyRepository $vocabularyRepository,
-        private CellRepository $cellRepository,
+        private readonly VocabularyRepository $vocabularyRepository,
     ) {
     }
 

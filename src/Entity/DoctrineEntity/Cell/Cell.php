@@ -72,6 +72,7 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?User $engineer;
 
+    /** @var Collection<int, Cell> $children */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Cell::class)]
     private Collection $children;
 
@@ -80,6 +81,7 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?Cell $parent = null;
 
+    /** @var Collection<int, CellAliquot> $cellAliquotes */
     #[ORM\OneToMany(mappedBy: "cell", targetEntity: CellAliquot::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     private Collection $cellAliquotes;
 
@@ -149,6 +151,7 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?string $cellNumber = "???";
 
+    /** @var Collection<int, CellProtein> $cellProteins */
     #[ORM\OneToMany(mappedBy: 'cellLine', targetEntity: CellProtein::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\OrderBy(["orderValue" => "ASC"])]
     #[Assert\Valid()]
@@ -258,15 +261,31 @@ class Cell implements PrivacyAwareInterface
     }
 
     /**
+     * @deprecated
+     * @see self::getCellAliquots()
      * @return Collection<int, CellAliquot>
      */
-    #[Deprecated]
     public function getCellAliquotes(): Collection
     {
         return $this->getCellAliquots();
     }
 
+    /**
+     * @deprecated
+     * @see self::addCellAliquot()
+     * @param CellAliquot $cellAliquote
+     * @return $this
+     */
     public function addCellAliquote(CellAliquot $cellAliquote): self
+    {
+        return $this->addCellAliquot($cellAliquote);
+    }
+
+    /**
+     * @param CellAliquot $cellAliquote
+     * @return $this
+     */
+    public function addCellAliquot(CellAliquot $cellAliquote): self
     {
         if (!$this->cellAliquotes->contains($cellAliquote)) {
             $this->cellAliquotes[] = $cellAliquote;
@@ -276,7 +295,22 @@ class Cell implements PrivacyAwareInterface
         return $this;
     }
 
+    /**
+     * @deprecated
+     * @see self::removeCellAliquot()
+     * @param CellAliquot $cellAliquote
+     * @return $this
+     */
     public function removeCellAliquote(CellAliquot $cellAliquote): self
+    {
+        return $this->removeCellAliquot($cellAliquote);
+    }
+
+    /**
+     * @param CellAliquot $cellAliquote
+     * @return $this
+     */
+    public function removeCellAliquot(CellAliquot $cellAliquote): self
     {
         if ($this->cellAliquotes->removeElement($cellAliquote)) {
             // set the owning side to null (unless already changed)

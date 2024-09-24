@@ -93,7 +93,9 @@ class ConsumableController extends AbstractController
         User $user,
         ConsumableRepository $consumableRepository,
     ): Response {
-        $consumables = match ($request->attributes->get("_route")) {
+        /** @var "app_consumables_to_order"|"app_consumables_to_order_critical" $currentRoute */
+        $currentRoute = $request->attributes->get("_route");
+        $consumables = match ($currentRoute) {
             "app_consumables_to_order" => $consumableRepository->findAllWithRequiredOrders(),
             "app_consumables_to_order_critical" => $consumableRepository->findAllWithCriticallyRequiredOrders(),
         };
@@ -151,7 +153,7 @@ class ConsumableController extends AbstractController
             $lot->setPricePerPackage(
                 (new Price())
                     ->setPriceValue($data["priceValue"])
-                    ->getPriceCurrency($data["priceCurrency"])
+                    ->setPriceCurrency($data["priceCurrency"])
             );
             $lot->setBoughtBy($user);
             $lot->setAvailability($data["status"]);

@@ -6,10 +6,15 @@ namespace App\Tests\FunctionalTests\Entity\DoctrineEntity\Experiment;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Substance\Antibody;
+use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Genie\Enums\DatumEnum;
+use App\Repository\Cell\CellRepository;
+use App\Repository\Substance\AntibodyRepository;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
+use Doctrine\Persistence\Proxy;
 use InvalidArgumentException;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -35,6 +40,9 @@ class ExperimentDatumTest extends KernelTestCase
         $this->entityManager = null;
     }
 
+    /**
+     * @return array<array{string, string, int}>
+     */
     public function integerDatumProvider(): array
     {
         return [
@@ -86,6 +94,9 @@ class ExperimentDatumTest extends KernelTestCase
         $this->assertSame($value, $datum->getValue());
     }
 
+    /**
+     * @return array<int, array{string, string, float, float}>
+     */
     public function floatDatumProvider(): array
     {
         return [
@@ -130,6 +141,9 @@ class ExperimentDatumTest extends KernelTestCase
         $this->assertEqualsWithDelta($value, $datum->getValue(), $delta);
     }
 
+    /**
+     * @return array<int, array{string, string, Uuid}>
+     */
     public function uidDatumProvider(): array
     {
         return [
@@ -168,6 +182,9 @@ class ExperimentDatumTest extends KernelTestCase
         $this->assertSame($value->toHex(), $datum->getValue()->toHex());
     }
 
+    /**
+     * @return array<array{string, DatumEnum, class-string, array{number?: string, cellNumber?: string}}>
+     */
     public function entityReferenceDatumProvider(): array
     {
         return [
@@ -177,18 +194,26 @@ class ExperimentDatumTest extends KernelTestCase
     }
 
     /**
+     * @param class-string $class,
+     * @param array<string, string> $search
      * @dataProvider entityReferenceDatumProvider
      */
-    public function testEntityReference(string $name, DatumEnum $type, string $class, array $search)
+    public function testEntityReference(string $name, DatumEnum $type, string $class, array $search): void
     {
-        $idObject = $this->entityManager->getRepository($class)->findOneBy($search);
+        $repository = $this->entityManager->getRepository($class);
+        $idObject = $repository->findOneBy($search);
 
         if (method_exists($idObject, "getUlid")) {
             $id = $idObject->getUlid();
         } else {
             $id = $idObject->getId();
         }
-        $realClassName = ClassUtils::getClass($idObject);
+
+        if ($idObject instanceof Proxy) {
+            $realClassName = ClassUtils::getClass($idObject);
+        } else {
+            $realClassName = get_class($idObject);
+        }
 
         $datum = (new ExperimentalDatum())
             ->setName($name)
@@ -225,7 +250,7 @@ class ExperimentDatumTest extends KernelTestCase
         }
     }
 
-    public function testThrowsExceptionIfEntityDoesNotHaveGetIdMethod()
+    public function testThrowsExceptionIfEntityDoesNotHaveGetIdMethod(): void
     {
         $class = new class() {
 
@@ -242,7 +267,7 @@ class ExperimentDatumTest extends KernelTestCase
         ;
     }
 
-    public function testThrowsExceptionIfEntityIdIsNotSupported()
+    public function testThrowsExceptionIfEntityIdIsNotSupported(): void
     {
         $class = new class() {
             public function getId(): string {
@@ -261,7 +286,7 @@ class ExperimentDatumTest extends KernelTestCase
         ;
     }
 
-    public function testThrowsExceptionIfDatumTypeIsNotSetAndValueIsSet()
+    public function testThrowsExceptionIfDatumTypeIsNotSetAndValueIsSet(): void
     {
         $this->expectException(LogicException::class);
 
@@ -271,7 +296,7 @@ class ExperimentDatumTest extends KernelTestCase
         ;
     }
 
-    public function testThrowsExceptionIfDatumTypeIsNotSetAndValueIsRetrieved()
+    public function testThrowsExceptionIfDatumTypeIsNotSetAndValueIsRetrieved(): void
     {
         $this->expectException(LogicException::class);
         $datum = (new ExperimentalDatum())
@@ -280,7 +305,7 @@ class ExperimentDatumTest extends KernelTestCase
         $datum->getValue();
     }
 
-    public function testBase64()
+    public function testBase64(): void
     {
         $datum = (new ExperimentalDatum())
             ->setName("datum-test")
@@ -308,6 +333,13 @@ class ExperimentDatumTest extends KernelTestCase
         $this->assertSame("ABA=", $datum->asBase64());
     }
 
+    /**
+     * @return array<int, array{
+     *     string,
+     *     string,
+     *     string,
+     * }>
+     */
     public function uidDateProvider(): array
     {
         return [

@@ -98,7 +98,7 @@ class ConsumableLot
         return $this;
     }
 
-    public function getConsumable(): Consumable
+    public function getConsumable(): ?Consumable
     {
         return $this->consumable;
     }

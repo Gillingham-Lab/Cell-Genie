@@ -8,14 +8,14 @@ use PHPUnit\Framework\TestCase;
 
 class ShortNameTraitTest extends TestCase
 {
-    public function testGetShortNameWithoutAnySetNameReturnsNull()
+    public function testGetShortNameWithoutAnySetNameReturnsNull(): void
     {
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);
 
         $this->assertNull($testClass->getShortName());
     }
 
-    public function testSetShortNameWillHaveGetNameReturningSameValue()
+    public function testSetShortNameWillHaveGetNameReturningSameValue(): void
     {
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);
 
@@ -23,7 +23,7 @@ class ShortNameTraitTest extends TestCase
         $this->assertSame("Short Name", $testClass->getShortName());
     }
 
-    public function testSetShortNameToNullWillNotCauseException()
+    public function testSetShortNameToNullWillNotCauseException(): void
     {
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);
 
@@ -32,14 +32,14 @@ class ShortNameTraitTest extends TestCase
         $this->assertNull($testClass->getShortName());
     }
 
-    public function testNotSettingShortNameReturnsStringContainingUnknown()
+    public function testNotSettingShortNameReturnsStringContainingUnknown(): void
     {
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);
 
         $this->assertSame("unknown", (string)$testClass);
     }
 
-    public function testSettingShortNameCausesToStringConversionToReturnIt()
+    public function testSettingShortNameCausesToStringConversionToReturnIt(): void
     {
 
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);

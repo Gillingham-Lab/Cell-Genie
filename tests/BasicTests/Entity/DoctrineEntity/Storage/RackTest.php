@@ -10,7 +10,7 @@ use TypeError;
 
 class RackTest extends TestCase
 {
-    public function testStringify()
+    public function testStringify(): void
     {
         $rack = new Rack();
 
@@ -23,7 +23,7 @@ class RackTest extends TestCase
         $this->assertSame($name, (string)$rack);
     }
 
-    public function testName()
+    public function testName(): void
     {
         $rack = new Rack();
         $name = "Rack 1";
@@ -37,7 +37,7 @@ class RackTest extends TestCase
         $this->assertNull($rack->getName());
     }
 
-    public function testMaxBoxes()
+    public function testMaxBoxes(): void
     {
         $rack = new Rack();
         $max = 9;
@@ -51,10 +51,10 @@ class RackTest extends TestCase
         $this->assertSame(0, $rack->getMaxBoxes());
 
         $this->expectException(TypeError::class);
-        $rack->setMaxBoxes(null);
+        $rack->setMaxBoxes(null);  // @phpstan-ignore argument.type
     }
 
-    public function testPinCode()
+    public function testPinCode(): void
     {
         $rack = new Rack();
         $pinCode = "E666";
@@ -68,7 +68,7 @@ class RackTest extends TestCase
         $this->assertNull($rack->getPinCode());
     }
 
-    public function testParent()
+    public function testParent(): void
     {
         $rack = new Rack();
         $parentRack = $this->createMock(Rack::class);
@@ -88,7 +88,7 @@ class RackTest extends TestCase
         $this->assertNull($rack->getParent());
     }
 
-    public function testChildren()
+    public function testChildren(): void
     {
         $rack = new Rack();
 
@@ -127,7 +127,7 @@ class RackTest extends TestCase
         $this->assertContains($children[1], $rack->getChildren());
     }
 
-    public function testBoxes()
+    public function testBoxes(): void
     {
         $rack = new Rack();
 

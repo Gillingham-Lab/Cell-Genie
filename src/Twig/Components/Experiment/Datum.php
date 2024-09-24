@@ -20,7 +20,7 @@ class Datum
     public bool $small = false;
 
     #[PreMount]
-    private function preMount($values)
+    public function preMount($values)
     {
         if (!isset($values["formRow"]) && isset($values["field"])) {
             $values["formRow"] = $values["field"]->getFormRow();

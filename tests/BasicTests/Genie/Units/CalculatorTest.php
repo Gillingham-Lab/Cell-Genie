@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
 {
-    public function testIfAmountAndAmountCanBeAdded()
+    public function testIfAmountAndAmountCanBeAdded(): void
     {
         $quantity1 = Amount::create(1);
         $quantity2 = Amount::create(1, "%");
@@ -27,7 +27,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(Amount::getInstance(), $quantitySum->getUnit());
     }
 
-    public function testIfMolarAmountAndAmountCanBeAdded()
+    public function testIfMolarAmountAndAmountCanBeAdded(): void
     {
         $quantity1 = MolarAmount::create(1, "mol");
         $quantity2 = Amount::create(6.022e23);
@@ -40,7 +40,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(MolarAmount::getInstance(), $quantitySum->getUnit());
     }
 
-    public function testIfAmountAndMolarAmountCanBeAdded()
+    public function testIfAmountAndMolarAmountCanBeAdded(): void
     {
         $quantity1 = Amount::create(6.022e23);
         $quantity2 = MolarAmount::create(1, "mol");
@@ -53,7 +53,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(Amount::getInstance(), $quantitySum->getUnit());
     }
 
-    public function testIfMolarAmountDividedByFloatGivesProperMolarAmount()
+    public function testIfMolarAmountDividedByFloatGivesProperMolarAmount(): void
     {
         $quantity1 = MolarAmount::create(1, "nmol");
         $quantity2 = 4;
@@ -65,7 +65,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(MolarAmount::getInstance(), $result->getUnit());
     }
 
-    public function testIfMolarAmountDividedByAmountGivesProperMolarAmount()
+    public function testIfMolarAmountDividedByAmountGivesProperMolarAmount(): void
     {
         $quantity1 = MolarAmount::create(1, "nmol");
         $quantity2 = Amount::create(4);
@@ -77,7 +77,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(MolarAmount::getInstance(), $result->getUnit());
     }
 
-    public function testIfMolarAmountMultipliedByFloatGivesProperMolarAmount()
+    public function testIfMolarAmountMultipliedByFloatGivesProperMolarAmount(): void
     {
         $quantity1 = MolarAmount::create(1, "μmol");
         $quantity2 = 10;
@@ -89,7 +89,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(MolarAmount::getInstance(), $result->getUnit());
     }
 
-    public function testIfMolarAmountMultipliedByAmountGivesProperMolarAmount()
+    public function testIfMolarAmountMultipliedByAmountGivesProperMolarAmount(): void
     {
         $quantity1 = MolarAmount::create(1, "μmol");
         $quantity2 = Amount::create(10, "%");
@@ -101,7 +101,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(MolarAmount::getInstance(), $result->getUnit());
     }
 
-    public function testIfMassDividedByVolumeGivesProperMassConcentration()
+    public function testIfMassDividedByVolumeGivesProperMassConcentration(): void
     {
         $quantity1 = Mass::create(1);
         $quantity2 = Volume::create(1);
@@ -114,7 +114,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(MassConcentration::getInstance(), $newQuantity->getUnit());
     }
 
-    public function testIfVolumeDividedByMassThrowsProperException()
+    public function testIfVolumeDividedByMassThrowsProperException(): void
     {
         $quantity1 = Volume::create(1);
         $quantity2 = Mass::create(1);
@@ -125,7 +125,7 @@ class CalculatorTest extends TestCase
         $newQuantity = $calculator->divide($quantity1, $quantity2);
     }
 
-    public function testIfMassDividedByMassConcentrationGivesProperVolume()
+    public function testIfMassDividedByMassConcentrationGivesProperVolume(): void
     {
         $quantity1 = Mass::create(1, "mg");
         $quantity2 = MassConcentration::create(2, "mg/mL");
@@ -138,7 +138,7 @@ class CalculatorTest extends TestCase
         $this->assertSame(Volume::getInstance(), $newQuantity->getUnit());
     }
 
-    public function testIfVolumeMultipliedWithMassConcentrationGivesProperMass()
+    public function testIfVolumeMultipliedWithMassConcentrationGivesProperMass(): void
     {
         $quantity1 = Volume::create(1, "μL");
         $quantity2 = MassConcentration::create(100, "μg/mL");

@@ -44,8 +44,8 @@ class Search extends AbstractController
     public ?string $eventSuffix = null;
 
     public function __construct(
-        #[CurrentUser]
-        private ?User $user,
+        //#[CurrentUser]
+        //private ?User $user,
         private readonly SerializerInterface $serializer,
     ) {
 

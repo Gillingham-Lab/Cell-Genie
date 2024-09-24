@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class GenBankImportTest extends TestCase
 {
-    public function testAddgenePlasmidImport()
+    public function testAddgenePlasmidImport(): void
     {
         $content = file_get_contents(__DIR__ . "/../../../fixtures/import/addgene_plasmid.gbk");
         $import = new GenBankImport($content);
@@ -35,7 +35,7 @@ class GenBankImportTest extends TestCase
         $this->assertTrue($features[5]["complement"]);
     }
 
-    public function testBenchlingExport()
+    public function testBenchlingExport(): void
     {
         $content = file_get_contents(__DIR__ . "/../../../fixtures/import/benchling_export.gb");
         $import = new GenBankImport($content);

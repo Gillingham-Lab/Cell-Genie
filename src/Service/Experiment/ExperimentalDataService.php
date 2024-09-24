@@ -10,27 +10,19 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\Form\FormRow;
-use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Lot;
-use App\Entity\SubstanceLot;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
-use App\Repository\Experiment\ExperimentalDesignRepository;
-use App\Repository\Interface\PaginatedRepositoryInterface;
+use App\Repository\LotRepository;
 use App\Repository\Substance\SubstanceRepository;
-use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Collection\CollectionInterface;
 use Symfony\Component\Uid\Uuid;
 
 class ExperimentalDataService
@@ -154,7 +146,7 @@ class ExperimentalDataService
     /**
      * Gets a list of entity IDs from the experimental design to fetch from the database
      *
-     * @param Paginator $conditions
+     * @param Collection<int, ExperimentalRunCondition> $conditions
      * @param ExperimentalDesign $design
      * @return array{str: array{str: true|string|object}}
      */
@@ -219,15 +211,16 @@ class ExperimentalDataService
      * Fetches a list of entities by trying to get their repository and writes the fetched entities back into the original array.
      *
      *
-     * @param array{str: array{str: true|string|object}} $entitiesToFetch
-     * @return array{str: array{str: object}}
+     * @param array<class-name, array{str: true|string|object}> $entitiesToFetch
+     * @return array<class-name, array{str: object}>
      */
     public function fetchEntitiesFromList(array $entitiesToFetch): array
     {
         foreach ($entitiesToFetch as $class => $entities) {
-            $entityRepository = $this->entityManager->getRepository($class);
 
             if (current($entities) === true) {
+                $entityRepository = $this->entityManager->getRepository($class);
+
                 if (method_exists($class, "getUlid")) {
                     $idField = "ulid";
                     $idMethod = "getUlid";
@@ -242,7 +235,9 @@ class ExperimentalDataService
                     $entitiesToFetch[$class][$entity->$idMethod()->toRfc4122()] = $entity;
                 }
             } else {
-                /** @var SubstanceRepository $substanceRepository */
+                /** @var LotRepository $entityRepository */
+                $entityRepository = $this->entityManager->getRepository($class);
+
                 $entityClasses = [];
 
                 foreach ($entities as $id => $entityClass) {
@@ -269,7 +264,7 @@ class ExperimentalDataService
     /**
      * @param Paginator<ExperimentalRunCondition> $conditions
      * @param array{str: array{str: object}} $entitiesToFetch
-     * @return array{str: mixed}
+     * @return array<int, mixed>
      */
     public function createDataArray(Paginator $conditions, array $entitiesToFetch, ExperimentalDesign $design): array
     {

@@ -11,14 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class GroupOwnerTraitTest extends TestCase
 {
-    public function testGetGroupReturnsNullIfNoneWasSet()
+    public function testGetGroupReturnsNullIfNoneWasSet(): void
     {
         $testClass = $this->getObjectForTrait(GroupOwnerTrait::class);
 
         $this->assertNull($testClass->getGroup());
     }
 
-    public function testGetGroupReturnsGroupIfGroupWasSetWithSetGroup()
+    public function testGetGroupReturnsGroupIfGroupWasSetWithSetGroup(): void
     {
         $testClass = $this->getObjectForTrait(GroupOwnerTrait::class);
         $user = $this->createMock(UserGroup::class);

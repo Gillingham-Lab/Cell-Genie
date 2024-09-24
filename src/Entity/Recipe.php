@@ -36,6 +36,7 @@ class Recipe
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $comment = null;
 
+    /** @var Collection<int, RecipeIngredient> */
     #[ORM\OneToMany(mappedBy: "recipe", targetEntity: RecipeIngredient::class, cascade: ["persist", "remove"])]
     #[Assert\Valid]
     private Collection $ingredients;

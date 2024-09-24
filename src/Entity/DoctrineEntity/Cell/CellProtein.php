@@ -35,12 +35,6 @@ class CellProtein
     #[ORM\Column(type: Types::INTEGER, nullable: false, options: ["default" => 0])]
     private int $orderValue = 0;
 
-    #[Assert\Valid]
-    #[Assert\All([
-        new Assert\NotNull(),
-    ])]
-    private ?Collection $detectionCollection = null;
-
     #[ORM\Column(length: 20, nullable: true, enumType: GeneRegulation::class)]
     private ?GeneRegulation $geneRegulation = null;
 

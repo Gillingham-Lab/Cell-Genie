@@ -7,7 +7,7 @@ class GenBankImport
 {
     /**
      * @var array{
-     *     metadata: array{},
+     *     metadata: array<string, string>,
      *     features: array<int, array{
      *          type: string,
      *          span: array{0: int, 1: int},
@@ -27,7 +27,7 @@ class GenBankImport
      * @throws ImportError
      */
     public function __construct(
-        private string $content
+        string $content
     ) {
         $this->parse(trim($content));
     }

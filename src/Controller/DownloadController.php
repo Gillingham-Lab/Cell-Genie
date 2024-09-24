@@ -22,11 +22,7 @@ class DownloadController extends AbstractController
     #[Route("download/{fileid}", name: "file_download")]
     public function download(string $fileid): Response
     {
-        try {
-            $file = $this->fileRepository->find($fileid);
-        } catch (ConversionException) {
-            $file = null;
-        }
+        $file = $this->fileRepository->find($fileid);
 
         if (!$file) {
             throw new FileNotFoundException("The desired file was not found.");
@@ -57,11 +53,7 @@ class DownloadController extends AbstractController
     public function picture(
         string $fileid
     ): Response {
-        try {
-            $file = $this->fileRepository->find($fileid);
-        } catch (ConversionException) {
-            $file = null;
-        }
+        $file = $this->fileRepository->find($fileid);
 
         if (!$file) {
             throw new FileNotFoundException("The desired file was not found.");

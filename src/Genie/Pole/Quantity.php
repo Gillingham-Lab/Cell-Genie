@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Genie\Pole;
 
-use App\Pole\UnitNotSupportedException;
+use App\Genie\Pole\Exception\UnitNotSupportedException;
 
 class Quantity
 {

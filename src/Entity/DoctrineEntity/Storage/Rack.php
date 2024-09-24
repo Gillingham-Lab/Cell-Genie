@@ -37,9 +37,11 @@ class Rack implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?int $maxBoxes = 0;
 
+    /** @var Collection<int, Box> */
     #[ORM\OneToMany(mappedBy: "rack", targetEntity: Box::class)]
     private Collection $boxes;
 
+    /** @var Collection<int, Rack> */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: Rack::class)]
     private Collection $children;
 

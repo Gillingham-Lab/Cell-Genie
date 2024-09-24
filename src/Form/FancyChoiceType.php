@@ -20,7 +20,7 @@ class FancyChoiceType extends AbstractType
         $resolver->setAllowedTypes("allow_add", "bool");
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if ($options["required"] === false) {
             $view->vars["attr"]["data-allow-empty"] = true;

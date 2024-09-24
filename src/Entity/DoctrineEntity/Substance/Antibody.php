@@ -34,6 +34,7 @@ class Antibody extends Substance
     #[ORM\Column(type: "string", enumType: AntibodyType::class, options: ["default" => AntibodyType::Primary])]
     private ?AntibodyType $type;
 
+    /** @var Collection<int, Epitope> */
     #[ORM\ManyToMany(targetEntity: Epitope::class, inversedBy: "antibodies")]
     #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(name: "epitope_id", referencedColumnName: "id", onDelete: "CASCADE")]
@@ -66,7 +67,7 @@ class Antibody extends Substance
         min: -200,
         max: 25
     )]
-    private int $storageTemperature = 0;
+    private ?int $storageTemperature = 0;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     #[Assert\Length(max: 250)]
@@ -76,6 +77,7 @@ class Antibody extends Substance
     #[Assert\Length(max: 250)]
     private ?string $usage = "Western blot";
 
+    /** @var Collection<int, File> */
     #[ORM\ManyToMany(targetEntity: File::class, cascade: ["persist", "remove"], orphanRemoval: true)]
     #[ORM\JoinTable(name: "antibody_vendor_documentation_files")]
     #[ORM\JoinColumn(name: "antibody_ulid", referencedColumnName: "ulid")]
@@ -89,7 +91,6 @@ class Antibody extends Substance
     {
         parent::__construct();
         $this->epitopeTargets = new ArrayCollection();
-        $this->lots = new ArrayCollection();
         $this->vendorDocumentation = new ArrayCollection();
     }
 

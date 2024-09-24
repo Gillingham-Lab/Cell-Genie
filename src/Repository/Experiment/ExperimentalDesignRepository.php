@@ -11,6 +11,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use ValueError;
 
 /**
  * @extends ServiceEntityRepository<ExperimentalDesign>
@@ -35,6 +36,7 @@ class ExperimentalDesignRepository extends ServiceEntityRepository implements Pa
         foreach ($orderBy as $fieldName => $order) {
             $field = match($fieldName) {
                 "number" => "ed.number",
+                default => throw new ValueError("{$fieldName} is not supported."),
             };
 
             $order = match($order) {

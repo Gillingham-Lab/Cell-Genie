@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExperimentalRunConditionTest extends TestCase
 {
-    public function testExperimentalRun()
+    public function testExperimentalRun(): void
     {
         $condition = new ExperimentalRunCondition();
         $run = $this->createMock(ExperimentalRun::class);
@@ -33,7 +33,7 @@ class ExperimentalRunConditionTest extends TestCase
         $this->assertNull($condition->getExperimentalRun());
     }
 
-    public function testName()
+    public function testName(): void
     {
         $condition = new ExperimentalRunCondition();
         $name = "spam and eggs with spam";
@@ -46,7 +46,7 @@ class ExperimentalRunConditionTest extends TestCase
         $this->assertSame($name, $condition->getName());
     }
 
-    public function testControl()
+    public function testControl(): void
     {
         $condition = new ExperimentalRunCondition();
 
@@ -60,7 +60,7 @@ class ExperimentalRunConditionTest extends TestCase
         $this->assertTrue($condition->isControl());
     }
 
-    public function testData()
+    public function testData(): void
     {
         $condition = new ExperimentalRunCondition();
 
