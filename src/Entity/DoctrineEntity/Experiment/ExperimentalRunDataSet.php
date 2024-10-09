@@ -63,7 +63,7 @@ class ExperimentalRunDataSet
         return $this->data;
     }
 
-    public function getDatum(string $name)
+    public function getDatum(string $name): ExperimentalDatum
     {
         if (!$this->data->containsKey($name)) {
             throw new InvalidArgumentException("Datum with key {$name} does not exist in this collection.");

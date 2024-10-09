@@ -11,6 +11,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\DatumEnum;
+use App\Genie\Enums\PrivacyLevel;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -26,27 +27,27 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
             ->setName("Condition 1")
             ->setControl(false)
             ->addData((new ExperimentalDatum())
-                ->setName("compound")
+                ->setName("_compound")
                 ->setType(DatumEnum::EntityReference)
                 ->setValue($this->getReference(CompoundFixtures::PENICILLIN_I_COMPOUND_REFERENCE))
             )
             ->addData((new ExperimentalDatum())
-                ->setName("time")
+                ->setName("_time")
                 ->setType(DatumEnum::UInt16)
                 ->setValue(24)
             )
         ;
 
         $condition2 = (new ExperimentalRunCondition())
-            ->setName("Condition 1")
+            ->setName("Condition 2")
             ->setControl(false)
             ->addData((new ExperimentalDatum())
-                ->setName("compound")
+                ->setName("_compound")
                 ->setType(DatumEnum::EntityReference)
                 ->setValue($this->getReference(CompoundFixtures::PENICILLIN_II_COMPOUND_REFERENCE))
             )
             ->addData((new ExperimentalDatum())
-                ->setName("time")
+                ->setName("_time")
                 ->setType(DatumEnum::UInt16)
                 ->setValue(24)
             )
@@ -61,7 +62,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
             ->addDataSet((new ExperimentalRunDataSet())
                 ->setCondition($condition1)
                 ->addData((new ExperimentalDatum())
-                    ->setName("MIC")
+                    ->setName("_MIC")
                     ->setType(DatumEnum::Float32)
                     ->setValue(150)
                 )
@@ -69,11 +70,14 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
             ->addDataSet((new ExperimentalRunDataSet())
                 ->setCondition($condition2)
                 ->addData((new ExperimentalDatum())
-                    ->setName("MIC")
+                    ->setName("_MIC")
                     ->setType(DatumEnum::Float32)
                     ->setValue(140)
                 )
             )
+            ->setOwner($scientist)
+            ->setGroup($scientist->getGroup())
+            ->setPrivacyLevel(PrivacyLevel::Group)
         ;
 
         $manager->persist($run);

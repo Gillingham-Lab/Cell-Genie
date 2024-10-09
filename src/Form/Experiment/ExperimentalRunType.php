@@ -45,7 +45,7 @@ class ExperimentalRunType extends AbstractType
                 ])
                 ->add("scientist", EntityType::class, [
                     "class" => User::class,
-                    "group_by" => fn(User $user) => $user->getGroup()->getShortName(),
+                    "group_by" => fn(User $user) => $user->getGroup()?->getShortName() ?? "None",
                     "attr"  => [
                         "class" => "gin-fancy-select",
                         "data-allow-empty" => "true",
