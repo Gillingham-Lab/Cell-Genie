@@ -23,11 +23,6 @@ use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Enums\PrivacyLevel;
-use App\Repository\ExperimentTypeRepository;
-use App\Repository\LotRepository;
-use App\Repository\Substance\ChemicalRepository;
-use App\Repository\Substance\ProteinRepository;
-use App\Repository\Substance\SubstanceRepository;
 use App\Service\Experiment\ExperimentalDataService;
 use App\Twig\Components\Experiment\Datum;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
@@ -136,7 +131,7 @@ class ExperimentController extends AbstractController
         #[MapQueryParameter] array $searchQuery = [],
         #[MapQueryParameter] bool $entitiesAsId = false,
         #[MapQueryParameter] bool $hideComments = false,
-    ) {
+    ): Response {
         $response = new Response(null, Response::HTTP_OK);
         $response->headers->set("Content-Type", "text/plain");
 
@@ -255,7 +250,7 @@ class ExperimentController extends AbstractController
         );
         $dataRows = $dataService->getPaginatedResults(searchFields: $searchQuery, design: $design, page: $page, limit: $limit);
 
-        # "Up end" data array
+        // "Up end" data array
         $newDataRows = [];
         foreach ($dataRows as $dataRow) {
             foreach ($dataRow["data"] as $dataSubRow) {
@@ -362,13 +357,13 @@ class ExperimentController extends AbstractController
         ExperimentalDesign $design,
     ): Response {
         return $this->newOrEditExperimentalRun(
-            (new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun())
+            run: (new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun())
                 ->setOwner($user)
                 ->setGroup($user->getGroup())
                 ->setPrivacyLevel(PrivacyLevel::Group)
                 ->setScientist($user)
                 ->setDesign($design),
-            $design,
+            design: $design,
             title: "Add experimental run",
         );
     }
@@ -376,18 +371,18 @@ class ExperimentController extends AbstractController
     #[Route("/experiment/design/editRun/{run}", name: "app_experiments_run_edit")]
     #[IsGranted("edit", "run")]
     public function editExperimentalRun(
-        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run
+        ExperimentalRun $run
     ): Response {
         return $this->newOrEditExperimentalRun(
-            $run,
-            $run->getDesign(),
+            run: $run,
+            design: $run->getDesign(),
             title: "Edit experimental run",
             onSubmitRedirectTo: $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()])
         );
     }
 
     private function newOrEditExperimentalRun(
-        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
+        ExperimentalRun $run,
         ExperimentalDesign $design,
         string $title,
         ?string $onSubmitRedirectTo = null,
@@ -426,7 +421,7 @@ class ExperimentController extends AbstractController
     #[Route("/experiment/design/addDataToRun/{run}", "app_experiments_run_addData")]
     #[IsGranted("edit", "run")]
     public function addDataToRun(
-        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
+        ExperimentalRun $run,
     ): Response {
         return $this->render("parts/forms/component_form.html.twig", [
             "toolbox" => new Toolbox([
@@ -460,7 +455,7 @@ class ExperimentController extends AbstractController
     public function viewRun(
         Request $request,
         ExperimentalDataService $dataService,
-        \App\Entity\DoctrineEntity\Experiment\ExperimentalRun $run,
+        ExperimentalRun $run,
     ): Response {
         $entitiesToFetch = $dataService->getListOfEntitiesToFetch($run->getConditions(), $run->getDesign());
         $entities = $dataService->fetchEntitiesFromList($entitiesToFetch);

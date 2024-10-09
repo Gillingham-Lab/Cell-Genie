@@ -122,7 +122,9 @@ class ExperimentalDataService
             ->getResult();
 
         // Prefetch run datasets
-        $runIds = array_unique(array_map(fn (ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum));
+        $runIds = array_map(fn (ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum);
+        $runIds = array_unique($runIds);
+
         $hydratedDataSets = $this->entityManager->createQueryBuilder()
             ->from(ExperimentalRun::class, "run", indexBy: "run.id")
             ->select("run")
@@ -316,6 +318,10 @@ class ExperimentalDataService
             $maxRows = 10;
 
             foreach ($condition->getExperimentalRun()->getDataSets() as $dataSet) {
+                if ($dataSet->getCondition() !== $condition) {
+                    continue;
+                }
+
                 $subRow = [];
                 $pushColumn($dataSet->getData(), $subRow);
                 $row["data"][] = $subRow;

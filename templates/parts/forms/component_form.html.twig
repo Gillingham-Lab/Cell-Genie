@@ -23,6 +23,7 @@
             {% if onSubmitRedirectTo is defined and onSubmitRedirectTo is not same as(null) %}
                 {% set component_data = component_data|merge({"onSubmitRedirectTo": onSubmitRedirectTo}) %}
             {% endif %}
+
             {% if formComponentData is defined %}
                 {% set component_data = formComponentData|merge(component_data) %}
             {% endif %}
@@ -33,11 +34,11 @@
         {% if no_structure is defined %}
             {{ content }}
         {% else %}
-        <twig:Layout:Row>
-            <twig:Layout:Col type="inner" class="col-12">
-                {{ content }}
-            </twig:Layout:Col>
-        </twig:Layout:Row>
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner" class="col-12">
+                    {{ content }}
+                </twig:Layout:Col>
+            </twig:Layout:Row>
         {% endif %}
     </div>
 </div>
