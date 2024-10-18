@@ -35,6 +35,7 @@ trait VocabularyTrait
             $type = TextType::class;
 
             unset($options["multiple"]);
+            unset($options["placeholder"]);
         }
 
         return [
