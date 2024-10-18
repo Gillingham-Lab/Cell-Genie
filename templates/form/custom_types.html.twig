@@ -53,36 +53,75 @@
 {%- block table_live_collection_widget -%}
     {% form_theme form 'form/table_collection.html.twig' %}
 
-    <table class="table table-borderless">
-        <thead>
-        <tr>
-            <td></td>
-            {% for child in form|last %}
-                {% if "hidden" in child.vars.block_prefixes %}
-                    <td></td>
-                {% elseif child|length > 0 %}
-                    <!-- Data -->
-                    {% for subChild in child %}
-                        <th style="min-width: 200px">{{ subChild.vars.label }}</th>
-                    {% endfor %}
-                {% else %}
-                    <th style="min-width: 200px">
-                        {{ child.vars.label }}
-                    </th>
-                {% endif %}
+    {% set column_map = [] %}
+    {% for child in form|last %}
+        {% if "hidden" in child.vars.block_prefixes %}
+        {% elseif child|length > 0 %}
+            {% for subChild in child %}
+                {% set column_map = column_map|merge([[subChild.vars.name, subChild.vars.label, child.vars.name]]) %}
             {% endfor %}
-        </tr>
-        </thead>
-        <tbody id="{{ form.vars.id }}">
-        {% for child in form %}
-            {{ form_row(child) }}
-        {% endfor %}
-        </tbody>
-    </table>
+        {% else %}
+            {% set column_map = column_map|merge([[child.vars.name, child.vars.label, ""]]) %}
+        {% endif %}
+    {% endfor %}
 
-    {% if skip_add_button|default(false) is same as(false) and button_add is defined and not button_add.rendered %}
-        {{ form_widget(button_add) }}
-    {% endif %}
+    <div {{ stimulus_controller('TableLiveCollection', {
+        "formName": form.vars.full_name,
+        "formId": form.vars.id,
+        "columnMap": column_map,
+    }) }}>
+
+        <div {{ stimulus_target("TableLiveCollection", 'import') }}>
+            <details>
+                <summary class="mb-1">
+                    <twig:Icon icon="import" />
+                </summary>
+                <div class="mb-5">
+                    <div class="row mb-1">
+                        <div class="col">
+                            <textarea class="form-control w-100" {{ stimulus_target("TableLiveCollection", "importField") }}></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="btn btn-outline-primary" {{ stimulus_action("TableLiveCollection", "importData") }}>Import</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <table class="table table-borderless">
+            <thead>
+            <tr>
+                <td></td>
+                {% for child in form|last %}
+                    {% if "hidden" in child.vars.block_prefixes %}
+                        <td></td>
+                    {% elseif child|length > 0 %}
+                        <!-- Data -->
+                        {% for subChild in child %}
+                            <th style="min-width: 200px">{{ subChild.vars.label }}</th>
+                        {% endfor %}
+                    {% else %}
+                        <th style="min-width: 200px">
+                            {{ child.vars.label }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody id="{{ form.vars.id }}">
+            {% for child in form %}
+                {{ form_row(child) }}
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if skip_add_button|default(false) is same as(false) and button_add is defined and not button_add.rendered %}
+            {{ form_widget(button_add, {"attr": {}|merge(stimulus_target('TableLiveCollection', "add"))}) }}
+        {% endif %}
+    </div>
 {%- endblock -%}
 
 {% block live_collection_widget %}
