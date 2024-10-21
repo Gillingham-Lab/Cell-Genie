@@ -13,6 +13,7 @@ use App\Entity\Table\Table;
 use App\Entity\Table\ToolboxColumn;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
+use App\Entity\Toolbox\ViewTool;
 use App\Form\Experiment\ExperimentalSearchDataType;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -68,6 +69,10 @@ class ExperimentalRunDataTable extends AbstractController
         $columns = [
             new ToolboxColumn("", function ($x) {
                 return new Toolbox([
+                    new ViewTool(
+                        path: $this->generateUrl("app_experiments_run_view", ["run" => $x["run"]->getId()]),
+                        tooltip: "View run",
+                    ),
                     new EditTool(
                         path: $this->generateUrl("app_experiments_run_edit", ["run" => $x["run"]->getId()]),
                         tooltip: "Edit run"

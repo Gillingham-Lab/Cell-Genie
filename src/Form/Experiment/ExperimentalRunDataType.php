@@ -5,6 +5,7 @@ namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Form\Collection\TableLiveCollectionType;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Service\Experiment\ExperimentalDataFormRowService;
@@ -121,9 +122,27 @@ class ExperimentalRunDataType extends AbstractType
             "inherit_data" => true,
         ]);
 
-        $this->addDataSetCollection($innerBuilder, $fields, $builder->getData()->getConditions()->toArray());
+        $conditions = [];
+        foreach ($builder->getData()->getConditions() as $condition) {
+            $conditions[$condition->getName()] = $condition->getName();
+        }
+
+        $this->addDataSetCollection($innerBuilder, $fields, $conditions);
         $builder->add($innerBuilder);
 
+        // Initially build up the choice list from persisted conditions
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event): void {
+                $form = $event->getForm();
+
+                foreach ($form->get("_dataSets")->get("dataSets") as $dataset) {
+                    $dataset->get("condition_name")->setData($dataset->getData()->getCondition()?->getName() ?? "");
+                }
+            }
+        );
+
+        // Update the choice list for all existing conditions
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
             function (FormEvent $event) use ($fields) {
@@ -131,14 +150,40 @@ class ExperimentalRunDataType extends AbstractType
                 $dataSetFormEntry = $event->getForm()["_dataSets"];
                 $dataSetFormEntry->remove("dataSets");
 
+                $eventData = $event->getData();
+
                 $conditions = [];
-                foreach ($event->getForm()["_conditions"]["conditions"]->getData() as $condition) {
-                    $conditions[] = $condition;
+                foreach ($eventData["_conditions"]["conditions"] as $position => $condition) {
+                    if (isset($condition["name"])) {
+                        $conditions[$condition["name"]] = $condition["name"];
+                    }
                 }
 
                 $conditionChoices = $conditions;
 
                 $this->addDataSetCollection($dataSetFormEntry, $fields, $conditionChoices);
+            }
+        );
+
+        // Upon submit, we need to update the model with the real conditions.
+        $builder->addEventListener(
+            FormEvents::SUBMIT,
+            function (FormEvent $event) {
+                $formData = $event->getForm()->getData();
+                $eventData = $event->getData();
+
+                $conditions = $formData->getConditions();
+
+                $dataSets = $event->getForm()->get("_dataSets")->get("dataSets");
+                foreach ($dataSets as $dataSet) {
+                    $selectedConditionName = $dataSet->get("condition_name")->getViewData();
+                    $condition = $conditions->filter(fn (ExperimentalRunCondition $condition) => $condition->getName() === $selectedConditionName)->first();
+
+                    if ($condition !== false) {
+                        $dataSet = $dataSet->getNormData();
+                        $dataSet->setCondition($condition);
+                    }
+                }
             }
         );
     }
