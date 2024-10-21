@@ -43,7 +43,7 @@
                         {%- set metaData = metaData|merge({(field.label): ["datum", {
                             "field": field,
                             "formRow": field.formRow,
-                            "datum": run.data[field.formRow.fieldName].value,
+                            "datum": run.data[field.formRow.fieldName] is defined ? run.data[field.formRow.fieldName].value : "",
                         }]}) -%}
                     {%- endfor -%}
                     <twig:Metadata

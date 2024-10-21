@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentalRunDataSetRepository::class)]
 #[ORM\Table("new_experimental_run_data_set")]
@@ -18,10 +19,12 @@ class ExperimentalRunDataSet
 
     #[ORM\ManyToOne(inversedBy: 'dataSets')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank()]
     private ?ExperimentalRun $experiment = null;
 
     #[ORM\ManyToOne(targetEntity: ExperimentalRunCondition::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[Assert\NotBlank()]
     private ?ExperimentalRunCondition $condition = null;
 
     #[ORM\ManyToOne(targetEntity: ExperimentalRunCondition::class)]
