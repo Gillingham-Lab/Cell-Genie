@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service\Experiment;
 
+use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
@@ -286,7 +287,7 @@ class ExperimentalDataFormRowService
     public function getEntityTypeConfig(FormRow $formRow): array
     {
         $configuration = $formRow->getConfiguration();
-        $classes = explode("|", $configuration["entityType"]);
+        $classes = explode("|", (string)$configuration["entityType"]);
 
         $fieldConfig = [
             "empty_data" => null,
@@ -331,7 +332,7 @@ class ExperimentalDataFormRowService
             }
         } else {
             $type = EntityType::class;
-            $fieldConfig["class"] = $classes[0];
+            $fieldConfig["class"] = $classes[0] ?? Cell::class;
         }
 
         return [

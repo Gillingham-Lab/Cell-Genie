@@ -50,6 +50,7 @@ class EntityTypeConfigurationType extends AbstractType
                         "Vendor" => Vendor::class,
                     ],
                 ],
+                "required" => true,
             ])
         ;
     }
