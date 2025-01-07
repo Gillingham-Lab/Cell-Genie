@@ -1,4 +1,4 @@
-{% set column_type = html_cva({
+{% set column_type = html_cva(
     base: "col ",
     variants: {
         type: {
@@ -7,7 +7,7 @@
             none: "",
         }
     }
-}) %}
+) %}
 
 <div class="{{ column_type.apply({type}, attributes.render("class") ?? "") }}"
     {{ attributes.without("class") }}
