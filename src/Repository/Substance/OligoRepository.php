@@ -130,7 +130,6 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
             "anyName" =>  $queryBuilder->expr()->orX(
                 $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),
                 $searchService->searchWithStringLike($queryBuilder, "c.longName", $searchValue),
-                $searchService->searchWithStringLike($queryBuilder, "c.iupacName", $searchValue),
             ),
             "sequence" => $searchService->searchWithStringLike($queryBuilder, "c.sequence", $searchValue),
             "oligoType" => $searchService->searchWithString($queryBuilder, "c.oligoTypeEnum", $searchValue),
