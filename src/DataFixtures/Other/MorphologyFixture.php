@@ -12,7 +12,7 @@ class MorphologyFixture extends Fixture
 {
     const Epithelial = "morphology.epithelial";
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $morphology = (new Morphology())->setName("epithelial");
         $this->setReference(self::Epithelial, $morphology);

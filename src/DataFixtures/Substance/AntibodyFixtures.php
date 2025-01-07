@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class AntibodyFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $antibody = (new Antibody())
             ->setShortName("anti-mouse")

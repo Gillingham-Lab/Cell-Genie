@@ -12,7 +12,7 @@ class GroupFixtures extends Fixture
     public const RESEARCH_GROUP_REFERENCE = "usergroup.research";
     public const OTHER_GROUP_REFERENCE = "usergroup.other";
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $group1 = (new UserGroup())
             ->setShortName("Research Group");

@@ -5,7 +5,10 @@ namespace App\DataFixtures\Cell;
 
 use App\DataFixtures\Storage\BoxFixtures;
 use App\DataFixtures\UserFixtures;
+use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Storage\Box;
+use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\PrivacyLevel;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -19,7 +22,7 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
     const HCT116 = "cell.aliquot.HCT116";
     const HeLa = "cell.aliquot.HeLa";
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             UserFixtures::class,
@@ -28,7 +31,7 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
         ];
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $aliquots = [
             $this->getHEK293Aliquot(),
@@ -43,17 +46,17 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
     {
         $aliquot = (new CellAliquot())
             ->setAliquotName("HEK1")
-            ->setCell($this->getReference(CellFixture::HEK293))
-            ->setBox($this->getReference(BoxFixtures::HEK293))
+            ->setCell($this->getReference(CellFixture::HEK293, Cell::class))
+            ->setBox($this->getReference(BoxFixtures::HEK293, Box::class))
             ->setAliquotedOn(new \DateTime("now"))
-            ->setAliquotedBy($this->getReference(UserFixtures::SCIENTIST_USER_REFERENCE))
+            ->setAliquotedBy($this->getReference(UserFixtures::SCIENTIST_USER_REFERENCE, User::class))
             ->setBoxCoordinate("A1")
             ->setCellCount(2000000)
             ->setVialColor("red")
             ->setVials(18)
             ->setMaxVials(18)
-            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE))
-            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE)->getGroup())
+            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class))
+            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class)->getGroup())
             ->setPrivacyLevel(PrivacyLevel::Group)
             ->setPassage(5);
         ;
@@ -67,17 +70,17 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
     {
         $aliquot = (new CellAliquot())
             ->setAliquotName("HEKAntique")
-            ->setCell($this->getReference(CellFixture::HEK293))
-            ->setBox($this->getReference(BoxFixtures::HEK293))
+            ->setCell($this->getReference(CellFixture::HEK293, Cell::class))
+            ->setBox($this->getReference(BoxFixtures::HEK293, Box::class))
             ->setAliquotedOn(new \DateTime("2020-03-25 13:00:00"))
-            ->setAliquotedBy($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE))
+            ->setAliquotedBy($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class))
             ->setBoxCoordinate("A1")
             ->setCellCount(5000000)
             ->setVialColor("green")
             ->setVials(3)
             ->setMaxVials(20)
-            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE))
-            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE)->getGroup())
+            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class))
+            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class)->getGroup())
             ->setPrivacyLevel(PrivacyLevel::Group)
             ->setPassage(15);
         ;

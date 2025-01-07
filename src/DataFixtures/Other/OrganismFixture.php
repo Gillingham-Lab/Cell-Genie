@@ -11,7 +11,7 @@ class OrganismFixture extends Fixture
 {
     const Human = "organism.human";
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $organism = (new Organism())->setName("Human")->setType("homo sapiens");
         $this->setReference(self::Human, $organism);

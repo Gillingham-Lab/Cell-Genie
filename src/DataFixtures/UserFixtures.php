@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\Param\Param;
 use App\Entity\Param\ParamBag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -24,14 +25,14 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     ) {
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             GroupFixtures::class
         ];
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $admin = $this->getAdmin();
         $manager->persist($admin);
@@ -46,12 +47,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $this->addReference(self::OTHER_HEAD_SCIENTIST_USER_REFERENCE, $headScientist2);
 
         $scientist1 = $this->getScientist(1);
-        $scientist1->setGroup($this->getReference(GroupFixtures::RESEARCH_GROUP_REFERENCE));
+        $scientist1->setGroup($this->getReference(GroupFixtures::RESEARCH_GROUP_REFERENCE, UserGroup::class));
         $manager->persist($scientist1);
         $this->addReference(self::SCIENTIST_USER_REFERENCE, $scientist1);
 
         $scientist2 = $this->getScientist(2);
-        $scientist2->setGroup($this->getReference(GroupFixtures::OTHER_GROUP_REFERENCE));
+        $scientist2->setGroup($this->getReference(GroupFixtures::OTHER_GROUP_REFERENCE, UserGroup::class));
         $manager->persist($scientist2);
         $this->addReference(self::OTHER_SCIENTIST_USER_REFERENCE, $scientist2);
 
@@ -88,7 +89,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             ->setOffice("P3N-C")
             ->setTitle("Sir")
             ->setRoles(["ROLE_GROUP_ADMIN"])
-            ->setGroup($this->getReference(GroupFixtures::RESEARCH_GROUP_REFERENCE))
+            ->setGroup($this->getReference(GroupFixtures::RESEARCH_GROUP_REFERENCE, UserGroup::class))
         ;
 
         $user->setPassword($this->passwordHasher->hashPassword($user, "PENICILLIN"));
@@ -105,7 +106,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             ->setOffice("P3N-X")
             ->setTitle("Prof. Dr")
             ->setRoles(["ROLE_GROUP_ADMIN"])
-            ->setGroup($this->getReference(GroupFixtures::OTHER_GROUP_REFERENCE))
+            ->setGroup($this->getReference(GroupFixtures::OTHER_GROUP_REFERENCE, UserGroup::class))
         ;
 
         $user->setPassword($this->passwordHasher->hashPassword($user, "XRayStructure"));

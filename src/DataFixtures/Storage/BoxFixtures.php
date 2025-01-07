@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\DataFixtures\Storage;
 
 use App\Entity\DoctrineEntity\Storage\Box;
+use App\Entity\DoctrineEntity\Storage\Rack;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,14 +14,14 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
     const HEK293 = "box.hek293";
     const HCT116 = "box.hct116";
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             RackFixtures::class
         ];
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $boxes = [
             (new Box())
@@ -35,7 +36,7 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
                 ->setName("Box 5"),
         ];
 
-        array_map(fn (Box $box) => $box->setRack($this->getReference(RackFixtures::RACK_1)),$boxes);
+        array_map(fn (Box $box) => $box->setRack($this->getReference(RackFixtures::RACK_1, Rack::class)),$boxes);
         array_map(fn (Box $box) => $manager->persist($box), $boxes);
 
         $otherBoxes = [
@@ -43,12 +44,12 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
                 ->setName("HEK293 cells")
                 ->setRows(9)
                 ->setCols(9)
-                ->setRack($this->getReference(RackFixtures::RACK_2)),
+                ->setRack($this->getReference(RackFixtures::RACK_2, Rack::class)),
             (new Box())
                 ->setName("HCT 116 cells")
                 ->setRows(9)
                 ->setCols(9)
-                ->setRack($this->getReference(RackFixtures::RACK_2)),
+                ->setRack($this->getReference(RackFixtures::RACK_2, Rack::class)),
         ];
 
         $this->setReference(self::HEK293, $otherBoxes[0]);

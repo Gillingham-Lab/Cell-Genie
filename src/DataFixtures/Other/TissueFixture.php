@@ -12,7 +12,7 @@ class TissueFixture extends Fixture
     const Kidney = "tissue.kidney";
     const Cervix = "tissue.cervix";
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $tissue_kidney = (new Tissue())->setName("Kidney");
         $tissue_cervix = (new Tissue())->setName("Cervix");
