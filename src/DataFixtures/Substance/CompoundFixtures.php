@@ -5,6 +5,7 @@ namespace App\DataFixtures\Substance;
 
 use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\User\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -36,7 +37,7 @@ class CompoundFixtures extends Fixture implements DependentFixtureInterface
 
     public function getPenicillins(): array
     {
-        $scientist = $this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE);
+        $scientist = $this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class);
 
         return [
             (new Chemical())

@@ -5,6 +5,7 @@ namespace App\DataFixtures\Cell;
 
 use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Cell\CellGroup;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -40,7 +41,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
     private function getHCT116(): Cell
     {
         $cell = (new Cell())
-            ->setCellGroup($this->getReference(CellGroupFixture::HCT116))
+            ->setCellGroup($this->getReference(CellGroupFixture::HCT116, CellGroup::class))
             ->setCellNumber("CL001")
             ->setName("HCT 116")
             ->setIsEngineered(false)
@@ -53,7 +54,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
     private function getHEK293(): Cell
     {
         $cell = (new Cell())
-            ->setCellGroup($this->getReference(CellGroupFixture::HEK293))
+            ->setCellGroup($this->getReference(CellGroupFixture::HEK293, CellGroup::class))
             ->setCellNumber("CL002")
             ->setName("HEK293")
             ->setIsEngineered(false)
@@ -67,7 +68,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
     {
         $cell = (new Cell())
             ->setName("HEK293T")
-            ->setCellGroup($this->getReference(CellGroupFixture::HEK293))
+            ->setCellGroup($this->getReference(CellGroupFixture::HEK293, CellGroup::class))
             ->setIsEngineered(false)
             ->setCellNumber("C002")
         ;
@@ -81,7 +82,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
         $cell = (new Cell())
             ->setName("HeLa")
             ->setIsEngineered(false)
-            ->setCellGroup($this->getReference(CellGroupFixture::HeLa))
+            ->setCellGroup($this->getReference(CellGroupFixture::HeLa, CellGroup::class))
             ->setCellNumber("C003")
         ;
 

@@ -8,6 +8,7 @@ use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -23,8 +24,8 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
     public function load(ObjectManager $manager): void
     {
         $design = (new ExperimentalDesign())
-            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE))
-            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE)->getGroup())
+            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class))
+            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class)->getGroup())
             ->setPrivacyLevel(PrivacyLevel::Group)
             ->setNumber("EXP001")
             ->setShortName("Experiment Design 1")

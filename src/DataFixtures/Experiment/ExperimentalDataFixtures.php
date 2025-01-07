@@ -6,9 +6,11 @@ namespace App\DataFixtures\Experiment;
 use App\DataFixtures\Substance\CompoundFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
+use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\PrivacyLevel;
@@ -21,7 +23,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
     public function load(ObjectManager $manager): void
     {
         /** @var User $scientist */
-        $scientist = $this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE);
+        $scientist = $this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class);
 
         $condition1 = (new ExperimentalRunCondition())
             ->setName("Condition 1")
@@ -29,7 +31,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
             ->addData((new ExperimentalDatum())
                 ->setName("_compound")
                 ->setType(DatumEnum::EntityReference)
-                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_I_COMPOUND_REFERENCE))
+                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_I_COMPOUND_REFERENCE, Chemical::class))
             )
             ->addData((new ExperimentalDatum())
                 ->setName("_time")
@@ -44,7 +46,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
             ->addData((new ExperimentalDatum())
                 ->setName("_compound")
                 ->setType(DatumEnum::EntityReference)
-                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_II_COMPOUND_REFERENCE))
+                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_II_COMPOUND_REFERENCE, Chemical::class))
             )
             ->addData((new ExperimentalDatum())
                 ->setName("_time")
@@ -55,7 +57,7 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
 
         $run = (new ExperimentalRun())
             ->setName("AF001 - Penicillin inhibition")
-            ->setDesign($this->getReference(ExperimentalDesignFixtures::EXPERIMENTAL_DESIGN))
+            ->setDesign($this->getReference(ExperimentalDesignFixtures::EXPERIMENTAL_DESIGN, ExperimentalDesign::class))
             ->setScientist($scientist)
             ->addCondition($condition1)
             ->addCondition($condition2)

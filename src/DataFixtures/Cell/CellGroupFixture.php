@@ -8,6 +8,9 @@ use App\DataFixtures\Other\OrganismFixture;
 use App\DataFixtures\Other\TissueFixture;
 use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
+use App\Entity\Morphology;
+use App\Entity\Organism;
+use App\Entity\Tissue;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -87,10 +90,10 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
             ->setAge("Fetus")
             ->setIsCancer(false)
             ->setCultureType("adherent")
-            ->setMorphology($this->getReference(MorphologyFixture::Epithelial))
-            ->setOrganism($this->getReference(OrganismFixture::Human))
-            ->setTissue($this->getReference(TissueFixture::Kidney))
-            ->setParent($this->getReference(self::HEK293))
+            ->setMorphology($this->getReference(MorphologyFixture::Epithelial, Morphology::class))
+            ->setOrganism($this->getReference(OrganismFixture::Human, Organism::class))
+            ->setTissue($this->getReference(TissueFixture::Kidney, Tissue::class))
+            ->setParent($this->getReference(self::HEK293, CellGroup::class))
         ;
 
         $this->setReference(self::HEK293T, $cellGroup);
@@ -104,9 +107,9 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
             ->setNumber("C003")
             ->setIsCancer(true)
             ->setCultureType("adherent")
-            ->setMorphology($this->getReference(MorphologyFixture::Epithelial))
-            ->setOrganism($this->getReference(OrganismFixture::Human))
-            ->setTissue($this->getReference(TissueFixture::Cervix))
+            ->setMorphology($this->getReference(MorphologyFixture::Epithelial, Morphology::class))
+            ->setOrganism($this->getReference(OrganismFixture::Human, Organism::class))
+            ->setTissue($this->getReference(TissueFixture::Cervix, Tissue::class))
         ;
 
         $this->setReference(self::HeLa, $cellGroup);
