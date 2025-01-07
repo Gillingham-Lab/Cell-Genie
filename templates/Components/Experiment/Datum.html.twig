@@ -40,8 +40,8 @@
                 <twig:Date dateTime="{{ datum }}" />
             {%- elseif formRow.type.value == "image" -%}
                 {%- if datum -%}
-                    <div style="max-width: 20rem; max-height: 2rem;">
-                        <img src="{{ datum }}" style="max-height: 2rem; vertical-align: top;" />
+                    <div style="max-width: 20rem; max-height: 10rem;">
+                        <img src="{{ datum }}" style="max-height: inherit; max-width: inherit; vertical-align: top;" />
                     </div>
                 {%- else -%}
                     <p class="text-muted">empty</p>
