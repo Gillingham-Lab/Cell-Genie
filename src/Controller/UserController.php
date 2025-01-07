@@ -12,7 +12,6 @@ use App\Form\User\UserSettingsType;
 use App\Form\User\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,13 +19,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Normalizer\UidNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class UserController extends AbstractController
 {
@@ -35,7 +27,7 @@ class UserController extends AbstractController
     public function main(
         #[CurrentUser]
         User $currentUser,
-        User $user = null,
+        ?User $user = null,
     ): Response {
         return $this->render("ucp/user.main.html.twig", [
             "user" => $user ?? $currentUser,
@@ -72,7 +64,7 @@ class UserController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         #[CurrentUser]
         User $currentUser,
-        User $user = null,
+        ?User $user = null,
     ): Response {
         $new = false;
 

@@ -12,7 +12,7 @@ class ValidBoxCoordinate extends Constraint
     public string $invalidCoordinateMessage = "The given coordinates are invalid.";
 
     public function __construct(
-        array $groups = null,
+        ?array $groups = null,
         mixed $payload = null
     ) {
         parent::__construct([], $groups, $payload);

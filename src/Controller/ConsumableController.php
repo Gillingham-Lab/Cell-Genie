@@ -339,8 +339,8 @@ class ConsumableController extends AbstractController
         User $user,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        ConsumableCategory $category = null,
-        Consumable $consumable = null,
+        ?ConsumableCategory $category = null,
+        ?Consumable $consumable = null,
     ): Response {
         if (!$consumable and !$category) {
             $this->createNotFoundException("Not found.");
@@ -404,8 +404,8 @@ class ConsumableController extends AbstractController
         #[CurrentUser]
         User $user,
         EntityManagerInterface $entityManager,
-        Consumable $consumable = null,
-        ConsumableLot $lot = null,
+        ?Consumable $consumable = null,
+        ?ConsumableLot $lot = null,
     ): Response {
         if (!$consumable and !$lot) {
             $this->createNotFoundException("Not found.");

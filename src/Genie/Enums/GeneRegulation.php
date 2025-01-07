@@ -19,7 +19,7 @@ enum GeneRegulation: string implements TranslatableInterface
     case DoubleKnockIn = "doublein";
     case DoubleKnockOut = "doubleout";
 
-    public function trans(TranslatorInterface $translator, string $locale = null): string
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
         return match ($this) {
             self::Unknown => "unknown",

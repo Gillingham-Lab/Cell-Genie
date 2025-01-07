@@ -71,7 +71,7 @@ class VendorController extends AbstractController
         Request $request,
         Security $security,
         EntityManagerInterface $entityManager,
-        Vendor $vendor = null,
+        ?Vendor $vendor = null,
     ): Response {
         return $this->addOrEditVendor($request, $security, $entityManager, $vendor, [
             "title" => "Edit Vendor",

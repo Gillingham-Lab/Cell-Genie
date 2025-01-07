@@ -78,7 +78,7 @@ class ResourceController extends AbstractController
         Security $security,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        Resource $resource = null,
+        ?Resource $resource = null,
     ): Response {
         return $this->addOrEditResource($request, $security, $entityManager, $fileUploader, $resource, [
             "title" => "Edit Resource",
@@ -167,7 +167,7 @@ class ResourceController extends AbstractController
     public function onCategoryAutocomplete(
         ResourceRepository $resourceRepository,
         #[MapQueryParameter]
-        string $query = null,
+        ?string $query = null,
     ): Response {
         $reply = [
             "results" => [

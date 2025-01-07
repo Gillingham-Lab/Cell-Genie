@@ -19,7 +19,7 @@ class NotLooped extends Constraint
         public string $parentField,
         public string $childrenField,
         public int $maxNestingLevel = 10,
-        array $groups = null,
+        ?array $groups = null,
         mixed $payload = null
     ) {
         parent::__construct([], $groups, $payload);

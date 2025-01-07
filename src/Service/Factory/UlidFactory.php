@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Symfony package.
@@ -12,10 +13,11 @@
 namespace App\Service\Factory;
 
 use App\Service\Doctrine\Type\Ulid;
+use DateTimeInterface;
 
 class UlidFactory
 {
-    public function create(\DateTimeInterface $time = null): Ulid
+    public function create(?DateTimeInterface $time = null): Ulid
     {
         return new Ulid(null === $time ? null : Ulid::generate($time));
     }

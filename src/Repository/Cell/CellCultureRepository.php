@@ -3,6 +3,7 @@
 namespace App\Repository\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,8 +23,12 @@ class CellCultureRepository extends ServiceEntityRepository
         parent::__construct($registry, CellCulture::class);
     }
 
-    public function findAllBetween(\DateTimeInterface $start, \DateTimeInterface $end, string $incubator = null, string $scientist = null)
-    {
+    public function findAllBetween(
+        DateTimeInterface $start,
+        DateTimeInterface $end,
+        ?string $incubator = null,
+        ?string $scientist = null
+    ) {
         // Joins on events not possible due to https://github.com/doctrine/orm/pull/9743
         $qb = $this->createQueryBuilder("cc");
 

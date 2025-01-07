@@ -61,7 +61,7 @@ class CellController extends AbstractController
     #[Route("/cells/group/view/{cellGroup}", name: "app_cells_group")]
     public function cells(
         CellGroupRepository $cellGroupRepository,
-        CellGroup $cellGroup = null,
+        ?CellGroup $cellGroup = null,
     ): Response {
         return $this->render('parts/cells/cells.html.twig', [
             "cellGroups" => $cellGroupRepository->getGroupsWithCellsAndAliquots(["name" => "ASC"]),
@@ -78,7 +78,7 @@ class CellController extends AbstractController
     #[IsGranted(CellGroupVoter::REMOVE, "cellGroup")]
     public function removeCellGroup(
         EntityManagerInterface $entityManager,
-        CellGroup $cellGroup = null,
+        ?CellGroup $cellGroup = null,
     ): Response {
         if ($cellGroup) {
             try {
@@ -110,7 +110,7 @@ class CellController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         CellGroupRepository $cellGroupRepository,
-        CellGroup $cellGroup = null,
+        ?CellGroup $cellGroup = null,
     ): Response {
         if ($cellGroup === null and $request->get("_route") === "app_cells_group_add") {
             $new = true;
@@ -261,7 +261,7 @@ class CellController extends AbstractController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         #[MapEntity(expr: "repository.findCellByIdOrNumber(cell)")]
-        Cell $cell = null,
+        ?Cell $cell = null,
     ): Response {
         if (!$cell and $request->get("_route") === "app_cell_add") {
             $cell = new Cell();
@@ -347,7 +347,7 @@ class CellController extends AbstractController
         FileUploader $fileUploader,
         #[MapEntity(expr: 'repository.findCellByIdOrNumber(cell)')]
         Cell $cell,
-        CellAliquot $cellAliquot = null,
+        ?CellAliquot $cellAliquot = null,
     ): Response {
         if (!$cellAliquot and $request->get("_route") === "app_cell_aliquot_add") {
             $cellAliquot = new CellAliquot();

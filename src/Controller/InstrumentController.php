@@ -85,7 +85,7 @@ class InstrumentController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        Instrument $instrument = null,
+        ?Instrument $instrument = null,
     ): Response {
         $routeName = $request->attributes->get("_route");
         $currentUser = $this->getUser();

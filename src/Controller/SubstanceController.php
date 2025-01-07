@@ -133,7 +133,7 @@ class SubstanceController extends AbstractController
         GeneBankImporter $geneBankImporter,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        Substance $substance = null,
+        ?Substance $substance = null,
     ): Response {
         return $this->addOrEditSubstance(
             $request, $geneBankImporter, $entityManager, $fileUploader, $substance, null,
@@ -256,7 +256,7 @@ class SubstanceController extends AbstractController
         LotRepository $lotRepository,
         FileUploader $fileUploader,
         Substance $substance ,
-        Lot $lot = null,
+        ?Lot $lot = null,
     ): Response {
         $new = !$lot;
         $substanceType = match ($substance::class) {
@@ -682,7 +682,7 @@ class SubstanceController extends AbstractController
         Request $request,
         EpitopeRepository $epitopeRepository,
         EntityManagerInterface $entityManager,
-        Epitope $epitope = null,
+        ?Epitope $epitope = null,
     ): Response {
         $new = !$epitope;
 

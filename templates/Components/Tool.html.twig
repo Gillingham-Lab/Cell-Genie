@@ -1,4 +1,3 @@
-{% apply spaceless %}
 <a {{- attributes.defaults({
     class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
 }) -}}
@@ -24,4 +23,3 @@
         {% endcache -%}
     {% endif -%}
 </a>
-{% endapply %}

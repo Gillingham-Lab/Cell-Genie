@@ -72,8 +72,11 @@ class ExperimentalDataService
         return $fields;
     }
 
-    private function getResults(?array $orderBy = null, array $searchFields = [], ExperimentalDesign $design = null): QueryBuilder
-    {
+    private function getResults(
+        ?array $orderBy = null,
+        array $searchFields = [],
+        ?ExperimentalDesign $design = null
+    ): QueryBuilder {
         $queryBuilder = $this->getBaseQuery($design);
 
         if (!empty($searchFields)) {
@@ -87,8 +90,13 @@ class ExperimentalDataService
         return $queryBuilder;
     }
 
-    public function getPaginatedResults(?array $orderBy = null, array $searchFields = [], int $page = 0, int $limit = 30, ExperimentalDesign $design = null): array
-    {
+    public function getPaginatedResults(
+        ?array $orderBy = null,
+        array $searchFields = [],
+        int $page = 0,
+        int $limit = 30,
+        ?ExperimentalDesign $design = null
+    ): array {
         if ($design === null) {
             throw new \Exception("You must give an experimental design.");
         }
@@ -339,13 +347,19 @@ class ExperimentalDataService
         return $data;
     }
 
-    public function getPaginatedResultCount(?array $orderBy = [], array $searchFields = [], ExperimentalDesign $design = null): int
-    {
+    public function getPaginatedResultCount(
+        ?array $orderBy = [],
+        array $searchFields = [],
+        ?ExperimentalDesign $design = null
+    ): int {
         return (new Paginator($this->getResults($orderBy, $searchFields, $design)))->count();
     }
 
-    private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields = [], ExperimentalDesign $design = null): QueryBuilder
-    {
+    private function addSearchFields(
+        QueryBuilder $queryBuilder,
+        array $searchFields = [],
+        ?ExperimentalDesign $design = null
+    ): QueryBuilder {
         $searchService = $this->searchService;
 
         $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {

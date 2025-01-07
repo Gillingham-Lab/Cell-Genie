@@ -34,8 +34,8 @@ class StorageController extends AbstractController
         SubstanceRepository $substanceRepository,
         CellAliquotRepository $cellAliquotRepository,
         ConsumableLotRepository $consumableLotRepository,
-        Rack $rack = null,
-        Box $box = null,
+        ?Rack $rack = null,
+        ?Box $box = null,
     ): Response {
         $racks = $rackRepository->findAllWithBoxes();
         $boxes = $boxRepository->findAll();
@@ -98,7 +98,7 @@ class StorageController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        Box $box = null,
+        ?Box $box = null,
     ) {
         return $this->addStorage($request, $entityManager, $fileUploader, null, $box);
     }

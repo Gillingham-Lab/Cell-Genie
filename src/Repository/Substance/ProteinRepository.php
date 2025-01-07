@@ -45,7 +45,7 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
             ;
     }
 
-    public function findWithAntibodies(Epitope $epitope = null, array $orderBy = null)
+    public function findWithAntibodies(?Epitope $epitope = null, ?array $orderBy = null)
     {
         $qb = $this->createQueryBuilder("p")
             ->addSelect("ep")
@@ -79,7 +79,7 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
         ;
     }
 
-    public function findWithAntibodiesAndLotCount(Epitope $epitope = null, array $orderBy = null)
+    public function findWithAntibodiesAndLotCount(?Epitope $epitope = null, ?array $orderBy = null)
     {
         $qb = $this->createQueryBuilder("p")
             ->addSelect("ep")

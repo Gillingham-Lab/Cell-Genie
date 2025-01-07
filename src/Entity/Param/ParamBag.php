@@ -11,7 +11,7 @@ class ParamBag implements \ArrayAccess
     /** @var array<string, Param> */
     public array $paramArray = [];
 
-    public function getParam($offset, string|float|int|bool $default = null): ?Param
+    public function getParam($offset, null|string|float|int|bool $default = null): ?Param
     {
         if ($this->offsetExists($offset)) {
             return $this->paramArray[$offset];
