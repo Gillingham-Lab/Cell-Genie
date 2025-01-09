@@ -227,7 +227,6 @@ class ExperimentalDataService
     public function fetchEntitiesFromList(array $entitiesToFetch): array
     {
         foreach ($entitiesToFetch as $class => $entities) {
-
             if (current($entities) === true) {
                 $entityRepository = $this->entityManager->getRepository($class);
 
@@ -247,6 +246,13 @@ class ExperimentalDataService
             } else {
                 /** @var LotRepository $entityRepository */
                 $entityRepository = $this->entityManager->getRepository($class);
+
+                if (!$entityRepository instanceof LotRepository) {
+                    // If we switch from a Substance to a SubstanceLot type, existing entries will not change.
+                    // $class will still reflect the class of the entry and $entityRepository will be the correct repository.
+                    // But it will not be a LotRepository.
+                    continue;
+                }
 
                 $entityClasses = [];
 

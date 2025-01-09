@@ -467,7 +467,11 @@ class ExperimentController extends AbstractController
                 $value = $datum?->getValue();
 
                 if ($datum?->getType() === DatumEnum::EntityReference) {
-                    $value = $entities[$value[1]][$value[0]->toRfc4122()];
+                    try {
+                        $value = $entities[$value[1]][$value[0]->toRfc4122()];
+                    } catch (\ErrorException $e) {
+                        $value = "{$value[1]}/{$value[0]->toRfc4122()}";
+                    }
                 }
 
                 return [

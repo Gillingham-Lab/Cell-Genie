@@ -86,8 +86,12 @@ class LotRepository extends ServiceEntityRepository
         $results = $query->getResult();
         $substanceLots = [];
 
+        //  Multiple lots for a single substances are foldet into that substances lot.
         foreach ($results as $result) {
-            $substanceLots[] = new SubstanceLot($result, $result->getLots()->first());
+            foreach ($result->getLots() as $lot) {
+                // Thus, we need to go through *all* retrieved lots.
+                $substanceLots[] = new SubstanceLot($result, $lot);
+            }
         }
 
         return $substanceLots;
