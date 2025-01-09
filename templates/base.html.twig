@@ -29,13 +29,12 @@
 
             <twig:block name="navsearch">{% block search %}{% endblock %}</twig:block>
 
-
-            {% cache "gin_top_navigation_general" %}
+            {% cache "gin_top_navigation_general-" ~ (app.user.id is defined ? app.user.id : "anonymous") %}
                 <twig:Layout:NavSeparator />
                 <twig:Layout:NavDropdown id="gin-navbar-cell" label="Cells" icon="cell" href="{{ url("app_cells") }}">
                     <twig:Layout:NavDropdownItem label="Browse cells" href="{{ url("app_cells") }}" icon="cell" iconStack="view" />
                     <twig:Layout:NavDropdownItem label="Search cells" href="{{ url("app_cells_all") }}" icon="cell" iconStack="search" />
-                    {% if is_granted("add", "cell") %}
+                    {% if is_granted("new", "Cell") %}
                         <twig:Layout:NavDropdownItem label="Add cell" href="{{ url("app_cell_add") }}" icon="add" />
                     {% endif %}
 
