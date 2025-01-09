@@ -54,15 +54,18 @@ export default class extends Controller {
     }
 
     onFileUploadChange(event) {
+        // Prevent the event from bubbling up. This stops the component from updating before we are dispatch our own.
+        event.cancelBubble = true;
+
         if (event.target.files.length > 0) {
             this.processFile(event.target.files[0]);
         }
-
-        event.preventDefault();
     }
 
     onClick(event) {
         this.uploadFieldTarget.click();
+
+        event.preventDefault();
     }
 
     onDragOver(event) {
@@ -72,6 +75,10 @@ export default class extends Controller {
     onFileLoad(result) {
         if (this.cropper) {
             this.cropper.destroy();
+        }
+
+        if (result.length == 0) {
+            return;
         }
 
         this.imageStorageTarget.src = result;
