@@ -77,7 +77,7 @@ export default class extends Controller {
             this.cropper.destroy();
         }
 
-        if (result.length == 0) {
+        if (result.length === 0) {
             return;
         }
 
