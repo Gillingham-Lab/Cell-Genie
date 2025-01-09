@@ -54,6 +54,7 @@ class SubstanceLotTable extends AbstractController
                 new Column("Concentration", fn(Lot $lot) => $lot->getPurity()),
                 new ProgressColumn("Aliquots", fn(Lot $lot) => [$lot->getNumberOfAliquotes(), $lot->getMaxNumberOfAliquots()], showNumbers: true),
                 new Column("Aliquot size", fn(Lot $lot) => $lot->getAliquoteSize()),
+                new Column("Comment", fn(Lot $lot) => $lot->getComment()),
             ],
             isDisabled: fn(Lot $lot) => $lot->getAvailability() === Availability::Empty,
         );
