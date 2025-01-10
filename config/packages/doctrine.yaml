@@ -29,5 +29,5 @@ doctrine:
                 dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Loggable/Entity"
         dql:
             string_functions:
-
                 convert_from: App\Doctrine\Functions\ConvertFrom
+                decode: App\Doctrine\Functions\Decode

@@ -19,7 +19,7 @@ class ScientificNumberType extends AbstractType
             nan_value: $options["nan_value"],
             inf_value: $options["+inf_value"],
             ninf_value: $options["-inf_value"],
-        ));
+        ), forcePrepend: true);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

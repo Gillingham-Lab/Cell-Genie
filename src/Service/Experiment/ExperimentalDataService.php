@@ -10,12 +10,19 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\Form\FormRow;
+use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\Lot;
+use App\Form\Search\NumberSearchTransformer;
+use App\Genie\Codec\ExperimentValueCodec;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
+use App\Genie\Enums\FloatTypeEnum;
 use App\Genie\Enums\FormRowTypeEnum;
+use App\Genie\Enums\IntegerTypeEnum;
 use App\Repository\LotRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Service\Doctrine\SearchService;
+use App\Twig\Components\Experiment\Datum;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
@@ -384,6 +391,17 @@ class ExperimentalDataService
 
     private function addVariableSearchField(QueryBuilder $queryBuilder, string $searchField, mixed $searchValue, ExperimentalDesign $design): ?Func
     {
+        // If the field name is coming from a composite, we need to adjust the search field.
+        if (str_ends_with($searchField, "_lot")) {
+            $searchField = substr($searchField, 0, -4);
+            $suffix = "_lot";
+        } elseif (str_ends_with($searchField, "_substance")) {
+            $searchField = substr($searchField, 0, -10);
+            $suffix = "_substance";
+        } else {
+            $suffix = "";
+        }
+
         /** @var ExperimentalDesignField $fieldRow */
         $fieldRow = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $searchField)->first();
 
@@ -395,12 +413,32 @@ class ExperimentalDataService
             $queryBuilder->setParameter($nameParamName, $searchField);
             $queryBuilder->setParameter($referencesParamName, $searchValue);
 
-            return $queryBuilder->expr()->in(
-                "exrc.id",
-                $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
-                    ->andWhere("data$abbreviation_suffix.referenceUuid IN (:$referencesParamName)")
-                    ->getDQL(),
-            );
+            if ($suffix === "" or $suffix === "_lot") {
+                return $queryBuilder->expr()->in(
+                    "exrc.id",
+                    $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
+                        ->andWhere("data$abbreviation_suffix.referenceUuid IN (:$referencesParamName)")
+                        ->getDQL(),
+                );
+            } else {
+                if (str_starts_with($fieldRow->getFormRow()->getConfiguration()["entityType"], Lot::class)) {
+                    return $queryBuilder->expr()->in(
+                        "exrc.id",
+                        $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
+                            #->andWhere("data$abbreviation_suffix.referenceUuid IN (:$referencesParamName)")
+                            ->andWhere($queryBuilder->expr()->in(
+                                "data$abbreviation_suffix.referenceUuid",
+                                $this->entityManager->createQueryBuilder()
+                                    ->select("l$abbreviation_suffix.id")
+                                    ->from(Substance::class, "s$abbreviation_suffix")
+                                    ->join("s$abbreviation_suffix.lots", "l$abbreviation_suffix")
+                                    ->where("s$abbreviation_suffix = :$referencesParamName")
+                                    ->getDql(),
+                            ))
+                            ->getDQL(),
+                    );
+                }
+            }
         } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::TextType) {
             $queryBuilder->setParameter($nameParamName, $searchField);
             $queryBuilder->setParameter($referencesParamName, $this->searchService->parse($searchValue));
@@ -411,6 +449,51 @@ class ExperimentalDataService
                     ->andWhere("lower(convert_from(data$abbreviation_suffix.value, 'UTF-8')) LIKE lower(:$referencesParamName)")
                     ->getDQL(),
             );
+        } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::FloatType or $fieldRow->getFormRow()->getType() === FormRowTypeEnum::IntegerType) {
+            if ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::FloatType) {
+                // Get datum type for correct encoding
+                $datumType = match(FloatTypeEnum::from($fieldRow->getFormRow()->getConfiguration()["datatype_float"])) {
+                    FloatTypeEnum::Float32 => DatumEnum::Float32,
+                    FloatTypeEnum::Float64 => DatumEnum::Float64,
+                };
+            } else {
+                $configuration = $fieldRow->getFormRow()->getConfiguration();
+                $isUnsigned = $configuration["unsigned"];
+                $datumType = match(IntegerTypeEnum::from($configuration["datatype_int"])) {
+                    IntegerTypeEnum::Int8 => $isUnsigned ? DatumEnum::UInt8 : DatumEnum::Int8,
+                    IntegerTypeEnum::Int16 => $isUnsigned ? DatumEnum::UInt16 : DatumEnum::Int16,
+                    IntegerTypeEnum::Int32 => $isUnsigned ? DatumEnum::UInt32 : DatumEnum::Int32,
+                    IntegerTypeEnum::Int64 => DatumEnum::Int64,
+                };
+            }
+
+            // Normalize search value and encode
+            $transformer = new NumberSearchTransformer();
+            $codec = new ExperimentValueCodec($datumType);
+            dump($searchValue);
+
+            $searchValue = $transformer->transform($searchValue);
+            $searchQuery = $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName);
+            $queryBuilder->setParameter($nameParamName, $searchField);
+
+            dump($searchValue);
+
+            // Determine the sign
+            $minSign = $searchValue["type"][0] == "1" ? ">=" : ">";
+            $maxSign = $searchValue["type"][1] == "1" ? "<=" : "<";
+
+            if (isset($searchValue["min"]) and !is_nan($searchValue["min"])) {
+                $minSearchValue = bin2hex($codec->encode($searchValue["min"]));
+                $searchQuery->andWhere("data$abbreviation_suffix.value $minSign decode(:{$referencesParamName}min, 'hex')");
+                $queryBuilder->setParameter($referencesParamName . "min", $minSearchValue);
+            }
+            if (isset($searchValue["max"]) and !is_nan($searchValue["max"])) {
+                $maxSearchValue = bin2hex($codec->encode($searchValue["max"]));
+                $searchQuery->andWhere("data$abbreviation_suffix.value $maxSign decode(:{$referencesParamName}max, 'hex')");
+                $queryBuilder->setParameter($referencesParamName . "max", $maxSearchValue);
+            }
+
+            return $queryBuilder->expr()->in("exrc.id", $searchQuery->getDQL());
         }
 
         return null;

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Form;
 
+use App\Genie\Enums\FloatTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,14 +19,14 @@ class FloatTypeConfigurationType extends AbstractType
                 "label" => "Float Size",
                 "help" => "Choose the float size. All types support negative values.",
                 "choices" => [
-                    "32 Bit (single, ca 7 significant digits)" => 1,
-                    "64 Bit (double, ca 15 significant digits)" => 2,
+                    "32 Bit (single, ca 7 significant digits)" => FloatTypeEnum::Float32,
+                    "64 Bit (double, ca 15 significant digits)" => FloatTypeEnum::Float64,
                 ],
                 "constraints" => [
                     new NotNull(),
                 ],
                 "required" => false,
-                "empty_data" => 1,
+                "empty_data" => FloatTypeEnum::Float32,
             ])
             ->add("floattype_inactive", ChoiceType::class, [
                 "label" => "Inactive values are safed as",

@@ -209,13 +209,17 @@ class ExperimentalRunDataTable extends AbstractController
             $entityFormRow = $entityField->getFormRow();
 
             $entityType = $entityFormRow->getConfiguration()["entityType"] ?? null;
+
             if ($entityType === null) {
+                // If entity type is not set, we skip the options
                 $choices[$entityFormRow->getFieldName()] = [];
+                continue;
             }
 
             // Entity types with subtypes (such as lots) are separated with a |.
             $entityType = explode("|", $entityType);
-            $entityChoices = [];
+            $lotEntityChoices = [];
+            $substanceEntityChoices = [];
 
             $queryBuilder = $this->entityManager->createQueryBuilder();
             $expression = $this->entityManager->getExpressionBuilder();
@@ -236,9 +240,16 @@ class ExperimentalRunDataTable extends AbstractController
                 $results = $queryBuilder->getQuery()->getResult();
 
                 foreach ($results as $result) {
-                    $substanceLot = new SubstanceLot($result, $result->getLots()->first());
-                    $entityChoices[(string)$substanceLot] = $substanceLot->getLot()->getId()->toRfc4122();
+                    foreach ($result->getLots() as $lot) {
+                        $substanceLot = new SubstanceLot($result, $lot);
+                        $lotEntityChoices[(string)$substanceLot] = $substanceLot->getLot()->getId()->toRfc4122();
+                    }
+
+                    $substanceEntityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
                 }
+
+                $choices[$entityFormRow->getFieldName() . "_lot"] = $lotEntityChoices;
+                $choices[$entityFormRow->getFieldName() . "_substance"] = $substanceEntityChoices;
             } else {
                 $entityType = $entityType[0];
 
@@ -255,11 +266,11 @@ class ExperimentalRunDataTable extends AbstractController
                 $results = $queryBuilder->getQuery()->getResult();
 
                 foreach ($results as $result) {
-                    $entityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
+                    $lotEntityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
                 }
-            }
 
-            $choices[$entityFormRow->getFieldName()] = $entityChoices;
+                $choices[$entityFormRow->getFieldName()] = $lotEntityChoices;
+            }
         }
 
         return [

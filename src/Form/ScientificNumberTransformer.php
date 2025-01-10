@@ -22,6 +22,8 @@ class ScientificNumberTransformer implements DataTransformerInterface
     {
         if ($value === null) {
             return null;
+        } elseif (is_string($value)) {
+            return $value;
         } elseif (is_nan($value)) {
             return $this->nan_value;
         } elseif (is_infinite($value)) {

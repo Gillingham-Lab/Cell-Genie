@@ -195,3 +195,20 @@
     {{ form_widget(form.entity) }}
     {{ form_widget(form.linkedEntity) }}
 {% endblock %}
+
+{% block number_search_row %}
+    <div class="mb-3">
+        <label class="form-label">{{ form.vars.label }}</label>
+
+        <div class="input-group">
+            <div class="input-group-text">{{ form.min.vars.label }}</div>
+            {{ form_widget(form.min) }}
+
+            <div class="input-group-text">{{ form.max.vars.label }}</div>
+            {{ form_widget(form.max) }}
+
+            <div class="input-group-text">{{ form.type.vars.label }}</div>
+            {{ form_widget(form.type) }}
+        </div>
+    </div>
+{% endblock %}
