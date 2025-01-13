@@ -5,10 +5,12 @@ namespace App\Repository\Instrument;
 
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\User\User;
+use App\Genie\Enums\InstrumentRole;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Instrument>
  * @method Instrument|null findOneBy(array $criteria, array $orderBy = null)
  * @method Instrument[]    findAll()
  * @method Instrument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
@@ -34,11 +36,14 @@ class InstrumentRepository extends ServiceEntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
-    public function findAllWithUserRole(User $user)
+    /**
+     * @return Instrument[]
+     */
+    public function findAllWithUserRole(User $user): array
     {
         $instruments = $this->createQueryBuilder("i")
             ->select("i as instrument")
-            ->addSelect("CASE WHEN(iu.role is null) THEN 'untrained' ELSE iu.role END AS role")
+            ->addSelect("CASE WHEN(iu.role is null) THEN :untrained ELSE iu.role END AS role")
             ->addSelect("iu2")
             ->leftJoin("i.users", "iu", conditionType: "WITH", condition: "iu.user = :user")
             ->leftJoin("i.users", "iu2")
@@ -46,6 +51,7 @@ class InstrumentRepository extends ServiceEntityRepository
             ->where("u.isActive = TRUE")
             ->orWhere("iu.role IS NULL")
             ->setParameter("user", $user->getId()->toRfc4122())
+            ->setParameter("untrained", InstrumentRole::Untrained->value)
         ;
 
         return $instruments->getQuery()->getResult();
