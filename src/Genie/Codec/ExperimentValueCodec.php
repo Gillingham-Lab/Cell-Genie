@@ -5,6 +5,7 @@ namespace App\Genie\Codec;
 
 use App\Genie\Enums\DatumEnum;
 use App\Service\Doctrine\Type\Ulid;
+use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use InvalidArgumentException;
 use Symfony\Component\Uid\AbstractUid;
@@ -63,6 +64,8 @@ class ExperimentValueCodec
 
     public function encode(mixed $value): string
     {
+        $value = $this->normalize($value, $this->type);
+
         $encodedValue = match($this->type) {
             DatumEnum::Int, DatumEnum::Int64 => pack("J", $value),
             DatumEnum::Int32, DatumEnum::UInt32 => pack("N", $value),
