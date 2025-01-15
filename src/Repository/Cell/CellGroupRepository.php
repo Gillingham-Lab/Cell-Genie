@@ -5,23 +5,21 @@ namespace App\Repository\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Repository\Traits\SearchTermTrait;
+use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method CellGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method CellGroup|null findOneBy(array $criteria, array $orderBy = null)
- * @method CellGroup[]    findAll()
- * @method CellGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<CellGroup>
  */
 class CellGroupRepository extends ServiceEntityRepository
 {
-    use SearchTermTrait;
-
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SearchService $searchService,
+    ) {
         parent::__construct($registry, CellGroup::class);
     }
 
@@ -50,7 +48,11 @@ class CellGroupRepository extends ServiceEntityRepository
             ->addGroupBy("ca");
     }
 
-    public function getGroupsWithCellsAndAliquots(?array $orderBy = null)
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @return CellGroup[]
+     */
+    public function getGroupsWithCellsAndAliquots(?array $orderBy = null): array
     {
         $qb = $this->getBaseQuery();
 
@@ -63,9 +65,13 @@ class CellGroupRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function searchGroupsWithCellsAndAliquots(string $searchTerm, ?array $orderBy = null)
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @return CellGroup[]
+     */
+    public function searchGroupsWithCellsAndAliquots(string $searchTerm, ?array $orderBy = null): array
     {
-        $searchTerm = $this->prepareSearchTerm($searchTerm);
+        $searchTerm = $this->searchService->parse($searchTerm);
 
         $qb = $this->getBaseQuery()
             ->orWhere("LOWER(cg.number) LIKE :searchTerm")
