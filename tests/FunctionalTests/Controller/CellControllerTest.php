@@ -395,4 +395,58 @@ class CellControllerTest extends WebTestCase
         $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
         $this->assertNull($aliquot);
     }
+
+    public function testCellCulturesAsAnonymousUserForwardsToLogin(): void
+    {
+        $client = self::createClient();
+
+        $crawler = $client->request("GET", "/cells/cultures");
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects("/login");
+    }
+
+    public function testCellCultures(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $crawler = $client->request("GET", "/cells/cultures");
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testAccessingCellCulturesAfterConsumingAliquot(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
+        $crawler = $client->request("GET", "/cells/consume/{$aliquot->getId()}");
+
+        // Make sure we have a redirect
+        $this->assertResponseStatusCodeSame(302);
+        $redirectTo = $client->getResponse()->headers->get("Location");
+        $this->assertStringStartsWith("/cells/cultures/edit", $redirectTo);
+        $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertStringContainsString("HEK293", $client->getCrawler()->filter("h1")->html());
+
+        $form = $client->getCrawler()->filter("form")->form();
+        $form->setValues([
+            "cell_culture[number]" => "CCL001",
+        ]);
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(302);
+
+        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+
+        $crawler = $client->request("GET", "/cells/cultures");
+
+        $this->assertStringContainsString('"cultureName": "CCL001 (CL002 | HEK293)"', $client->getResponse()->getContent());
+
+        $this->assertResponseStatusCodeSame(200);
+    }
 }
