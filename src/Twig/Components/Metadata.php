@@ -11,14 +11,21 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent]
 class Metadata
 {
+    /**
+     * @var array<string, mixed>
+     */
     public array $data = [];
 
     public int $columns = 1;
     public int $md = 2;
     public int $xl = 4;
 
+    /**
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
     #[PreMount]
-    public function preMount(array $attributes)
+    public function preMount(array $attributes): array
     {
         $cleanedAttributes = $attributes;
         $cleanedAttributes["data"] = [];

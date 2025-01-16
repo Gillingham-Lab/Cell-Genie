@@ -201,6 +201,10 @@ class Rack implements PrivacyAwareInterface
         return $this->ulidTree;
     }
 
+    /**
+     * @param string[] $ulidTree
+     * @return $this
+     */
     public function setUlidTree(array $ulidTree): self
     {
         $this->ulidTree = $ulidTree;
@@ -208,13 +212,17 @@ class Rack implements PrivacyAwareInterface
     }
 
     /**
-     * @return array<string>
+     * @return string[]
      */
     public function getNameTree(): array
     {
         return $this->nameTree;
     }
 
+    /**
+     * @param string[] $nameTree
+     * @return $this
+     */
     public function setNameTree(array $nameTree): self
     {
         $this->nameTree = $nameTree;

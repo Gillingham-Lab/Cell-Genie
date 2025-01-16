@@ -12,20 +12,23 @@ use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<self::NEW|self::ATTR_*, Instrument|array{0: Instrument, 1: Log}>
+ */
 class InstrumentVoter extends Voter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const NEW = "new";
-    const BOOK = "book";
-    const TRAIN = "train";
-    const LOG_NEW = "log_new";
-    const LOG_EDIT = "log_edit";
-    const LOG_REMOVE = "log_remove";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string NEW = "new";
+    const string ATTR_BOOK = "book";
+    const string ATTR_TRAIN = "train";
+    const string ATTR_LOG_NEW = "log_new";
+    const string ATTR_LOG_EDIT = "log_edit";
+    const string ATTR_LOG_REMOVE = "log_remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::TRAIN, self::BOOK, self::LOG_NEW, self::LOG_EDIT, self::LOG_REMOVE])) {
+        if (!in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::NEW, self::ATTR_TRAIN, self::ATTR_BOOK, self::ATTR_LOG_NEW, self::ATTR_LOG_EDIT, self::ATTR_LOG_REMOVE])) {
             return false;
         }
 
@@ -40,13 +43,19 @@ class InstrumentVoter extends Voter
         return false;
     }
 
+    /**
+     * @param self::NEW|self::ATTR_* $attribute
+     * @param Instrument|array{0: Instrument, 1: Log} $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
         // If the attribute is not VIEW, the user is always instanceof User
         if (!$user instanceof User) {
-            if ($attribute !== self::VIEW) {
+            if ($attribute !== self::ATTR_VIEW) {
                 return false;
             } else {
                 return true;
@@ -61,19 +70,17 @@ class InstrumentVoter extends Voter
         if (is_array($subject)) {
             [$instrument, $log] = $subject;
         } else {
-            /** @var Instrument $instrument */
             $instrument = $subject;
-            /** @var Log $log */
             $log = null;
         }
 
         return match ($attribute) {
-            self::VIEW => $this->canView($instrument, $user),
-            self::EDIT, self::TRAIN => $this->canEdit($instrument, $user),
+            self::ATTR_VIEW => $this->canView($instrument, $user),
+            self::ATTR_EDIT, self::ATTR_TRAIN => $this->canEdit($instrument, $user),
             self::NEW => $this->canCreate($instrument, $user),
-            self::BOOK => $this->canBook($instrument, $user),
-            self::LOG_NEW => $this->canChange($instrument, $user),
-            self::LOG_REMOVE, self::LOG_EDIT => $this->canEditLogs($instrument, $log, $user),
+            self::ATTR_BOOK => $this->canBook($instrument, $user),
+            self::ATTR_LOG_NEW => $this->canChange($instrument, $user),
+            self::ATTR_LOG_REMOVE, self::ATTR_LOG_EDIT => $this->canEditLogs($instrument, $log, $user),
             default => false,
         };
     }

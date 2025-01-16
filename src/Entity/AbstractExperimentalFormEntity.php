@@ -5,10 +5,17 @@ namespace App\Entity;
 
 class AbstractExperimentalFormEntity
 {
+    /** @var array<string, ExperimentalCondition> */
     protected array $conditions = [];
+
+    /** @var array<string, mixed> */
     protected array $condition_data = [];
 
+    /** @var array<string, ExperimentalMeasurement> */
+
     protected array $measurements = [];
+
+    /** @var array<string, mixed> */
     protected array $measurement_data = [];
 
     protected function initConditionProperties(Experiment $experiment, bool $useGeneral = true): void

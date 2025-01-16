@@ -6,8 +6,12 @@ namespace App\Repository\Instrument;
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\InstrumentUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<InstrumentUser>
+ */
 class InstrumentUserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -15,7 +19,11 @@ class InstrumentUserRepository extends ServiceEntityRepository
         parent::__construct($registry, InstrumentUser::class);
     }
 
-    public function findAllInstrumentUsers(Instrument $instrument)
+    /**
+     * @param Instrument $instrument
+     * @return InstrumentUser[]
+     */
+    public function findAllInstrumentUsers(Instrument $instrument): array
     {
         $qb = $this->createQueryBuilder("iu")
             ->select("iu")

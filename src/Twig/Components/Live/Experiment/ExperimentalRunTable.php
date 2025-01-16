@@ -21,10 +21,14 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+/**
+ * @phpstan-import-type ArrayTableShape from Table
+ */
 #[AsLiveComponent]
 class ExperimentalRunTable extends AbstractController
 {
     use DefaultActionTrait;
+    /** @use PaginatedRepositoryTrait<ExperimentalRun> */
     use PaginatedRepositoryTrait;
 
     #[LiveProp]
@@ -37,6 +41,10 @@ class ExperimentalRunTable extends AbstractController
         $this->setPaginatedOrderBy(["createdAt" => "DESC"]);
     }
 
+    /**
+     * @return ArrayTableShape
+     * @throws \Exception
+     */
     public function getTable(): array
     {
         $paginatedRuns = $this->getPaginatedResults(searchFields: ["design" => $this->design->getId()->toRfc4122()]);

@@ -5,6 +5,7 @@ namespace App\Form\User;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\DoctrineEntity\User\UserGroup;
+use App\Entity\Interface\PrivacyAwareInterface;
 use App\Genie\Enums\PrivacyLevel;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -14,6 +15,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * @extends AbstractType<PrivacyAwareInterface>
+ */
 class PrivacyAwareType extends AbstractType
 {
     public function __construct(

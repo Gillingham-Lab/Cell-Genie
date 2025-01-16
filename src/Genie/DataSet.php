@@ -9,6 +9,7 @@ use App\Entity\ExperimentalMeasurement;
 use App\Entity\ExperimentalRun;
 use App\Entity\ExperimentalRunWell;
 use App\Service\Doctrine\Type\Ulid;
+use Doctrine\Common\Collections\Collection;
 
 class DataSet
 {
@@ -46,6 +47,9 @@ class DataSet
         }
     }
 
+    /**
+     * @return string[]
+     */
     protected function makeTableHeader(bool $includeRunDate = false): array
     {
         $h = ["Nr", "Name", "ESTD"];
@@ -73,6 +77,9 @@ class DataSet
         return $h;
     }
 
+    /**
+     * @return array<string|string[]>
+     */
     public function allToArray(bool $header = true, bool $normalise = false, bool $comments = true, bool $includeRunDate = true): array
     {
         if ($comments) {
@@ -101,6 +108,9 @@ class DataSet
         return $table;
     }
 
+    /**
+     * @return array<string|string[]>
+     */
     public function runToArray(
         ExperimentalRun $experimentalRun,
         bool $header = false,
@@ -130,7 +140,6 @@ class DataSet
             $table[] = $this->makeTableHeader($includeRunDate);
         }
 
-        /** @var array<int, ExperimentalRunWell> $wells */
         $wells = $experimentalRun->getWells();
         $runData = $experimentalRun->getData();
 

@@ -16,7 +16,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class CellControllerTest extends WebTestCase
 {
-
     public function testCellBrowseRouteForAllCells(): void
     {
         $client = self::createClient();

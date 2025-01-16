@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalMeasurement;
 use App\Entity\InputType;
@@ -22,8 +23,16 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * @deprecated Old-style Experiment
+ * @template TData
+ * @extends AbstractType<TData>
+ */
 class ExperimentRunBaseType extends AbstractType
 {
+    /**
+     * @param SubstanceRepository<Substance> $substanceRepository
+     */
     public function __construct(
         protected ChemicalRepository  $chemicalRepository,
         protected ProteinRepository $proteinRepository,
@@ -32,6 +41,11 @@ class ExperimentRunBaseType extends AbstractType
     ) {
     }
 
+    /**
+     * @param FormBuilderInterface<TData> $formBuilder
+     * @param InputType $inputType
+     * @return void
+     */
     protected function addInputTypeToForm(FormBuilderInterface $formBuilder, InputType $inputType): void
     {
         $type = match ($inputType->getType()) {

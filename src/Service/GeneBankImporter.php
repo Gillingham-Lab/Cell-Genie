@@ -19,6 +19,7 @@ class GeneBankImporter
 
     }
     /**
+     * @param Collection<int, File> $files
      * @throws ImportError
      */
     public function addSequenceAnnotations(

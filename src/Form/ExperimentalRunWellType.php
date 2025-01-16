@@ -10,6 +10,7 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Experiment;
 use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalMeasurement;
+use App\Entity\ExperimentalRunFormEntity;
 use App\Entity\ExperimentalRunWellFormEntity;
 use App\Entity\InputType;
 use App\Repository\LotRepository;
@@ -26,6 +27,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated Old-style Experiment
+ * @extends ExperimentRunBaseType<ExperimentalRunFormEntity>
+ */
 class ExperimentalRunWellType extends ExperimentRunBaseType
 {
 

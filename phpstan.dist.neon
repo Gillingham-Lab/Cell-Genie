@@ -1,15 +1,19 @@
 parameters:
+    treatPhpDocTypesAsCertain: false
     level: 6
     paths:
         - bin/
         - config/
         - public/
         - src/
-        - tests/
     doctrine:
         objectManagerLoader: tests/object-manager.php
+        allowNullablePropertyForRequiredField: true
+        literalString: true
     ignoreErrors:
-        - '#type mapping mismatch: property can contain .+\|null but database expects .+#'
+        -
+            message: '#Parameter \#. \$.+ of method .+#'
+            path: src/Form/*
     excludePaths:
         - src/Entity/Experiment.php
         - src/Entity/Experimental*

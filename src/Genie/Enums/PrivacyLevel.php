@@ -9,7 +9,7 @@ enum PrivacyLevel: int
     case Group = 1;
     case Public = 2;
 
-    public function label()
+    public function label(): string
     {
         return match($this) {
             self::Public => "Public readable, group writeable",

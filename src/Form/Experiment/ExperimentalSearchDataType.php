@@ -21,6 +21,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * @extends AbstractType<array>
+ */
 class ExperimentalSearchDataType extends AbstractType
 {
     public function __construct(
@@ -29,15 +32,23 @@ class ExperimentalSearchDataType extends AbstractType
 
     }
 
-    public static function serialize(SerializerInterface $serializer, $data)
+    /**
+     * @param array{fields: Collection<int, FormRow>|array<int, FormRow>, fieldChoices: array<string, string[]>} $data
+     * @return array{fields: array<int, string>, fieldChoices: array<string, string[]>}
+     */
+    public static function serialize(SerializerInterface $serializer, array $data): array
     {
         return [
-            "fields" => array_map(fn ($elm) => $serializer->serialize($elm, "json"), $data["fields"]->toArray()),
+            "fields" => array_map(fn ($elm) => $serializer->serialize($elm, "json"), is_array($data["fields"]) ? $data["fields"] : $data["fields"]->toArray()),
             "fieldChoices" => $data["fieldChoices"],
         ];
     }
 
-    public static function deserialize(SerializerInterface $serializer, $data)
+    /**
+     * @param array{fields: array<int, string>, fieldChoices: array<string, string[]>} $data
+     * @return array{fields: Collection<int, FormRow>, fieldChoices: array<string, string[]>}
+     */
+    public static function deserialize(SerializerInterface $serializer, array $data): array
     {
         return [
             "fields" => new ArrayCollection(array_map(fn($elm) => $serializer->deserialize($elm, FormRow::class, format: "json"), $data["fields"])),
@@ -56,6 +67,10 @@ class ExperimentalSearchDataType extends AbstractType
         $resolver->setAllowedTypes("fieldChoices", "array");
     }
 
+    /**
+     * @param FormBuilderInterface<array<string, mixed>> $builder
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $innerForm = $builder->create("search", FormType::class);

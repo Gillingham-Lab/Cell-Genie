@@ -15,6 +15,7 @@ use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -23,17 +24,23 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Range;
-use Symfony\UX\Cropperjs\Form\CropperType;
 
 class ExperimentalDataFormRowService
 {
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {}
 
+    /**
+     * @template TData
+     * @param FormBuilderInterface<TData> $builder
+     * @param string $outerFormName
+     * @param ExperimentalDesignField ...$designFields
+     * @return FormBuilderInterface<TData>
+     */
     public function createBuilder(
         FormBuilderInterface $builder,
         string $outerFormName,
@@ -45,7 +52,7 @@ class ExperimentalDataFormRowService
             "required" => false,
         ]);
 
-        $map = $this->addFields($dataField, $designFields);
+        $map = $this->addFields($dataField, ... $designFields);
 
         $builder->add($dataField);
 
@@ -54,6 +61,11 @@ class ExperimentalDataFormRowService
         return $dataField;
     }
 
+    /**
+     * @param FormBuilderInterface<mixed> $builder
+     * @param string $outerFormName
+     * @param array<string, DatumEnum> $mappedFields
+     */
     public function addDataTransformer(FormBuilderInterface $builder, string $outerFormName, array $mappedFields): void
     {
         $dataField = $builder->get($outerFormName);
@@ -63,6 +75,10 @@ class ExperimentalDataFormRowService
         ));
     }
 
+    /**
+     * @param null|iterable<ExperimentalDatum<DatumEnum>> $modelData
+     * @return array<string, mixed>
+     */
     public function normalize(?iterable $modelData): array
     {
         if ($modelData === null) {
@@ -70,9 +86,9 @@ class ExperimentalDataFormRowService
         }
 
         $normData = [];
-        /** @var ExperimentalDatum $datum */
         foreach ($modelData as $datum) {
             if ($datum->getType() === DatumEnum::EntityReference) {
+                /** @var class-string $class */
                 [$id, $class] = $datum->getValue();
 
                 $instance = $this->entityManager->getRepository($class)->find($id);
@@ -88,7 +104,12 @@ class ExperimentalDataFormRowService
         return $normData;
     }
 
-    public function transformToModel($normData, $mappedFields): array
+    /**
+     * @param array<string, mixed> $normData
+     * @param array<string, DatumEnum> $mappedFields
+     * @return list<ExperimentalDatum<DatumEnum>>
+     */
+    public function transformToModel(array $normData, array $mappedFields): array
     {
         $modelData = [];
         foreach ($normData as $fieldName => $fieldValue) {
@@ -112,11 +133,10 @@ class ExperimentalDataFormRowService
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param ExperimentalDesignField[] $fields
+     * @param FormBuilderInterface<mixed> $builder
      * @return array<string, DatumEnum>
      */
-    public function addFields(FormBuilderInterface $builder, array $fields): array
+    public function addFields(FormBuilderInterface $builder, ExperimentalDesignField ... $fields): array
     {
         $mappedFields = [];
         foreach ($fields as $field) {
@@ -127,6 +147,10 @@ class ExperimentalDataFormRowService
         return $mappedFields;
     }
 
+    /**
+     * @param FormBuilderInterface<mixed> $builder
+     * @return DatumEnum
+     */
     public function addField(FormBuilderInterface $builder, ExperimentalDesignField $field): DatumEnum
     {
         $fieldRow = $field->getFormRow();
@@ -144,8 +168,7 @@ class ExperimentalDataFormRowService
     }
 
     /**
-     * @param FormRow $row
-     * @return array{0: string, 1: array, 2: DatumEnum}
+     * @return array{class-string<AbstractType<mixed>>, array<string, mixed>, DatumEnum}
      */
     public function getFieldConfiguration(FormRow $row): array
     {
@@ -161,7 +184,10 @@ class ExperimentalDataFormRowService
         };
     }
 
-    public function getTextTypeConfig(FormRow $row) {
+    /**
+     * @return array{class-string<TextType>, array{constraints: Constraint[]}, DatumEnum::String}
+     */
+    public function getTextTypeConfig(FormRow $row): array {
         $fieldConfig = [];
         $configuration = $row->getConfiguration();
 
@@ -183,10 +209,13 @@ class ExperimentalDataFormRowService
             DatumEnum::String,
         ];
     }
-
+    /**
+     * @return array{class-string<TextareaType>, array{constraints: Constraint[]}, DatumEnum::String}
+     */
     public function getTextAreaTypeConfig(FormRow $formRow): array
     {
         [$fieldType, $fieldConfig, $datumType] = $this->getTextTypeConfig($formRow);
+
         return [
             TextareaType::class,
             $fieldConfig,
@@ -194,6 +223,9 @@ class ExperimentalDataFormRowService
         ];
     }
 
+    /**
+     * @return array{class-string<IntegerType>, array{constraints: Constraint[]}, DatumEnum::UInt*|DatumEnum::Int*}
+     */
     public function getIntegerTypeConfig(FormRow $row): array
     {
         $fieldConfig = [];
@@ -236,6 +268,9 @@ class ExperimentalDataFormRowService
         ];
     }
 
+    /**
+     * @return array{class-string<ScientificNumberType>, array<string, mixed>, DatumEnum::Float*}
+     */
     public function getFloatTypeConfig(FormRow $row): array
     {
         $fieldConfig = [];
@@ -271,6 +306,9 @@ class ExperimentalDataFormRowService
         ];
     }
 
+    /**
+     * @return array{class-string<DateType>, array<string, mixed>, DatumEnum::Date}
+     */
     public function getDateTypeConfig(FormRow $formRow): array
     {
         $fieldConfig = [
@@ -283,7 +321,9 @@ class ExperimentalDataFormRowService
             DatumEnum::Date,
         ];
     }
-
+    /**
+     * @return array{class-string<EntityType|ChoiceType>, array<string, mixed>, DatumEnum::EntityReference}
+     */
     public function getEntityTypeConfig(FormRow $formRow): array
     {
         $configuration = $formRow->getConfiguration();
@@ -342,6 +382,9 @@ class ExperimentalDataFormRowService
         ];
     }
 
+    /**
+     * @return array{class-string<CropImageType>, array<string, mixed>, DatumEnum::Image}
+     */
     public function getImageTypeConfig(FormRow $formRow): array
     {
         $fieldConfig = [];

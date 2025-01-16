@@ -60,6 +60,7 @@ class ConsumableCategory implements PrivacyAwareInterface
         $this->consumables = new ArrayCollection();
     }
 
+    /** @return Collection<int, Consumable>  */
     public function getConsumables(): Collection
     {
         return $this->consumables;

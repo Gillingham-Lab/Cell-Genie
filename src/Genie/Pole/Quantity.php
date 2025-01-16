@@ -31,7 +31,7 @@ class Quantity
         return $this->unit;
     }
 
-    public function isUnit(string $unitClass)
+    public function isUnit(string $unitClass): bool
     {
         return $this->unit::class === $unitClass;
     }

@@ -25,7 +25,7 @@ class BoxCoordinate
         $this->col = $colNumber;
     }
 
-    private function stringCoordinateToNumber($stringCoordinate): int
+    private function stringCoordinateToNumber(string $stringCoordinate): int
     {
         $length = strlen($stringCoordinate);
         $number = 0;
@@ -44,6 +44,7 @@ class BoxCoordinate
         return $this->coordinate;
     }
 
+    /** @return array{int, int} */
     public function getIntCoordinates(): array
     {
         return [$this->row, $this->col];

@@ -32,11 +32,11 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Uid\Uuid;
 
-class ExperimentalDataService
+readonly class ExperimentalDataService
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly SearchService $searchService,
+        private EntityManagerInterface $entityManager,
+        private SearchService $searchService,
     ) {
 
     }
@@ -64,7 +64,10 @@ class ExperimentalDataService
             ;
     }
 
-    public function getFields(ExperimentalDesign $design, $onlyExposed = true): Collection
+    /**
+     * @return Collection<int, ExperimentalDesignField>
+     */
+    public function getFields(ExperimentalDesign $design, bool $onlyExposed = true): Collection
     {
         if ($onlyExposed) {
             if (method_exists($design->getFields(), "isInitialized") && $design->getFields()->isInitialized() === false) {
@@ -79,6 +82,10 @@ class ExperimentalDataService
         return $fields;
     }
 
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, mixed> $searchFields
+     */
     private function getResults(
         ?array $orderBy = null,
         array $searchFields = [],
@@ -97,6 +104,11 @@ class ExperimentalDataService
         return $queryBuilder;
     }
 
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, mixed> $searchFields
+     * @return mixed[]
+     */
     public function getPaginatedResults(
         ?array $orderBy = null,
         array $searchFields = [],
@@ -165,7 +177,7 @@ class ExperimentalDataService
      *
      * @param Collection<int, ExperimentalRunCondition> $conditions
      * @param ExperimentalDesign $design
-     * @return array{str: array{str: true|string|object}}
+     * @return array<class-string<object>, array{str: true|string|object}>
      */
     public function getListOfEntitiesToFetch(iterable $conditions, ExperimentalDesign $design): array
     {
@@ -227,9 +239,8 @@ class ExperimentalDataService
     /**
      * Fetches a list of entities by trying to get their repository and writes the fetched entities back into the original array.
      *
-     *
-     * @param array<class-name, array{str: true|string|object}> $entitiesToFetch
-     * @return array<class-name, array{str: object}>
+     * @param array<class-string<object>, array{str: true|string|object}> $entitiesToFetch
+     * @return array<class-string<object>, array{str: object}>
      */
     public function fetchEntitiesFromList(array $entitiesToFetch): array
     {
@@ -294,7 +305,7 @@ class ExperimentalDataService
         $data = [];
 
         $pushColumn = function (Collection $data, &$row) use ($entitiesToFetch, $design) {
-            /** @var ExperimentalDatum $datum */
+            /** @var ExperimentalDatum<DatumEnum> $datum */
             foreach ($data as $datum) {
                 $field = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $datum->getName())->first();
 
@@ -360,6 +371,11 @@ class ExperimentalDataService
         return $data;
     }
 
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, mixed> $searchFields
+     * @return int<0, max>
+     */
     public function getPaginatedResultCount(
         ?array $orderBy = [],
         array $searchFields = [],
@@ -368,6 +384,12 @@ class ExperimentalDataService
         return (new Paginator($this->getResults($orderBy, $searchFields, $design)))->count();
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array<string, mixed> $searchFields
+     * @param ExperimentalDesign|null $design
+     * @return QueryBuilder
+     */
     private function addSearchFields(
         QueryBuilder $queryBuilder,
         array $searchFields = [],
@@ -381,12 +403,7 @@ class ExperimentalDataService
             default => $this->addVariableSearchField($queryBuilder, $searchField, $searchValue, $design)
         });
 
-        // Remove null elements
-        $expressions = array_filter($expressions, fn($x) => $x !== null);
-
-        $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
-
-        return $queryBuilder;
+        return $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
     }
 
     private function addVariableSearchField(QueryBuilder $queryBuilder, string $searchField, mixed $searchValue, ExperimentalDesign $design): ?Func
@@ -470,13 +487,10 @@ class ExperimentalDataService
             // Normalize search value and encode
             $transformer = new NumberSearchTransformer();
             $codec = new ExperimentValueCodec($datumType);
-            dump($searchValue);
 
             $searchValue = $transformer->transform($searchValue);
             $searchQuery = $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName);
             $queryBuilder->setParameter($nameParamName, $searchField);
-
-            dump($searchValue);
 
             // Determine the sign
             $minSign = $searchValue["type"][0] == "1" ? ">=" : ">";
@@ -524,7 +538,12 @@ class ExperimentalDataService
         return $queryBuilder;
     }
 
-    public function convertFloatToString($value, FormRow $formRow): string
+    /**
+     * @param mixed $value
+     * @param FormRow $formRow
+     * @return ($value is float ? string : "NAN")
+     */
+    public function convertFloatToString(mixed $value, FormRow $formRow): string
     {
         $configuration = $formRow->getConfiguration();
 

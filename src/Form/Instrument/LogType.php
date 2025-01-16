@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SaveableType<Log>
+ */
 class LogType extends SaveableType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

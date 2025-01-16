@@ -4,23 +4,26 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\DoctrineEntity\Resource;
+use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Resource|null find($id, $lockMode = null, $lockVersion = null)
- * @method Resource|null findOneBy(array $criteria, array $orderBy = null)
- * @method Resource[]    findAll()
- * @method Resource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Resource>
  */
 class ResourceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SearchService $searchService,
+    ) {
         parent::__construct($registry, Resource::class);
     }
 
-    public function findCategories($searchTerm = null)
+    /**
+     * @return array<int, array{category: string}>
+     */
+    public function findCategories(?string $searchTerm = null): array
     {
         $qb = $this->createQueryBuilder("r")
             ->distinct(true)
@@ -28,29 +31,10 @@ class ResourceRepository extends ServiceEntityRepository
             ->groupBy("r.category")
             ->orderBy("r.category");
 
-        if ($searchTerm) {
-            $prefix = "%";
-            $suffix = "%";
-            if (str_starts_with($searchTerm, "^")) {
-                $prefix = "";
-                $searchTerm = substr($searchTerm, 1);
-            }
-
-            if (str_ends_with($searchTerm, "$")) {
-                $suffix = "";
-                $searchTerm = substr($searchTerm, 0, -1);
-            }
-
-            $searchTerm = $prefix . $searchTerm . $suffix;
-
-            var_dump($searchTerm);
-
-            $qb = $qb
-                ->where("r.category LIKE :search")
-                ->setParameter("search", $searchTerm);
+        if ($searchTerm !== null) {
+            $qb = $qb->where($this->searchService->searchWith($qb, "r.category", "string", $searchTerm));
         }
 
-        $result = $qb->getQuery()->getScalarResult();
-        return $result;
+        return $qb->getQuery()->getScalarResult();
     }
 }

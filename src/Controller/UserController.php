@@ -131,7 +131,7 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         #[CurrentUser]
         User $user,
-    ) {
+    ): Response {
         $data = $user->getSettings() ?? new ParamBag();
         $form = $this->createForm(UserSettingsType::class, $data);
         $form->handleRequest($request);

@@ -9,10 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ExperimentalRun|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExperimentalRun|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExperimentalRun[]    findAll()
- * @method ExperimentalRun[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<ExperimentalRun>
  */
 class ExperimentalRunRepository extends ServiceEntityRepository
 {
@@ -21,7 +18,10 @@ class ExperimentalRunRepository extends ServiceEntityRepository
         parent::__construct($registry, ExperimentalRun::class);
     }
 
-    public function findByOwner(User $owner)
+    /**
+     * @return ExperimentalRun[]
+     */
+    public function findByOwner(User $owner): array
     {
         return $this->createQueryBuilder("e")
             ->andWhere("e.owner = :owner")
@@ -33,7 +33,10 @@ class ExperimentalRunRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findNotByOwner(User $owner)
+    /**
+     * @return ExperimentalRun[]
+     */
+    public function findNotByOwner(User $owner): array
     {
         return $this->createQueryBuilder("e")
             ->andWhere("e.owner != :owner")

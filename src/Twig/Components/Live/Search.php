@@ -30,9 +30,11 @@ class Search extends AbstractController
     #[LiveProp]
     public string $formType;
 
+    /** @var null|array<string, mixed> */
     #[LiveProp]
     public ?array $formData = null;
 
+    /** @var array<string, mixed> */
     #[LiveProp(hydrateWith: "hydrateFormOptions", dehydrateWith: "dehydrateFormOptions")]
     ##[Ignore]
     public array $formOptions = [];
@@ -51,7 +53,11 @@ class Search extends AbstractController
 
     }
 
-    public function hydrateFormOptions(array $data)
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function hydrateFormOptions(array $data): array
     {
         if (method_exists($this->formType, "deserialize")) {
             return $this->formType::deserialize($this->serializer, $data);
@@ -60,7 +66,11 @@ class Search extends AbstractController
         }
     }
 
-    public function dehydrateFormOptions(array $data)
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function dehydrateFormOptions(array $data): array
     {
         if (method_exists($this->formType, "serialize")) {
             return $this->formType::serialize($this->serializer, $data);
@@ -69,6 +79,9 @@ class Search extends AbstractController
         }
     }
 
+    /**
+     * @return FormInterface<mixed>
+     */
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(
@@ -78,18 +91,23 @@ class Search extends AbstractController
         );
     }
 
+    /**
+     * @param array<string, mixed> $properties
+     * @return array<string, mixed>
+     */
     #[PreMount]
-    public function fillRememberedData($properties): array
+    public function fillRememberedData(array $properties): array
     {
         return $properties;
     }
 
     /**
      * Submits the form and emits the search results.
+     *
      * @return void
      */
     #[LiveAction]
-    public function save()
+    public function save(): void
     {
         $this->submitForm();
 
@@ -127,13 +145,13 @@ class Search extends AbstractController
      * @return void
      */
     #[LiveAction]
-    public function remember()
+    public function remember(): void
     {
 
     }
 
     #[LiveAction]
-    public function reset()
+    public function reset(): void
     {
         $this->formData = [];
         $this->resetForm();

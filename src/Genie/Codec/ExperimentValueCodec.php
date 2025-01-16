@@ -14,58 +14,62 @@ use Symfony\Component\Uid\Uuid;
 /**
  * Encodes values into binary data and decoded binary data into values.
  * Value type must be set by using DatumEnum.
+ * @template TType of DatumEnum
  */
-class ExperimentValueCodec
+readonly class ExperimentValueCodec
 {
     public function __construct(
+        /** @var TType */
         private DatumEnum $type
     ) {
     }
 
-    public function normalize(mixed $value, DatumEnum $type): mixed
+    public function normalizeUuidDatum(string|AbstractUid $value): string
     {
-        if ($this->type === DatumEnum::Uuid) {
-            if ($value instanceof AbstractUid) {
-                $value = $value->toBinary();
-            } else {
-                $value = Uuid::fromString($value)->toBinary();
-            }
-        } elseif ($this->type === DatumEnum::EntityReference) {
-            // Check if id method exists
-            if (method_exists($value, "getUlid")) {
-                $id = $value->getUlid();
-            } elseif (method_exists($value, "getId")) {
-                $id = $value->getId();
-            } else {
-                dump($value);
-                throw new InvalidArgumentException("A value for entityReference must have an getId / getUlid method");
-            }
-
-            // Convert ID to binary. Uud is 16 Bytes.
-            if ($id instanceof AbstractUid) {
-                $normalizedValue = $id->toBinary();
-            } elseif (is_int($id)) {
-                // If the ID is numeric, we pack first 8 bytes of 0, then the ID
-                $normalizedValue = pack("P", 0) . pack("P", $id);
-            } else {
-                $type = get_debug_type($id);
-                throw new InvalidArgumentException("The ID of the entity must either be an uid or an number, {$type} given.");
-            }
-
-            // Finally, we add the FQCN
-            $className = ClassUtils::getClass($value);
-            $value = $normalizedValue . $className;
-        } elseif ($this->type === DatumEnum::Date) {
-            $value = $value->getTimestamp();
+        if ($value instanceof AbstractUid) {
+            $value = $value->toBinary();
+        } else {
+            $value = Uuid::fromString($value)->toBinary();
         }
 
         return $value;
     }
 
+    public function normalizeEntityDatum(object $value): string
+    {
+        // Check if id method exists
+        if (method_exists($value, "getUlid")) {
+            $id = $value->getUlid();
+        } elseif (method_exists($value, "getId")) {
+            $id = $value->getId();
+        } else {
+            dump($value);
+            throw new InvalidArgumentException("A value for entityReference must have an getId / getUlid method");
+        }
+
+        // Convert ID to binary. Uuid is 16 Bytes.
+        if ($id instanceof AbstractUid) {
+            $normalizedValue = $id->toBinary();
+        } elseif (is_int($id)) {
+            // If the ID is numeric, we pack first 8 bytes of 0, then the ID
+            $normalizedValue = pack("P", 0) . pack("P", $id);
+        } else {
+            $type = get_debug_type($id);
+            throw new InvalidArgumentException("The ID of the entity must either be an uid or an number, {$type} given.");
+        }
+
+        // Finally, we add the FQCN
+        $className = ClassUtils::getClass($value);
+        return $normalizedValue . $className;
+    }
+
+    public function normalizeDateDatum(DateTime $value): int
+    {
+        return $value->getTimestamp();
+    }
+
     public function encode(mixed $value): string
     {
-        $value = $this->normalize($value, $this->type);
-
         $encodedValue = match($this->type) {
             DatumEnum::Int, DatumEnum::Int64 => pack("J", $value),
             DatumEnum::Int32, DatumEnum::UInt32 => pack("N", $value),
@@ -74,19 +78,38 @@ class ExperimentValueCodec
             DatumEnum::UInt8 => pack("C", $value),
             DatumEnum::Float32 => pack("G", $value),
             DatumEnum::Float64 => pack("E", $value),
-            DatumEnum::Uuid, DatumEnum::EntityReference => $value,
+            DatumEnum::Uuid => $this->normalizeUuidDatum($value),
+            DatumEnum::EntityReference => $this->normalizeEntityDatum($value),
             DatumEnum::String => (string)$value,
-            DatumEnum::Date => pack("J", $value),
+            DatumEnum::Date => pack("J", $this->normalizeDateDatum($value)),
             DatumEnum::Image => empty($value) ? "" : (string)$value,
         };
 
         return $encodedValue;
     }
 
+    /**
+     * @param resource|string $stream
+     * @return (
+     *  TType is DatumEnum::EntityReference ? array{Ulid|int, class-string} : (
+     *      TType is DatumEnum::Uuid ? Uuid : (
+     *          TType is DatumEnum::Date ? DateTime : (
+     *              TType is DatumEnum::String|DatumEnum::Image ? string : (
+     *                  TType is DatumEnum::Float32|DatumEnum::Float64 ? float : int
+     *              )
+     *          )
+     *      )
+     *  )
+     * )
+     */
     public function decode($stream): mixed
     {
         if (is_resource($stream)) {
             $value = stream_get_contents($stream, -1, 0);
+
+            if ($value === false) {
+                throw new InvalidArgumentException("Reading the stream failed.");
+            }
         } else {
             $value = $stream;
         }
@@ -101,7 +124,8 @@ class ExperimentValueCodec
             DatumEnum::Float64 => unpack("E", $value)[1],
             DatumEnum::String => $value,
             DatumEnum::Uuid => Ulid::fromBinary($value),
-            DatumEnum::EntityReference, DatumEnum::Date => $this->denormalize($value),
+            DatumEnum::EntityReference => $this->denormalizeEntityDatum($value),
+            DatumEnum::Date => $this->denormalizeDateDatum($value),
             DatumEnum::Image => $value,
         };
 
@@ -118,21 +142,26 @@ class ExperimentValueCodec
         return $decodedValue;
     }
 
-    public function denormalize($value)
+    public function denormalizeDateDatum(string $value): DateTime
     {
-        if ($this->type === DatumEnum::Date) {
-            $timestamp = unpack("J", $value)[1];
-            $datetime = new DateTime();
-            return $datetime->setTimestamp($timestamp);
-        } elseif ($this->type === DatumEnum::EntityReference) {
-            if (str_starts_with($value, "\0\0\0\0\0\0\0\0")) {
-                $id = unpack("P2", $value)[2];
-            } else {
-                $id = Ulid::fromBinary(substr($value, 0, 16));
-            }
+        $timestamp = unpack("J", $value)[1];
+        $datetime = new DateTime();
+        return $datetime->setTimestamp($timestamp);
+    }
 
-            $className = substr($value, 16);
-            return [$id, $className];
+    /**
+     * @param string $value
+     * @return array{0: int|Ulid, 1: class-string}
+     */
+    public function denormalizeEntityDatum(string $value): array
+    {
+        if (str_starts_with($value, "\0\0\0\0\0\0\0\0")) {
+            $id = unpack("P2", $value)[2];
+        } else {
+            $id = Ulid::fromBinary(substr($value, 0, 16));
         }
+
+        $className = substr($value, 16);
+        return [$id, $className];
     }
 }

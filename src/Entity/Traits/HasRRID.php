@@ -14,6 +14,9 @@ trait HasRRID
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $rrid = null;
 
+    /**
+     * @return array{0: TextField}
+     */
     public static function rridCrudFields(): array
     {
         return [

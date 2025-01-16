@@ -10,6 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @template TData
+ * @extends AbstractType<TData>
+ */
 class IntegerTypeConfigurationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

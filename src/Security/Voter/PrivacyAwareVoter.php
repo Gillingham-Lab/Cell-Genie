@@ -8,15 +8,18 @@ use App\Entity\Interface\PrivacyAwareInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends AbstractPrivacyAwareVoter<self::ATTR_*, PrivacyAwareInterface>
+ */
 class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const REMOVE = "remove";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string ATTR_REMOVE = "remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::REMOVE])) {
+        if (!in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::ATTR_REMOVE])) {
             return false;
         }
 
@@ -28,7 +31,7 @@ class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
     }
 
     /**
-     * @param self::VIEW|self::EDIT|self::REMOVE $attribute
+     * @param self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_REMOVE $attribute
      * @param PrivacyAwareInterface $subject
      * @param TokenInterface $token
      * @return bool
@@ -42,9 +45,9 @@ class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
         $user = $token->getUser();
 
         return match($attribute) {
-            self::VIEW => $this->canView($user, $subject),
-            self::EDIT => $this->canEdit($user, $subject),
-            self::REMOVE => $this->canRemove($user, $subject),
+            self::ATTR_VIEW => $this->canView($user, $subject),
+            self::ATTR_EDIT => $this->canEdit($user, $subject),
+            self::ATTR_REMOVE => $this->canRemove($user, $subject),
         };
     }
 }

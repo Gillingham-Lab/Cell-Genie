@@ -8,10 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ExperimentalDesignField|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExperimentalDesignField|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExperimentalDesignField[]    findAll()
- * @method ExperimentalDesignField[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<ExperimentalDesignField>
  */
 class ExperimentalDesignFieldRepository extends ServiceEntityRepository
 {

@@ -5,6 +5,7 @@ namespace App\Repository\Substance;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Interface\PaginatedRepositoryInterface;
+use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Repository\User\UserGroupRepository;
 use App\Repository\User\UserRepository;
@@ -15,18 +16,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * @extends ServiceEntityRepository<Oligo>
- *
- * @method Oligo|null find($id, $lockMode = null, $lockVersion = null)
- * @method Oligo|null findOneBy(array $criteria, array $orderBy = null)
- * @method Oligo[]    findAll()
- * @method Oligo[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends SubstanceRepository<Oligo>
+ * @implements PaginatedRepositoryInterface<Oligo>
  */
-class OligoRepository extends ServiceEntityRepository implements PaginatedRepositoryInterface
+class OligoRepository extends SubstanceRepository implements PaginatedRepositoryInterface
 {
     use PaginatedRepositoryTrait;
-
-    protected const LotAvailableQuery = "SUM(CASE WHEN l.availability = 'available' THEN 1 ELSE 0 END)";
+    use HasAvailableLotSearchTrait;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -35,26 +31,8 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
         parent::__construct($registry, Oligo::class);
     }
 
-    public function add(Oligo $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Oligo $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
-     * @return array[Oligo, int]
+     * @return array<int, array{0: Oligo, 1: int<0, max>}>
      */
     public function findAllWithLotCount(): array
     {
@@ -68,6 +46,19 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
         ;
     }
 
+    /**
+     * @param array{
+     *     shortName: string,
+     *     longName: string,
+     *     comment: string,
+     *     sequence: string,
+     *     extinctionCoefficient: numeric-string,
+     *     molecularMass: numeric-string,
+     *     privacyLevel: value-of<PrivacyLevel>,
+     *     owner: string,
+     *     group: string,
+     * } $data
+     */
     public static function createFromArray(
         UserRepository $userRepository,
         UserGroupRepository $groupRepository,
@@ -78,8 +69,8 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
         $oligo->setLongName($data["longName"]);
         $oligo->setComment($data["comment"]);
         $oligo->setSequence($data["sequence"]);
-        $oligo->setExtinctionCoefficient($data["extinctionCoefficient"]);
-        $oligo->setMolecularMass($data["molecularMass"]);
+        $oligo->setExtinctionCoefficient(floatval($data["extinctionCoefficient"]));
+        $oligo->setMolecularMass(floatval($data["molecularMass"]));
         $oligo->setPrivacyLevel(PrivacyLevel::from(intval($data["privacyLevel"])));
         $oligo->setOwner($userRepository->find(Ulid::fromString($data["owner"])));
         $oligo->setGroup($groupRepository->find(Ulid::fromString($data["group"])));
@@ -116,16 +107,22 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
         return $this->getBaseQuery();
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         return $queryBuilder;
     }
 
+    /**
+     * @param array<string, scalar> $searchFields
+     */
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
         $searchService = $this->searchService;
 
-        $expressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
                 $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),
@@ -138,13 +135,8 @@ class OligoRepository extends ServiceEntityRepository implements PaginatedReposi
             default => null,
         });
 
-        $havingExpressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
-            "hasAvailableLot" => $searchValue === true ? $queryBuilder->expr()->gt($this::LotAvailableQuery, 0) : $queryBuilder->expr()->eq($this::LotAvailableQuery, 0),
-            default => null,
-        });
-
-        $queryBuilder = $this->addExpressionsToSearchQuery($queryBuilder, $expressions);
-        $queryBuilder = $this->addExpressionsToHavingQuery($queryBuilder, $havingExpressions);
+        $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
+        $queryBuilder = $this->addHasAvailableLotSearch($queryBuilder, $searchFields);
 
         return $queryBuilder;
     }

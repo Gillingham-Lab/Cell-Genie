@@ -14,11 +14,7 @@ use ValueError;
 
 /**
  * @extends ServiceEntityRepository<ExperimentalRun>
- *
- * @method ExperimentalRun|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExperimentalRun|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExperimentalRun[]    findAll()
- * @method ExperimentalRun[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @implements PaginatedRepositoryInterface<ExperimentalRun>
  */
 class ExperimentalRunRepository extends ServiceEntityRepository implements PaginatedRepositoryInterface
 {
@@ -31,6 +27,9 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
         parent::__construct($registry, ExperimentalRun::class);
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         foreach ($orderBy as $fieldName => $order) {
@@ -72,6 +71,9 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
         return $this->getBaseQuery();
     }
 
+    /**
+     * @param array<string, scalar> $searchFields
+     */
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
         $searchService = $this->searchService;

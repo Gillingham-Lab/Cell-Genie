@@ -16,6 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * @template TData
+ * @extends AbstractType<TData>
+ */
 class ImportLotType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -81,7 +85,5 @@ class ImportLotType extends AbstractType
                 "required" => false,
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\Traits\Fields\IdTrait;
+use App\Genie\Enums\DatumEnum;
 use App\Repository\Experiment\ExperimentalRunConditionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -31,13 +32,13 @@ class ExperimentalRunCondition
     private ?bool $control = false;
 
     /**
-     * @var Collection<string, ExperimentalDatum>
+     * @var Collection<string, ExperimentalDatum<DatumEnum>>
      */
     #[ORM\ManyToMany(targetEntity: ExperimentalDatum::class, cascade: ["persist", "remove"], orphanRemoval: true, indexBy: "name")]
     #[ORM\JoinTable("new_experimental_run_condition_datum")]
     #[ORM\JoinColumn("condition_id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
-    private Collection $data;
+    private Collection $data;  // @phpstan-ignore doctrine.associationType
 
     public function __construct()
     {
@@ -82,13 +83,16 @@ class ExperimentalRunCondition
     }
 
     /**
-     * @return Collection<string, ExperimentalDatum>
+     * @return Collection<string, ExperimentalDatum<DatumEnum>>
      */
     public function getData(): Collection
     {
         return $this->data;
     }
 
+    /**
+     * @return ExperimentalDatum<DatumEnum>
+     */
     public function getDatum(string $name): ExperimentalDatum
     {
         if (!$this->data->containsKey($name)) {
@@ -98,6 +102,9 @@ class ExperimentalRunCondition
         return $this->data[$name];
     }
 
+    /**
+     * @param ExperimentalDatum<DatumEnum> $data
+     */
     public function addData(ExperimentalDatum $data): static
     {
         $this->data[$data->getName()] = $data;
@@ -105,6 +112,9 @@ class ExperimentalRunCondition
         return $this;
     }
 
+    /**
+     * @param ExperimentalDatum<DatumEnum> $data
+     */
     public function removeData(ExperimentalDatum $data): static
     {
         $this->data->remove($data->getName());

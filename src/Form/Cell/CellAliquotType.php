@@ -26,8 +26,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SaveableType<CellAliquot>
+ */
 class CellAliquotType extends SaveableType
 {
+    /**
+     * @phpstan-use VocabularyTrait<CellAliquot>
+     */
     use VocabularyTrait;
 
     public function __construct(
@@ -35,6 +41,11 @@ class CellAliquotType extends SaveableType
     ) {
     }
 
+    /**
+     * @param FormBuilderInterface<CellAliquot|null> $builder
+     * @param bool $includeParent
+     * @return FormBuilderInterface<CellAliquot|null>
+     */
     protected function getGeneralForm(FormBuilderInterface $builder, bool $includeParent = true): FormBuilderInterface
     {
         $builder = $builder

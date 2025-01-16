@@ -58,6 +58,7 @@ class ExperimentalDesign implements PrivacyAwareInterface
         $this->runs = new ArrayCollection();
     }
 
+    /** @return Collection<int, ExperimentalDesignField>  */
     public function getFields(): Collection
     {
         return $this->fields;
@@ -83,6 +84,7 @@ class ExperimentalDesign implements PrivacyAwareInterface
         return $this;
     }
 
+    /** @return Collection<int, ExperimentalRun> */
     public function getRuns(): Collection
     {
         return $this->runs;

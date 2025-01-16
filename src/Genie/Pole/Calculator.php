@@ -16,6 +16,9 @@ use App\Genie\Pole\Unit\Volume;
 
 class Calculator
 {
+    /**
+     * @var array<string, class-string>
+     */
     protected array $divisions = [
         Mass::class . "/" . Volume::class => MassConcentration::class,
         Mass::class . "/" . MassConcentration::class => Volume::class,
@@ -25,6 +28,9 @@ class Calculator
         MolarAmount::class . "/" . MolarMass::class => MolarAmount::class,
     ];
 
+    /**
+     * @var array<string, class-string>
+     */
     protected array $multiplications = [
         MassConcentration::class . "*" . Volume::class => Mass::class,
         Volume::class . "*" . MassConcentration::class => Mass::class,

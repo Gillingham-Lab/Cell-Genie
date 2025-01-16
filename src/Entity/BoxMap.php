@@ -7,14 +7,19 @@ use App\Entity\DoctrineEntity\Storage\Box;
 
 class BoxMap implements \JsonSerializable
 {
+    /** @var array<int, array<int, object|null>> */
     private array $map;
+
+    /** @var object[] */
     private array $loose = [];
     private int $loosePointer = 0;
     private bool $doublyOccupied = false;
+
+    /** @var array<int, array<int, boolean|null>> */
     private array $doublyOccupiedMap;
     private int $count = 0;
 
-    public static function fromBox(Box $box)
+    public static function fromBox(Box $box): self
     {
         return new self($box->getRows(), $box->getCols());
     }
@@ -39,6 +44,9 @@ class BoxMap implements \JsonSerializable
         $this->doublyOccupiedMap = $map;
     }
 
+    /**
+     * @return array<string, mixed[]|scalar>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -83,7 +91,13 @@ class BoxMap implements \JsonSerializable
         }
     }
 
-    private function shift(int $row, int $col, ?int $shift=0): array
+    /**
+     * @param int $row
+     * @param int $col
+     * @param int $shift
+     * @return array{int, int}
+     */
+    private function shift(int $row, int $col, int $shift=0): array
     {
         if ($shift > 0) {
             $col += $shift;
@@ -185,7 +199,7 @@ class BoxMap implements \JsonSerializable
         return $this->count;
     }
 
-    public function add(object $object, int $numberOfAliquots, ?string $lotCoordinate) {
+    public function add(object $object, int $numberOfAliquots, ?string $lotCoordinate): void {
         // Do not display lots with no aliquots.
         if ($numberOfAliquots === 0) {
             return;

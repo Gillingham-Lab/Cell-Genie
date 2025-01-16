@@ -9,10 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ExperimentalRunWell|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExperimentalRunWell|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExperimentalRunWell[]    findAll()
- * @method ExperimentalRunWell[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<ExperimentalRunWell>
  */
 class ExperimentalRunWellRepository extends ServiceEntityRepository
 {
@@ -21,7 +18,10 @@ class ExperimentalRunWellRepository extends ServiceEntityRepository
         parent::__construct($registry, ExperimentalRunWell::class);
     }
 
-    public function getByExperimentalRun(ExperimentalRun $experiment)
+    /**
+     * @return ExperimentalRunWell[]
+     */
+    public function getByExperimentalRun(ExperimentalRun $experiment): array
     {
         return $this->createQueryBuilder("erw")
             ->where("erw.experimentalRun = :experimentalRun")

@@ -13,6 +13,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class UserSettingsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -47,6 +50,9 @@ class UserSettingsType extends AbstractType
         ;
     }
 
+    /**
+     * @return array<string>
+     */
     protected function getDateFormats(): array
     {
         $date = new \DateTime("now");

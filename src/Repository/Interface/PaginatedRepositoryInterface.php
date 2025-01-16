@@ -5,13 +5,17 @@ namespace App\Repository\Interface;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
+/**
+ * @template TPaginated
+ */
 interface PaginatedRepositoryInterface
 {
     /**
-     * @param array|null $orderBy
-     * @param array $searchFields
-     * @param int $page
-     * @param int $limit
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, scalar> $searchFields
+     * @param int<0, max> $page
+     * @param int<1, max> $limit
+     * @return Paginator<TPaginated>
      */
     public function getPaginatedResults(
         ?array $orderBy = null,
@@ -19,6 +23,13 @@ interface PaginatedRepositoryInterface
         int $page = 0,
         int $limit = 30,
     ): Paginator;
+
+
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, scalar> $searchFields
+     * @return int<0, max>
+     */
     public function getPaginatedResultCount(
         ?array $orderBy = null,
         array $searchFields = [],

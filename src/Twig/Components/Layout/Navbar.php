@@ -10,7 +10,7 @@ class Navbar
 {
     public string $id;
 
-    public function getContainerId() {
+    public function getContainerId(): string {
         return "{$this->id}-container";
     }
 }

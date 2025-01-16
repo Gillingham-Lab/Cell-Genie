@@ -17,7 +17,11 @@ use InvalidArgumentException;
 use LogicException;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @template TType of DatumEnum
+ */
 #[ORM\Entity(repositoryClass: ExperimentalDatumRepository::class)]
 #[ORM\Table("new_experimental_datum")]
 #[ORM\Index(fields: ["referenceUuid"])]
@@ -28,7 +32,9 @@ class ExperimentalDatum
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    /** @var DatumEnum|null  */
     #[ORM\Column(length: 255, enumType: DatumEnum::class)]
+    #[Assert\NotNull()]
     private ?DatumEnum $type = null;
 
     /** @var resource|string|null */
@@ -50,6 +56,10 @@ class ExperimentalDatum
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return self<TType>
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -57,11 +67,18 @@ class ExperimentalDatum
         return $this;
     }
 
+    /**
+     * @return TType|null
+     */
     public function getType(): ?DatumEnum
     {
         return $this->type;
     }
 
+    /**
+     * @param TType $type
+     * @return self<TType>
+     */
     public function setType(DatumEnum $type): self
     {
         $this->type = $type;
@@ -69,12 +86,33 @@ class ExperimentalDatum
         return $this;
     }
 
+    /**
+     * @return (
+     *  TType is DatumEnum::EntityReference ? array{Ulid|int, class-string} : (
+     *      TType is DatumEnum::Uuid ? Uuid : (
+     *          TType is DatumEnum::Date ? DateTime : (
+     *              TType is DatumEnum::String|DatumEnum::Image ? string : (
+     *                  TType is DatumEnum::Float32|DatumEnum::Float64 ? float : int
+     *              )
+     *          )
+     *      )
+     *  )
+     * )
+     * @throws LogicException
+     */
     public function getValue(): mixed
     {
+        if ($this->type === null) {
+            throw new LogicException("The type of a value must be set before you get the value.");
+        }
+
         $codec = new ExperimentValueCodec($this->type);
         return $codec->decode($this->value);
     }
 
+    /**
+     * @return self<TType>
+     */
     public function setValue(mixed $value): self
     {
         if ($value !== null) {

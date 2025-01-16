@@ -5,11 +5,17 @@ namespace App\Form;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-class ScientificNumberTransformer implements DataTransformerInterface
+/**
+ * @implements DataTransformerInterface<null|float, null|string>
+ */
+readonly class ScientificNumberTransformer implements DataTransformerInterface
 {
     public function __construct(
+        /** @var string[] */
         private array $nan_values,
+        /** @var string[] */
         private array $inf_values,
+        /** @var string[] */
         private array $ninf_values,
         private string $nan_value,
         private string $inf_value,

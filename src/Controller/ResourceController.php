@@ -125,6 +125,15 @@ class ResourceController extends AbstractController
         return $this->redirectToRoute("app_resources");
     }
 
+    /**
+     * @param Request $request
+     * @param Security $security
+     * @param EntityManagerInterface $entityManager
+     * @param FileUploader $fileUploader
+     * @param Resource $resource
+     * @param array<string, mixed> $options
+     * @return Response
+     */
     protected function addOrEditResource(
         Request $request,
         Security $security,

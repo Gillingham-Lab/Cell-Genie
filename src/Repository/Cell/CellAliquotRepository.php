@@ -10,10 +10,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method CellAliquot|null find($id, $lockMode = null, $lockVersion = null)
- * @method CellAliquot|null findOneBy(array $criteria, array $orderBy = null)
- * @method CellAliquot[]    findAll()
- * @method CellAliquot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<CellAliquot>
  */
 class CellAliquotRepository extends ServiceEntityRepository
 {

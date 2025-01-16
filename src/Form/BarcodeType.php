@@ -26,8 +26,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<BarcodeEntry>
+ */
 class BarcodeType extends AbstractType
 {
+    /**
+     * @param SubstanceRepository<Substance> $substanceRepository
+     */
     public function __construct(
         private SubstanceRepository $substanceRepository,
     ) {
@@ -153,7 +159,10 @@ class BarcodeType extends AbstractType
         }
     }
 
-    private function getLotChoices()
+    /**
+     * @return SubstanceLot[]
+     */
+    private function getLotChoices(): array
     {
         $substances = $this->substanceRepository->findAllWithLot();
 

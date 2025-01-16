@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Valid;
 use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
+/**
+ * @extends AbstractType<CellProtein>
+ */
 class CellularProteinCollectionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

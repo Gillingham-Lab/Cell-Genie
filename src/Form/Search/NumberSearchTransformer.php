@@ -5,48 +5,9 @@ namespace App\Form\Search;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-
-class ShieldedFloat {
-    public readonly ?float $floatValue;
-    public readonly bool $isInfinite;
-    public readonly ?int $infiniteSign;
-
-    public function __construct(float $float) {
-        if (is_nan($float)) {
-            $this->floatValue = null;
-            $this->isInfinite = false;
-            $this->infiniteSign = null;
-        } elseif (is_infinite($float)) {
-            $this->floatValue = null;
-            $this->isInfinite = true;
-
-            $this->infiniteSign = $float <=> 0;
-        } else {
-            $this->floatValue = $float;
-            $this->infiniteSign = null;
-            $this->isInfinite = false;
-        }
-    }
-
-    public function getFloatValue(): float
-    {
-        if ($this->floatValue === null) {
-            if ($this->isInfinite) {
-                if ($this->infiniteSign > 0) {
-                    return -INF;
-                } else {
-                    return INF;
-                }
-            } else {
-                return NAN;
-            }
-        } else {
-            return $this->floatValue;
-        }
-    }
-}
-
-
+/**
+ * @implements DataTransformerInterface<array<string, mixed>, array<string, mixed>>
+ */
 class NumberSearchTransformer implements DataTransformerInterface
 {
     private function shield(float $floatValue): string|float

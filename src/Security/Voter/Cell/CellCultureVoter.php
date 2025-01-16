@@ -9,39 +9,49 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Security\Voter\AbstractPrivacyAwareVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @extends AbstractPrivacyAwareVoter<self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_REMOVE|self::ATTR_TRASH|self::ATTR_OWNS|self::ATTR_ADD_EVENT, CellCulture>
+ * @extends AbstractPrivacyAwareVoter<self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_REMOVE|self::ATTR_TRASH|self::ATTR_OWNS, CellCultureEvent>
+ */
 class CellCultureVoter extends AbstractPrivacyAwareVoter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const NEW = "new";
-    const REMOVE = "remove";
-    const OWNS = "owns";
-    const TRASH = "trash";
-    const ADD_EVENT = "add_event";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string ATTR_NEW = "new";
+    const string ATTR_REMOVE = "remove";
+    const string ATTR_OWNS = "owns";
+    const string ATTR_TRASH = "trash";
+    const string ATTR_ADD_EVENT = "add_event";
 
-    const ATTRIBUTES = [
-        self::VIEW,
-        self::EDIT,
-        self::NEW,
-        self::REMOVE,
-        self::OWNS,
-        self::TRASH,
-        self::ADD_EVENT
+    const array ATTRIBUTES = [
+        self::ATTR_VIEW,
+        self::ATTR_EDIT,
+        self::ATTR_NEW,
+        self::ATTR_REMOVE,
+        self::ATTR_OWNS,
+        self::ATTR_TRASH,
+        self::ATTR_ADD_EVENT
     ];
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if ($subject instanceof CellCulture and in_array($attribute, [self::VIEW, self::EDIT, self::REMOVE, self::TRASH, self::OWNS, self::ADD_EVENT])) {
+        if ($subject instanceof CellCulture and in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::ATTR_REMOVE, self::ATTR_TRASH, self::ATTR_OWNS, self::ATTR_ADD_EVENT])) {
             return true;
         }
 
-        if ($subject instanceof CellCultureEvent and in_array($attribute, [self::VIEW, self::EDIT, self::REMOVE, self::TRASH, self::OWNS])) {
+        if ($subject instanceof CellCultureEvent and in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::ATTR_REMOVE, self::ATTR_TRASH, self::ATTR_OWNS])) {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * @param self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_REMOVE|self::ATTR_TRASH|self::ATTR_OWNS|self::ATTR_ADD_EVENT $attribute
+     * @param ($attribute is self::ATTR_ADD_EVENT ? CellCulture : CellCulture|CellCultureEvent) $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
@@ -54,17 +64,17 @@ class CellCultureVoter extends AbstractPrivacyAwareVoter
 
         if ($subject instanceof CellCulture) {
             return match($attribute) {
-                self::VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
-                self::EDIT, self::TRASH, self::ADD_EVENT => $this->canEdit($user, $subject),
-                self::OWNS => $subject->getOwner() === $user,
-                self::REMOVE => $user->getIsAdmin(),
+                self::ATTR_VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
+                self::ATTR_EDIT, self::ATTR_TRASH, self::ATTR_ADD_EVENT => $this->canEdit($user, $subject),
+                self::ATTR_OWNS => $subject->getOwner() === $user,
+                self::ATTR_REMOVE => $user->getIsAdmin(),
                 default => false,
             };
         } elseif ($subject instanceof CellCultureEvent) {
             return match($attribute) {
-                self::VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
-                self::EDIT, self::REMOVE => $this->canEdit($user, $subject),
-                self::OWNS => $subject->getOwner() === $user,
+                self::ATTR_VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
+                self::ATTR_EDIT, self::ATTR_REMOVE => $this->canEdit($user, $subject),
+                self::ATTR_OWNS => $subject->getOwner() === $user,
                 default => false,
             };
         }

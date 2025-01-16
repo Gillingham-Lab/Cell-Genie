@@ -289,7 +289,7 @@ class Instrument implements PrivacyAwareInterface
         return $this->users;
     }
 
-    public function setUserRole(User $user, InstrumentRole $role)
+    public function setUserRole(User $user, InstrumentRole $role): self
     {
         $found = false;
 
@@ -309,6 +309,8 @@ class Instrument implements PrivacyAwareInterface
 
             $this->addUser($instrumentUser);
         }
+
+        return $this;
     }
 
     public function addUser(InstrumentUser $user): self

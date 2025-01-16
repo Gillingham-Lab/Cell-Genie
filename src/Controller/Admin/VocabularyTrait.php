@@ -9,6 +9,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 trait VocabularyTrait
 {
+    /**
+     * @param string $name
+     * @return null|string[]
+     */
     private function getVocabularyChoices(string $name): ?array
     {
         $vocabEntry = $this->vocabularyRepository->findOneBy(["name" => $name]);

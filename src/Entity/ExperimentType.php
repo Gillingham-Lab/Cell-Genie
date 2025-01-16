@@ -36,15 +36,17 @@ class ExperimentType
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
+    /** @var Collection<int, Experiment> */
     #[ORM\OneToMany(mappedBy: "experimentType", targetEntity: Experiment::class, orphanRemoval: true)]
-    private ?Collection $experiments;
+    private Collection $experiments;
 
     #[ORM\ManyToOne(targetEntity: ExperimentType::class, inversedBy: "children")]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?self $parent = null;
 
+    /** @var Collection<int, ExperimentType> */
     #[ORM\OneToMany(mappedBy: "parent", targetEntity: ExperimentType::class)]
-    private ?Collection $children;
+    private Collection $children;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Assert\GreaterThanOrEqual("1970-01-01 00:00:00")]
@@ -62,7 +64,7 @@ class ExperimentType
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
-    public function updateTimestamps()
+    public function updateTimestamps(): void
     {
         if ($this->getCreatedAt() === null) {
             $this->setCreatedAt(new DateTime("now"));

@@ -44,6 +44,13 @@ trait VendorTrait
         return $this;
     }
 
+    /**
+     * @return array{
+     *     0: FormField,
+     *     1: AssociationField,
+     *     2: TextField,
+     * }
+     */
     public static function crudFields(): array
     {
         return [

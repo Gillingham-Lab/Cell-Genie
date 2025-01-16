@@ -35,7 +35,7 @@ class GenBankImport
     /**
      * @throws ImportError
      */
-    private function parse(string $content)
+    private function parse(string $content): void
     {
         if (str_starts_with($content, "LOCUS") === false or str_ends_with($content, "//") === false) {
             throw new ImportError("The file format does not seem to be a genebank file.");
@@ -76,6 +76,9 @@ class GenBankImport
         }
     }
 
+    /**
+     * @param string[] $buffer
+     */
     private function parseLocus(array $buffer): void
     {
         $bufferLength = count($buffer);
@@ -89,6 +92,9 @@ class GenBankImport
         }
     }
 
+    /**
+     * @param string[] $buffer
+     */
     private function parseDefinition(array $buffer): void
     {
         $definition = [];
@@ -109,6 +115,9 @@ class GenBankImport
         $this->data["metadata"]["definition"] = $definition;
     }
 
+    /**
+     * @param string[] $buffer
+     */
     private function parseAccession(array $buffer): void
     {
         $accession = \preg_split("#\s{2,}#", $buffer[0])[1];
@@ -119,6 +128,9 @@ class GenBankImport
         $this->data["metadata"]["accession"] = $accession;
     }
 
+    /**
+     * @param string[] $buffer
+     */
     private function parseVersion(array $buffer): void
     {
         $version = \preg_split("#\s{2,}#", $buffer[0])[1];
@@ -129,6 +141,9 @@ class GenBankImport
         $this->data["metadata"]["version"] = $version;
     }
 
+    /**
+     * @param string[] $buffer
+     */
     private function parseFeatures(array $buffer): void
     {
         // Assumption: File is nicely formatted with same column width for the feature table
@@ -208,6 +223,9 @@ class GenBankImport
         $this->data["features"] = $features;
     }
 
+    /**
+     * @param string[] $buffer
+     */
     private function parseOrigin(array $buffer): void
     {
         $sequence = "";
@@ -248,6 +266,14 @@ class GenBankImport
         return $this->data["metadata"]["version"] ?? "";
     }
 
+    /**
+     * @return array<int, array{
+     *       type: string,
+     *       span: array{0: int, 1: int},
+     *       complement: bool,
+     *       annotations: array<string, string>,
+     *  }>
+     */
     public function getFeatures(): array
     {
         return $this->data["features"];

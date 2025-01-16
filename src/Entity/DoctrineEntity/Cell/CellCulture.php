@@ -88,7 +88,7 @@ class CellCulture implements PrivacyAwareInterface
         }
     }
 
-    public function getMycoplasmaStatus()
+    public function getMycoplasmaStatus(): ?string
     {
         $status = "unclear";
         foreach ($this->events as $event) {

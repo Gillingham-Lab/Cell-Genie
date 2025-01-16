@@ -4,13 +4,36 @@ declare(strict_types=1);
 namespace App\Entity\Table;
 
 use Closure;
-use Traversable;
+use Generator;
 
+/**
+ * @template T
+ * @phpstan-type ArrayTableShape array{
+ *      numberOfRows: int,
+ *      maxNumberOfRows: int,
+ *      columns: array<int, array{
+ *          label: string,
+ *          type: string,
+ *          showLabel: bool,
+ *          widthRecommendation: int,
+ *          bold: bool,
+ *      }>,
+ *      rows: array<int, array{
+ *          value: mixed,
+ *          tooltip: mixed,
+ *          raw: bool,
+ *          component: string,
+ *          isActive: bool,
+ *          isDisabled: bool,
+ *      }>,
+ *  }
+ */
 class Table
 {
-    private $isActive = null;
+    private ?Closure $isActive;
 
     public function __construct(
+        /** @var iterable<T>|null */
         private ?iterable $data = null,
         /** @var Column[] */
         private array $columns = [],
@@ -20,7 +43,7 @@ class Table
         private bool $spreadDatum = false,
         private ?Closure $isDisabled = null,
     ) {
-        $this->isActive = $isActive;
+        $this->isActive = is_null($isActive) ? null : $isActive(...);
     }
 
     public function addColumn(Column $column): static
@@ -29,18 +52,28 @@ class Table
         return $this;
     }
 
-    public function getColumns(): iterable
+    /**
+     * @return Generator<Column>
+     */
+    public function getColumns(): Generator
     {
         yield from $this->columns;
     }
 
-    public function getData(): iterable
+    /**
+     * @return Generator<T>
+     */
+    public function getData(): Generator
     {
         yield from $this->data;
     }
 
-    public function setData(iterable $data): static
-    {
+    /**
+     * @param iterable<T> $data
+     */
+    public function setData(
+        iterable $data
+    ): static {
         $this->data = $data;
         return $this;
     }
@@ -51,25 +84,7 @@ class Table
     }
 
     /**
-     * @return array{
-     *     numberOfRows: int,
-     *     maxNumberOfRows: int,
-     *     columns: array<int, array{
-     *         label: string,
-     *         type: string,
-     *         showLabel: bool,
-     *         widthRecommendation: int,
-     *         bold: bool,
-     *     }>,
-     *     rows: array<int, array{
-     *         value: mixed,
-     *         tooltip: mixed,
-     *         raw: bool,
-     *         component: string,
-     *         isActive: bool,
-     *         isDisabled: bool,
-     *     }>,
-     * }
+     * @return ArrayTableShape
      */
     public function toArray(): array
     {

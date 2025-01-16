@@ -4,9 +4,13 @@ declare(strict_types=1);
 namespace App\Repository\Traits;
 
 use Closure;
-use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Expr\Comparison;
+use Doctrine\ORM\Query\Expr\Func;
+use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Hoa\Stream\Composite;
 
 trait PaginatedRepositoryTrait
 {
@@ -51,45 +55,4 @@ trait PaginatedRepositoryTrait
     abstract private function getPaginatedCountQuery(): QueryBuilder;
     abstract private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder;
     abstract private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder;
-
-    private function addExpressionsToSearchQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
-    {
-        return match (count($expressions)) {
-            0 => $queryBuilder,
-            1 => $queryBuilder->andWhere($expressions[0]),
-            default => $queryBuilder->andWhere($queryBuilder->expr()->andX(...$expressions)),
-        };
-    }
-
-    private function addExpressionsToHavingQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
-    {
-        return match(count($expressions)) {
-            0 => $queryBuilder,
-            1 => $queryBuilder->andHaving($expressions[0]),
-            default => $queryBuilder->andHaving($queryBuilder->expr()->andX(...$expressions))
-        };
-    }
-
-    /**
-     * @param array $searchFields
-     * @param Closure $match
-     * @return array
-     */
-    private function createExpressions(array $searchFields, Closure $match): array
-    {
-        $expressions = [];
-        foreach ($searchFields as $searchField => $searchValue) {
-            if ($searchValue === null or (is_string($searchValue) and strlen($searchValue) === 0)) {
-                continue;
-            }
-
-            $expression = $match($searchField ,$searchValue);
-
-            if ($expression !== null) {
-                $expressions[] = $expression;
-            }
-        }
-
-        return $expressions;
-    }
 }

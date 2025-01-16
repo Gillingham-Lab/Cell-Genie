@@ -5,6 +5,7 @@ namespace App\Repository\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Repository\Interface\PaginatedRepositoryInterface;
+use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -12,16 +13,13 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Plasmid|null find($id, $lockMode = null, $lockVersion = null)
- * @method Plasmid|null findOneBy(array $criteria, array $orderBy = null)
- * @method Plasmid[]    findAll()
- * @method Plasmid[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends SubstanceRepository<Plasmid>
+ * @implements PaginatedRepositoryInterface<Plasmid>
  */
-class PlasmidRepository extends ServiceEntityRepository implements PaginatedRepositoryInterface
+class PlasmidRepository extends SubstanceRepository implements PaginatedRepositoryInterface
 {
     use PaginatedRepositoryTrait;
-
-    protected const LotAvailableQuery = "SUM(CASE WHEN l.availability = 'available' THEN 1 ELSE 0 END)";
+    use HasAvailableLotSearchTrait;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -31,7 +29,7 @@ class PlasmidRepository extends ServiceEntityRepository implements PaginatedRepo
     }
 
     /**
-     * @return array[Oligo, int]
+     * @return array<array{0: Plasmid, 1: int<0, max>}>
      */
     public function findAllWithLotCount(): array
     {
@@ -70,16 +68,22 @@ class PlasmidRepository extends ServiceEntityRepository implements PaginatedRepo
         return $this->getBaseQuery();
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         return $queryBuilder;
     }
 
+    /**
+     * @param array<string, scalar> $searchFields
+     */
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
         $searchService = $this->searchService;
 
-        $expressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "number" => $searchService->searchWithString($queryBuilder, "p.number", $searchValue),
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "p.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
@@ -94,14 +98,14 @@ class PlasmidRepository extends ServiceEntityRepository implements PaginatedRepo
             default => null,
         });
 
-        $havingExpressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
-            "hasAvailableLot" => $searchValue === true ? $queryBuilder->expr()->gt($this::LotAvailableQuery, 0) : $queryBuilder->expr()->eq($this::LotAvailableQuery, 0),
+        $havingExpressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "expressesProtein" => $searchValue === true ? $queryBuilder->expr()->gt("COUNT(ep)", 0) : $queryBuilder->expr()->eq("COUNT(ep)", 0),
             default => null,
         });
 
-        $queryBuilder = $this->addExpressionsToSearchQuery($queryBuilder, $expressions);
-        $queryBuilder = $this->addExpressionsToHavingQuery($queryBuilder, $havingExpressions);
+        $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
+        $queryBuilder = $searchService->addExpressionsToHavingQuery($queryBuilder, $havingExpressions);
+        $queryBuilder = $this->addHasAvailableLotSearch($queryBuilder, $searchFields);
 
         return $queryBuilder;
     }

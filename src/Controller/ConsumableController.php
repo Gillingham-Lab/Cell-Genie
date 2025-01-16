@@ -122,6 +122,14 @@ class ConsumableController extends AbstractController
         ]);
     }
 
+    /**
+     * @param ConsumableCategoryRepository $categoryRepository
+     * @param ConsumableCategory|null $category
+     * @param Consumable|null $consumable
+     * @param ConsumableLot|null $lot
+     * @param array<string, mixed> $options
+     * @return Response
+     */
     private function consumableHelper(
         ConsumableCategoryRepository $categoryRepository,
         ?ConsumableCategory $category = null,

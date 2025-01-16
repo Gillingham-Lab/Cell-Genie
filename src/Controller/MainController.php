@@ -19,7 +19,7 @@ class MainController extends AbstractController
 
     #[Route("/", name: "app_homepage")]
     #[Route("/page_{pageNr<\d+?0>")]
-    public function homepage($pageNr = 1): Response
+    public function homepage(int $pageNr = 1): Response
     {
         $query = $this->messageRepository->createQueryBuilder("m")
             ->orderBy("m.date", "DESC")

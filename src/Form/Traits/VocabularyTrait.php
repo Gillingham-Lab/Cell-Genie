@@ -7,8 +7,14 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * @template TData
+ */
 trait VocabularyTrait
 {
+    /**
+     * @return null|string[]
+     */
     private function getVocabularyChoices(string $name): ?array
     {
         $vocabEntry = $this->vocabularyRepository->findOneBy(["name" => $name]);
@@ -16,6 +22,10 @@ trait VocabularyTrait
         return $vocabEntry?->getVocabulary();
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @return array{0: class-string, 1: array<string, mixed>}
+     */
     private function getTextOrChoiceOptions(string $vocabularyName, array $options = []): array
     {
         $vocabEntries = $this->getVocabularyChoices($vocabularyName);
@@ -44,7 +54,11 @@ trait VocabularyTrait
         ];
     }
 
-    private function addTextOrChoiceType(FormBuilderInterface $builder, string $field, ?string $vocabularyName, array $options)
+    /**
+     * @param FormBuilderInterface<TData> $builder
+     * @param array<string, mixed> $options
+     */
+    private function addTextOrChoiceType(FormBuilderInterface $builder, string $field, ?string $vocabularyName, array $options): void
     {
         $vocabularyName ??= $field;
         $vocab = $this->getVocabularyChoices($vocabularyName);

@@ -5,13 +5,15 @@ namespace App\Service\Doctrine;
 
 use App\Service\Doctrine\Type\Ulid;
 use Closure;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Expr\Comparison;
+use Doctrine\ORM\Query\Expr\Func;
+use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
 
 class SearchService
 {
-    private $counter = 0;
+    private int $counter = 0;
 
     public function parse(string $searchValue): string
     {
@@ -30,7 +32,10 @@ class SearchService
         return mb_strtolower($searchValue);
     }
 
-    public function searchWith(QueryBuilder $qb, string|array $field, string $type, mixed $value)
+    /**
+     * @param string|string[] $field
+     */
+    public function searchWith(QueryBuilder $qb, string|array $field, string $type, mixed $value): Orx|Comparison
     {
         if (is_array($field)) {
             $expressions = [];
@@ -49,21 +54,21 @@ class SearchService
         }
     }
 
-    private function getFieldName()
+    private function getFieldName(): string
     {
         $fieldName = "searchService{$this->counter}";
         $this->counter++;
         return $fieldName;
     }
 
-    public function searchWithString(QueryBuilder $qb, string $field, mixed $value): Query\Expr\Comparison
+    public function searchWithString(QueryBuilder $qb, string $field, mixed $value): Comparison
     {
         $fieldName = $this->getFieldName();
         $qb->setParameter($fieldName, $value);
         return $qb->expr()->eq($field, ":$fieldName");
     }
 
-    public function searchWithStringLike(QueryBuilder $qb, string $field, string $value): Query\Expr\Comparison
+    public function searchWithStringLike(QueryBuilder $qb, string $field, string $value): Comparison
     {
         $fieldName = $this->getFieldName();
         $value = $this->parse($value);
@@ -72,7 +77,7 @@ class SearchService
         return $qb->expr()->like((string)$qb->expr()->lower($field), ":$fieldName");
     }
 
-    public function searchWithInteger(QueryBuilder $qb, string $field, int|string $value): Query\Expr\Comparison
+    public function searchWithInteger(QueryBuilder $qb, string $field, int|string $value): Comparison
     {
         if (is_string($value)) {
             $value = intval($value);
@@ -81,13 +86,13 @@ class SearchService
         return $this->searchWithString($qb, $field, $value);
     }
 
-    public function searchWithUlid(QueryBuilder $qb, string $field, string $value): Query\Expr\Comparison
+    public function searchWithUlid(QueryBuilder $qb, string $field, string $value): Comparison
     {
         $value = Ulid::fromString($value)->toRfc4122();
         return $this->searchWithString($qb, $field, $value);
     }
 
-    public function searchWithBool(QueryBuilder $qb, string $field, mixed $value): Query\Expr\Comparison
+    public function searchWithBool(QueryBuilder $qb, string $field, mixed $value): Comparison
     {
         if (is_bool($value)) {
             return $qb->expr()->eq($field, $value ? "true" : "false");
@@ -96,6 +101,9 @@ class SearchService
         }
     }
 
+    /**
+     * @param array<int, Orx|Andx|Comparison|Func|string> $expressions
+     */
     public function addExpressionsToSearchQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
     {
         return match (count($expressions)) {
@@ -105,6 +113,9 @@ class SearchService
         };
     }
 
+    /**
+     * @param array<int, Orx|Andx|Comparison|Func|string> $expressions
+     */
     public function addExpressionsToHavingQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
     {
         return match(count($expressions)) {
@@ -115,9 +126,9 @@ class SearchService
     }
 
     /**
-     * @param array $searchFields
+     * @param array<string, scalar> $searchFields
      * @param Closure $match
-     * @return array
+     * @return array<int, Andx|Orx|Func|Comparison|string>
      */
     public function createExpressions(array $searchFields, Closure $match): array
     {

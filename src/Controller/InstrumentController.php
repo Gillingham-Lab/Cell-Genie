@@ -65,7 +65,7 @@ class InstrumentController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-    ) {
+    ): Response {
         return $this->addOrEditInstruments($request, $entityManager, $fileUploader);
     }
 
@@ -75,7 +75,7 @@ class InstrumentController extends AbstractController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         Instrument $instrument,
-    ) {
+    ):Response {
         $this->denyAccessUnlessGranted("edit", $instrument);
 
         return $this->addOrEditInstruments($request, $entityManager, $fileUploader, $instrument);

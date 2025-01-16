@@ -9,9 +9,16 @@ use App\Genie\Pole\Exception\UnitNotSupportedException;
 abstract class BaseUnit implements UnitInterface
 {
     protected string $base_unit_symbol = "";
+    /**
+     * @var array<string, numeric>
+     */
     protected array $unitStringFactors = [];
+    /**
+     * @var array<class-string, numeric>
+     */
     protected array $interconversionFactors = [];
 
+    /** @var array<class-string<static>, static> */
     protected static array $instance = [];
 
     final protected function __construct()
@@ -81,6 +88,7 @@ abstract class BaseUnit implements UnitInterface
         return $value / $this->unitStringFactors[$unitString];
     }
 
+    /** @inheritDoc */
     public function convertValueToClosestUnit(float $value): array
     {
         $magnitude = (int)floor(log10($value) + 0.3010299958);

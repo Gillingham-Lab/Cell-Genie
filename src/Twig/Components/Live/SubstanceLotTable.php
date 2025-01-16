@@ -21,6 +21,9 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+/**
+ * @phpstan-import-type ArrayTableShape from Table
+ */
 #[AsLiveComponent]
 class SubstanceLotTable extends AbstractController
 {
@@ -29,6 +32,9 @@ class SubstanceLotTable extends AbstractController
     #[LiveProp]
     public ?Substance $substance;
 
+    /**
+     * @return Table<Lot>
+     */
     public function getTable(): Table
     {
         $table = new Table(

@@ -9,6 +9,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @template TData
+ * @extends AbstractType<TData>
+ */
 class FancyChoiceType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void

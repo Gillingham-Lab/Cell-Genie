@@ -29,6 +29,7 @@ class FormRow
     #[Assert\NotBlank()]
     public ?FormRowTypeEnum $type = null;
 
+    /** @var array<string, mixed> */
     #[Column(type: Types::JSON)]
     public array $configuration = [];
 
@@ -77,11 +78,15 @@ class FormRow
         return $this;
     }
 
+    /** @return array<string, mixed> */
     public function getConfiguration(): array
     {
         return $this->configuration;
     }
 
+    /**
+     * @param array<string, mixed> $configuration
+     */
     public function setConfiguration(array $configuration): self
     {
         $this->configuration = $configuration;

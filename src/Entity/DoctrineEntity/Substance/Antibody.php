@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Epitope;
-use App\Entity\EpitopeHost;
 use App\Entity\File;
 use App\Entity\Lot;
 use App\Entity\Traits\HasRRID;
@@ -237,7 +236,7 @@ class Antibody extends Substance
     }
 
     /**
-     * @return Collection|File[]
+     * @return Collection<int, File>
      */
     public function getVendorDocumentation(): Collection
     {
@@ -295,7 +294,7 @@ class Antibody extends Substance
         return $this;
     }
 
-    public function getCitation(?Lot $lot=null)
+    public function getCitation(?Lot $lot=null): string
     {
         $other = [
             $this->getVendor()?->getName() ?? "??",

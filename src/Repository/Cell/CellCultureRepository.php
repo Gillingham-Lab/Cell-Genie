@@ -10,11 +10,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<CellCulture>
- *
- * @method CellCulture|null find($id, $lockMode = null, $lockVersion = null)
- * @method CellCulture|null findOneBy(array $criteria, array $orderBy = null)
- * @method CellCulture[]    findAll()
- * @method CellCulture[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CellCultureRepository extends ServiceEntityRepository
 {
@@ -23,12 +18,15 @@ class CellCultureRepository extends ServiceEntityRepository
         parent::__construct($registry, CellCulture::class);
     }
 
+    /**
+     *  @return CellCulture[]
+     */
     public function findAllBetween(
         DateTimeInterface $start,
         DateTimeInterface $end,
         ?string $incubator = null,
         ?string $scientist = null
-    ) {
+    ): array {
         // Joins on events not possible due to https://github.com/doctrine/orm/pull/9743
         $qb = $this->createQueryBuilder("cc");
 
@@ -43,11 +41,6 @@ class CellCultureRepository extends ServiceEntityRepository
             ->leftJoin("ca.cell", "c", conditionType: Join::ON)
             ->leftJoin("cc.owner", "co", conditionType: Join::ON)
             ->leftJoin("cc.events", "ce", conditionType: Join::ON)
-            ->addGroupBy("cc.id")
-            ->addGroupBy("ca.id")
-            ->addGroupBy("c.id")
-            ->addGroupBy("co.id")
-            ->addGroupBy("ce.id")
             ->orderBy("priority", "ASC")
             ->addOrderBy("cc.incubator", "ASC")
             ->addOrderBy("co.fullName", "ASC")
@@ -58,10 +51,6 @@ class CellCultureRepository extends ServiceEntityRepository
                     ->add("cc.unfrozenOn < :start and cc.trashedOn IS NULL")
                     ->add("cc.unfrozenOn < :start and cc.trashedOn > :end")
             )
-            /*->where("cc.unfrozenOn >= :start and cc.unfrozenOn <= :end")
-            ->orWhere("cc.trashedOn >= :start and cc.trashedOn <= :end")
-            ->orWhere("cc.unfrozenOn < :start and cc.trashedOn IS NULL")
-            ->orWhere("cc.unfrozenOn < :start and cc.trashedOn > :end")*/
             ->setParameter("start", $start)
             ->setParameter("end", $end)
         ;

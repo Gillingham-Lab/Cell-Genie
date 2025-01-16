@@ -12,18 +12,18 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Substance>
- *
- * @method Substance|null find($id, $lockMode = null, $lockVersion = null)
- * @method Substance|null findOneBy(array $criteria, array $orderBy = null)
- * @method Substance[]    findAll()
- * @method Substance[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @template TSubstance of Substance
+ * @extends ServiceEntityRepository<TSubstance>
  */
 class SubstanceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @param ManagerRegistry $registry
+     * @param class-string<TSubstance>|null $class
+     */
+    public function __construct(ManagerRegistry $registry, ?string $class = null)
     {
-        parent::__construct($registry, Substance::class);
+        parent::__construct($registry, $class ?? Substance::class);
     }
 
     public function add(Substance $entity, bool $flush = false): void
@@ -90,6 +90,7 @@ class SubstanceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, Lot|Ulid|string> $lots
      * @return array<int, SubstanceLot>
      */
     public function findSubstanceLotsByLots(array $lots): array
@@ -116,18 +117,12 @@ class SubstanceRepository extends ServiceEntityRepository
             return [];
         }
 
-        $substanceLots = [];
-        foreach ($results as $result) {
-            foreach ($result->getLots() as $lot) {
-                if ($lot->getId() === null) {}
-            }
-            $substanceLots[] = new SubstanceLot($result[0], $result[1]);
-        }
-
-        return $substanceLots;
+        return $this->turnIntoSubstanceLot($results);
     }
 
-    /** @return Substance[] */
+    /**
+     * @return Substance[]
+     */
     public function findAllWithLot(): array
     {
         return $this->createQueryBuilder("s")
@@ -142,9 +137,10 @@ class SubstanceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Substance[] $results
      * @return SubstanceLot[]
      */
-    private function turnIntoSubstanceLot($results): array
+    private function turnIntoSubstanceLot(array $results): array
     {
         $return = [];
         /** @var Substance $result */
@@ -175,6 +171,10 @@ class SubstanceRepository extends ServiceEntityRepository
         return $this->turnIntoSubstanceLot($results);
     }
 
+    /**
+     * @param Box $box
+     * @return SubstanceLot[]
+     */
     public function findAllSubstanceLotsInBox(Box $box): array
     {
         $results = $this->createQueryBuilder("s")

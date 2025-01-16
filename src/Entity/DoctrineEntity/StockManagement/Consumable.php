@@ -162,6 +162,7 @@ class Consumable implements PrivacyAwareInterface
         return $this;
     }
 
+    /** @return Collection<int, ConsumableLot>  */
     public function getLots(): Collection
     {
         return $this->lots;

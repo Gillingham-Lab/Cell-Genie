@@ -18,6 +18,9 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SubstanceType<Chemical>
+ */
 class ChemicalType extends SubstanceType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

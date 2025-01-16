@@ -6,6 +6,7 @@ namespace App\Twig\Components\Live\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
+use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\SubstanceLot;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
@@ -21,6 +22,7 @@ use App\Service\Experiment\ExperimentalDataService;
 use App\Twig\Components\Experiment\Datum;
 use App\Twig\Components\Trait\PaginatedRepositoryTrait;
 use App\Twig\Components\Trait\PaginatedTrait;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -29,11 +31,15 @@ use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+/**
+ * @phpstan-import-type ArrayTableShape from Table
+ */
 #[AsLiveComponent]
 class ExperimentalRunDataTable extends AbstractController
 {
     use DefaultActionTrait;
     use PaginatedTrait;
+    /** @use PaginatedRepositoryTrait<never> */
     use PaginatedRepositoryTrait;
 
     #[LiveProp]
@@ -45,6 +51,7 @@ class ExperimentalRunDataTable extends AbstractController
     #[LiveProp]
     public string $liveSearchFormType = ExperimentalSearchDataType::class;
 
+    /** @var array<string, mixed> */
     #[LiveProp(url: true)]
     public array $searchQuery = [];
 
@@ -64,6 +71,10 @@ class ExperimentalRunDataTable extends AbstractController
         return $this->numberOfRows;
     }
 
+    /**
+     * @param ExperimentalDesignField ...$fields
+     * @return Column[]
+     */
     private function getTableColumns(ExperimentalDesignField ... $fields): array
     {
         $columns = [
@@ -155,6 +166,10 @@ class ExperimentalRunDataTable extends AbstractController
         return $columns;
     }
 
+    /**
+     * @return ArrayTableShape
+     * @throws \Exception
+     */
     public function getTable(): array
     {
         $conditionFields = $this->dataService->getFields($this->design);
@@ -179,11 +194,14 @@ class ExperimentalRunDataTable extends AbstractController
         return $table->toArray();
     }
 
+    /**
+     * @param array<string, mixed> $search
+     */
     #[LiveListener("search")]
     public function onSearch(
         #[LiveArg()]
         array $search = [],
-    ) {
+    ): void {
         $this->searchQuery = [];
 
         foreach($search as $searchName => $searchValue) {
@@ -195,6 +213,9 @@ class ExperimentalRunDataTable extends AbstractController
         $this->page = 0;
     }
 
+    /**
+     * @return array{fields: Collection<int, FormRow>, fieldChoices: array<string, string[]>}
+     */
     public function getSearchFormOptions(): array
     {
         $fields = $this->dataService->getFields($this->design);

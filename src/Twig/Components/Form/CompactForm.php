@@ -10,5 +10,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class CompactForm
 {
     public FormView $form;
+    /** @var array<string, mixed> */
     public array $formAttributes = [];
 }

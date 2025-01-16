@@ -130,8 +130,9 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?string $trypsin = null;
 
+    /** @var Collection<int, Experiment>  */
     #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "cells")]
-    private ?Collection $experiments;
+    private Collection $experiments;
 
     #[ORM\Column(type: "text", nullable: true)]
     #[Gedmo\Versioned]

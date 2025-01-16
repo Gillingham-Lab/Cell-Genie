@@ -16,6 +16,9 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent]
 class EntityReference
 {
+    /**
+     * @var object|array<int, object>|null
+     */
     public object|array|null $entity;
     public bool $iterable = false;
     public string $icon;
@@ -27,8 +30,12 @@ class EntityReference
 
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     */
     #[PreMount]
-    public function preMount($attributes)
+    public function preMount(array $attributes)
     {
         $entity = $attributes["entity"];
 

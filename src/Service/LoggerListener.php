@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Gedmo\Loggable\Loggable;
 use Gedmo\Loggable\LoggableListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -18,8 +19,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  *
  * @author Christophe Coevoet <stof@notk.org>
  */
-class LoggerListener implements EventSubscriberInterface
+readonly class LoggerListener implements EventSubscriberInterface
 {
+    /**
+     * @param LoggableListener<Loggable> $loggableListener
+     */
     public function __construct(
         private LoggableListener $loggableListener,
         private TokenStorageInterface $tokenStorage,
@@ -35,7 +39,7 @@ class LoggerListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event) {
+    public function onKernelRequest(RequestEvent $event): void {
         if ($event->getRequestType() !== HttpKernelInterface::MAIN_REQUEST) {
             return;
         }

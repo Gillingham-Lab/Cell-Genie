@@ -8,11 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ExperimentalRunCondition>
- *
- * @method ExperimentalRunCondition|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExperimentalRunCondition|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExperimentalRunCondition[]    findAll()
- * @method ExperimentalRunCondition[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ExperimentalRunConditionRepository extends ServiceEntityRepository
 {

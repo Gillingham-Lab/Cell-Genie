@@ -31,6 +31,10 @@ class DetectionEntry
         ];
     }
 
+    /**
+     * @param array<string, scalar> $data
+     * @return void
+     */
     public function __unserialize(array $data): void
     {
         $this->method = $data["method"] ?? "";

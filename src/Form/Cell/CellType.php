@@ -30,8 +30,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
+/**
+ * @extends SaveableType<Cell>
+ */
 class CellType extends SaveableType
 {
+    /**
+     * @phpstan-use VocabularyTrait<Cell>
+     */
     use VocabularyTrait;
 
     public function __construct(
@@ -120,6 +126,11 @@ class CellType extends SaveableType
         parent::configureOptions($resolver);
     }
 
+    /**
+     * @param FormBuilderInterface<Cell> $builder
+     * @param array<string, mixed> $options
+     * @return FormBuilderInterface<Cell>
+     */
     private function createGeneralForm(FormBuilderInterface $builder, array $options): FormBuilderInterface
     {
         $builder = $builder
@@ -169,6 +180,11 @@ class CellType extends SaveableType
         return $builder;
     }
 
+    /**
+     * @param FormBuilderInterface<Cell> $builder
+     * @param array<string, mixed> $options
+     * @return FormBuilderInterface<Cell>
+     */
     private function createOriginForm(FormBuilderInterface $builder, array $options): FormBuilderInterface
     {
         return $builder
@@ -212,6 +228,11 @@ class CellType extends SaveableType
         ;
     }
 
+    /**
+     * @param FormBuilderInterface<Cell> $builder
+     * @param array<string, mixed> $options
+     * @return FormBuilderInterface<Cell>
+     */
     private function createEngineeringForm(FormBuilderInterface $builder, array $options): FormBuilderInterface
     {
         return $builder
@@ -290,6 +311,11 @@ class CellType extends SaveableType
         ;
     }
 
+    /**
+     * @param FormBuilderInterface<Cell> $builder
+     * @param array<string, mixed> $options
+     * @return FormBuilderInterface<Cell>
+     */
     private function createConditionForm(FormBuilderInterface $builder, array $options): FormBuilderInterface
     {
         return $builder

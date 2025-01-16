@@ -28,12 +28,12 @@ class FileBlob
         return $this->id;
     }
 
-    public function getContent()
+    public function getContent(): mixed
     {
         return $this->content;
     }
 
-    public function setContent($content): self
+    public function setContent(mixed $content): self
     {
         $this->content = $content;
 

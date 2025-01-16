@@ -6,6 +6,9 @@ namespace App\Genie;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * @implements IteratorAggregate<int, string>
+ */
 class SequenceIterator implements IteratorAggregate
 {
     public function __construct(

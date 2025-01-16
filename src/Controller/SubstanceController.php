@@ -63,22 +63,13 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SubstanceController extends AbstractController
 {
-    private ?User $user;
-
-    public function __construct(
-        private Security $security
-    ) {
-        if ($this->security->getUser() instanceof User) {
-            $this->user = $this->security->getUser();
-        }
-    }
-
     #[Route("/substance/view/{substance}", name: "app_substance_view")]
     public function viewSubstance(
         Substance $substance
@@ -95,6 +86,9 @@ class SubstanceController extends AbstractController
         };
     }
 
+    /**
+     * @param SubstanceRepository<Substance> $substanceRepository
+     */
     #[Route("/substance/lot/{lot}", name: "app_substance_lot_view")]
     public function viewLot(
         SubstanceRepository $substanceRepository,
@@ -116,13 +110,15 @@ class SubstanceController extends AbstractController
     #[Route("/substance/new/{type}", name: "app_substance_new")]
     public function addSubstance(
         Request $request,
+        #[CurrentUser]
+        User $user,
         GeneBankImporter $geneBankImporter,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         string $type,
     ): Response {
         return $this->addOrEditSubstance(
-            $request, $geneBankImporter, $entityManager, $fileUploader, null, $type,
+            $request, $user, $geneBankImporter, $entityManager, $fileUploader, null, $type,
         );
     }
 
@@ -130,18 +126,21 @@ class SubstanceController extends AbstractController
     #[IsGranted("edit", "substance")]
     public function editSubstance(
         Request $request,
+        #[CurrentUser]
+        User $user,
         GeneBankImporter $geneBankImporter,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         ?Substance $substance = null,
     ): Response {
         return $this->addOrEditSubstance(
-            $request, $geneBankImporter, $entityManager, $fileUploader, $substance, null,
+            $request, $user, $geneBankImporter, $entityManager, $fileUploader, $substance, null,
         );
     }
 
     private function addOrEditSubstance(
         Request $request,
+        User $user,
         GeneBankImporter $geneBankImporter,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
@@ -166,8 +165,8 @@ class SubstanceController extends AbstractController
                 default => null,
             };
 
-            $substance->setOwner($this->user);
-            $substance->setGroup($this->user?->getGroup());
+            $substance->setOwner($user);
+            $substance->setGroup($user->getGroup());
         } else {
             $this->denyAccessUnlessGranted("edit", $substance);
         }
@@ -251,6 +250,8 @@ class SubstanceController extends AbstractController
     #[Route("/substance/{substance}/lot/edit/{lot}", name: "app_substance_edit_lot")]
     public function addLotToSubstance(
         Request $request,
+        #[CurrentUser]
+        User $user,
         SecurityController $securityController,
         EntityManagerInterface $entityManager,
         LotRepository $lotRepository,
@@ -268,14 +269,14 @@ class SubstanceController extends AbstractController
         };
 
         if (!$lot) {
-            $this->denyAccessUnlessGranted(SubstanceVoter::ADD_LOT, $substance);
+            $this->denyAccessUnlessGranted(SubstanceVoter::ATTR_ADD_LOT, $substance);
 
             $lot = new Lot();
-            $lot->setBoughtBy($this->user);
-            $lot->setOwner($this->user);
-            $lot->setGroup($this->user?->getGroup());
+            $lot->setBoughtBy($user);
+            $lot->setOwner($user);
+            $lot->setGroup($user->getGroup());
         } else {
-            $this->denyAccessUnlessGranted(LotVoter::EDIT, $lot);
+            $this->denyAccessUnlessGranted(LotVoter::ATTR_EDIT, $lot);
         }
 
         $formOptions = [
@@ -340,7 +341,7 @@ class SubstanceController extends AbstractController
     public function viewAntibody(
         #[MapEntity(mapping: ["antibodyId"  => "ulid"])]
         Antibody $antibody,
-    ) {
+    ): Response {
         return $this->render("parts/substance/view_antibody.html.twig", [
             "title" => "{$antibody->getNumber()} - {$antibody->getShortName()}",
             "subtitle" => $antibody->getCitation(),
@@ -379,7 +380,7 @@ class SubstanceController extends AbstractController
     public function viewAntibodyByNumber(
         #[MapEntity(mapping: ["antibodyNr" => "number"])]
         Antibody $antibody,
-    ) {
+    ): Response {
         return $this->viewAntibody($antibody);
     }
 

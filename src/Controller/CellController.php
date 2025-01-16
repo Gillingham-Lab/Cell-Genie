@@ -70,12 +70,12 @@ class CellController extends AbstractController
     }
 
     #[Route("/cells/all", name: "app_cells_all")]
-    public function allCells() {
+    public function allCells(): Response {
         return $this->render("parts/cells/cells_list.html.twig") ;
     }
 
     #[Route("/cells/group/remove/{cellGroup}", name: "app_cells_group_remove")]
-    #[IsGranted(CellGroupVoter::REMOVE, "cellGroup")]
+    #[IsGranted(CellGroupVoter::ATTR_REMOVE, "cellGroup")]
     public function removeCellGroup(
         EntityManagerInterface $entityManager,
         ?CellGroup $cellGroup = null,
@@ -100,7 +100,7 @@ class CellController extends AbstractController
         EntityManagerInterface $entityManager,
         CellGroupRepository $cellGroupRepository,
     ): Response {
-        $this->denyAccessUnlessGranted(CellGroupVoter::NEW, "CellGroup");
+        $this->denyAccessUnlessGranted(CellGroupVoter::ATTR_NEW, "CellGroup");
 
         return $this->addNewOrEditCellGroup($request, $entityManager, $cellGroupRepository);
     }
@@ -120,7 +120,7 @@ class CellController extends AbstractController
         } else {
             $new = false;
 
-            $this->denyAccessUnlessGranted(CellGroupVoter::EDIT, $cellGroup);
+            $this->denyAccessUnlessGranted(CellGroupVoter::ATTR_EDIT, $cellGroup);
         }
 
         $formType = CellGroupType::class;
@@ -275,7 +275,7 @@ class CellController extends AbstractController
         } else {
             $new = false;
 
-            $this->denyAccessUnlessGranted(CellVoter::EDIT, $cell);
+            $this->denyAccessUnlessGranted(CellVoter::ATTR_EDIT, $cell);
         }
 
         $formType = CellType::class;
@@ -324,7 +324,7 @@ class CellController extends AbstractController
 
     #[Route("/cells/addAliquot/{cell}", name: "app_cell_aliquot_add")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
-    #[IsGranted(CellVoter::ADD_ALIQUOT, "cell")]
+    #[IsGranted(CellVoter::ATTR_ADD_ALIQUOT, "cell")]
     public function addNewCellAliquot(
         Request $request,
         #[CurrentUser]
@@ -364,7 +364,7 @@ class CellController extends AbstractController
                 throw $this->createNotFoundException("No aliquot with the id '{$cellAliquot->getId()}' has been found for the given cell line.");
             }
 
-            $this->denyAccessUnlessGranted(CellAliquotVoter::EDIT, $cellAliquot);
+            $this->denyAccessUnlessGranted(CellAliquotVoter::ATTR_EDIT, $cellAliquot);
         }
 
         $formType = CellAliquotType::class;
@@ -532,7 +532,7 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function trashCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::TRASH, $cellCulture);
+        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_TRASH, $cellCulture);
 
         try {
             $cellCulture->setTrashedOn(new DateTime("today"));
@@ -554,7 +554,7 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function restoreCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::TRASH, $cellCulture);
+        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_TRASH, $cellCulture);
 
         try {
             $cellCulture->setTrashedOn(null);
@@ -583,7 +583,7 @@ class CellController extends AbstractController
         ?string $eventType = null,
         ?CellCultureEvent $cellCultureEvent = null
     ): Response {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ADD_EVENT, $cellCulture);
+        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_ADD_EVENT, $cellCulture);
 
         if ($cellCulture->getTrashedOn()) {
             $this->addFlash("error", "Cannot add events for trashed cell cultures.");
@@ -597,7 +597,6 @@ class CellController extends AbstractController
                 default => [CellCultureOtherType::class, CellCultureOtherEvent::class],
             };
 
-            /** @var CellCultureEvent $cellCultureEvent */
             $cellCultureEvent = new $entityType();
         } else {
             $formType = match(get_class($cellCultureEvent)) {
@@ -689,7 +688,7 @@ class CellController extends AbstractController
         CellCulture $cellCulture,
         CellCultureEvent $cellCultureEvent,
     ): Response {
-        $this->denyAccessUnlessGranted(CellCultureVoter::REMOVE, $cellCultureEvent);
+        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_REMOVE, $cellCultureEvent);
         $this->entityManager->remove($cellCultureEvent);
 
         try {
@@ -710,7 +709,7 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function viewCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::VIEW, $cellCulture);
+        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_VIEW, $cellCulture);
 
         return $this->render("parts/cells/cell_culture.html.twig", [
             "culture" => $cellCulture,
@@ -723,7 +722,7 @@ class CellController extends AbstractController
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
     public function editCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::EDIT, $cellCulture);
+        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_EDIT, $cellCulture);
 
         $form = $this->createForm(CellCultureType::class, $cellCulture, ["save_button" => true]);
         $form->handleRequest($request);
@@ -752,10 +751,15 @@ class CellController extends AbstractController
         ]);
     }
 
-    private function extractCultures(array $currentCultures, array &$cultureList, CellCulture $parentCulture)
+    /**
+     * @param CellCulture[] $currentCultures
+     * @param array<string, CellCulture> $cultureList
+     * @param CellCulture $parentCulture
+     * @return void
+     */
+    private function extractCultures(array $currentCultures, array &$cultureList, CellCulture $parentCulture): void
     {
         // Very bad at scaling (O(n^n)), but the lists are going to be short. Should be acceptable.
-        /** @var CellCulture $culture */
         foreach ($currentCultures as $culture) {
             if ($culture->getParentCellCulture() !== $parentCulture) {
                 continue;

@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Param;
 
-use Symfony\Component\Serializer\Attribute\Ignore;
-use function Symfony\Component\String\b;
+use TypeError;
 
 class Param
 {
@@ -55,7 +54,10 @@ class Param
         return (bool)$this->getValue();
     }
 
-    private function assertParamType(null|int|float|bool|string $value=null)
+    /**
+     * @throws TypeError
+     */
+    private function assertParamType(null|int|float|bool|string $value=null): void
     {
         $throw = false;
 
@@ -91,7 +93,7 @@ class Param
 
         if ($throw) {
             $actualType = get_debug_type($value);
-            throw new \TypeError("Value type must match ParamType. {$actualType} was given, but {$this->paramType->value} was required.");
+            throw new TypeError("Value type must match ParamType. {$actualType} was given, but {$this->paramType->value} was required.");
         }
     }
 }

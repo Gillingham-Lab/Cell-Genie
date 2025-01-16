@@ -17,6 +17,9 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SaveableType<ConsumableCategory>
+ */
 class ConsumableCategoryType extends SaveableType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

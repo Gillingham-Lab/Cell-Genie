@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\BoxMap;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\Storage\BoxType;
 use App\Form\Storage\RackType;
@@ -25,6 +26,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class StorageController extends AbstractController
 {
+    /**
+     * @param SubstanceRepository<Substance> $substanceRepository
+     */
     #[Route("/storage", name: "app_storage")]
     #[Route("/storage/location/{rack}", name: "app_storage_view_rack")]
     #[Route("/storage/{box}", name: "app_storage_view_box")]
@@ -84,7 +88,7 @@ class StorageController extends AbstractController
         User $user,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-    ) {
+    ): Response {
         $newBox = new Box();
         $newBox->setOwner($user);
         $newBox->setGroup($user->getGroup());
@@ -99,7 +103,7 @@ class StorageController extends AbstractController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         ?Box $box = null,
-    ) {
+    ): Response {
         return $this->addStorage($request, $entityManager, $fileUploader, null, $box);
     }
 
@@ -110,7 +114,7 @@ class StorageController extends AbstractController
         User $user,
         FileUploader $fileUploader,
         EntityManagerInterface $entityManager,
-    ) {
+    ): Response {
         $newBox = new Rack();
         $newBox->setOwner($user);
         $newBox->setGroup($user->getGroup());
@@ -125,7 +129,7 @@ class StorageController extends AbstractController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         Rack $rack,
-    ) {
+    ): Response {
         return $this->addStorage($request, $entityManager, $fileUploader, $rack, null);
     }
 

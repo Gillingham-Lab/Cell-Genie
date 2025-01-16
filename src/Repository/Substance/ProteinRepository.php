@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Repository\Interface\PaginatedRepositoryInterface;
+use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -15,16 +16,13 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Protein|null find($id, $lockMode = null, $lockVersion = null)
- * @method Protein|null findOneBy(array $criteria, array $orderBy = null)
- * @method Protein[]    findAll()
- * @method Protein[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends SubstanceRepository<Protein>
+ * @implements PaginatedRepositoryInterface<Protein>
  */
-class ProteinRepository extends ServiceEntityRepository implements PaginatedRepositoryInterface
+class ProteinRepository extends SubstanceRepository implements PaginatedRepositoryInterface
 {
     use PaginatedRepositoryTrait;
-
-    protected const LotAvailableQuery = "SUM(CASE WHEN l.availability = 'available' THEN 1 ELSE 0 END)";
+    use HasAvailableLotSearchTrait;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -33,7 +31,11 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
         parent::__construct($registry, Protein::class);
     }
 
-    public function findByCell(Cell $cell)
+    /**
+     * @param Cell $cell
+     * @return Protein[]
+     */
+    public function findByCell(Cell $cell): array
     {
         return $this->createQueryBuilder("p")
             ->leftJoin("p.experiments", "e", conditionType: Join::ON)
@@ -45,7 +47,11 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
             ;
     }
 
-    public function findWithAntibodies(?Epitope $epitope = null, ?array $orderBy = null)
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @return Protein[]
+     */
+    public function findWithAntibodies(?Epitope $epitope = null, ?array $orderBy = null): array
     {
         $qb = $this->createQueryBuilder("p")
             ->addSelect("ep")
@@ -79,7 +85,11 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
         ;
     }
 
-    public function findWithAntibodiesAndLotCount(?Epitope $epitope = null, ?array $orderBy = null)
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     * @return array<array{0: Protein, 1: int}>
+     */
+    public function findWithAntibodiesAndLotCount(?Epitope $epitope = null, ?array $orderBy = null): array
     {
         $qb = $this->createQueryBuilder("p")
             ->addSelect("ep")
@@ -150,16 +160,22 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
         return $this->getBaseQuery();
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         return $queryBuilder;
     }
 
+    /**
+     * @param array<string, scalar> $searchFields
+     */
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
         $searchService = $this->searchService;
 
-        $expressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "p.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
                 $searchService->searchWithStringLike($queryBuilder, "p.shortName", $searchValue),
@@ -170,14 +186,14 @@ class ProteinRepository extends ServiceEntityRepository implements PaginatedRepo
             default => null,
         });
 
-        $havingExpressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
-            "hasAvailableLot" => $searchValue === true ? $queryBuilder->expr()->gt($this::LotAvailableQuery, 0) : $queryBuilder->expr()->eq($this::LotAvailableQuery, 0),
+        $havingExpressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "hasAntibodies" => $searchValue === true ? $queryBuilder->expr()->gt("COUNT(ab)", 0) : $queryBuilder->expr()->eq("COUNT(ab)", 0),
             default => null,
         });
 
-        $queryBuilder = $this->addExpressionsToSearchQuery($queryBuilder, $expressions);
-        $queryBuilder = $this->addExpressionsToHavingQuery($queryBuilder, $havingExpressions);
+        $queryBuilder = $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
+        $queryBuilder = $searchService->addExpressionsToHavingQuery($queryBuilder, $havingExpressions);
+        $queryBuilder = $this->addHasAvailableLotSearch($queryBuilder, $searchFields);
 
         return $queryBuilder;
     }

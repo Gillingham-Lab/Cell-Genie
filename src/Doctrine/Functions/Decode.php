@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Doctrine\Functions;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
+use Doctrine\ORM\Query\AST\Node;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\TokenType;
@@ -14,8 +15,8 @@ use Doctrine\ORM\Query\TokenType;
  */
 class Decode extends FunctionNode
 {
-    public $field = null;
-    public $encoding = null;
+    public ?Node $field = null;
+    public ?Node $encoding = null;
 
     public function parse(Parser $parser): void
     {

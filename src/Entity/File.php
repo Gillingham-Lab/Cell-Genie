@@ -224,7 +224,7 @@ class File
         };
     }
 
-    public function getFileExtension()
+    public function getFileExtension(): string
     {
         $parts = explode(".", $this->originalFileName);
         return end($parts);

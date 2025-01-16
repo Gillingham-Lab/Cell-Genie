@@ -12,6 +12,10 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated Old-style Experiment
+ * @extends AbstractType<ExperimentalRunWellCollectionFormEntity>
+ */
 class ExperimentalRunWellCollectionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

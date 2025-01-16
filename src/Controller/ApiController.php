@@ -169,10 +169,14 @@ class ApiController extends AbstractController
         return $response;
     }
 
+    /**
+     * @param string[]|string[][] $lines
+     * @return string
+     */
     protected function linesToTSV(array $lines): string
     {
         $content = "";
-        /** @var array|string $line */
+        /** @var string[]|string $line */
         foreach ($lines as $line) {
             if (is_array($line)) {
                 $line = array_map(fn($x) => str_replace(["\t", "\r\n", "\n"], " ", (string)$x), $line);

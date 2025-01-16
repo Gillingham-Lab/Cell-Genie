@@ -9,6 +9,10 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @template TData
+ * @extends SaveableType<TData>
+ */
 class SubstanceType extends SaveableType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

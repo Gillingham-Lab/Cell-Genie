@@ -26,6 +26,11 @@ class Column
         return $this->title;
     }
 
+    /**
+     * @param object|array<string, mixed> $row
+     * @param bool $spreadDatum
+     * @return mixed
+     */
     public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
         if ($spreadDatum and is_array($row)) {

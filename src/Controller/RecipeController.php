@@ -27,7 +27,7 @@ class RecipeController extends AbstractController
     }
 
     #[Route("/recipes/view/{recipeId}", name: "app_recipe_view")]
-    public function viewRecipe($recipeId): Response
+    public function viewRecipe(string $recipeId): Response
     {
         $recipe = $this->recipeRepository->find($recipeId);
 

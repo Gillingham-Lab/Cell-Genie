@@ -13,18 +13,18 @@ use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class StorageBoxService
+readonly class StorageBoxService
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
-        private readonly Security $security,
+        private LoggerInterface $logger,
+        private Security $security,
     ) {
 
     }
 
     /**
      * @param Cell|Substance $entity
-     * @return Collection<int, CellAliquot|Lot>
+     * @return Collection<int, CellAliquot>|Collection<int, Lot>
      */
     private function getEntries(Cell|Substance $entity): Collection
     {

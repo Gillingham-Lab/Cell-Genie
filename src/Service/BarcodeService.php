@@ -18,6 +18,9 @@ use Symfony\Component\Uid\Ulid;
 
 class BarcodeService
 {
+    /**
+     * @param SubstanceRepository<Substance> $substanceRepository
+     */
     public function __construct(
         private CellCultureRepository $cellCultureRepository,
         private CellRepository $cellRepository,

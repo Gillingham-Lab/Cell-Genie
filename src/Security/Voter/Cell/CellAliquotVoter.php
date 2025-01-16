@@ -9,18 +9,21 @@ use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<self::ATTR_*, CellAliquot>
+ */
 class CellAliquotVoter extends Voter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const REMOVE = "remove";
-    const CONSUME = "consume";
-    const OWNS = "owns";
-    const ADD_CULTURE = "add_culture";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string ATTR_REMOVE = "remove";
+    const string ATTR_CONSUME = "consume";
+    const string ATTR_OWNS = "owns";
+    const string ATTR_ADD_CULTURE = "add_culture";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::CONSUME, self::REMOVE, self::OWNS, self::ADD_CULTURE])) {
+        if (!in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::ATTR_CONSUME, self::ATTR_REMOVE, self::ATTR_OWNS, self::ATTR_ADD_CULTURE])) {
             return false;
         }
 
@@ -32,7 +35,7 @@ class CellAliquotVoter extends Voter
     }
 
     /**
-     * @param self::VIEW|self::EDIT|self::CONSUME|self::REMOVE|self::OWNS|self::ADD_CULTURE $attribute
+     * @param self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_CONSUME|self::ATTR_REMOVE|self::ATTR_OWNS|self::ATTR_ADD_CULTURE $attribute
      * @param CellAliquot $subject
      * @param TokenInterface $token
      * @return bool
@@ -43,7 +46,7 @@ class CellAliquotVoter extends Voter
         $aliquot = $subject;
 
         if (!$user instanceof User) {
-            if ($attribute === self::VIEW) {
+            if ($attribute === self::ATTR_VIEW) {
                 return $this->canView($subject, null);
             } else {
                 return false;
@@ -56,10 +59,10 @@ class CellAliquotVoter extends Voter
         }
 
         return match ($attribute) {
-            self::VIEW => $this->canView($aliquot, $user),
-            self::EDIT, self::CONSUME, self::ADD_CULTURE => $this->canEdit($aliquot, $user),
-            self::REMOVE => $this->canRemove($aliquot, $user),
-            self::OWNS => $aliquot->getOwner() === $user,
+            self::ATTR_VIEW => $this->canView($aliquot, $user),
+            self::ATTR_EDIT, self::ATTR_CONSUME, self::ATTR_ADD_CULTURE => $this->canEdit($aliquot, $user),
+            self::ATTR_REMOVE => $this->canRemove($aliquot, $user),
+            self::ATTR_OWNS => $aliquot->getOwner() === $user,
         };
     }
 

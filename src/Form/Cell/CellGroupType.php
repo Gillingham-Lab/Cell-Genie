@@ -13,14 +13,21 @@ use App\Repository\Cell\CellRepository;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SaveableType<CellGroup>
+ */
 class CellGroupType extends SaveableType
 {
+    /**
+     * @phpstan-use VocabularyTrait<CellGroup>
+     */
     use VocabularyTrait;
 
     public function __construct(

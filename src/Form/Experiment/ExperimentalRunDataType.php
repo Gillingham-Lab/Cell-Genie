@@ -5,10 +5,12 @@ namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Form\Collection\TableLiveCollectionType;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Service\Experiment\ExperimentalDataFormRowService;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
@@ -17,6 +19,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<ExperimentalRun>
+ */
 class ExperimentalRunDataType extends AbstractType
 {
     public function __construct(
@@ -45,6 +50,10 @@ class ExperimentalRunDataType extends AbstractType
         $this->addDataFields($builder, $options);
     }
 
+    /**
+     * @param FormBuilderInterface<ExperimentalRun> $builder
+     * @param array<string, mixed> $options
+     */
     private function addMetadataFields(FormBuilderInterface $builder, array $options): void
     {
         /** @var ExperimentalDesign $design */
@@ -68,6 +77,10 @@ class ExperimentalRunDataType extends AbstractType
         $builder->add($innerBuilder);
     }
 
+    /**
+     * @param FormBuilderInterface<ExperimentalRun> $builder
+     * @param array<string, mixed> $options
+     */
     private function addConditionFields(FormBuilderInterface $builder, array $options): void
     {
         /** @var ExperimentalDesign $design */
@@ -104,6 +117,10 @@ class ExperimentalRunDataType extends AbstractType
         );
     }
 
+    /**
+     * @param FormBuilderInterface<ExperimentalRun> $builder
+     * @param array<string, mixed> $options
+     */
     private function addDataFields(FormBuilderInterface $builder, array $options): void
     {
         /** @var ExperimentalDesign $design */
@@ -187,7 +204,11 @@ class ExperimentalRunDataType extends AbstractType
             }
         );
     }
-
+    /**
+     * @param FormBuilderInterface<ExperimentalRun> $builder
+     * @param iterable<int, ExperimentalDesignField> $fields
+     * @param array<string, string> $conditionChoices
+     */
     private function addDataSetCollection(FormBuilderInterface|Form $builder, iterable $fields, array $conditionChoices = []): void
     {
         $builder->add("dataSets", TableLiveCollectionType::class, [

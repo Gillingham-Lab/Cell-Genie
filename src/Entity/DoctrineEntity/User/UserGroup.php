@@ -36,6 +36,7 @@ class UserGroup
         return $this->getShortName();
     }
 
+    /** @return Collection<int, User> */
     public function getUsers(): Collection
     {
         return $this->users;

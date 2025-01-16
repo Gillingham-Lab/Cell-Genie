@@ -9,6 +9,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @phpstan-type SequenceAnnotationArray array{
+ *     id: string,
+ *     type: ?string,
+ *     label: ?string,
+ *     start: ?int,
+ *     end: ?int,
+ *     complement: bool,
+ *     color: ?string,
+ *     annotations: null|array<string, scalar>
+ * }
+ */
 #[ORM\Entity]
 #[Gedmo\Loggable]
 class SequenceAnnotation implements \JsonSerializable
@@ -41,6 +53,9 @@ class SequenceAnnotation implements \JsonSerializable
     #[Assert\Positive]
     private ?int $annotationEnd;
 
+    /**
+     * @var null|array<mixed>
+     */
     #[ORM\Column(type: "array", nullable: true)]
     private ?array $annotations = [];
 
@@ -49,6 +64,9 @@ class SequenceAnnotation implements \JsonSerializable
         return sprintf("%s<%s%d..%d>", $this->getAnnotationLabel(), $this->isComplement() ? "c" : "", $this->getAnnotationStart(), $this->getAnnotationEnd());
     }
 
+    /**
+     * @return SequenceAnnotationArray
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -128,12 +146,17 @@ class SequenceAnnotation implements \JsonSerializable
         $this->annotationEnd = $annotationEnd;
         return $this;
     }
-
+    /**
+     * @return array<string|int, scalar>
+     */
     public function getAnnotations(): array
     {
         return $this->annotations;
     }
 
+    /**
+     * @param array<string|int, scalar> $annotations
+     */
     public function setAnnotations(array $annotations): self
     {
         $this->annotations = $annotations;

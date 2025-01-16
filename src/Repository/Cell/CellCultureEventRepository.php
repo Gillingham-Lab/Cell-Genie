@@ -8,11 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<CellCultureEvent>
- *
- * @method CellCultureEvent|null find($id, $lockMode = null, $lockVersion = null)
- * @method CellCultureEvent|null findOneBy(array $criteria, array $orderBy = null)
- * @method CellCultureEvent[]    findAll()
- * @method CellCultureEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CellCultureEventRepository extends ServiceEntityRepository
 {

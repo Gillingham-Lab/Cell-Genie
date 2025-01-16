@@ -11,9 +11,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Instrument>
- * @method Instrument|null findOneBy(array $criteria, array $orderBy = null)
- * @method Instrument[]    findAll()
- * @method Instrument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class InstrumentRepository extends ServiceEntityRepository
 {
@@ -37,7 +34,7 @@ class InstrumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Instrument[]
+     * @return array<int, array{instrument: Instrument, role: string}>
      */
     public function findAllWithUserRole(User $user): array
     {

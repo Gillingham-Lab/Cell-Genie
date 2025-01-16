@@ -9,10 +9,7 @@ use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Rack|null find($id, $lockMode = null, $lockVersion = null)
- * @method Rack|null findOneBy(array $criteria, array $orderBy = null)
- * @method Rack[]    findAll()
- * @method Rack[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Rack>
  */
 class RackRepository extends ServiceEntityRepository
 {
@@ -21,7 +18,10 @@ class RackRepository extends ServiceEntityRepository
         parent::__construct($registry, Rack::class);
     }
 
-    public function findAllWithBoxes()
+    /**
+     * @return Rack[]
+     */
+    public function findAllWithBoxes(): array
     {
         return $this->createQueryBuilder("r")
             ->select("r")
@@ -43,10 +43,10 @@ class RackRepository extends ServiceEntityRepository
      * @param Rack|null $exludeRack
      * @return array<array{
      *     0: Rack,
-     *     "depth": int,
-     *     "sort_path": string,
-     *     "path": string,
-     *     "cycle": bool,
+     *     depth: int,
+     *     sort_path: string,
+     *     path: string,
+     *     cycle: bool,
      * }>
      */
     public function getTree(?Rack $exludeRack = null): array

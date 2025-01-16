@@ -9,18 +9,22 @@ use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<self::NEW, 'Cell'>
+ * @extends Voter<self::ATTR_*, Cell>
+ */
 class CellVoter extends Voter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const NEW = "new";
-    const REMOVE = "remove";
-    const ADD_ALIQUOT = "add_aliquot";
-    const OWNS = "owns";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string NEW = "new";
+    const string ATTR_REMOVE = "remove";
+    const string ATTR_ADD_ALIQUOT = "add_aliquot";
+    const string ATTR_OWNS = "owns";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::ADD_ALIQUOT, self::REMOVE, self::OWNS])) {
+        if (!in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::NEW, self::ATTR_ADD_ALIQUOT, self::ATTR_REMOVE, self::ATTR_OWNS])) {
             return false;
         }
 
@@ -36,7 +40,7 @@ class CellVoter extends Voter
     }
 
     /**
-     * @param self::VIEW|self::EDIT|self::NEW|self::ADD_ALIQUOT|self::REMOVE|self::OWNS $attribute
+     * @param self::ATTR_*|self::NEW $attribute
      * @param ($attribute is self::NEW ? 'Cell' : Cell) $subject
      * @param TokenInterface $token
      * @return bool
@@ -46,7 +50,7 @@ class CellVoter extends Voter
         $user = $token->getUser();
 
         if (!$user instanceof User) {
-            if ($attribute !== self::VIEW) {
+            if ($attribute !== self::ATTR_VIEW) {
                 return false;
             } else {
                 return true;
@@ -55,11 +59,11 @@ class CellVoter extends Voter
 
         if ($subject instanceof Cell) {
             return match ($attribute) {
-                self::VIEW => true, // Cells can always be viewed
+                self::ATTR_VIEW => true, // Cells can always be viewed
                 self::NEW => $this->canCreate($user),
-                self::EDIT, self::ADD_ALIQUOT => $this->canEdit($subject, $user),
-                self::REMOVE => $this->canRemove($subject, $user),
-                self::OWNS => $subject->getOwner() === $user,
+                self::ATTR_EDIT, self::ATTR_ADD_ALIQUOT => $this->canEdit($subject, $user),
+                self::ATTR_REMOVE => $this->canRemove($subject, $user),
+                self::ATTR_OWNS => $subject->getOwner() === $user,
             };
         } elseif ($attribute === self::NEW) {
             return $this->canCreate($user);

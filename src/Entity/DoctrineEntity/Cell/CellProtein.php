@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Cell;
 
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\FormEntity\DetectionEntry;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\GeneRegulation;
 use App\Repository\Cell\CellProteinRepository;
@@ -29,6 +30,7 @@ class CellProtein
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    /** @var null|DetectionEntry[] */
     #[ORM\Column(type: JsonDocumentType::NAME, nullable: true)]
     private ?array $detection = [];
 
@@ -79,11 +81,16 @@ class CellProtein
         return $this;
     }
 
+    /** @return null|DetectionEntry[] */
     public function getDetection(): ?array
     {
         return $this->detection;
     }
 
+    /**
+     * @param null|DetectionEntry[] $detection
+     * @return $this
+     */
     public function setDetection(?array $detection): static
     {
         $this->detection = $detection;

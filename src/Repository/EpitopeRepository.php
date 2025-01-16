@@ -9,10 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Epitope|null find($id, $lockMode = null, $lockVersion = null)
- * @method Epitope|null findOneBy(array $criteria, array $orderBy = null)
- * @method Collection<int, Epitope>    findAll()
- * @method Collection<int, Epitope>    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Epitope>
  */
 class EpitopeRepository extends ServiceEntityRepository
 {

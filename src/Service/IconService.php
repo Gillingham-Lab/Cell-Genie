@@ -25,6 +25,10 @@ class IconService
     ) {
     }
 
+    /**
+     * @param object|array{object}|null $object
+     * @return string|null
+     */
     public function get(null|object|array $object): ?string
     {
         if ($object === null) {

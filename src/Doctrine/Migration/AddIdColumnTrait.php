@@ -6,6 +6,9 @@ namespace App\Doctrine\Migration;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 
+/**
+ * @phpstan-ignore trait.unused
+ */
 trait AddIdColumnTrait
 {
     public function addIdColumn(

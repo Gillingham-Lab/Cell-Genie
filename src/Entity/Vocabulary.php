@@ -18,6 +18,9 @@ class Vocabulary
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = "";
 
+    /**
+     * @var array<mixed>|null
+     */
     #[ORM\Column(type: 'array', options: ["default" => "a:0:{}"])]
     private ?array $vocabulary = [];
 
@@ -33,11 +36,18 @@ class Vocabulary
         return $this;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getVocabulary(): array
     {
         return $this->vocabulary;
     }
 
+    /**
+     * @param array<mixed> $vocabulary
+     * @return $this
+     */
     public function setVocabulary(array $vocabulary): self
     {
         $this->vocabulary = $vocabulary;

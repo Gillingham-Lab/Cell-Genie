@@ -10,6 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/**
+ * @template TData
+ * @extends AbstractType<TData>
+ */
 class FloatTypeConfigurationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

@@ -25,6 +25,9 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
+/**
+ * @phpstan-import-type ArrayTableShape from Table
+ */
 #[AsLiveComponent]
 class CellAliquotTable extends AbstractController
 {
@@ -35,6 +38,9 @@ class CellAliquotTable extends AbstractController
     #[LiveProp]
     public ?CellAliquot $currentAliquot = null;
 
+    /**
+     * @return array{}|ArrayTableShape
+     */
     public function getTable(): array
     {
         if (!$this->cell) {

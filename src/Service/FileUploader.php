@@ -11,9 +11,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class FileUploader
+readonly class FileUploader
 {
-    private User $user;
+    private ?User $user;
 
     public function __construct(
         private Security $security,
@@ -22,12 +22,21 @@ class FileUploader
 
         if ($user instanceof User) {
             $this->user = $user;
+        } else {
+            $this->user = null;
         }
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     * @throws \Exception If no user was retrieved from security service
+     */
     public function upload(FormInterface $form): void
     {
-        /** @var FormInterface $child */
+        if (is_null($this->user)) {
+            throw new \Exception("Uploading a file is only possible if a user is logged in.");
+        }
+
         foreach ($form as $child) {
             $config = $child->getConfig();
 

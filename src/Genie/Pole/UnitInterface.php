@@ -18,10 +18,10 @@ interface UnitInterface
     /**
      * Converts
      * @param float $value
-     * @return array[float, string]
+     * @return array{0: numeric, 1: string}
      */
     public function convertValueToClosestUnit(float $value): array;
 
     public function interconvertFrom(Quantity $quantity): Quantity;
-    public function interconvertTo(float $value, UnitInterface $targetUnit);
+    public function interconvertTo(float $value, UnitInterface $targetUnit): Quantity;
 }

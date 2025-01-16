@@ -8,10 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method FormRow|null find($id, $lockMode = null, $lockVersion = null)
- * @method FormRow|null findOneBy(array $criteria, array $orderBy = null)
- * @method FormRow[]    findAll()
- * @method FormRow[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<FormRow>
  */
 class FormRowRepository extends ServiceEntityRepository
 {

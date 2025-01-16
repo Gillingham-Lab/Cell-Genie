@@ -9,6 +9,11 @@ use App\Genie\Enums\PrivacyLevel;
 use App\Security\UserRole;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @template TAttribute of string
+ * @template TSubject of mixed
+ * @extends Voter<TAttribute, TSubject>
+ */
 abstract class AbstractPrivacyAwareVoter extends Voter
 {
     protected function canEdit(User $user, PrivacyAwareInterface $entity): bool

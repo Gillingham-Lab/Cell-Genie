@@ -17,6 +17,10 @@ class Row
     public ?int $xl = null;
     public ?int $xxl = null;
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     #[PreMount]
     public function preMount(array $data): array
     {

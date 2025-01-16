@@ -11,13 +11,13 @@ use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Genie\Enums\Availability;
 use App\Repository\LotRepository;
+use App\Service\Doctrine\Generator\UlidGenerator;
+use App\Service\Doctrine\Type\Ulid;
 use App\Validator\Constraint\ValidBoxCoordinate;
 use App\Validator\Constraint\WithinBoxBounds;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
@@ -96,6 +96,9 @@ class Lot implements \JsonSerializable, PrivacyAwareInterface
         return $this->getNumber() ?? "???";
     }
 
+    /**
+     * @return array<string, scalar>
+     */
     public function jsonSerialize(): array
     {
         return [

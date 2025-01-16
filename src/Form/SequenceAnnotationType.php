@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<SequenceAnnotation>
+ */
 class SequenceAnnotationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -24,7 +27,7 @@ class SequenceAnnotationType extends AbstractType
             ])
             ->add("annotationType", TextType::class, options: [
                 "label" => "Annotation type",
-                "help" => "Type of the annotation. Can be any text, but common terms are preferred ('CDS' for coding sequence, 'primer', 'Promotor' or 'misc_feature').",
+                "help" => "Type of the annotation. Can be any text, but common terms are preferred ('CDS' for coding sequence, 'primer', 'Promoter' or 'misc_feature').",
                 "required" => true,
             ])
             ->add("color", ColorType::class, options: [

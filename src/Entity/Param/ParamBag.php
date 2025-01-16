@@ -3,15 +3,22 @@ declare(strict_types=1);
 
 namespace App\Entity\Param;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Attribute\Ignore;
+use ArrayAccess;
 
-class ParamBag implements \ArrayAccess
+/**
+ * @implements ArrayAccess<string, Param>
+ */
+class ParamBag implements ArrayAccess
 {
     /** @var array<string, Param> */
     public array $paramArray = [];
 
-    public function getParam($offset, null|string|float|int|bool $default = null): ?Param
+    /**
+     * @param string $offset
+     * @param null|scalar $default
+     * @return Param|null
+     */
+    public function getParam(string $offset, null|string|float|int|bool $default = null): ?Param
     {
         if ($this->offsetExists($offset)) {
             return $this->paramArray[$offset];
@@ -34,7 +41,7 @@ class ParamBag implements \ArrayAccess
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->paramArray[$offset] = new Param($value);
+        $this->paramArray[$offset] = ($value instanceof Param ? $value : new Param($value));
     }
 
     public function offsetUnset(mixed $offset): void
@@ -42,11 +49,18 @@ class ParamBag implements \ArrayAccess
         unset($this->paramArray[$offset]);
     }
 
+    /**
+     * @return array<string, Param>
+     */
     public function getParamArray(): array
     {
         return $this->paramArray;
     }
 
+    /**
+     * @param array<string, Param> $paramArray
+     * @return $this
+     */
     public function setParamArray(array $paramArray): static
     {
         $this->paramArray = $paramArray;

@@ -11,10 +11,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ExperimentType|null find($id, $lockMode = null, $lockVersion = null)
- * @method ExperimentType|null findOneBy(array $criteria, array $orderBy = null)
- * @method ExperimentType[]    findAll()
- * @method ExperimentType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<ExperimentType>
  */
 class ExperimentTypeRepository extends ServiceEntityRepository
 {
@@ -23,7 +20,10 @@ class ExperimentTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, ExperimentType::class);
     }
 
-    public function findAllWithExperiments()
+    /**
+     * @return ExperimentType[]
+     */
+    public function findAllWithExperiments(): array
     {
         return $this->createQueryBuilder("et")
             ->addSelect("exps")
@@ -35,7 +35,10 @@ class ExperimentTypeRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByCell(Cell $cell)
+    /**
+     * @return ExperimentType[]
+     */
+    public function findByCell(Cell $cell): array
     {
         return $this->createQueryBuilder("et")
             ->distinct()
@@ -48,7 +51,10 @@ class ExperimentTypeRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByProtein(Protein $protein)
+    /**
+     * @return ExperimentType[]
+     */
+    public function findByProtein(Protein $protein): array
     {
         return $this->createQueryBuilder("et")
             ->distinct()
@@ -60,33 +66,4 @@ class ExperimentTypeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-    // /**
-    //  * @return ExperimentType[] Returns an array of ExperimentType objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?ExperimentType
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

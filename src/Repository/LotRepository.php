@@ -11,15 +11,13 @@ use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Storage\BoxRepository;
 use App\Repository\User\UserGroupRepository;
 use App\Repository\User\UserRepository;
+use App\Service\Doctrine\Type\Ulid;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Uid\Ulid;
 
 /**
- * @method Lot|null find($id, $lockMode = null, $lockVersion = null)
- * @method Lot|null findOneBy(array $criteria, array $orderBy = null)
- * @method Lot[]    findAll()
- * @method Lot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Lot>
  */
 class LotRepository extends ServiceEntityRepository
 {
@@ -28,6 +26,25 @@ class LotRepository extends ServiceEntityRepository
         parent::__construct($registry, Lot::class);
     }
 
+    /**
+     * @param array{
+     *     number: string,
+     *     lotNumber: string,
+     *     comment: string,
+     *     availability: value-of<Availability>,
+     *     boughtOn: string,
+     *     privacyLevel: value-of<PrivacyLevel>,
+     *     owner: string,
+     *     group: string,
+     *     box: string,
+     *     boxCoordinate: ?string,
+     *     amount: string,
+     *     purity: string,
+     *     numberOfAliquotes: numeric-string,
+     *     maxNumberOfAliquots: numeric-string,
+     *     aliquoteSize: ?string,
+     * } $data
+     */
     public static function createFromArray(
         UserRepository $userRepository,
         UserGroupRepository $groupRepository,
@@ -56,7 +73,7 @@ class LotRepository extends ServiceEntityRepository
         return $lot;
     }
 
-    protected static function tryDate(?string $date): ?\DateTimeInterface
+    protected static function tryDate(?string $date): ?DateTimeInterface
     {
         if ($date === null) {return null;}
 
@@ -73,7 +90,12 @@ class LotRepository extends ServiceEntityRepository
         return $parsedDate !== false ? $parsedDate : null;
     }
 
-    public function getLotsWithSubstance($class, array $lotIds)
+    /**
+     * @param class-string $class
+     * @param array<int, string|Ulid> $lotIds
+     * @return SubstanceLot[]
+     */
+    public function getLotsWithSubstance(string $class, array $lotIds): array
     {
         if (!is_subclass_of($class, Substance::class)) {
             throw new \TypeError("Only subclasses of " . Substance::class ." are accepted for getLotsWithSubstance, {$class} was given.");
@@ -86,7 +108,7 @@ class LotRepository extends ServiceEntityRepository
         $results = $query->getResult();
         $substanceLots = [];
 
-        //  Multiple lots for a single substances are foldet into that substances lot.
+        //  Multiple lots for a single substances are folded into that substance's lot.
         foreach ($results as $result) {
             foreach ($result->getLots() as $lot) {
                 // Thus, we need to go through *all* retrieved lots.

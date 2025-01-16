@@ -15,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SaveableType<User>
+ */
 class UserType extends SaveableType
 {
     public function __construct(
@@ -38,12 +41,12 @@ class UserType extends SaveableType
                         "label" => "Personal settings",
                     ])
                     ->add("email", options: [
-                        "disabled" => !$this->security->isGranted(UserVoter::CHANGE_IDENTITY, $entity),
+                        "disabled" => !$this->security->isGranted(UserVoter::ATTR_CHANGE_IDENTITY, $entity),
                     ])
                     ->add("plainPassword", RepeatedType::class, options: [
                         "type" => PasswordType::class,
                         "invalid_message" => "The passwords must match",
-                        "disabled" => !$this->security->isGranted(UserVoter::CHANGE_PASSWORD, $entity),
+                        "disabled" => !$this->security->isGranted(UserVoter::ATTR_CHANGE_PASSWORD, $entity),
                         "required" => $options["require_password"],
                         "first_options" => ["label" => "Password"],
                         "second_options" => ["label" => "Repeat password"],
@@ -51,10 +54,10 @@ class UserType extends SaveableType
                     ->add("personalAddress")
                     ->add("title")
                     ->add("firstName", options: [
-                        "disabled" => !$this->security->isGranted(UserVoter::CHANGE_IDENTITY, $entity),
+                        "disabled" => !$this->security->isGranted(UserVoter::ATTR_CHANGE_IDENTITY, $entity),
                     ])
                     ->add("lastName", options: [
-                        "disabled" => !$this->security->isGranted(UserVoter::CHANGE_IDENTITY, $entity),
+                        "disabled" => !$this->security->isGranted(UserVoter::ATTR_CHANGE_IDENTITY, $entity),
                     ])
                     ->add("suffix")
                     ->add("orcid", options: [
@@ -63,17 +66,17 @@ class UserType extends SaveableType
                     ->add("phoneNumber")
                     ->add("office")
                     ->add("group", options: [
-                        "disabled" => !$this->security->isGranted(UserVoter::CHANGE_GROUP, $entity),
+                        "disabled" => !$this->security->isGranted(UserVoter::ATTR_CHANGE_GROUP, $entity),
                     ])
                     ->add("roles", ChoiceType::class, options: [
                         "choices" => UserRole::getChoices($this->security),
-                        "disabled" => !$this->security->isGranted(UserVoter::CHANGE_IDENTITY, $entity),
+                        "disabled" => !$this->security->isGranted(UserVoter::ATTR_CHANGE_IDENTITY, $entity),
                         "multiple" => true,
                         "required" => false,
                         "empty_data" => [],
                     ])
                     ->add("isActive", options: [
-                        "disabled" => !($this->security->isGranted(UserVoter::CHANGE_IDENTITY, $entity) and !($this->security->getUser() === $entity)),
+                        "disabled" => !($this->security->isGranted(UserVoter::ATTR_CHANGE_IDENTITY, $entity) and !($this->security->getUser() === $entity)),
                     ])
                     ->add("isAdmin", options: [
                         "disabled" => !($this->security->isGranted("ROLE_ADMIN") and !($this->security->getUser() === $entity)),

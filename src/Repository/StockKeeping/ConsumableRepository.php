@@ -8,10 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Consumable|null findOneBy(array $criteria, array $orderBy = null)
- * @method Consumable[]    findAll()
- * @method Consumable[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- * @method Consumable|null find($id, $lockMode = null, $lockVersion = null)
+ * @extends ServiceEntityRepository<Consumable>
  */
 class ConsumableRepository extends ServiceEntityRepository
 {
@@ -20,7 +17,10 @@ class ConsumableRepository extends ServiceEntityRepository
         parent::__construct($registry, Consumable::class);
     }
 
-    public function findAllWithRequiredOrders()
+    /**
+     * @return Consumable[]
+     */
+    public function findAllWithRequiredOrders(): array
     {
         $qb = $this->createQueryBuilder("c")
             ->addSelect("cl")
@@ -37,7 +37,10 @@ class ConsumableRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findAllWithCriticallyRequiredOrders()
+    /**
+     * @return Consumable[]
+     */
+    public function findAllWithCriticallyRequiredOrders(): array
     {
         $qb = $this->createQueryBuilder("c")
             ->addSelect("cl")

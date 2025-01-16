@@ -31,9 +31,11 @@ abstract class ExtendedAbstractCrudController extends AbstractCrudController
             HTML);
     }
 
+    /**
+     * @phpstan-ignore missingType.generics
+     */
     public function processUploadedFiles(FormInterface $form): void
     {
-        /** @var FormInterface $child */
         foreach ($form as $child) {
             $config = $child->getConfig();
 

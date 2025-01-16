@@ -20,6 +20,9 @@ trait HasAttachmentsTrait
     #[Assert\Valid]
     private Collection $attachments;
 
+    /**
+     * @return array{0: CollectionField}
+     */
     public static function attachmentCrudFields(): array
     {
         return [

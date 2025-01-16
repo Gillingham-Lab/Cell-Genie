@@ -9,10 +9,14 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use UnhandledMatchError;
 
+/**
+ * @template T
+ */
 trait PaginatedRepositoryTrait
 {
     use PaginatedTrait;
 
+    /** @var PaginatedRepositoryInterface<T>  */
     private PaginatedRepositoryInterface $repository;
 
     /** @var array<string, 'ASC'|'DESC'> */
@@ -41,9 +45,13 @@ trait PaginatedRepositoryTrait
         return $this;
     }
 
+    /**
+     * @param PaginatedRepositoryInterface<T> $repository
+     * @return void
+     */
     private function setRepository(PaginatedRepositoryInterface $repository): void
     {
-        $this->repository = $repository; // @phpstan-ignore-line
+        $this->repository = $repository;
     }
 
     /**
@@ -69,6 +77,11 @@ trait PaginatedRepositoryTrait
         return $this->numberOfRows;
     }
 
+    /**
+     * @param mixed ...$args
+     * @return Paginator<T>
+     * @throws Exception
+     */
     private function getPaginatedResults(mixed ... $args): Paginator
     {
         try {

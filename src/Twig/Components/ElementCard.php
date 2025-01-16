@@ -17,7 +17,7 @@ class ElementCard
     public bool $noPadding = false;
 
     #[ExposeInTemplate]
-    public function getId()
+    public function getId(): string
     {
         return preg_replace("#[^A-Za-z]#", "", $this->title);
     }

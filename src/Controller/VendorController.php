@@ -99,6 +99,14 @@ class VendorController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param Security $security
+     * @param EntityManagerInterface $entityManager
+     * @param Vendor $vendor
+     * @param array<string, mixed> $options
+     * @return Response
+     */
     protected function addOrEditVendor(
         Request $request,
         Security $security,

@@ -52,7 +52,7 @@ class ExperimentalDesignField
         return $this->getLabel() ?? "(new entry)";
     }
 
-    public function getLabel()
+    public function getLabel(): ?string
     {
         return $this->formRow->getLabel();
     }

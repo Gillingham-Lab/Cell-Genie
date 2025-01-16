@@ -120,6 +120,18 @@ class ExperimentController extends AbstractController
     }
 
 
+    /**
+     * @param ExperimentalDataService $dataService
+     * @param ExperimentalDesign $design
+     * @param int $limit
+     * @param int $page
+     * @param bool $onlyExposed
+     * @param array<string, mixed> $searchQuery
+     * @param bool $entitiesAsId
+     * @param bool $hideComments
+     * @return Response
+     * @throws \Exception
+     */
     #[Route('/api/public/experiment/design/viewData/{design}', name: "app_api_experiments_view_data")]
     ##[IsGranted("view", "design")]
     public function downloadDesignData(
@@ -223,6 +235,16 @@ class ExperimentController extends AbstractController
         return $response;
     }
 
+    /**
+     * @param ExperimentalDataService $dataService
+     * @param ExperimentalRun $run
+     * @param int $limit
+     * @param int $page
+     * @param array<string, mixed> $searchQuery
+     * @param bool $entitiesAsId
+     * @return Response
+     * @throws \Exception
+     */
     #[Route('/api/experiment/run/viewData/{run}', name: "app_api_experiments_run_view_data")]
     #[IsGranted("view", "run")]
     public function downloadConditionData(
@@ -462,7 +484,6 @@ class ExperimentController extends AbstractController
 
         $getComponentColumn = function(ExperimentalDesignField $field, array $entities) {
             return new ComponentColumn($field->getLabel(), function (ExperimentalRunCondition|ExperimentalRunDataSet $condition) use ($field, $entities) {
-                /** @var ?ExperimentalDatum $datum */
                 $datum = $condition->getData()[$field->getFormRow()->getFieldName()];
                 $value = $datum?->getValue();
 

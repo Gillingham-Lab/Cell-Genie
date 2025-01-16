@@ -11,6 +11,10 @@ enum UserRole: string
     case Admin = "ROLE_ADMIN";
     case GroupAdmin = "ROLE_GROUP_ADMIN";
 
+    /**
+     * @param Security $security
+     * @return array<string, value-of<self>>
+     */
     public static function getChoices(Security $security): array
     {
         $cases = [];

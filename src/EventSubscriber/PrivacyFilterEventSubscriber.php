@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class PrivacyFilterEventSubscriber implements EventSubscriberInterface
 {
@@ -26,7 +27,7 @@ class PrivacyFilterEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         /** @var ?User $user */
         $user = $this->security->getUser();

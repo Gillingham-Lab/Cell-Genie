@@ -6,6 +6,7 @@ namespace App\Repository\Substance;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
 use App\Repository\Interface\PaginatedRepositoryInterface;
+use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -17,16 +18,13 @@ use function \str_ends_with;
 use function \str_starts_with;
 
 /**
- * @method Antibody|null find($id, $lockMode = null, $lockVersion = null)
- * @method Antibody|null findOneBy(array $criteria, array $orderBy = null)
- * @method Antibody[]    findAll()
- * @method Antibody[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends SubstanceRepository<Antibody>
+ * @implements PaginatedRepositoryInterface<Antibody>
  */
-class AntibodyRepository extends ServiceEntityRepository implements PaginatedRepositoryInterface
+class AntibodyRepository extends SubstanceRepository implements PaginatedRepositoryInterface
 {
     use PaginatedRepositoryTrait;
-
-    private const LotAvailableQuery = "SUM(CASE WHEN l.availability = 'available' THEN 1 ELSE 0 END)";
+    use HasAvailableLotSearchTrait;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -63,16 +61,22 @@ class AntibodyRepository extends ServiceEntityRepository implements PaginatedRep
         return $this->getBaseQuery();
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         return $queryBuilder;
     }
 
+    /**
+     * @param array<string, scalar> $searchFields
+     */
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
         $searchService = $this->searchService;
 
-        $expressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $this->searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
             "antibodyNumber" => $searchService->searchWithStringLike($queryBuilder, "a.number", $searchValue),
             "antibodyType" => $searchService->searchWithStringLike($queryBuilder, "a.type", $searchValue),
             "rrid" => $searchService->searchWithStringLike($queryBuilder, "a.rrid", $searchValue),
@@ -87,13 +91,8 @@ class AntibodyRepository extends ServiceEntityRepository implements PaginatedRep
             default => null,
         });
 
-        $havingExpressions = $this->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
-            "hasAvailableLot" => $searchValue === true ? $queryBuilder->expr()->gt($this::LotAvailableQuery, 0) : $queryBuilder->expr()->eq($this::LotAvailableQuery, 0),
-            default => null,
-        });
-
-        $queryBuilder = $this->addExpressionsToSearchQuery($queryBuilder, $expressions);
-        $queryBuilder = $this->addExpressionsToHavingQuery($queryBuilder, $havingExpressions);
+        $queryBuilder = $this->searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
+        $queryBuilder = $this->addHasAvailableLotSearch($queryBuilder, $searchFields);
 
         return $queryBuilder;
     }

@@ -5,8 +5,6 @@ namespace App\Repository\Cell;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Substance\Protein;
-use App\Entity\DoctrineEntity\User\UserGroup;
-use App\Repository\Traits\SearchTermTrait;
 use App\Service\Doctrine\SearchService;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -17,15 +15,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use ValueError;
 
 /**
- * @method Cell|null find($id, $lockMode = null, $lockVersion = null)
- * @method Cell|null findOneBy(array $criteria, array $orderBy = null)
- * @method Cell[]    findAll()
- * @method Cell[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Cell>
  */
 class CellRepository extends ServiceEntityRepository
 {
-    use SearchTermTrait;
-
     public function __construct(
         ManagerRegistry $registry,
         private SearchService $searchService,
@@ -51,6 +44,11 @@ class CellRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, scalar> $searchFields
+     * @return Cell[]
+     */
     public function getCellsWithAliquotes(
         ?array $orderBy = null,
         array $searchFields = [],
@@ -61,11 +59,23 @@ class CellRepository extends ServiceEntityRepository
             $queryBuilder = $this->addOrderBy($queryBuilder, $orderBy);
         }
 
+        if (!empty($searchFields)) {
+            $queryBuilder = $this->addSearchFields($queryBuilder, $searchFields);
+        }
+
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();
     }
 
+    /**
+     * @param null|array<string, "ASC"|"DESC"> $orderBy
+     * @param array<string, scalar> $searchFields
+     * @param int $page
+     * @param int $limit
+     * @param bool $omitAliquots
+     * @return Paginator<Cell>
+     */
     public function getPaginatedCellsWithAliquots(
         ?array $orderBy = null,
         array $searchFields = [],
@@ -91,6 +101,9 @@ class CellRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder, fetchJoinCollection: true);
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         foreach ($orderBy as $fieldName => $order) {
@@ -112,6 +125,11 @@ class CellRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array<"cellNumber"|"cellIdentifier"|"cellName"|"cellGroupName"|"groupOwner"|"isCancer"|"isEngineered"|"organism"|"tissue", scalar> $searchFields
+     * @return QueryBuilder
+     */
     private function addSearchFields(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
         $searchService = $this->searchService;
@@ -145,9 +163,13 @@ class CellRepository extends ServiceEntityRepository
         };
     }
 
-    public function searchCellsWithAliquots(string $searchTerm, ?array $orderBy = null)
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     * @return Cell[]
+     */
+    public function searchCellsWithAliquots(string $searchTerm, ?array $orderBy = null): array
     {
-        $searchTerm = $this->prepareSearchTerm($searchTerm);
+        $searchTerm = $this->searchService->parse($searchTerm);
 
         $qb = $this->getBaseQuery($orderBy)
             ->orWhere("LOWER(cg.number) LIKE :searchTerm")
@@ -163,7 +185,10 @@ class CellRepository extends ServiceEntityRepository
     }
 
 
-    public function fetchByProtein(Protein $protein)
+    /**
+     * @return Cell[]
+     */
+    public function fetchByProtein(Protein $protein): array
     {
         $qb = $this->createQueryBuilder("c");
 
@@ -181,6 +206,9 @@ class CellRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param array<string, "ASC"|"DESC"> $orderBy
+     */
     private function getBaseQuery(?array $orderBy = null, bool $omitAliquots = false): QueryBuilder
     {
         $qb = $this->createQueryBuilder("c");

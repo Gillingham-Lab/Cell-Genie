@@ -79,6 +79,9 @@ class ExperimentalDesignForm extends AbstractController
         }
     }
 
+    /**
+     * @return FormInterface<ExperimentalDesign>
+     */
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(

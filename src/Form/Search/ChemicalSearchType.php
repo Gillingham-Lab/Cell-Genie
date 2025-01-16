@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ChemicalSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

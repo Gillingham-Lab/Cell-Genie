@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Service\Doctrine\Type\Ulid;
 
 class SubstanceLot
 {
@@ -14,7 +15,7 @@ class SubstanceLot
 
     }
 
-    public function getId()
+    public function getId(): ?Ulid
     {
         return $this->lot->getId();
     }

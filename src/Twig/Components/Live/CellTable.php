@@ -40,6 +40,9 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 use Twig\Error\RuntimeError;
 use UnhandledMatchError;
 
+/**
+ * @phpstan-import-type ArrayTableShape from Table
+ */
 #[AsLiveComponent]
 class CellTable extends AbstractController
 {
@@ -52,6 +55,9 @@ class CellTable extends AbstractController
     #[LiveProp]
     public string $liveSearchFormType = CellSearchType::class;
 
+    /**
+     * @var array<string, scalar>
+     */
     #[LiveProp(url: true)]
     public array $searchResults = [];
 
@@ -81,7 +87,7 @@ class CellTable extends AbstractController
         #[LiveArg] ?string $isEngineered = null,
         #[LiveArg] ?int $organism = null,
         #[LiveArg] ?int $tissue = null,
-    ) {
+    ): void {
         $this->searchResults = [
             "cellNumber" => $cellNumber,
             "cellIdentifier" => $cellIdentifier,
@@ -98,6 +104,10 @@ class CellTable extends AbstractController
         $this->page = 0;
     }
 
+    /**
+     * @return Paginator<Cell>
+     * @throws Exception
+     */
     private function getPaginatedResults(bool $omitAliquots = true): Paginator
     {
         try {
@@ -117,7 +127,7 @@ class CellTable extends AbstractController
 
     /**
      * Returns the array-converted table of found entities
-     * @return array
+     * @return ArrayTableShape
      * @throws Exception
      */
     public function getTable()

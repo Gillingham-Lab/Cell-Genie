@@ -10,10 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ConsumableLot|null findOneBy(array $criteria, array $orderBy = null)
- * @method ConsumableLot[]    findAll()
- * @method ConsumableLot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- * @method ConsumableLot|null find($id, $lockMode = null, $lockVersion = null)
+ * @extends ServiceEntityRepository<ConsumableLot>
  */
 class ConsumableLotRepository extends ServiceEntityRepository
 {
@@ -26,7 +23,7 @@ class ConsumableLotRepository extends ServiceEntityRepository
      * @param Rack $rack
      * @return ConsumableLot[]
      */
-    public function getLotsByLocation(Rack $rack)
+    public function getLotsByLocation(Rack $rack): array
     {
         $qb = $this->createQueryBuilder("cl")
             ->leftJoin("cl.consumable", "c")

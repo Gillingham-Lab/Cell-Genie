@@ -10,18 +10,21 @@ use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<self::ATTR_*, Lot>
+ */
 class LotVoter extends Voter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const REMOVE = "remove";
-    const OWNS = "owns";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string ATTR_REMOVE = "remove";
+    const string ATTR_OWNS = "owns";
 
     const ATTRIBUTES = [
-        self::VIEW,
-        self::EDIT,
-        self::REMOVE,
-        self::OWNS,
+        self::ATTR_VIEW,
+        self::ATTR_EDIT,
+        self::ATTR_REMOVE,
+        self::ATTR_OWNS,
     ];
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -37,20 +40,26 @@ class LotVoter extends Voter
         return true;
     }
 
+    /**
+     * @param self::ATTR_* $attribute
+     * @param Lot $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User and $attribute !== self::VIEW) {
+        if (!$user instanceof User and $attribute !== self::ATTR_VIEW) {
             return false;
         }
 
         if ($subject instanceof Lot) {
             return match ($attribute) {
-                self::VIEW => true,
-                self::EDIT => $this->canEdit($subject, $user),
-                self::OWNS => $subject->getOwner() === $user,
-                self::REMOVE => $user->getIsAdmin(),
+                self::ATTR_VIEW => true,
+                self::ATTR_EDIT => $this->canEdit($subject, $user),
+                self::ATTR_OWNS => $subject->getOwner() === $user,
+                self::ATTR_REMOVE => $user->getIsAdmin(),
                 default => false,
             };
         }  else {

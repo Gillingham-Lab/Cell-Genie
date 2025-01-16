@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\Epitope;
-use App\Entity\EpitopeProtein;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Lot;
 use App\Entity\Traits\Collections\HasUlidAttachmentsTrait;
@@ -54,6 +53,9 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         $this->attachments = new ArrayCollection();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -65,11 +67,13 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         ];
     }
 
+    /** @return Collection<int, Lot> */
     public function getLots(): Collection
     {
         return $this->lots;
     }
 
+    /** @return Collection<int, Lot> */
     public function getAvailableLots(): Collection
     {
         return $this->lots->matching((new Criteria())->where(new Comparison("availability", "=", Availability::Available->value)));
@@ -90,6 +94,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         return $this;
     }
 
+    /** @return Collection<int, Epitope> */
     public function getEpitopes(): Collection
     {
         return $this->epitopes;
@@ -116,7 +121,7 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
         return $this;
     }
 
-    public function getCitation(?Lot $lot=null)
+    public function getCitation(?Lot $lot=null): string
     {
         $other = [
         ];

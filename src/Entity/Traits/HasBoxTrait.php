@@ -25,6 +25,9 @@ trait HasBoxTrait
         return $this;
     }
 
+    /**
+     * @return array{0: AssociationField}
+     */
     public static function crudField(): array
     {
         return [

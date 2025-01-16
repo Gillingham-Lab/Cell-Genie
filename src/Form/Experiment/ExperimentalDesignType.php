@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
+/**
+ * @extends AbstractType<ExperimentalDesign>
+ */
 class ExperimentalDesignType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void

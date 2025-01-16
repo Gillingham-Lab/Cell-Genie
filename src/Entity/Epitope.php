@@ -82,6 +82,7 @@ class Epitope
         return $this;
     }
 
+    /** @return Collection<int, Substance> */
     public function getSubstances(): Collection
     {
         return $this->substances;

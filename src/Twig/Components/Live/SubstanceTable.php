@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Epitope;
 use App\Entity\Table\Column;
@@ -48,6 +49,9 @@ use Symfony\UX\TwigComponent\Attribute\PostMount;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 use ValueError;
 
+/**
+ * @template TSubstanceType of Substance
+ */
 #[AsLiveComponent]
 final class SubstanceTable extends AbstractController
 {
@@ -64,11 +68,16 @@ final class SubstanceTable extends AbstractController
     #[Assert\NotBlank]
     public string $liveSearchFormType;
 
+    /** @var array<string, mixed> */
     #[LiveProp(url: true)]
     public array $search = [];
 
+    /**
+     * @var class-string<covariant TSubstanceType>
+     */
     public string $entityType;
 
+    /** @var EntityRepository<covariant TSubstanceType>  */
     public EntityRepository $entityRepository;
 
     public function __construct(
@@ -76,8 +85,12 @@ final class SubstanceTable extends AbstractController
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $props
+     * @return array<string, mixed>
+     */
     #[PreMount]
-    public function preMount($props)
+    public function preMount(array $props): array
     {
         [$props["entityType"], $props["liveSearchFormType"]] = match ($props["type"]) {
             "antibody" => [Antibody::class, AntibodySearchType::class],
@@ -88,14 +101,14 @@ final class SubstanceTable extends AbstractController
             default => throw new ValueError("Unsupported type for SubstanceTable component."),
         };
 
-        $props["entityRepository"] = $props["entityType"] == null ? null : $this->entityManager->getRepository($props["entityType"]);
+        $props["entityRepository"] = $this->entityManager->getRepository($props["entityType"]);
 
 
         return $props;
     }
 
     #[PostMount]
-    public function postMount()
+    public function postMount(): void
     {
         $this->validate(false);
     }
@@ -120,6 +133,9 @@ final class SubstanceTable extends AbstractController
         return $this->numberOfRows;
     }
 
+    /**
+     * @return Table<covariant TSubstanceType>|null
+     */
     public function getTable(): ?Table
     {
         if (!$this->isValid()) {
@@ -139,6 +155,9 @@ final class SubstanceTable extends AbstractController
         return $table;
     }
 
+    /**
+     * @return EntityRepository<covariant TSubstanceType>
+     */
     private function getRepository(): EntityRepository
     {
         if (!isset($this->entityRepository)) {
@@ -149,6 +168,9 @@ final class SubstanceTable extends AbstractController
         return $this->entityRepository;
     }
 
+    /**
+     * @return class-string<TSubstanceType>
+     */
     private function getEntityClass(): string
     {
         if (!isset($this->entityType)) {
@@ -164,6 +186,10 @@ final class SubstanceTable extends AbstractController
         return $this->entityType;
     }
 
+    /**
+     * @param Table<covariant TSubstanceType> $table
+     * @return void
+     */
     private function addData(Table $table): void
     {
         $repository = $this->getRepository();
@@ -175,13 +201,17 @@ final class SubstanceTable extends AbstractController
                 limit: $this->limit,
             );
         } else {
+
             $data = $repository->findAll();
         }
 
-        $table->setData($data);
+        $table->setData($data);  // @phpstan-ignore argument.type
         $table->setMaxRows($this->getNumberOfRows());
     }
 
+    /**
+     * @return Table<Antibody>
+     */
     private function getAntibodyTable(): Table
     {
         $antibodyCitation = function (Antibody $antibody, ?Vendor $vendor, ?string $productNumber, ?string $rrid): string {
@@ -305,6 +335,9 @@ final class SubstanceTable extends AbstractController
         $this->page = 0;
     }
 
+    /**
+     * @return Table<Chemical>
+     */
     private function getChemicalTable(): Table
     {
         return new Table(
@@ -366,6 +399,9 @@ final class SubstanceTable extends AbstractController
         $this->page = 0;
     }
 
+    /**
+     * @return Table<Oligo>
+     */
     private function getOligoTable(): Table
     {
         return new Table(
@@ -436,6 +472,9 @@ final class SubstanceTable extends AbstractController
         $this->page = 0;
     }
 
+    /**
+     * @return Table<Plasmid>
+     */
     private function getPlasmidTable(): Table
     {
         return new Table(
@@ -517,6 +556,9 @@ final class SubstanceTable extends AbstractController
         $this->page = 0;
     }
 
+    /**
+     * @return Table<Protein>
+     */
     private function getProteinTable(): Table
     {
         $getLastElementOfArray = function (array $array) {

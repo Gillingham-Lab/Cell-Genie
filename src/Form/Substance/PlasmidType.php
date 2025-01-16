@@ -21,8 +21,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends SubstanceType<Plasmid>
+ */
 class PlasmidType extends SubstanceType
 {
+    /**
+     * @phpstan-use VocabularyTrait<Plasmid>
+     */
     use VocabularyTrait;
 
     public function __construct(

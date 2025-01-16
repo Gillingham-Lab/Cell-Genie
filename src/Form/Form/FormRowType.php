@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<FormRow>
+ */
 class FormRowType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
@@ -63,6 +66,11 @@ class FormRowType extends AbstractType
         );
     }
 
+    /**
+     * @param FormBuilderInterface<FormRow> $builder
+     * @param FormInterface<FormRow> $form
+     * @param array{type: value-of<FormRowTypeEnum>}|FormRow|null $formRow
+     */
     private function modifyFormOnType(FormBuilderInterface $builder, FormInterface $form, null|array|FormRow $formRow): void
     {
         if ($formRow === null) {

@@ -16,13 +16,16 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class PlasmidSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add("number", TextType::class, [
-                "label" => "Short name",
+                "label" => "Number",
                 "required" => false,
             ])
             ->add("shortName", TextType::class, [

@@ -19,10 +19,14 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use UnhandledMatchError;
 
+/**
+ * @phpstan-import-type ArrayTableShape from Table
+ */
 #[AsLiveComponent]
 class ExperimentalDesignTable extends AbstractController
 {
     use DefaultActionTrait;
+    /** @use PaginatedRepositoryTrait<ExperimentalDesign> */
     use PaginatedRepositoryTrait;
 
     public function __construct(
@@ -34,6 +38,8 @@ class ExperimentalDesignTable extends AbstractController
 
     /**
      * Returns the array-converted table of found entities
+     *
+     * @return ArrayTableShape
      * @throws Exception
      */
     public function getTable(): array

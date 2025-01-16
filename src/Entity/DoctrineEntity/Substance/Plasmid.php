@@ -54,10 +54,12 @@ class Plasmid extends Substance implements AnnotateableInterface
     #[Gedmo\Versioned]
     private ?Organism $expressionIn = null;
 
+    /** @var null|string[] */
     #[ORM\Column(type: "simple_array")]
     #[Gedmo\Versioned]
     private ?array $growthResistance = null;
 
+    /** @var null|string[] */
     #[ORM\Column(type: "simple_array")]
     #[Gedmo\Versioned]
     private ?array $expressionResistance = null;
@@ -166,22 +168,26 @@ class Plasmid extends Substance implements AnnotateableInterface
         return $this;
     }
 
+    /** @return null|string[] */
     public function getGrowthResistance(): ?array
     {
         return $this->growthResistance;
     }
 
+    /** @param null|string[] $growthResistance */
     public function setGrowthResistance(?array $growthResistance): self
     {
         $this->growthResistance = $growthResistance;
         return $this;
     }
 
+    /** @return null|string[] */
     public function getExpressionResistance(): ?array
     {
         return $this->expressionResistance;
     }
 
+    /** @param null|string[] $expressionResistance */
     public function setExpressionResistance(?array $expressionResistance): self
     {
         $this->expressionResistance = $expressionResistance;

@@ -7,9 +7,15 @@ use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SaveableType extends AbstractType
+/**
+ * @template TData
+ * @extends AbstractType<TData>
+ * @implements FormTypeInterface<TData>
+ */
+class SaveableType extends AbstractType implements FormTypeInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

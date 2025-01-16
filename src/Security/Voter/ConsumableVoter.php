@@ -12,17 +12,21 @@ use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<self::NEW, 'ConsumableCategory'>
+ * @extends Voter<self::NEW|self::ATTR_*, ConsumableCategory|ConsumableLot|Consumable>
+ */
 class ConsumableVoter extends Voter
 {
-    const VIEW = "view";
-    const EDIT = "edit";
-    const NEW = "new";
-    const ADD_TO = "add_to";
-    const TRASH = "trash";
+    const string ATTR_VIEW = "view";
+    const string ATTR_EDIT = "edit";
+    const string NEW = "new";
+    const string ATTR_ADD_TO = "add_to";
+    const string ATTR_TRASH = "trash";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::NEW, self::ADD_TO, self::TRASH])) {
+        if (!in_array($attribute, [self::ATTR_VIEW, self::ATTR_EDIT, self::NEW, self::ATTR_ADD_TO, self::ATTR_TRASH])) {
             return false;
         }
 
@@ -37,13 +41,19 @@ class ConsumableVoter extends Voter
         return false;
     }
 
+    /**
+     * @param self::ATTR_*|self::NEW $attribute
+     * @param 'ConsumableCategory'|Consumable|ConsumableCategory|ConsumableLot $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
         // If the attribute is not VIEW, the user is always instanceof User
         if (!$user instanceof User) {
-            if ($attribute !== self::VIEW) {
+            if ($attribute !== self::ATTR_VIEW) {
                 return false;
             } else {
                 return true;
@@ -56,16 +66,16 @@ class ConsumableVoter extends Voter
         }
 
         return match($attribute) {
-            self::VIEW => $this->canView($user, $subject),
+            self::ATTR_VIEW => $this->canView($user, $subject),
             self::NEW => $this->canCreate($user, $subject),
-            self::ADD_TO => $this->canAddTo($user, $subject),
-            self::EDIT => $this->canEdit($user, $subject),
-            self::TRASH => $this->canTrash($user, $subject),
+            self::ATTR_ADD_TO => $this->canAddTo($user, $subject),
+            self::ATTR_EDIT => $this->canEdit($user, $subject),
+            self::ATTR_TRASH => $this->canTrash($user, $subject),
             default => false,
         };
     }
 
-    private function canView(?User $user, $subject): bool
+    private function canView(?User $user, mixed $subject): bool
     {
         if ($subject instanceof ConsumableCategory or $subject instanceof Consumable) {
             return match ($subject->getPrivacyLevel()) {
@@ -85,7 +95,7 @@ class ConsumableVoter extends Voter
         }
     }
 
-    private function canCreate(User $user, $subject): bool
+    private function canCreate(User $user, mixed $subject): bool
     {
         if ($subject === "ConsumableCategory") {
             return true;
@@ -112,7 +122,7 @@ class ConsumableVoter extends Voter
         return false;
     }
 
-    private function canAddTo(User $user, $subject): bool
+    private function canAddTo(User $user, mixed $subject): bool
     {
         if ($subject instanceof ConsumableCategory or $subject instanceof Consumable) {
             return match ($subject->getPrivacyLevel()) {
@@ -124,7 +134,7 @@ class ConsumableVoter extends Voter
         }
     }
 
-    private function canEdit(?User $user, $subject): bool
+    private function canEdit(?User $user, mixed $subject): bool
     {
         if ($subject instanceof ConsumableCategory or $subject instanceof Consumable) {
             return match ($subject->getPrivacyLevel()) {
@@ -142,7 +152,7 @@ class ConsumableVoter extends Voter
         }
     }
 
-    private function canTrash(?User $user, $subject): bool
+    private function canTrash(?User $user, mixed $subject): bool
     {
         if ($subject instanceof ConsumableLot) {
             return match ($subject->getConsumable()->getPrivacyLevel()) {

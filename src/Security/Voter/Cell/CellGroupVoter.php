@@ -9,25 +9,26 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * @phpstan-extends Voter<'new', CellGroup>|Voter<'edit'|'remove', CellGroup>
+ * @phpstan-extends Voter<self::ATTR_NEW, "CellGroup">
+ * @phpstan-extends Voter<self::ATTR_EDIT|self::ATTR_REMOVE, CellGroup>
  */
 class CellGroupVoter extends Voter
 {
-    const NEW = "new";
-    const EDIT = "edit";
-    const REMOVE = "remove";
+    const string ATTR_NEW = "new";
+    const string ATTR_EDIT = "edit";
+    const string ATTR_REMOVE = "remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::NEW, self::EDIT, self::REMOVE])) {
+        if (!in_array($attribute, [self::ATTR_NEW, self::ATTR_EDIT, self::ATTR_REMOVE])) {
             return false;
         }
 
-        if ($subject === "CellGroup" and $attribute === self::NEW) {
+        if ($subject === "CellGroup" and $attribute === self::ATTR_NEW) {
             return true;
         }
 
-        if ($subject instanceof CellGroup and $attribute !== self::NEW) {
+        if ($subject instanceof CellGroup and $attribute !== self::ATTR_NEW) {
             return true;
         }
 
@@ -35,8 +36,8 @@ class CellGroupVoter extends Voter
     }
 
     /**
-     * @param self::NEW|self::EDIT|self::REMOVE $attribute
-     * @param ($attribute is self::NEW ? 'CellGroup' : CellGroup) $subject
+     * @param self::ATTR_NEW|self::ATTR_EDIT|self::ATTR_REMOVE $attribute
+     * @param ($attribute is self::ATTR_NEW ? 'CellGroup' : CellGroup) $subject
      * @param TokenInterface $token
      * @return bool
      */
@@ -48,12 +49,12 @@ class CellGroupVoter extends Voter
             return false;
         }
 
-        if ($attribute === self::NEW) {
+        if ($attribute === self::ATTR_NEW) {
             return in_array("ROLE_USER", $user->getRoles());
         } else {
             return match ($attribute) {
-                self::EDIT => in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_USER", $user->getRoles()),
-                self::REMOVE => in_array("ROLE_ADMIN", $user->getRoles()) or (in_array("ROLE_USER", $user->getRoles()) && $subject->getCells()->count() === 0),
+                self::ATTR_EDIT => in_array("ROLE_ADMIN", $user->getRoles()) or in_array("ROLE_USER", $user->getRoles()),
+                self::ATTR_REMOVE => in_array("ROLE_ADMIN", $user->getRoles()) or (in_array("ROLE_USER", $user->getRoles()) && $subject->getCells()->count() === 0),
             };
         }
     }

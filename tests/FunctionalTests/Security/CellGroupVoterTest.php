@@ -42,14 +42,14 @@ class CellGroupVoterTest extends KernelTestCase
         /** @var CellGroupVoter $voter */
         $voter = static::getContainer()->get(CellGroupVoter::class);
 
-        $this->assertSame($new, $voter->vote($token, "CellGroup", [CellGroupVoter::NEW]), message: "For user {$email}:");
+        $this->assertSame($new, $voter->vote($token, "CellGroup", [CellGroupVoter::ATTR_NEW]), message: "For user {$email}:");
 
         $cellGroup = static::getContainer()->get(CellGroupRepository::class)->findOneByNumber("CVCL_0291");
 
-        $this->assertSame($edit, $voter->vote($token, $cellGroup, [CellGroupVoter::EDIT]), message: "For user {$email}:");
+        $this->assertSame($edit, $voter->vote($token, $cellGroup, [CellGroupVoter::ATTR_EDIT]), message: "For user {$email}:");
 
         // Users cannot remove Cell groups that still have cells
-        $this->assertSame($removeFull, $voter->vote($token, $cellGroup, [CellGroupVoter::REMOVE]), message: "For user {$email}:");
+        $this->assertSame($removeFull, $voter->vote($token, $cellGroup, [CellGroupVoter::ATTR_REMOVE]), message: "For user {$email}:");
 
         // But they can if the cell group is empty
         $cellGroup = $this->createMock(CellGroup::class);
@@ -59,7 +59,7 @@ class CellGroupVoterTest extends KernelTestCase
             return $countMock;
         });
 
-        $this->assertSame($removeEmpty, $voter->vote($token, $cellGroup, [CellGroupVoter::REMOVE]), message: "For user {$email}:");
+        $this->assertSame($removeEmpty, $voter->vote($token, $cellGroup, [CellGroupVoter::ATTR_REMOVE]), message: "For user {$email}:");
     }
 
     public function testVoterVotesDeniedIfTokenUserIsNotUser(): void
@@ -70,6 +70,6 @@ class CellGroupVoterTest extends KernelTestCase
         /** @var CellGroupVoter $voter */
         $voter = static::getContainer()->get(CellGroupVoter::class);
 
-        $this->assertSame(Voter::ACCESS_DENIED, $voter->vote($token, "CellGroup", [CellGroupVoter::NEW]));
+        $this->assertSame(Voter::ACCESS_DENIED, $voter->vote($token, "CellGroup", [CellGroupVoter::ATTR_NEW]));
     }
 }

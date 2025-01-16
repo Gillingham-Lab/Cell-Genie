@@ -8,9 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ConsumableCategory|null findOneBy(array $criteria, array $orderBy = null)
- * @method ConsumableCategory[]    findAll()
- * @method ConsumableCategory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<ConsumableCategory>
  */
 class ConsumableCategoryRepository extends ServiceEntityRepository
 {
@@ -38,8 +36,10 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
-    public function findAllWithConsumablesAndLots(
-    ) {
+    /**
+     * @return ConsumableCategory[]
+     */
+    public function findAllWithConsumablesAndLots(): array {
         return $this->createQueryBuilder("cc")
             ->addSelect("c")
             ->addSelect("cl")

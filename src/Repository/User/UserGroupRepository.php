@@ -11,10 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Types\UlidType;
 
 /**
- * @method UserGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserGroup|null findOneBy(array $criteria, array $orderBy = null)
- * @method UserGroup[]    findAll()
- * @method UserGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<UserGroup>
  */
 class UserGroupRepository extends ServiceEntityRepository
 {
