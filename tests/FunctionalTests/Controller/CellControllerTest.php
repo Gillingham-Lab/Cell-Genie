@@ -445,7 +445,7 @@ class CellControllerTest extends WebTestCase
 
         $crawler = $client->request("GET", "/cells/cultures");
 
-        $this->assertStringContainsString('"cultureName": "CCL001 (CL002 | HEK293)"', $client->getResponse()->getContent());
+        $this->assertStringContainsString(htmlentities('"name":"CCL001 (CL002 | HEK293)"'), $client->getResponse()->getContent());
 
         $this->assertResponseStatusCodeSame(200);
     }

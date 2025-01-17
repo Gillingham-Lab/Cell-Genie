@@ -5,6 +5,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -13,14 +14,23 @@ class CellCultureTestEvent extends CellCultureEvent
 {
     const RESULTS = ['positive', 'negative', 'unclear'];
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'string', length: 30)]
     #[Assert\Choice(choices: self::RESULTS)]
     private ?string $result = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     private ?string $testType = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'float')]
     #[Assert\Range(min: 0)]
     private ?float $supernatantAmount = null;

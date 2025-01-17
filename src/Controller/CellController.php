@@ -487,9 +487,6 @@ class CellController extends AbstractController
         $startDate = DateTimeImmutable::createFromFormat("Y-m-d", $request->get("startDate") ?? "");
         $endDate = DateTimeImmutable::createFromFormat("Y-m-d", $request->get("endDate") ?? "");
 
-        $filterScientist = $request->get("scientist");
-        $filterIncubator = $request->get("incubator");
-
         if ($startDate === false and $endDate === false) {
             $startDate = new DateTimeImmutable("today - 3 weeks");
             $endDate = new DateTimeImmutable("today + 1 weeks");
@@ -499,30 +496,7 @@ class CellController extends AbstractController
             $endDate = $startDate->add(new DateInterval("P4W"));
         }
 
-        $currentCultures = $this->cellCultureRepository->findAllBetween($startDate, $endDate, $filterIncubator, $filterScientist);
-
-        $cultures = [];
-        /** @var CellCulture $culture */
-        foreach ($currentCultures as $culture) {
-            // Skip if already set
-            if (isset($cultures[$culture->getId()->toBase58()])) {
-                continue;
-            }
-
-            // Skip if it has a parent culture registered (for group reasons).
-            if ($culture->getParentCellCulture() !== null) {
-                continue;
-            }
-
-            // Add
-            $cultures[$culture->getId()->toBase58()] = $culture;
-
-            // Now we add all child cultures of the current culture.
-            $this->extractCultures($currentCultures, $cultures, $culture);
-        }
-
         return $this->render("parts/cells/cell_cultures.html.twig", [
-            "cultures" => array_values($cultures),
             "startDate" => $startDate,
             "endDate" => $endDate,
         ]);
@@ -749,24 +723,5 @@ class CellController extends AbstractController
             "culture" => $cellCulture,
             "form" => $form,
         ]);
-    }
-
-    /**
-     * @param CellCulture[] $currentCultures
-     * @param array<string, CellCulture> $cultureList
-     * @param CellCulture $parentCulture
-     * @return void
-     */
-    private function extractCultures(array $currentCultures, array &$cultureList, CellCulture $parentCulture): void
-    {
-        // Very bad at scaling (O(n^n)), but the lists are going to be short. Should be acceptable.
-        foreach ($currentCultures as $culture) {
-            if ($culture->getParentCellCulture() !== $parentCulture) {
-                continue;
-            }
-
-            $cultureList[$culture->getId()->toBase58()] = $culture;
-            $this->extractCultures($currentCultures, $cultureList, $culture);
-        }
     }
 }

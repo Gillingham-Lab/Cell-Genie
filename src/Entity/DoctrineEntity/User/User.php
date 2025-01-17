@@ -16,6 +16,7 @@ use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -24,12 +25,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ["email"], message: "This email address is already in use.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\Column(type: "ulid", unique: true)]
     #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
     private ?Ulid $id = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: "string", length: 255, unique: true)]
     private ?string $fullName = null;
 
@@ -44,17 +51,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $personalAddress = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $title = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\NotBlank]
     private ?string $firstName = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\NotBlank]
     private ?string $lastName = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $suffix = null;
 

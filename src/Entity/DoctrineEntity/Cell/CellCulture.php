@@ -15,6 +15,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CellCultureRepository::class)]
 class CellCulture implements PrivacyAwareInterface
@@ -24,6 +25,9 @@ class CellCulture implements PrivacyAwareInterface
     use GroupOwnerTrait;
     use PrivacyLevelTrait;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'cellCultures')]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?User $owner = null;
@@ -32,15 +36,27 @@ class CellCulture implements PrivacyAwareInterface
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private ?CellAliquot $aliquot = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'date')]
     private DateTimeInterface $unfrozenOn;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $trashedOn;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $incubator = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $flask = null;
 
@@ -53,6 +69,9 @@ class CellCulture implements PrivacyAwareInterface
     private Collection $subCellCultures;
 
     /** @var Collection<int, CellCultureEvent>  */
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\OneToMany(mappedBy: 'cellCulture', targetEntity: CellCultureEvent::class, fetch: "EAGER", orphanRemoval: true)]
     #[ORM\OrderBy(["date" => "ASC"])]
     private Collection $events;
@@ -73,6 +92,9 @@ class CellCulture implements PrivacyAwareInterface
         $this->events = new ArrayCollection();
     }
 
+    #[Groups([
+        "twig",
+    ])]
     public function getName(): string
     {
         if ($this->aliquot) {
@@ -88,6 +110,9 @@ class CellCulture implements PrivacyAwareInterface
         }
     }
 
+    #[Groups([
+        "twig",
+    ])]
     public function getMycoplasmaStatus(): ?string
     {
         $status = "unclear";
@@ -102,6 +127,29 @@ class CellCulture implements PrivacyAwareInterface
         return $status;
     }
 
+    #[Groups([
+        "twig",
+    ])]
+    public function getStartPassage(): int
+    {
+        return $this->getCurrentPassage($this->unfrozenOn);
+    }
+
+    #[Groups([
+        "twig",
+    ])]
+    public function getEndPassage(): ?int
+    {
+        if (is_null($this->trashedOn)){
+            return null;
+        }
+
+        return $this->getCurrentPassage($this->getTrashedOn());
+    }
+
+    #[Groups([
+        "twig",
+    ])]
     public function getCurrentPassage(?DateTimeInterface $dateTime = null): int
     {
         if ($this->aliquot) {
@@ -125,6 +173,9 @@ class CellCulture implements PrivacyAwareInterface
         return $currentPassage;
     }
 
+    #[Groups([
+        "twig",
+    ])]
     public function isAbandoned(): bool
     {
         // Trashed cells cannot be abandoned

@@ -1,13 +1,8 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
-{% import 'parts/cells/cell_culture_macros.html.twig' as cell_culture_macros %}
 
 {% block title %}Gin :: Cell Culture :: {{ culture.name }}{% endblock %}
-
-{% block javascripts %}
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-{% endblock %}
 
 {% block body_main %}
     <div class="row">
@@ -51,8 +46,15 @@
             <div class="row">
                 <div class="col p-0 m-0">
                     <div class="bg-white mx-3 mb-3 border py-2 px-3 px-lg-5 overflow-auto">
-                        <div id="cellCultureChart" style="position: relative;"></div>
-                        <div id="cellCultureChartEventInfo" style="color: black; background: whitesmoke; font-size: 10px; width: 150px; position: absolute; display: none; padding: 3px 6px; margin-left: -80px;"></div>
+                        {% set leftMargin = 20 %}
+                        <twig:Cell:CellCultureDiagram
+                            :culture="culture"
+                            :startDate="startDate"
+                            :endDate="endDate"
+                            :incubatorFilter="app.request.get('incubator')"
+                            :scientistFilter="app.request.get('scientist')"
+                            :leftMargin="leftMargin"
+                        />
                     </div>
                 </div>
             </div>
@@ -160,8 +162,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block script_bottom %}
-    {{ cell_culture_macros.culture_timeline([culture], startDate, endDate, 20) }}
 {% endblock %}

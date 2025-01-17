@@ -1,0 +1,111 @@
+{% import 'parts/cells/cell_culture_macros.html.twig' as cell_culture_macros %}
+
+<div>
+    {% if cultures|length == 0 %}
+        <p>There are no cells in culture in the chosen timeframe.</p>
+    {% else %}
+        <div {{ stimulus_controller('CellCultureDiagram', {
+            'cultures': cultures|serialize("json", {groups: ['twig']}),
+            'startDate': startDate.format("Y-m-d"),
+            'endDate': endDate.format("Y-m-d"),
+            'leftMargin': leftMargin,
+        }) }}>
+            <div {{ stimulus_target("CellCultureDiagram", "diagram") }} style="position: relative;">
+                {% if not culture %}
+                    {% for culture in cultures %}
+                        <div id="culture-buttons-group-{{ culture.id.toBase58 }}" style="position: absolute; left: 0px; top: {{ 60 + loop.index0*100 - 15}}px">
+                            {# Small screens only get a single 'view' button #}
+                            <div id="culture-buttons-sm-{{ culture.id.toBase58 }}" >
+                                <a class="btn btn-primary btn-sm d-lg-none"
+                                   href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
+                                   data-toggle="tooltip" data-placement="bottom" title="View culture"
+                                ><span class="fa fa-eye"></span></a>
+                            </div>
+
+                            {# Toolkit buttons for large screens #}
+                            <div id="culture-buttons-{{ culture.id.toBase58 }}" class="btn-group btn-group-sm mr-3 d-none d-lg-inline-flex">
+                                <a class="btn btn-primary"
+                                   href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
+                                   data-toggle="tooltip" data-placement="bottom" title="View culture"
+                                ><span class="fa fa-eye"></span></a>
+                                <a class="btn btn-primary"
+                                   href="{{ url("app_cell_culture_edit", {"cellCulture": culture.id}) }}"
+                                   data-toggle="tooltip" data-placement="bottom" title="Edit culture"
+                                ><span class="fa fa-edit"></span></a>
+                                <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                                   href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "other"}) }}"
+                                   data-toggle="tooltip" data-placement="bottom" title="Add new event"
+                                ><span class="fas fa-tag"></span></a>
+                                <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                                   href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "test"}) }}"
+                                   data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"
+                                ><span class="fas fa-hospital-symbol"></span></a>
+                                <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                                   href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "split"}) }}"
+                                   data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"
+                                ><span class="fas fa-fill-drip"></span></a>
+
+                                {% if culture.trashedOn %}
+                                    <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_restore", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Restore cell culture"><span class="fas fa-trash-restore"></span></a>
+                                {% else %}
+                                    <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_trash", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"><span class="fas fa-trash-alt"></span></a>
+                                {% endif %}
+                                <!--<a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create aliquots"><span class="fas fa-snowflake"></span></a>-->
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div {{ stimulus_target("CellCultureDiagram", "events") }} style="color: black; background: whitesmoke; font-size: 10px; width: 150px; position: absolute; display: none; padding: 3px 6px; margin-left: -80px;"></div>
+        </div>
+        {# <div id="cellCultureChart" style="position: relative;">
+            {% for culture in cultures %}
+                <div id="culture-buttons-group-{{ culture.id.toBase58 }}" style="position: absolute; left: 0px; top: {{ 60 + loop.index0*100 - 15}}px">
+                    {# Small screens only get a single 'view' button # }
+                    <div id="culture-buttons-sm-{{ culture.id.toBase58 }}" >
+                        <a class="btn btn-primary btn-sm d-lg-none"
+                           href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="View culture"
+                        ><span class="fa fa-eye"></span></a>
+                    </div>
+
+                    {# Toolkit buttons for large screens # }
+                    <div id="culture-buttons-{{ culture.id.toBase58 }}" class="btn-group btn-group-sm mr-3 d-none d-lg-inline-flex">
+                        <a class="btn btn-primary"
+                           href="{{ url("app_cell_culture_view", {"cellCulture": culture.id}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="View culture"
+                        ><span class="fa fa-eye"></span></a>
+                        <a class="btn btn-primary"
+                           href="{{ url("app_cell_culture_edit", {"cellCulture": culture.id}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Edit culture"
+                        ><span class="fa fa-edit"></span></a>
+                        <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                           href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "other"}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Add new event"
+                        ><span class="fas fa-tag"></span></a>
+                        <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                           href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "test"}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Add new mycoplasma test"
+                        ><span class="fas fa-hospital-symbol"></span></a>
+                        <a class="btn btn-secondary {{ culture.trashedOn ? "disabled" : "" }}"
+                           href="{{ url("app_cell_culture_create_event", {"cellCulture": culture.id, "eventType": "split"}) }}"
+                           data-toggle="tooltip" data-placement="bottom" title="Add new splitting event"
+                        ><span class="fas fa-fill-drip"></span></a>
+
+                        {% if culture.trashedOn %}
+                            <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_restore", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Restore cell culture"><span class="fas fa-trash-restore"></span></a>
+                        {% else %}
+                            <a class="btn btn-warning btn-sm" href="{{ url("app_cell_culture_trash", {"cellCulture": culture.id}) }}" data-toggle="tooltip" data-placement="bottom" title="Trash cell culture"><span class="fas fa-trash-alt"></span></a>
+                        {% endif %}
+                        <!--<a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create aliquots"><span class="fas fa-snowflake"></span></a>-->
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="cellCultureChartEventInfo" style="color: black; background: whitesmoke; font-size: 10px; width: 150px; position: absolute; display: none; padding: 3px 6px; margin-left: -80px;"></div> #}
+    {% endif %}
+</div>
+
+{# {% block script_bottom %}
+    {{ cell_culture_macros.culture_timeline(cultures, startDate, endDate) }}
+{% endblock %} #}

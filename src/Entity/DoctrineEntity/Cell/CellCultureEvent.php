@@ -13,6 +13,7 @@ use App\Repository\Cell\CellCultureEventRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellCultureEventRepository::class)]
@@ -29,16 +30,33 @@ class CellCultureEvent implements PrivacyAwareInterface
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?CellCulture $cellCulture = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?User $owner = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'date', nullable: false)]
     #[Assert\NotBlank]
     private ?DateTimeInterface $date;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
+
+    #[Groups([
+        "twig",
+    ])]
+    public function getEventType(): string
+    {
+        return static::class;
+    }
 
     public function __construct()
     {

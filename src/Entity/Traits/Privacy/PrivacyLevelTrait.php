@@ -5,10 +5,14 @@ namespace App\Entity\Traits\Privacy;
 
 use App\Genie\Enums\PrivacyLevel;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait PrivacyLevelTrait
 {
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: "smallint", nullable: false, enumType: PrivacyLevel::class, options: ["default" => PrivacyLevel::Public])]
     #[Assert\NotBlank]
     private PrivacyLevel $privacyLevel = PrivacyLevel::Public;

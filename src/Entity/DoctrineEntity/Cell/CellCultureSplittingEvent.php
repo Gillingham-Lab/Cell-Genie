@@ -5,16 +5,23 @@ namespace App\Entity\DoctrineEntity\Cell;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class CellCultureSplittingEvent extends CellCultureEvent
 {
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     private ?string $splitting = null;
 
+    #[Groups([
+        "twig",
+    ])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
@@ -42,5 +49,13 @@ class CellCultureSplittingEvent extends CellCultureEvent
         $this->newFlask = $newFlask;
 
         return $this;
+    }
+
+    #[Groups([
+        "twig",
+    ])]
+    public function getCurrentPassage(): int
+    {
+        return $this->getCellCulture()->getCurrentPassage($this->getDate());
     }
 }
