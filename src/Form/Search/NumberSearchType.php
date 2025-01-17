@@ -62,7 +62,7 @@ class NumberSearchType extends AbstractType
         ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "scientific_number_types" => false,

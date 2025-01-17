@@ -38,7 +38,7 @@ class NumberSearchTransformer implements DataTransformerInterface
         }
     }
 
-    public function reverseTransform(mixed $value)
+    public function reverseTransform(mixed $value): mixed
     {
         $return = $value;
 
@@ -53,7 +53,7 @@ class NumberSearchTransformer implements DataTransformerInterface
         return $return;
     }
 
-    public function transform(mixed $value)
+    public function transform(mixed $value): mixed
     {
         $return = $value;
 
