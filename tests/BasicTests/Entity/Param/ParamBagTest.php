@@ -5,8 +5,7 @@ namespace App\Tests\BasicTests\Entity\Param;
 
 use App\Entity\Param\Param;
 use App\Entity\Param\ParamBag;
-use Monolog\Test\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 
 class ParamBagTest extends TestCase
 {
