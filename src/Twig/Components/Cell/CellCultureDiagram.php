@@ -19,6 +19,7 @@ class CellCultureDiagram
 
     public ?string $incubatorFilter;
     public ?string $scientistFilter;
+    /** @var array<string, CellCulture> */
     public array $cultures = [];
     public ?CellCulture $culture;
 
@@ -97,28 +98,8 @@ class CellCultureDiagram
             foreach ($culture->getSubCellCultures() as $subCulture) {
                 $cultures[$subCulture->getId()->toBase58()] = $subCulture;
             }
-            //$this->extractCultures($currentCultures, $cultures, $culture);
         }
 
         $this->cultures = $cultures;
-    }
-
-    /**
-     * @param CellCulture[] $currentCultures
-     * @param array<string, CellCulture> $cultureList
-     * @param CellCulture $parentCulture
-     * @return void
-     */
-    private function extractCultures(array $currentCultures, array &$cultureList, CellCulture $parentCulture): void
-    {
-        // Very bad at scaling (O(n^n)), but the lists are going to be short. Should be acceptable.
-        foreach ($currentCultures as $culture) {
-            if ($culture->getParentCellCulture() !== $parentCulture) {
-                continue;
-            }
-
-            $cultureList[$culture->getId()->toBase58()] = $culture;
-            $this->extractCultures($currentCultures, $cultureList, $culture);
-        }
     }
 }

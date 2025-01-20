@@ -52,8 +52,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CellController extends AbstractController
 {
     public function __construct(
-        readonly private EntityManagerInterface   $entityManager,
-        readonly private CellCultureRepository    $cellCultureRepository,
+        readonly private EntityManagerInterface $entityManager,
     ) {
     }
 
