@@ -415,6 +415,7 @@ class CellController extends AbstractController
 
     #[Route("/cells/consume/{aliquotId}", name: "app_cell_consume_aliquot")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted("consume", "aliquot")]
     public function consumeAliquot(
         #[MapEntity(mapping: ["aliquotId"  => "id"])]
         CellAliquot $aliquot,
@@ -422,36 +423,31 @@ class CellController extends AbstractController
         User $user,
         CellCultureService $cellCultureService,
     ): Response {
-        $this->denyAccessUnlessGranted("consume", $aliquot);
+        try {
+            $cellCulture = $cellCultureService->createCellCultureFromAliquot($user, $aliquot);
 
-        if ($aliquot->getVials() <= 0) {
-            $this->addFlash("error", "There are no aliquote left to consume.");
-        } else {
-            // For updating legacy vials.
-            if ($aliquot->getMaxVials() === null) {
-                $aliquot->setMaxVials($aliquot->getVials());
-            }
 
-            // Reduce aliquot numbers by 1
-            $aliquot->setVials($aliquot->getVials() - 1);
-
-            if ($aliquot->getCell()->isAliquotConsumptionCreatesCulture()) {
-                // Create new cell culture
-                $cellCulture = $cellCultureService->createCellCulture($user, $aliquot);
-
+            if ($cellCulture !== null) {
+                $this->entityManager->persist($cellCulture);
                 // Flush changes
                 $this->entityManager->flush();
 
                 $this->addFlash("success", "Aliquot was consumed and a new cell culture has been created. Check out the current cell cultures!");
 
                 return $this->redirectToRoute("app_cell_culture_edit", [
-                    "cellCulture" => $cellCulture->getId(),
+                    "cellCulture" => $cellCulture->getId()->toRfc4122(),
                 ]);
             } else {
                 // Flush changes
                 $this->entityManager->flush();
 
                 $this->addFlash("success", "Aliquot was consumed.");
+            }
+        } catch (\LogicException $e) {
+            if ($e->getCode() === 27_000_000) {
+                $this->addFlash("error", "There are no aliquote left to consume.");
+            } else {
+                throw $e;
             }
         }
 

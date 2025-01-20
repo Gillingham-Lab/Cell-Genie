@@ -365,7 +365,9 @@ class CellControllerTest extends WebTestCase
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
         $client->loginUser($user);
 
+        /** @var CellAliquot $aliquot */
         $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
+        $this->assertTrue($aliquot->getCell()->isAliquotConsumptionCreatesCulture());
         $crawler = $client->request("GET", "/cells/consume/{$aliquot->getId()}");
 
         // Make sure we have a redirect

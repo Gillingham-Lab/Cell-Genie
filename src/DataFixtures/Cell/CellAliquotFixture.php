@@ -14,6 +14,9 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * @implements DependentFixtureInterface<CellAliquot>
+ */
 class CellAliquotFixture extends Fixture implements DependentFixtureInterface
 {
     const HEK293 = "cell.aliquot.HEK293";
