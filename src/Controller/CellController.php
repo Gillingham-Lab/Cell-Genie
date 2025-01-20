@@ -499,10 +499,9 @@ class CellController extends AbstractController
 
     #[Route("/cells/cultures/trash/{cellCulture}", name: "app_cell_culture_trash")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellCultureVoter::ATTR_TRASH, "cellCulture")]
     public function trashCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_TRASH, $cellCulture);
-
         try {
             $cellCulture->setTrashedOn(new DateTime("today"));
 
@@ -521,10 +520,9 @@ class CellController extends AbstractController
 
     #[Route("/cells/cultures/restore/{cellCulture}", name: "app_cell_culture_restore")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellCultureVoter::ATTR_TRASH, "cellCulture")]
     public function restoreCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_TRASH, $cellCulture);
-
         try {
             $cellCulture->setTrashedOn(null);
 
@@ -544,6 +542,7 @@ class CellController extends AbstractController
     #[Route("/cells/cultures/create/{cellCulture}/event/{eventType}", name: "app_cell_culture_create_event", requirements: ["eventType" => "test|split|other"])]
     #[Route("/cells/cultures/edit/{cellCulture}/event/{cellCultureEvent}", name: "app_cell_culture_edit_event")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellCultureVoter::ATTR_ADD_EVENT, "cellCulture")]
     public function addCellCultureEvent(
         Request $request,
         #[CurrentUser]
@@ -552,8 +551,6 @@ class CellController extends AbstractController
         ?string $eventType = null,
         ?CellCultureEvent $cellCultureEvent = null
     ): Response {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_ADD_EVENT, $cellCulture);
-
         if ($cellCulture->getTrashedOn()) {
             $this->addFlash("error", "Cannot add events for trashed cell cultures.");
             return $this->redirectToRoute("app_cell_cultures");
@@ -652,12 +649,12 @@ class CellController extends AbstractController
 
     #[Route("/cells/cultures/trash/{cellCulture}/{cellCultureEvent}", name: "app_cell_culture_trash_event")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellCultureVoter::ATTR_REMOVE, "cellCultureEvent")]
     public function trashCellCultureEvent(
         Request $request,
         CellCulture $cellCulture,
         CellCultureEvent $cellCultureEvent,
     ): Response {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_REMOVE, $cellCultureEvent);
         $this->entityManager->remove($cellCultureEvent);
 
         try {
@@ -676,10 +673,9 @@ class CellController extends AbstractController
 
     #[Route("/cells/cultures/view/{cellCulture}", name: "app_cell_culture_view")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellCultureVoter::ATTR_VIEW, "cellCulture")]
     public function viewCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_VIEW, $cellCulture);
-
         return $this->render("parts/cells/cell_culture.html.twig", [
             "culture" => $cellCulture,
             "startDate" => $cellCulture->getUnfrozenOn(),
@@ -689,10 +685,9 @@ class CellController extends AbstractController
 
     #[Route("/cells/cultures/edit/{cellCulture}", name: "app_cell_culture_edit")]
     #[IsGranted("ROLE_USER", message: "You must be logged in to do this")]
+    #[IsGranted(CellCultureVoter::ATTR_EDIT, "cellCulture")]
     public function editCellCulture(Request $request, CellCulture $cellCulture): Response
     {
-        $this->denyAccessUnlessGranted(CellCultureVoter::ATTR_EDIT, $cellCulture);
-
         $form = $this->createForm(CellCultureType::class, $cellCulture, ["save_button" => true]);
         $form->handleRequest($request);
 
