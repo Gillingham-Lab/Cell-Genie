@@ -16,6 +16,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
     const HEK293 = "Cell.HEK293";
     const HEK293T = "Cell.HEK293T";
     const HeLa = "Cell.HeLa";
+    const EColi = "Cell.EColi";
 
     public function getDependencies(): array
     {
@@ -32,6 +33,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
             $this->getHEK293(),
             $this->getHEK293T(),
             $this->getHeLa(),
+            $this->getEColi(),
         ];
 
         array_map(fn ($e) => $manager->persist($e), $cells);
@@ -87,6 +89,20 @@ class CellFixture extends Fixture implements DependentFixtureInterface
         ;
 
         $this->setReference(self::HeLa, $cell);
+        return $cell;
+    }
+
+    private function getEColi(): Cell
+    {
+        $cell = (new Cell())
+            ->setName("E.Coli DH5α")
+            ->setIsEngineered(false)
+            ->setAliquotConsumptionCreatesCulture(false)
+            ->setCellGroup($this->getReference(CellGroupFixture::EColi, CellGroup::class))
+            ->setCellNumber("EC001")
+        ;
+
+        $this->setReference(self::EColi, $cell);
         return $cell;
     }
 }

@@ -13,6 +13,7 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
 {
     const HEK293 = "box.hek293";
     const HCT116 = "box.hct116";
+    const ECOLI = "box.ecoli";
 
     public function getDependencies(): array
     {
@@ -50,10 +51,16 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
                 ->setRows(9)
                 ->setCols(9)
                 ->setRack($this->getReference(RackFixtures::RACK_2, Rack::class)),
+            (new Box())
+                ->setName("E. coli cells")
+                ->setRows(12)
+                ->setCols(12)
+                ->setRack($this->getReference(RackFixtures::RACK_2, Rack::class)),
         ];
 
         $this->setReference(self::HEK293, $otherBoxes[0]);
         $this->setReference(self::HCT116, $otherBoxes[1]);
+        $this->setReference(self::ECOLI, $otherBoxes[2]);
 
         array_map(fn (Box $box) => $manager->persist($box), $otherBoxes);
 

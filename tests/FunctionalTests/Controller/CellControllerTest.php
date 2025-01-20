@@ -7,12 +7,15 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Repository\Cell\CellAliquotRepository;
+use App\Repository\Cell\CellCultureRepository;
 use App\Repository\Cell\CellGroupRepository;
 use App\Repository\Cell\CellRepository;
 use App\Repository\User\UserRepository;
 use App\Security\Voter\Cell\CellGroupVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\CssSelector\CssSelectorConverter;
 
 class CellControllerTest extends WebTestCase
 {
@@ -29,7 +32,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapseCellGroupsHeader h2", "Cell groups");
         $this->assertSelectorTextContains("#collapseCellsHeader h2", "Cells");
 
-        $this->assertSelectorCount(4, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
+        $this->assertSelectorCount(5, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
         $this->assertSelectorTextContains("#collapseCellsContent .card-body", "No cell group has been selected");
 
         $content = $crawler->html();
@@ -70,7 +73,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapseCellGroupsHeader h2", "Cell groups");
         $this->assertSelectorTextContains("#collapseCellsHeader h2", "Cells");
 
-        $this->assertSelectorCount(4, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
+        $this->assertSelectorCount(5, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
 
         $this->assertSelectorTextContains("#collapseCellsContent .card-body h3", $cellGroupName);
     }
@@ -150,7 +153,7 @@ class CellControllerTest extends WebTestCase
         $this->assertSelectorTextContains("#collapseCellsHeader h2", "Cells");
 
         // We should fine now 1 more
-        $this->assertSelectorCount(5, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
+        $this->assertSelectorCount(6, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
 
         $this->assertSelectorTextContains("#collapseCellsContent .card-body h3", "New Cell Line");
     }
@@ -378,10 +381,53 @@ class CellControllerTest extends WebTestCase
         $this->assertSame(17, $aliquotRefetched->getVials());
     }
 
-    public function trashAliquot(): void
+    public function testConsumeAliquotThatDoesNotCreateACellCulture(): void
     {
         $client = self::createClient();
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        /** @var CellAliquot $aliquot */
+        $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("ECOLI.1");
+        $this->assertNotNull($aliquot);
+        $this->assertSame(25, $aliquot->getVials());
+        $this->assertFalse($aliquot->getCell()->isAliquotConsumptionCreatesCulture());
+        $crawler = $client->request("GET", "/cells/consume/{$aliquot->getId()}");
+
+        // Make sure we have a redirect
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertStringStartsWith("/cells/view", $client->getResponse()->headers->get("Location"));
+        // Refetch aliquot to check counter
+        $aliquotRefetched = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("ECOLI.1");
+        $this->assertSame(24, $aliquotRefetched->getVials());
+    }
+
+    public function testConsumeAliquotWithNoAliquotsLeftFails(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        /** @var CellAliquot $aliquot */
+        $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
+        $this->assertTrue($aliquot->getCell()->isAliquotConsumptionCreatesCulture());
+        $aliquot->setVials(0);
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        $em->flush();
+
+        $crawler = $client->request("GET", "/cells/consume/{$aliquot->getId()}");// Make sure we have a redirect
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertStringStartsWith("/cells/view", $client->getResponse()->headers->get("Location"));
+
+        // Refetch aliquot to check counter
+        $aliquotRefetched = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
+        $this->assertSame(0, $aliquotRefetched->getVials());
+    }
+
+    public function testTrashAliquot(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("flemming@example.com");
         $client->loginUser($user);
 
         /** @var CellAliquot $aliquot */
@@ -415,6 +461,44 @@ class CellControllerTest extends WebTestCase
 
         $crawler = $client->request("GET", "/cells/cultures");
         $this->assertResponseStatusCodeSame(200);
+
+        // There is no culture at the current time. Controller should only be mounted if a culture is to be displayed.
+        $controller = $crawler->filter("div[data-controller^='CellCultureDiagram']");
+        $this->assertSame(0, $controller->count());
+    }
+
+    public function testCellCulturesWithOnlyStartDate(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $crawler = $client->request("GET", "/cells/cultures?startDate=2020-03-01");
+        $this->assertResponseStatusCodeSame(200);
+
+        $controller = $crawler->filter("div[data-controller^='CellCultureDiagram']");
+
+        $this->assertGreaterThan(0, $controller->count());
+
+        $this->assertSame("2020-03-01", $controller->attr("data-cellculturediagram-start-date-value"));
+        $this->assertSame("2020-03-29", $controller->attr("data-cellculturediagram-end-date-value"));
+    }
+
+    public function testCellCulturesWithOnlyEndDate(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $crawler = $client->request("GET", "/cells/cultures?endDate=2020-03-29");
+        $this->assertResponseStatusCodeSame(200);
+
+        $controller = $crawler->filter("div[data-controller^='CellCultureDiagram']");
+
+        $this->assertGreaterThan(0, $controller->count());
+
+        $this->assertSame("2020-03-01", $controller->attr("data-cellculturediagram-start-date-value"));
+        $this->assertSame("2020-03-29", $controller->attr("data-cellculturediagram-end-date-value"));
     }
 
     public function testAccessingCellCulturesAfterConsumingAliquot(): void
@@ -450,5 +534,84 @@ class CellControllerTest extends WebTestCase
         $this->assertStringContainsString(htmlentities('"name":"CCL001 (CL002 | HEK293)"'), $client->getResponse()->getContent());
 
         $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testTrashingCellCulture(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
+        $crawler = $client->request("GET", "/cells/consume/{$aliquot->getId()}");
+        $client->followRedirect();
+
+        $form = $client->getCrawler()->filter("form")->form();
+        $form->setValues([
+            "cell_culture[number]" => "CCL001",
+        ]);
+        $client->submit($form);
+        $redirect = $client->getResponse()->headers->get("Location");
+        $crawler = $client->followRedirect();
+
+        /** @var CellCultureRepository $cellCultureRepository */
+        $cellCultureRepository = self::getContainer()->get(CellCultureRepository::class);
+
+        $culture = $cellCultureRepository->findOneByNumber("CCL001");
+
+        $this->assertNotNull($culture);
+
+        $crawler = $client->request("GET", "/cells/cultures/trash/{$culture->getId()}");
+        $this->assertResponseStatusCodeSame(302);
+
+        /** @var EntityManagerInterface $entityManger */
+        $entityManger = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManger->clear();
+
+        $culture = $cellCultureRepository->findOneByNumber("CCL001");
+
+        // Culture is not really trashed, but the trash datum will be set
+        $this->assertNotNull($culture->getTrashedOn());
+    }
+
+    public function testRestoringCellCulture(): void
+    {
+        $client = self::createClient();
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $client->loginUser($user);
+
+        $aliquot = self::getContainer()->get(CellAliquotRepository::class)->findOneByAliquotName("HEK1");
+        $crawler = $client->request("GET", "/cells/consume/{$aliquot->getId()}");
+        $client->followRedirect();
+
+        $form = $client->getCrawler()->filter("form")->form();
+        $form->setValues([
+            "cell_culture[number]" => "CCL001",
+        ]);
+        $client->submit($form);
+        $redirect = $client->getResponse()->headers->get("Location");
+        $crawler = $client->followRedirect();
+
+        /** @var CellCultureRepository $cellCultureRepository */
+        $cellCultureRepository = self::getContainer()->get(CellCultureRepository::class);
+
+        $culture = $cellCultureRepository->findOneByNumber("CCL001");
+
+        $this->assertNotNull($culture);
+
+        $crawler = $client->request("GET", "/cells/cultures/trash/{$culture->getId()}");
+        $this->assertResponseStatusCodeSame(302);
+
+        $crawler = $client->request("GET", "/cells/cultures/restore/{$culture->getId()}");
+        $this->assertResponseStatusCodeSame(302);
+
+        /** @var EntityManagerInterface $entityManger */
+        $entityManger = self::getContainer()->get(EntityManagerInterface::class);
+        $entityManger->clear();
+
+        $culture = $cellCultureRepository->findOneByNumber("CCL001");
+
+        // Culture is not really trashed, but the trash datum will be set
+        $this->assertNull($culture->getTrashedOn());
     }
 }

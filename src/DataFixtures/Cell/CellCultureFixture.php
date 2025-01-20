@@ -25,7 +25,7 @@ class CellCultureFixture extends Fixture implements DependentFixtureInterface
     {
         return [
             CellAliquotFixture::class,
-            User::class,
+            UserFixtures::class,
         ];
     }
 
@@ -36,6 +36,7 @@ class CellCultureFixture extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < 2; $i++) {
             $cellCulture = $this->cellCultureService->createCellCultureFromAliquot($user, $oldHekAliquot);
+            $cellCulture->setUnfrozenOn(new \DateTime("2020-03-11"));
             $manager->persist($cellCulture);
             $this->setReference(self::OldHEK293CulturePrefix . $i, $cellCulture);
         }

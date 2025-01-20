@@ -14,9 +14,6 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-/**
- * @implements DependentFixtureInterface<CellAliquot>
- */
 class CellAliquotFixture extends Fixture implements DependentFixtureInterface
 {
     const HEK293 = "cell.aliquot.HEK293";
@@ -24,6 +21,7 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
     const HEK293T = "cell.aliquot.HEK293T";
     const HCT116 = "cell.aliquot.HCT116";
     const HeLa = "cell.aliquot.HeLa";
+    const EColi = "cell.aliquot.EColi";
 
     public function getDependencies(): array
     {
@@ -39,6 +37,7 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
         $aliquots = [
             $this->getHEK293Aliquot(),
             $this->getOldHEK293Aliquot(),
+            $this->getEColiAliquot(),
         ];
 
         array_map(fn (CellAliquot $aliquot) => $manager->persist($aliquot), $aliquots);
@@ -88,6 +87,30 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
             ->setPassage(15);
         ;
         $this->setReference(self::OldHEK293, $aliquot);
+
+        return $aliquot;
+    }
+
+    public function getEColiAliquot(): CellAliquot
+    {
+        $aliquot = (new CellAliquot())
+            ->setAliquotName("ECOLI.1")
+            ->setCell($this->getReference(CellFixture::EColi, Cell::class))
+            ->setBox($this->getReference(BoxFixtures::ECOLI, Box::class))
+            ->setAliquotedOn(new \DateTime("now"))
+            ->setAliquotedBy($this->getReference(UserFixtures::SCIENTIST_USER_REFERENCE, User::class))
+            ->setBoxCoordinate("A1")
+            ->setCellCount(1)
+            ->setVialColor("brown")
+            ->setVials(25)
+            ->setMaxVials(25)
+            ->setOwner($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class))
+            ->setGroup($this->getReference(UserFixtures::HEAD_SCIENTIST_USER_REFERENCE, User::class)->getGroup())
+            ->setPrivacyLevel(PrivacyLevel::Group)
+            ->setPassage(5);
+        ;
+
+        $this->setReference(self::EColi, $aliquot);
 
         return $aliquot;
     }

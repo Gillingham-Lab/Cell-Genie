@@ -22,6 +22,7 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
     const HEK293T = "CellGroup.HEK293T";
     const HeLa = "CellGroup.HELA";
     const Empty = "CellGroup.empty";
+    const EColi = "CellGroup.EColi";
 
     public function getDependencies(): array
     {
@@ -41,6 +42,7 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
             $this->getHEK293T(),
             $this->getHeLa(),
             $this->getEmpty(),
+            $this->getEColi(),
         ];
 
         array_map(fn ($e) => $manager->persist($e), $cells);
@@ -124,6 +126,20 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
             ;
 
         $this->setReference(self::Empty, $cellGroup);
+        return $cellGroup;
+    }
+
+    private function getEColi(): CellGroup
+    {
+        $cellGroup = (new CellGroup())
+            ->setNumber("ECOLI.DH5a")
+            ->setName("E. coli DH5α")
+            ->setIsCancer(false)
+            ->setEthnicity("unknown")
+            ->setDisease("Colon carcinoma")
+        ;
+
+        $this->setReference(self::EColi, $cellGroup);
         return $cellGroup;
     }
 }
