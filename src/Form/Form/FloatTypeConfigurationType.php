@@ -23,14 +23,14 @@ class FloatTypeConfigurationType extends AbstractType
                 "label" => "Float Size",
                 "help" => "Choose the float size. All types support negative values.",
                 "choices" => [
-                    "32 Bit (single, ca 7 significant digits)" => FloatTypeEnum::Float32,
-                    "64 Bit (double, ca 15 significant digits)" => FloatTypeEnum::Float64,
+                    "32 Bit (single, ca 7 significant digits)" => FloatTypeEnum::Float32->value,
+                    "64 Bit (double, ca 15 significant digits)" => FloatTypeEnum::Float64->value,
                 ],
                 "constraints" => [
                     new NotNull(),
                 ],
                 "required" => false,
-                "empty_data" => FloatTypeEnum::Float32,
+                "empty_data" => FloatTypeEnum::Float32->value,
             ])
             ->add("floattype_inactive", ChoiceType::class, [
                 "label" => "Inactive values are safed as",

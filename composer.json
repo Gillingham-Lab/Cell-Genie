@@ -9,13 +9,13 @@
     "require": {
         "php": ">=8.3",
         "ext-ctype": "*",
+        "ext-curl": "*",
         "ext-fileinfo": "*",
         "ext-gd": "*",
         "ext-iconv": "*",
         "ext-pdo_pgsql": "*",
         "ext-sqlite3": "*",
         "ext-zip": "*",
-        "ext-curl": "*",
         "composer/package-versions-deprecated": "1.11.99.1",
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.0",
@@ -55,8 +55,8 @@
         "tienvx/ux-collection-js": "1.1",
         "twig/cache-extra": "^3.10",
         "twig/extra-bundle": "^3.6",
-        "twig/string-extra": "^3.6",
-        "twig/html-extra": "^3.18"
+        "twig/html-extra": "^3.18",
+        "twig/string-extra": "^3.6"
     },
     "config": {
         "optimize-autoloader": true,
