@@ -1,11 +1,11 @@
 {% extends 'homepage.html.twig' %}
 
-{% block title %}Gin :: User settings{% endblock %}
+{% block title %}Gin :: {{ title }}{% endblock %}
 
 {% block body_main %}
 <div class="row">
     <div class="container container-fluid w-100 p-0 m-0">
-        <twig:PageHeader title="User settings" icon="user" />
+        <twig:PageHeader :title="title" icon="{{ icon }}" :iconStack="iconStack" />
 
         <twig:Layout:Row>
             <twig:Layout:Col type="inner">
@@ -17,11 +17,7 @@
         <twig:Layout:Row>
             <twig:Layout:Col type="outer" class="col-12">
                 <twig:ElementCard title="Settings" icon="settings">
-                    {{ form_start(form) }}
-                    {{ form_rest(form) }}
-
-                    <button type="submit" class="btn btn-primary" name="submit">Save</button>
-                    {{ form_end(form) }}
+                    <twig:Form:TabbedFormComponent form="{{ form }}" saveButtonLabel=""/>
                 </twig:ElementCard>
             </twig:Layout:Col>
         </twig:Layout:Row>

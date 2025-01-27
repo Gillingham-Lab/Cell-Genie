@@ -212,3 +212,47 @@
         </div>
     </div>
 {% endblock %}
+
+{% block form_group_row %}
+    <div class="form-fieldset {{ form.vars.errors|length > 0 ? "form-fieldset-error" : "" }}">
+        <label for="{{ form.vars.id }}" class="form-label">{{ form_label(form) }}</label>
+
+        {% if form.vars.errors|length > 0 %}
+            <div class="form-errors">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <div id="{{ form.vars.id }}" class="row">
+            {% for child in form.children %}
+                <div class="col">
+                    {{ form_row(child) }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <small>{{ form_help(form) }}</small>
+    </div>
+{% endblock %}
+
+{% block enumerated_widget %}
+    <div {{ stimulus_controller("EnumeratedWidget", {
+        "inputId": form.vars.id,
+        "inputFullName": form.vars.full_name,
+        "url": enumeration_url ?? url("stimulus_enumerated_widget"),
+    }) }} class="input-group">
+        <div class="small text-danger" {{ stimulus_target("EnumeratedWidget", "error") }}></div>
+
+        <div class="input-group">
+            <div
+                class="btn btn-outline-secondary"
+                {{ stimulus_target("EnumeratedWidget", "generation") }}
+                {{ stimulus_action("EnumeratedWidget", "generate", "click", {"enumeration_type": enumeration_type}) }}
+            >
+                <twig:Icon icon="generate" />
+            </div>
+
+            {{ form_widget(form) }}
+        </div>
+    </div>
+{% endblock %}

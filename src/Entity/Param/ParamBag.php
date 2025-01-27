@@ -14,11 +14,11 @@ class ParamBag implements ArrayAccess
     public array $paramArray = [];
 
     /**
-     * @param string $offset
+     * @param int|string $offset
      * @param null|scalar $default
      * @return Param|null
      */
-    public function getParam(string $offset, null|string|float|int|bool $default = null): ?Param
+    public function getParam(int|string $offset, null|string|float|int|bool $default = null): ?Param
     {
         if ($this->offsetExists($offset)) {
             return $this->paramArray[$offset];
@@ -41,7 +41,11 @@ class ParamBag implements ArrayAccess
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->paramArray[$offset] = ($value instanceof Param ? $value : new Param($value));
+        if (is_array($value) or $value instanceof ParamBag) {
+            $this->paramArray[$offset] = new Param($value);
+        } else {
+            $this->paramArray[$offset] = ($value instanceof Param ? $value : new Param($value));
+        }
     }
 
     public function offsetUnset(mixed $offset): void

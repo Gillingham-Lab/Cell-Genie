@@ -5,6 +5,7 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\Traits\VocabularyTrait;
@@ -47,10 +48,11 @@ class AntibodyType extends SubstanceType
                     "inherit_data" => true,
                     "label" => "General information"
                 ])
-                ->add("number", TextType::class, [
+                ->add("number", EnumeratedType::class, [
                     "label" => "Number",
                     "help" => "An internal identifier (such as AK001). Check with existing antibodies which numbers are free.",
                     "required" => true,
+                    "enumeration_type" => "antibody",
                 ])
                 ->add("rrid", TextType::class, [
                     "label" => "#RRID",

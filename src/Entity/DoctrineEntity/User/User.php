@@ -5,6 +5,8 @@ namespace App\Entity\DoctrineEntity\User;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\Param\ParamBag;
+use App\Entity\Traits\Fields\IdTrait;
+use App\Entity\Traits\Fields\SettingsTrait;
 use App\Repository\User\UserRepository;
 use App\Service\Doctrine\Generator\UlidGenerator;
 use App\Service\Doctrine\Type\Ulid;
@@ -25,14 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ["email"], message: "This email address is already in use.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Groups([
-        "twig",
-    ])]
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
-    #[ORM\Column(type: "ulid", unique: true)]
-    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
-    private ?Ulid $id = null;
+    use IdTrait;
+    use SettingsTrait;
 
     #[Groups([
         "twig",
@@ -113,22 +109,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?UserGroup $group = null;
 
-    #[ORM\Column(type: JsonDocumentType::NAME, nullable: true)]
-    private ?ParamBag $settings = null;
-
     public function __construct()
     {
         $this->cellCultures = new ArrayCollection();
+        $this->settings = new ParamBag();
     }
 
     public function __toString(): string
     {
         return $this->getFullName() ?? "unknown";
-    }
-
-    public function getId(): ?Ulid
-    {
-        return $this->id;
     }
 
     public function getFullName(): ?string
@@ -428,18 +417,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSettings(): ?ParamBag
+    public function getSettings(): ParamBag
     {
         if ($this->settings === null) {
             $this->settings = new ParamBag();
         }
 
-        return $this->settings;
+        if ($this->group) {
+            return $this->settings;
+        } else {
+            return $this->settings;
+        }
     }
 
-    public function setSettings(?ParamBag $settings): static
+    public function getInheritedSettings(): ParamBag
     {
-        $this->settings = $settings;
-        return $this;
+        if ($this->group) {
+            return $this->group->getSettings()->mergeBag($this->settings);
+        } else {
+            return $this->settings;
+        }
     }
 }

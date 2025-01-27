@@ -109,6 +109,7 @@
 
                         <twig:Layout:NavDropdownItem label="Settings" icon="user" iconStack="settings" href="{{ url("app_user_settings") }}" />
                         <twig:Layout:NavDropdownItem label="Group" icon="user.group" href="{{ url("app_group") }}" />
+                        <twig:Layout:NavDropdownItem label="Settings" icon="user.group" iconStack="settings" href="{{ url("app_group_settings") }}" />
 
                         {% if is_granted("ROLE_ADMIN") %}
                             <twig:Layout:NavDropdownItem label="New Group" icon="user.group" iconStack="add" href="#" />

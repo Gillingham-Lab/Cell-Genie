@@ -5,6 +5,7 @@ namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\Epitope;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\SaveableType;
@@ -27,9 +28,19 @@ class ChemicalType extends SubstanceType
     {
         $builder
             ->add(
-                $builder->create("general", NameType::class, [
+                $builder->create("general", FormType::class, [
                     "inherit_data" => true,
                     "label" => "General information"
+                ])
+                ->add("shortName", EnumeratedType::class, [
+                    "label" => "Short name",
+                    "help" => "Short name of the chemical, must be unique among all substances.",
+                    "required" => true,
+                    "enumeration_type" => "chemical",
+                ])
+                ->add("longName", TextType::class, [
+                    "label" => "Name",
+                    "help" => "A longer, more descriptive name.",
                 ])
                 ->add("iupacName", TextType::class, [
                     "label" => "IUPAC name",

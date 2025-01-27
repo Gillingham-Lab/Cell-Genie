@@ -132,7 +132,7 @@ class UserController extends AbstractController
         #[CurrentUser]
         User $user,
     ): Response {
-        $data = $user->getSettings() ?? new ParamBag();
+        $data = $user->getSettings();
         $form = $this->createForm(UserSettingsType::class, $data);
         $form->handleRequest($request);
 
@@ -145,6 +145,9 @@ class UserController extends AbstractController
         }
 
         return $this->render("ucp/settings.html.twig", [
+            "icon" => "user",
+            "iconStack" => "settings",
+            "title" => "User settings",
             "user" => $user,
             "form" => $form,
         ]);

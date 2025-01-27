@@ -86,6 +86,8 @@ class Icon
             "other" => "fas fa-fw fa-ellipsis-v",
             "none" => "fas fa-fw",
 
+            "generate", "automate" => "fas fa-fw fa-cog",
+
             default => throw new ValueError("Icon {$this->icon} does not exist."),
         };
     }

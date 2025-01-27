@@ -1,0 +1,95 @@
+<div{{ attributes.defaults({"class": "col-12"}) }}>
+    <div>
+        {{ form_start(form) }}
+
+        {{ form_errors(form) }}
+
+        {% if errors is defined and errors|length > 0 %}
+            <div class="alert alert-danger">
+                {{ errors }}
+            </div>
+        {% endif %}
+
+        <twig:Layout:Row cols="1">
+            {% set form_groups = form|filter(e => e|length > 0) %}
+
+            {% if form_groups|length > 0 %}
+                <twig:Layout:Tabbed>
+                    {% set tabs = "" %}
+                    {% set tab_containers = "" %}
+
+                    {% for group in form_groups %}
+                        {% set tabs %}
+                            {{ tabs }}
+
+                            <twig:Layout:Tab
+                                key="{{ group.vars.name }}"
+                                label="{{ group.vars.label }}"
+                                active="{{ loop.index0 == 0 ? true : false }}"
+                            />
+                        {% endset %}
+
+                        {% set tab_containers %}
+                            {{ tab_containers }}
+
+                            <twig:Layout:TabContent
+                                key="{{ group.vars.name }}"
+                                label="{{ group.vars.label }}"
+                                active="{{ loop.index0 == 0 ? true : false }}"
+                            >
+                                {% if group.vars.errors|length > 0 %}
+                                    <div class="is-invalid my-3">
+                                        {{ form_errors(group) }}
+                                    </div>
+                                {% endif %}
+
+                                {% for child in group %}
+                                    {% if not child.rendered %}
+                                        <div class="col">
+                                            {{ form_row(child) }}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </twig:Layout:TabContent>
+                        {% endset %}
+                    {% endfor %}
+
+                    <twig:Layout:Tabs>
+                        {{ tabs }}
+                    </twig:Layout:Tabs>
+
+                    <twig:Layout:TabContentContainer>
+                        {{ tab_containers }}
+                    </twig:Layout:TabContentContainer>
+                </twig:Layout:Tabbed>
+            {% else %}
+                {% for child in form.children %}
+                    <twig:Layout:Col type="none">
+                        {{ form_row(child) }}
+                    </twig:Layout:Col>
+                {% endfor %}
+            {% endif %}
+        </twig:Layout:Row>
+
+        <twig:Layout:Row cols="1">
+            <twig:Layout:Col type="inner">
+                {% block content %}
+                    <div>
+                        <div>
+                            {{ form_rest(form) }}
+                        </div>
+
+                        <div>
+                            <button class="btn btn-primary">{{ submitButtonLabel }}</button>
+                            {% if saveButtonLabel %}
+                                <button class="btn btn-outline-primary" name="save">{{ saveButtonLabel }}</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endblock %}
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+
+    {{ form_end(form) }}
+    </div>
+</div>

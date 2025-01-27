@@ -28,6 +28,7 @@
         "google/apiclient": "^2.12.1",
         "phpdocumentor/reflection-docblock": "^5.4",
         "phpstan/phpdoc-parser": "^2.0",
+        "symfony-bundles/json-request-bundle": "^4.2",
         "symfony/console": "*",
         "symfony/debug-bundle": "^6.1",
         "symfony/dotenv": "*",

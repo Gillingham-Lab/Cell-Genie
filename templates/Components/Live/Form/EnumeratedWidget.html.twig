@@ -1,0 +1,11 @@
+<div {{ attributes.defaults({"class": "input-group"}) }}>
+    <div class="input-group-text">
+        <a data-action="live#action:prevent" data-live-action-param="generate"><twig:Icon icon="settings"/></a>
+    </div>
+
+    {{ dump(formView) }}
+
+    {#  <input type="text" id="{{ formView.vars.id }}" name="{{ formView.vars.full_name }}" required="required" aria-describedby="{{ formView.vars.id }}_help" class="form-control"> #}
+
+    {% block content %}{% endblock %}
+</div>

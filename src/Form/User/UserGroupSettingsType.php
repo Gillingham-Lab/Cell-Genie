@@ -3,25 +3,30 @@ declare(strict_types=1);
 
 namespace App\Form\User;
 
-use App\Entity\Param\ParamBag;
 use App\Form\BasicType\FormGroupType;
 use App\Form\FancyChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 
 /**
  * @extends AbstractType<mixed>
  */
-class UserSettingsType extends AbstractType
+class UserGroupSettingsType extends AbstractType
 {
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            "data_class" => null,
+        ]);
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -46,14 +51,9 @@ class UserSettingsType extends AbstractType
                 ->add("dateFormat", FancyChoiceType::class, [
                     "label" => "Preferred format for datetime",
                     "empty_data" => "d. m. Y",
-                    "choices" => self::getDateFormats(),
+                    "choices" => UserSettingsType::getDateFormats(),
                     "help" => "Y = year, m = month, d = day",
                     "allow_add" => true,
-                    "required" => false,
-                ])
-                ->add("hideSmilesInDataOverview", CheckboxType::class, [
-                    "label" => "Hide smiles in experimental data overview",
-                    "empty_data" => null,
                     "required" => false,
                 ])
             )
@@ -62,14 +62,22 @@ class UserSettingsType extends AbstractType
                     "label" => "Numbering options",
                     "inherit_data" => true,
                 ])
-                ->add("sigill", TextType::class, [
-                    "label" => "User Sigill",
+                ->add("numberingGroupPrefix", TextType::class, [
+                    "label" => "Group prefix for numbering entities",
                     "required" => false,
                     "empty_data" => "",
-                    "help" => "Depdending on the settings, the sigill will be added to numbers of compounds.",
+                    "help" => "Changing this will only effect newly created entities, and only if the user does not change the number manually.",
                     "constraints" => [
-                        new Length(max: 6),
+                        new Length(max: 4),
                     ],
+                ])
+                ->add("numberingLength", NumberType::class, [
+                    "label" => "Length of the number (eg, 4 = 0004) after the prefix",
+                    "required" => false,
+                    "empty_data" => 4,
+                    "constraints" => [
+                        new Range(min: 2, max: 30),
+                    ]
                 ])
                 ->add(
                     $builder->create("numberingCell", FormGroupType::class, [
@@ -83,6 +91,10 @@ class UserSettingsType extends AbstractType
                         "constraints" => [
                             new Length(max: 4),
                         ]
+                    ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for cell numbering by default",
+                        "required" => false,
                     ])
                 )
                 ->add(
@@ -98,6 +110,10 @@ class UserSettingsType extends AbstractType
                             new Length(max: 4),
                         ]
                     ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for cell culture numbering by default",
+                        "required" => false,
+                    ])
                 )
                 ->add(
                     $builder->create("numberingAntibody", FormGroupType::class, [
@@ -111,6 +127,10 @@ class UserSettingsType extends AbstractType
                         "constraints" => [
                             new Length(max: 4),
                         ]
+                    ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for antibody numbering by default",
+                        "required" => false,
                     ])
                 )
                 ->add(
@@ -126,6 +146,10 @@ class UserSettingsType extends AbstractType
                             new Length(max: 4),
                         ]
                     ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for chemical numbering by default",
+                        "required" => false,
+                    ])
                 )
                 ->add(
                     $builder->create("numberingOligo", FormGroupType::class, [
@@ -139,6 +163,10 @@ class UserSettingsType extends AbstractType
                         "constraints" => [
                             new Length(max: 4),
                         ]
+                    ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for oligo numbering by default",
+                        "required" => false,
                     ])
                 )
                 ->add(
@@ -154,6 +182,10 @@ class UserSettingsType extends AbstractType
                             new Length(max: 4),
                         ]
                     ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for plasmid numbering by default",
+                        "required" => false,
+                    ])
                 )
                 ->add(
                     $builder->create("numberingProtein", FormGroupType::class, [
@@ -168,35 +200,12 @@ class UserSettingsType extends AbstractType
                             new Length(max: 4),
                         ]
                     ])
+                    ->add("userSigill", CheckboxType::class, [
+                        "label" => "Use user sigill for protein numbering by default",
+                        "required" => false,
+                    ])
                 )
             )
         ;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public static function getDateFormats(): array
-    {
-        $date = new \DateTime("now");
-
-        $formats = [
-            "Y-m-d",
-            "d. m. Y",
-            "m/d/Y",
-            "d. M. Y",
-            "d. F Y",
-            "F d, Y",
-            "D, d. M. Y",
-        ];
-
-        return array_combine(array_map(fn ($x) => $date->format($x), $formats), $formats);
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            "data_class" => null,
-        ]);
     }
 }

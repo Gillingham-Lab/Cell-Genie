@@ -64,4 +64,23 @@ class ParamBagTest extends TestCase
         $this->assertSame(10, $mergedBag["test1"]);
         $this->assertSame("Hello World 2", $mergedBag["test2"]);
     }
+
+    public function testParamBagAcceptArrayValues()
+    {
+        $bag = new ParamBag();
+        $bag["test1"] = [1, 2, true];
+        $bag["test2"] = ["Hello World", 5, 4.5];
+        $bag["test3"] = ["hans" => "heiri", "haafebeggi" => 3];
+
+        $this->assertSame(1, $bag->getParam("test1")->getParam(0)->getValue());
+        $this->assertSame(2, $bag->getParam("test1")->getParam(1)->getValue());
+        $this->assertSame(true, $bag->getParam("test1")->getParam(2)->getValue());
+
+        $this->assertSame("Hello World", $bag->getParam("test2")->getParam(0)->getValue());
+        $this->assertSame(5, $bag->getParam("test2")->getParam(1)->getValue());
+        $this->assertSame(4.5, $bag->getParam("test2")->getParam(2)->getValue());
+
+        $this->assertSame(3, $bag->getParam("test3")->getParam("haafebeggi")->getValue());
+        $this->assertSame("heiri", $bag->getParam("test3")->getParam("hans")->getValue());
+    }
 }

@@ -6,6 +6,7 @@ namespace App\Form\Cell;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\CellularProteinCollectionType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\PriceType;
@@ -138,10 +139,11 @@ class CellType extends SaveableType
                 "inherit_data" => true,
                 "label" => "General information",
             ])
-            ->add("cellNumber", TextType::class, [
+            ->add("cellNumber", EnumeratedType::class, [
                 "label" => "Cell number",
                 "required" => true,
                 "help" => "The cell number must be a unique identifier of the cell. It can be changed, but this will make permanent links (like from QR-Codes) to the cell invalid.",
+                "enumeration_type" => "cell",
             ])
             ->add("name", TextType::class, [
                 "label" => "Cell name",

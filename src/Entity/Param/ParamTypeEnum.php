@@ -9,4 +9,5 @@ enum ParamTypeEnum: string
     case Float = "float";
     case String = "string";
     case Bool = "bool";
+    case Bag = "bag";
 }

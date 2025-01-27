@@ -2,6 +2,7 @@ doctrine_migrations:
     migrations_paths:
         # namespace is arbitrary but should be different from App\Migrations
         # as migrations classes should NOT be autoloaded
+        'DoctrineMigrations2025': '%kernel.project_dir%/migrations/Migration2025'
         'DoctrineMigrations2024': '%kernel.project_dir%/migrations/Migration2024'
         'DoctrineMigrations2023': '%kernel.project_dir%/migrations/Migration2023'
         'DoctrineMigrations': '%kernel.project_dir%/migrations/MigrationOld'

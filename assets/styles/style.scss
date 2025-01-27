@@ -130,3 +130,27 @@ tr.disabled td {
     }
   }
 }
+
+.form-fieldset {
+  margin-bottom: 1rem;
+
+  border-top: 1px solid $secondary;
+  border-bottom: 1px solid $secondary;
+  border-left: 0.5rem solid $secondary;
+
+  padding: 0.5rem;
+
+  background-color: $secondary-bg-subtle;
+
+  > label {
+    font-weight: bold;
+  }
+
+  .row {
+    margin-left: 1rem;
+  }
+}
+
+.form-fieldset-error {
+  border-left: 0.5rem solid $danger;
+}

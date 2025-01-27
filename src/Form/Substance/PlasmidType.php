@@ -6,6 +6,7 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Organism;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\Collection\SequenceAnnotationCollectionType;
 use App\Form\Traits\VocabularyTrait;
@@ -45,9 +46,11 @@ class PlasmidType extends SubstanceType
                     "inherit_data" => true,
                     "label" => "General information"
                 ])
-                ->add("number", TextType::class, [
+                ->add("number", EnumeratedType::class, [
                     "label" => "Number",
                     "help" => "Plasmid number",
+                    "required" => true,
+                    "enumeration_type" => "plasmid",
                 ])
                 ->add("shortName", TextType::class, [
                     "label" => "Short name",

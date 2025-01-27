@@ -281,6 +281,9 @@
     "sebastian/version": {
         "version": "3.0.2"
     },
+    "symfony-bundles/json-request-bundle": {
+        "version": "4.2.0"
+    },
     "symfony/asset": {
         "version": "v5.2.4"
     },

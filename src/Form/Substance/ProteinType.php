@@ -6,6 +6,7 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Entity\Organism;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\NameType;
 use App\Form\Traits\VocabularyTrait;
@@ -40,9 +41,19 @@ class ProteinType extends SubstanceType
     {
         $builder
             ->add(
-                $builder->create("general", NameType::class, [
+                $builder->create("general", FormType::class, [
                     "inherit_data" => true,
                     "label" => "General information"
+                ])
+                ->add("shortName", EnumeratedType::class, [
+                    "label" => "Short name",
+                    "help" => "Short name of the protein, must be unique among all substances.",
+                    "required" => true,
+                    "enumeration_type" => "protein",
+                ])
+                ->add("longName", TextType::class, [
+                    "label" => "Name",
+                    "help" => "A longer, more descriptive name.",
                 ])
                 ->add("proteinAtlasUri", UrlType::class, [
                     "label" => "Protein Atlas",

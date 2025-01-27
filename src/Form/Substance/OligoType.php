@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\User\PrivacyAwareType;
 use App\Genie\Enums\OligoTypeEnum;
@@ -37,9 +38,11 @@ class OligoType extends SubstanceType
                     "inherit_data" => true,
                     "label" => "General information"
                 ])
-                ->add("shortName", TextType::class, [
+                ->add("shortName", EnumeratedType::class, [
                     "label" => "Short name",
                     "help" => "Short name of the oligo, must be unique among all substances.",
+                    "required" => true,
+                    "enumeration_type" => "oligo",
                 ])
                 ->add("longName", TextType::class, [
                     "label" => "Name",

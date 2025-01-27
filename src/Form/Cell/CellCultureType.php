@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Form\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
+use App\Form\BasicType\EnumeratedType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\User\PrivacyAwareType;
 use App\Repository\VocabularyRepository;
@@ -33,10 +34,11 @@ class CellCultureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add("number", TextType::class, [
+            ->add("number", EnumeratedType::class, [
                 "label" => "Culture number",
                 "help" => "A short (max 10) identifier of the cell culture, like FLC001 (First name, Last name, Cell).",
                 "required" => true,
+                "enumeration_type" => "cell_culture",
             ])
             ->add("_privacy", PrivacyAwareType::class, [
                 "inherit_data" => true,
