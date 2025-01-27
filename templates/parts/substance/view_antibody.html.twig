@@ -26,7 +26,7 @@
                         "Target epitopes": ["entity", antibody.epitopeTargets],
                         "AB epitopes": ["entity", antibody.epitopes],
                         "Clonality": antibody.clonality,
-                        "Vendor": antibody.vendor.homepage ? ["url", {"title": antibody.vendor.name, "href": antibody.vendor.homepage}] : antibody.vendor.name,
+                        "Vendor": antibody.vendor ? (antibody.vendor.homepage ? ["url", {"title": antibody.vendor.name, "href": antibody.vendor.homepage}] : antibody.vendor.name) ? "",
                         "Product Number": antibody.vendor ? (antibody.vendor.catalogUrl ? ["url", {"title": antibody.vendorPn, "href": antibody.vendor.productUrl(antibody.vendorPn ?? "")}] : antibody.vendor) : "unknown",
                         "Storage": antibody.storageTemperature,
                         "Usage": antibody.usage,
