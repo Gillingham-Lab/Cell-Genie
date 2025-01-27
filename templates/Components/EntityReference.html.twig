@@ -20,7 +20,7 @@
                 none
             {%- endfor -%}
         {%- else -%}
-            {% cache 'gin-pill-cache-' ~ (e.ulid is defined ? e.ulid : e.id) %}
+            {% cache 'gin-pill-cache-' ~ (entity.ulid is defined ? entity.ulid : entity.id) %}
                 <a class="badge {{ this.class(entity) }} rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
                     {% cache "gin-icon-cache-" ~ icon %}
                     <twig:Icon :icon="icon" />
