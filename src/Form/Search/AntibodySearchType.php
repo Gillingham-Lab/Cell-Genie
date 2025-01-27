@@ -5,6 +5,7 @@ namespace App\Form\Search;
 
 use App\Entity\Epitope;
 use App\Genie\Enums\AntibodyType;
+use App\Twig\Components\Live\SubstanceTable;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -18,6 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @extends AbstractType<mixed>
+ * @see SubstanceTable
  */
 class AntibodySearchType extends AbstractType
 {
@@ -111,6 +113,10 @@ class AntibodySearchType extends AbstractType
                     "No" => "false",
                 ],
                 "empty_data" => null,
+                "required" => false,
+            ])
+            ->add("productNumber", TextType::class, [
+                "label" => "Product number",
                 "required" => false,
             ])
         ;

@@ -88,6 +88,7 @@ class AntibodyRepository extends SubstanceRepository implements PaginatedReposit
             "externallyValidated" => $searchService->searchWithBool($queryBuilder, "a.validatedExternally", $searchValue),
             "hasEpitope" => $searchService->searchWithUlid($queryBuilder, "eph.id", $searchValue),
             "targetsEpitope" => $searchService->searchWithUlid($queryBuilder, "ept.id", $searchValue),
+            "productNumber" => $searchService->searchWithStringLike($queryBuilder, "a.vendorPN", $searchValue),
             default => null,
         });
 

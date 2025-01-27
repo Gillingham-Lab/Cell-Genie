@@ -307,6 +307,7 @@ final class SubstanceTable extends AbstractController
         #[LiveArg] ?string $rrid = null,
         #[LiveArg] ?string $hasEpitope = null,
         #[LiveArg] ?string $targetsEpitope = null,
+        #[LiveArg] ?string $productNumber = null,
     ): void {
         $this->search = [
             "antibodyNumber" => $antibodyNumber,
@@ -330,6 +331,7 @@ final class SubstanceTable extends AbstractController
             "rrid" => $rrid,
             "hasEpitope" => $hasEpitope === null ? null : Ulid::fromString($hasEpitope)->toRfc4122(),
             "targetsEpitope" => $targetsEpitope === null ? null : Ulid::fromString($targetsEpitope)->toRfc4122(),
+            "productNumber" => $productNumber,
         ];
 
         $this->page = 0;
