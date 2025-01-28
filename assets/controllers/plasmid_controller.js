@@ -151,7 +151,6 @@ export default class extends Controller {
             }
         } else {
             // Toggle.html.twig state
-            console.log("toggle off");
             this.permanentFeature = null;
             featureElement.setAttribute("stroke-width", 1);
             this.plasmidFeatureDetailsTarget.innerText = null;
@@ -233,7 +232,12 @@ export default class extends Controller {
     }
 
     connect() {
+        super.connect();
+
         let totalWidth = this.element.clientWidth;
+        if (this.element.offsetParent === null) {
+            totalWidth = 400;
+        }
         let totalHeight = 0;
         let margin = 100;
         let width = 0;

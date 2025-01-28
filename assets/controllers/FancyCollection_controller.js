@@ -7,7 +7,6 @@ export default class extends Controller {
 
     cleanupTomSelect() {
         const tsWrappers = this.element.querySelectorAll(".ts-wrapper");
-        console.log(tsWrappers);
         tsWrappers.forEach(tsWrapper => {
             tsWrapper.remove();
         });
