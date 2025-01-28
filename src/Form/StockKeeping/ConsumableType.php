@@ -7,12 +7,14 @@ use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Form\BasicType\FancyCurrencyType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\CompositeType\PriceType;
+use App\Form\CompositeType\PrivacyAwareType;
+use App\Form\CompositeType\VendorFieldType;
 use App\Form\LongNameType;
-use App\Form\PriceType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
-use App\Form\VendorFieldType;
 use App\Form\VisualisationType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -45,13 +47,10 @@ class ConsumableType extends SaveableType
                     "empty_data" => null,
                     "config" => ["toolbar" => "basic"],
                 ])
-                ->add("category", EntityType::class, [
+                ->add("category", FancyEntityType::class, [
                     "label" => "Category",
                     "class" => ConsumableCategory::class,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                     "group_by" => function ($e) {
                         return $e->getParent()?->getLongName();
                     },
@@ -80,7 +79,7 @@ class ConsumableType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                 ])
-                ->add("location", EntityType::class, [
+                ->add("location", FancyCurrencyType::class, [
                     "class" => Rack::class,
                     "label" => "Location",
                     "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
@@ -99,12 +98,9 @@ class ConsumableType extends SaveableType
                     'by_reference' => false,
                     "placeholder" => "Empty",
                     "required" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "false",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("instruments", EntityType::class, [
+                ->add("instruments", FancyEntityType::class, [
                     "label" => "Instruments",
                     "help" => "Choose instruments that use this consumable. The consumables will then appear on the instruments page.",
                     "class" => Instrument::class,
@@ -125,10 +121,7 @@ class ConsumableType extends SaveableType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,

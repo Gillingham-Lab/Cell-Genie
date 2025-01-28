@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Import;
 
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;

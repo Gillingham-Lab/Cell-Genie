@@ -1,29 +1,43 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Form\User;
+namespace App\Form\CompositeType;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\Interface\PrivacyAwareInterface;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\BasicType\FormGroupType;
 use App\Genie\Enums\PrivacyLevel;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @extends AbstractType<PrivacyAwareInterface>
  */
 class PrivacyAwareType extends AbstractType
 {
+    public function getParent()
+    {
+        return FormGroupType::class;
+    }
+
     public function __construct(
         private Security $security
     ) {
 
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            "icon" => "privacy",
+        ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -31,7 +45,7 @@ class PrivacyAwareType extends AbstractType
         $security = $this->security;
 
         $builder
-            ->add("owner", EntityType::class, [
+            ->add("owner", FancyEntityType::class, [
                 "label" => "Owner",
                 "required" => false,
                 "class" => User::class,
@@ -66,12 +80,9 @@ class PrivacyAwareType extends AbstractType
                 "empty_data" => null,
                 "placeholder" => "Select a owner",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("group", EntityType::class, [
+            ->add("group", FancyEntityType::class, [
                 "label" => "Group owner",
                 "required" => false,
                 "class" => UserGroup::class,
@@ -97,10 +108,7 @@ class PrivacyAwareType extends AbstractType
                 "empty_data" => null,
                 "placeholder" => "Select a owner group",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
             ->add("privacyLevel", EnumType::class, [
                 "label" => "Privacy level",

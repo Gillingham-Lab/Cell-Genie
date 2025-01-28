@@ -724,6 +724,7 @@ class SubstanceController extends AbstractController
 
         return $this->render("parts/forms/add_substance.html.twig", [
             "title" => $new ? "Epitope :: New" : "Epitope :: {$epitope->getShortName()} :: Edit",
+            "icon" => "epitope",
             "substance" => ($new ? null : $epitope),
             "form" => $form,
             "returnTo" => $new ? $this->generateUrl("app_epitopes") : $this->generateUrl("app_epitope_view", ["epitope" => $epitope->getId()]),

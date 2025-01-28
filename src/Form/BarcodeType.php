@@ -14,6 +14,8 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
 use App\Entity\Lot;
 use App\Entity\SubstanceLot;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\BasicType\FancyEntityType;
 use App\Repository\LotRepository;
 use App\Repository\Substance\SubstanceRepository;
 use Doctrine\ORM\EntityRepository;
@@ -45,7 +47,7 @@ class BarcodeType extends AbstractType
             ->add("barcode", TextType::class, [
                 "disabled" => true,
             ])
-            ->add("cellCulture", EntityType::class, [
+            ->add("cellCulture", FancyEntityType::class, [
                 "class" => CellCulture::class,
                 'empty_data' => null,
                 "query_builder" => function(EntityRepository $er) {
@@ -74,15 +76,12 @@ class BarcodeType extends AbstractType
                 },
                 "placeholder" => "Empty",
                 "required" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
                 "group_by" => function($choice, $key, $value) {
                     return $choice->getOwner();
                 },
             ])
-            ->add("cell", EntityType::class, [
+            ->add("cell", FancyEntityType::class, [
                 "class" => Cell::class,
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("c")
@@ -92,12 +91,9 @@ class BarcodeType extends AbstractType
                 'empty_data' => null,
                 "placeholder" => "Empty",
                 "required" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("substance", EntityType::class, [
+            ->add("substance", FancyEntityType::class, [
                 "class" => Substance::class,
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("s")
@@ -107,10 +103,7 @@ class BarcodeType extends AbstractType
                 'empty_data' => null,
                 "placeholder" => "Empty",
                 "required" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
                 "group_by" => function($choice, $key, $value) {
                     return match($choice::class) {
                         Antibody::class => "Antibodies",
@@ -122,7 +115,7 @@ class BarcodeType extends AbstractType
                     };
                 },
             ])
-            ->add("substanceLot", ChoiceType::class, [
+            ->add("substanceLot", FancyChoiceType::class, [
                 "choices" => $this->getLotChoices(),
                 "choice_label" => function ($choice) {
                     if ($choice?->getSubstance() instanceof Antibody) {
@@ -137,10 +130,7 @@ class BarcodeType extends AbstractType
                 'empty_data' => null,
                 "placeholder" => "Empty",
                 "required" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
                 "group_by" => function($choice, $key, $value) {
                     return is_null($choice) ? "Other" : match(($choice->getSubstance())::class) {
                         Antibody::class => "Antibodies",

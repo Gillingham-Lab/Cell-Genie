@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Form\StockKeeping;
 
 use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Form\BasicType\FancyCurrencyType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\SaveableType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
@@ -61,14 +63,11 @@ class QuickOrderType extends SaveableType
                 "currency" => false,
                 "divisor" => 1000,
             ])
-            ->add("priceCurrency", CurrencyType::class, options: [
+            ->add("priceCurrency", FancyCurrencyType::class, options: [
                 "label" => "Currency",
                 "required" => false,
                 "empty_data" => "CHF",
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
             ->add("status", EnumType::class, [
                 "label" => "Status",
@@ -78,7 +77,7 @@ class QuickOrderType extends SaveableType
                     new Assert\NotBlank(),
                 ]
             ])
-            ->add("location", EntityType::class, [
+            ->add("location", FancyEntityType::class, [
                 "class" => Rack::class,
                 "label" => "Location",
                 "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
@@ -97,10 +96,7 @@ class QuickOrderType extends SaveableType
                 'by_reference' => false,
                 "placeholder" => "Empty",
                 "required" => true,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "false",
-                ],
+                "allow_empty" => true,
             ])
         ;
 

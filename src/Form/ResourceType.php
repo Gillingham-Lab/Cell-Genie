@@ -5,7 +5,7 @@ namespace App\Form;
 
 use App\Entity\DoctrineEntity\Resource;
 use App\Form\Collection\AttachmentCollectionType;
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

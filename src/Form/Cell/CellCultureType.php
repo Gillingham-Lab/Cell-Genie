@@ -5,13 +5,12 @@ namespace App\Form\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\Traits\VocabularyTrait;
-use App\Form\User\PrivacyAwareType;
 use App\Repository\VocabularyRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

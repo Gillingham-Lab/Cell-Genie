@@ -6,10 +6,9 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\Epitope;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
-use App\Form\NameType;
-use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -83,7 +82,7 @@ class ChemicalType extends SubstanceType
                     "scale" => 3,
                     "required" => false,
                 ])
-                ->add("epitopes", EntityType::class, [
+                ->add("epitopes", FancyEntityType::class, [
                     "class" => Epitope::class,
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
@@ -95,11 +94,7 @@ class ChemicalType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                        //"data-allow-add" => true,
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(

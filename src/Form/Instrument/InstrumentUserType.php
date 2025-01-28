@@ -5,6 +5,7 @@ namespace App\Form\Instrument;
 
 use App\Entity\DoctrineEntity\InstrumentUser;
 use App\Entity\DoctrineEntity\User\User;
+use App\Form\BasicType\FancyEntityType;
 use App\Genie\Enums\InstrumentRole;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -22,7 +23,7 @@ class InstrumentUserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add("user", EntityType::class, options: [
+            ->add("user", FancyEntityType::class, options: [
                 "label" => "User",
                 "class" => User::class,
                 "query_builder" => function (EntityRepository $er) {
@@ -30,10 +31,7 @@ class InstrumentUserType extends AbstractType
                         ->addOrderBy("a.fullName", "ASC")
                         ->where("a.isActive = true");
                 },
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
                 "group_by" => function (User $instrumentUser) {
                     return $instrumentUser->getGroup();
                 },

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Form\Import;
 
 use App\Entity\DoctrineEntity\Storage\Box;
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

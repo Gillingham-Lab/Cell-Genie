@@ -5,6 +5,8 @@ namespace App\Form\Search;
 
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\BasicType\FancyEntityType;
 use App\Genie\Enums\OligoTypeEnum;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -43,7 +45,7 @@ class OligoSearchType extends AbstractType
                 "required" => false,
                 "class" => OligoTypeEnum::class,
             ])
-            ->add("startConjugate", EntityType::class, [
+            ->add("startConjugate", FancyEntityType::class, [
                 "label" => "Start conjugate",
                 "required" => false,
                 "class" => Substance::class,
@@ -62,12 +64,9 @@ class OligoSearchType extends AbstractType
                 },
                 "placeholder" => "Empty",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("endConjugate", EntityType::class, [
+            ->add("endConjugate", FancyEntityType::class, [
                 "label" => "End conjugate",
                 "required" => false,
                 "class" => Substance::class,
@@ -86,12 +85,9 @@ class OligoSearchType extends AbstractType
                 },
                 "placeholder" => "Empty",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("hasAvailableLots", ChoiceType::class, [
+            ->add("hasAvailableLots", FancyChoiceType::class, [
                 "label" => "Has available lots",
                 "choices" => [
                     "Yes" => "true",
@@ -99,6 +95,7 @@ class OligoSearchType extends AbstractType
                 ],
                 "empty_data" => null,
                 "required" => false,
+                "allow_empty" => true,
             ])
         ;
 

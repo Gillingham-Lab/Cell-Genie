@@ -6,6 +6,8 @@ namespace App\Form\Search;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Entity\Organism;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\BasicType\FancyEntityType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -40,7 +42,7 @@ class PlasmidSearchType extends AbstractType
                 "label" => "Sequence",
                 "required" => false,
             ])
-            ->add("hasAvailableLots", ChoiceType::class, [
+            ->add("hasAvailableLots", FancyChoiceType::class, [
                 "label" => "Has available lots",
                 "choices" => [
                     "Yes" => "true",
@@ -48,6 +50,7 @@ class PlasmidSearchType extends AbstractType
                 ],
                 "empty_data" => null,
                 "required" => false,
+                "allow_empty" => true,
             ])
             ->add("growthResistance", TextType::class, [
                 "label" => "Growth resistance",
@@ -57,7 +60,7 @@ class PlasmidSearchType extends AbstractType
                 "label" => "Expression resistance",
                 "required" => false,
             ])
-            ->add("expressionOrganism", EntityType::class, [
+            ->add("expressionOrganism", FancyEntityType::class, [
                 "class" => Organism::class,
                 "label" => "Expression host",
                 "required" => false,
@@ -70,12 +73,9 @@ class PlasmidSearchType extends AbstractType
                 },
                 "placeholder" => "Empty",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("expressesProtein", ChoiceType::class, [
+            ->add("expressesProtein", FancyChoiceType::class, [
                 "label" => "Expresses a protein",
                 "choices" => [
                     "Yes" => "true",
@@ -83,8 +83,9 @@ class PlasmidSearchType extends AbstractType
                 ],
                 "empty_data" => null,
                 "required" => false,
+                "allow_empty" => true,
             ])
-            ->add("expressedProtein", EntityType::class, [
+            ->add("expressedProtein", FancyEntityType::class, [
                 "label" => "Expressed protein",
                 "class" => Protein::class,
                 "query_builder" => function (EntityRepository $er) {
@@ -102,10 +103,7 @@ class PlasmidSearchType extends AbstractType
                 "placeholder" => "Empty",
                 "required" => false,
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
         ;
     }

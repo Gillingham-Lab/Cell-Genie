@@ -10,8 +10,9 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Genie\Enums\OligoTypeEnum;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -73,7 +74,7 @@ class OligoType extends SubstanceType
                     "help" => "The DNA oligomer sequence (5' to 3'). Add modified bases using the square bracket notation (e.g., [Hexylamine]ATG[FAM])",
                     "required" => false,
                 ])
-                ->add("startConjugate", EntityType::class, [
+                ->add("startConjugate", FancyEntityType::class, [
                     "class" => Substance::class,
                     "query_builder" => function (EntityRepository $er) use ($currentId) {
                         return $er->createQueryBuilder("e")
@@ -95,12 +96,9 @@ class OligoType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("endConjugate", EntityType::class, [
+                ->add("endConjugate", FancyEntityType::class, [
                     "class" => Substance::class,
                     "query_builder" => function (EntityRepository $er) use ($currentId) {
                         return $er->createQueryBuilder("e")
@@ -122,10 +120,7 @@ class OligoType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("molecularMass", NumberType::class, [
                     "label" => "Molecular mass [Da]",
@@ -136,7 +131,7 @@ class OligoType extends SubstanceType
                     "help" => "Extinction coefficient, as given by the manufacturer or as calculated. Must be in [mM⁻¹ cm⁻¹]",
                     "required" => false,
                 ])
-                ->add("epitopes", EntityType::class, [
+                ->add("epitopes", FancyEntityType::class, [
                     "label" => "Epitopes",
                     "class" => Epitope::class,
                     "query_builder" => function (EntityRepository $er) {
@@ -149,11 +144,7 @@ class OligoType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                        //"data-allow-add" => true,
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(

@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace App\Form\Storage;
 
 use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
 use App\Form\VisualisationType;
 use App\Repository\Storage\RackRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -79,16 +80,13 @@ class RackType extends SaveableType
                     "help" => "Maximum amount of boxes within this location, with 0 = infinite. Interesting for freezer racks, for example.",
                     "required" => false,
                 ])
-                ->add("parent", ChoiceType::class, [
+                ->add("parent", FancyChoiceType::class, [
                     "label" => "Parent location",
                     "choices" => $parentChoices(),
                     "group_by" => function(Rack $rack) { return $rack->getParent()?->getPathName(); },
                     "placeholder" => "Empty",
                     "required" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,

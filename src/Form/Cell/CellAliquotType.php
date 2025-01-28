@@ -6,17 +6,15 @@ namespace App\Form\Cell;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Storage\Box;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
-use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
-use App\Repository\Cell\CellAliquotRepository;
-use App\Repository\Cell\CellRepository;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -112,7 +110,7 @@ class CellAliquotType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Storage",
                 ])
-                ->add("box", EntityType::class, [
+                ->add("box", FancyEntityType::class, [
                     "required" => true,
                     "label" => "Storage box",
                     "class" => Box::class,
@@ -127,10 +125,7 @@ class CellAliquotType extends SaveableType
                     "empty_data" => null,
                     "placeholder" => "Select a box",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("boxCoordinate", TextType::class, options: [
                     "label" => "Position in box",

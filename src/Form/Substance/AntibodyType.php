@@ -6,11 +6,12 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\Epitope;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\CompositeType\PrivacyAwareType;
+use App\Form\CompositeType\VendorFieldType;
 use App\Form\NameType;
 use App\Form\Traits\VocabularyTrait;
-use App\Form\User\PrivacyAwareType;
-use App\Form\VendorFieldType;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
@@ -90,7 +91,7 @@ class AntibodyType extends SubstanceType
                     "empty_data" => null,
                     "required" => false,
                 ])
-                ->add("epitopes", EntityType::class, [
+                ->add("epitopes", FancyEntityType::class, [
                     "label" => "Has epitopes",
                     "class" => Epitope::class,
                     "query_builder" => function (EntityRepository $er) {
@@ -103,12 +104,9 @@ class AntibodyType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("epitopeTargets", EntityType::class, [
+                ->add("epitopeTargets", FancyEntityType::class, [
                     "label" => "Targets epitopes",
                     "class" => Epitope::class,
                     "query_builder" => function (EntityRepository $er) {
@@ -121,10 +119,7 @@ class AntibodyType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Form\Experiment;
 
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\User\User;
-use App\Form\User\PrivacyAwareType;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\CompositeType\PrivacyAwareType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -46,13 +46,10 @@ class ExperimentalRunType extends AbstractType
                 ->add("comment", TextareaType::class, [
                     "required" => false,
                 ])
-                ->add("scientist", EntityType::class, [
+                ->add("scientist", FancyEntityType::class, [
                     "class" => User::class,
                     "group_by" => fn(User $user) => $user->getGroup()?->getShortName() ?? "None",
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("ownership", PrivacyAwareType::class, [
                     "label" => "Ownership",

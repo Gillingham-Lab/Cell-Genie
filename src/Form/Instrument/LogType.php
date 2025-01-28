@@ -4,12 +4,11 @@ declare(strict_types=1);
 namespace App\Form\Instrument;
 
 use App\Entity\DoctrineEntity\Log;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
 use App\Genie\Enums;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

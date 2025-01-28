@@ -6,10 +6,11 @@ namespace App\Form\Substance;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Lot;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\CompositeType\PrivacyAwareType;
+use App\Form\CompositeType\VendorFieldType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
-use App\Form\VendorFieldType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -58,7 +59,7 @@ class LotType extends SaveableType
                     "widget" => "single_text",
                     "label" => "Bought on (or made on)",
                 ])
-                ->add("boughtBy", EntityType::class, options: [
+                ->add("boughtBy", FancyEntityType::class, options: [
                     "class" => User::class,
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("u")
@@ -70,10 +71,7 @@ class LotType extends SaveableType
                     },
                     "label" => "Bought by",
                     "required" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("openedOn", DateType::class, options: [
                     "widget" => "single_text",
@@ -97,7 +95,7 @@ class LotType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Storage",
                 ])
-                ->add("box", EntityType::class, options: [
+                ->add("box", FancyEntityType::class, options: [
                     "class" => Box::class,
                     "label" => "Storage location",
                     "help" => "Which box is the Aliquot located in",
@@ -112,10 +110,7 @@ class LotType extends SaveableType
                     'empty_data' => null,
                     "placeholder" => "Empty",
                     "required" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("boxCoordinate", TextType::class, options: [
                     "label" => "Position in box",

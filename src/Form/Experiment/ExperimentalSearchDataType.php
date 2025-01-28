@@ -3,19 +3,15 @@ declare(strict_types=1);
 
 namespace App\Form\Experiment;
 
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
-use App\Form\FancyChoiceType;
+use App\Form\BasicType\FancyChoiceType;
 use App\Form\Search\NumberSearchType;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Service\Experiment\ExperimentalDataFormRowService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -87,9 +83,6 @@ class ExperimentalSearchDataType extends AbstractType
                         "choices" => $options["fieldChoices"][$field->getFieldName() . "_substance"],
                         "multiple" => true,
                         "empty_data" => [],
-                        "attr" => [
-                            "class" => "gin-fancy-select",
-                        ]
                     ]);
 
                     $innerForm->add($field->getFieldName() . "_lot", FancyChoiceType::class, [
@@ -98,9 +91,6 @@ class ExperimentalSearchDataType extends AbstractType
                         "choices" => $options["fieldChoices"][$field->getFieldName() . "_lot"],
                         "multiple" => true,
                         "empty_data" => [],
-                        "attr" => [
-                            "class" => "gin-fancy-select",
-                        ]
                     ]);
                 } else {
                     $innerForm->add($field->getFieldName(), FancyChoiceType::class, [
@@ -109,9 +99,6 @@ class ExperimentalSearchDataType extends AbstractType
                         "choices" => $options["fieldChoices"][$field->getFieldName()],
                         "multiple" => true,
                         "empty_data" => [],
-                        "attr" => [
-                            "class" => "gin-fancy-select",
-                        ]
                     ]);
                 }
             } elseif ($field->getType() === FormRowTypeEnum::TextType || $field->getType() === FormRowTypeEnum::TextAreaType) {

@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\Vendor;
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -73,7 +72,5 @@ class VendorType extends SaveableType
         $resolver->setDefaults([
             "data_class" => Vendor::class,
         ]);
-
-        parent::configureOptions($resolver);
     }
 }

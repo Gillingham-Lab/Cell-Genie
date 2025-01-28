@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\SaveableType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -38,7 +39,7 @@ class EpitopeType extends SaveableType
                 "empty_data" => null,
                 "config" => ["toolbar" => "basic"],
             ])
-            ->add("substances", EntityType::class, [
+            ->add("substances", FancyEntityType::class, [
                 "label" => "Substances with this epitope",
                 "class" => Substance::class,
                 "query_builder" => function (EntityRepository $er) {
@@ -60,12 +61,9 @@ class EpitopeType extends SaveableType
                 "placeholder" => "Empty",
                 "required" => false,
                 "multiple" => true,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("antibodies", EntityType::class, [
+            ->add("antibodies", FancyEntityType::class, [
                 "label" => "Antibodies targeting this epitope",
                 "class" => Antibody::class,
                 "query_builder" => function (EntityRepository $er) {
@@ -78,10 +76,7 @@ class EpitopeType extends SaveableType
                 "placeholder" => "Empty",
                 "required" => false,
                 "multiple" => true,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
         ;
 

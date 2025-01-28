@@ -5,14 +5,14 @@ namespace App\Form\StockKeeping;
 
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\LongNameType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -59,7 +59,7 @@ class ConsumableCategoryType extends SaveableType
                     "label" => "Absolute minimum before ordering is required",
                     "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
                 ])
-                ->add("consumables", EntityType::class, [
+                ->add("consumables", FancyEntityType::class, [
                     "label" => "Consumables",
                     "help" => "Select consumables to be part of this category.",
                     "class" => Consumable::class,
@@ -80,12 +80,9 @@ class ConsumableCategoryType extends SaveableType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("parent", EntityType::class, [
+                ->add("parent", FancyEntityType::class, [
                     "label" => "Parent",
                     "help" => "Select a parent category.",
                     "class" => ConsumableCategory::class,
@@ -101,17 +98,14 @@ class ConsumableCategoryType extends SaveableType
 
                         return $qb;
                     },
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                     'empty_data' => null,
                     'by_reference' => true,
                     "multiple" => false,
                     "required" => false,
                     "placeholder" => "Empty",
                 ])
-                ->add("children", EntityType::class, [
+                ->add("children", FancyEntityType::class, [
                     "label" => "Child categories",
                     "help" => "Select categories that are part of this one.",
                     "class" => ConsumableCategory::class,
@@ -132,10 +126,7 @@ class ConsumableCategoryType extends SaveableType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("_ownership", PrivacyAwareType::class, [
                     "inherit_data" => true,

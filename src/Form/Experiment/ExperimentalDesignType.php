@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Form\User\PrivacyAwareType;
+use App\Form\CompositeType\PrivacyAwareType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

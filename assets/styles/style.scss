@@ -11,6 +11,19 @@ div.gin-fancy-select.form-select {
     }
 }
 
+div.gin-fancy-select-2.form-select {
+  padding-left: 0rem;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+
+  width: 100%;
+
+  div.ts-control {
+    border: none;
+    min-height: 2rem;
+  }
+}
+
 @import '~bootstrap';
 @import 'bootstrap/scss/variables';
 @import "~bootswatch/dist/lumen/bootswatch";

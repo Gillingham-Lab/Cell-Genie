@@ -9,6 +9,8 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\CropImageType;
 use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
@@ -331,10 +333,7 @@ class ExperimentalDataFormRowService
 
         $fieldConfig = [
             "empty_data" => null,
-            "attr" => [
-                "class" => "gin-fancy-select",
-                "data-allow-empty" => "true",
-            ],
+            "allow_empty" => true,
             "required" => false,
         ];
 
@@ -366,12 +365,12 @@ class ExperimentalDataFormRowService
                 }
 
                 $fieldConfig["choices"] = $choices;
-                $type = ChoiceType::class;
+                $type = FancyChoiceType::class;
             } else {
                 throw new \Exception("Double-classes are not supported outside of Substances.");
             }
         } else {
-            $type = EntityType::class;
+            $type = FancyEntityType::class;
             $fieldConfig["class"] = $classes[0] ?? Cell::class;
         }
 

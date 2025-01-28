@@ -7,25 +7,23 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\CellularProteinCollectionType;
 use App\Form\Collection\AttachmentCollectionType;
-use App\Form\PriceType;
+use App\Form\CompositeType\PriceType;
+use App\Form\CompositeType\PrivacyAwareType;
+use App\Form\CompositeType\VendorFieldType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
-use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
-use App\Form\VendorFieldType;
-use App\Repository\Cell\CellRepository;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -150,7 +148,7 @@ class CellType extends SaveableType
                 "required" => true,
                 "help" => "(Official) name of the cell line if commercially available (like 'HCT 116') or a descriptive name if the cell has been engineered ('HEK293T, MGMT-GFP, mCherry')"
             ])
-            ->add("cellGroup", EntityType::class, [
+            ->add("cellGroup", FancyEntityType::class, [
                 "label" => "Cell group",
                 "help" => "A cell group is for collection cell lines from different origins under the same label.",
                 "required" => true,
@@ -162,10 +160,7 @@ class CellType extends SaveableType
                 "empty_data" => null,
                 "placeholder" => "Select a cell group",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
             ->add("aliquotConsumptionCreatesCulture", CheckboxType::class, [
                 "label" => "Create culture on consumption",
@@ -253,7 +248,7 @@ class CellType extends SaveableType
                 "help" => "Which scientist has engineered this cell line?",
                 "required" => false,
             ])
-            ->add("parent", EntityType::class, [
+            ->add("parent", FancyEntityType::class, [
                 "label" => "Parent",
                 "help" => "From which cell line has this one been derived? Also important if the cell is a known derivative (but not self-made), like HEK293T originates from HEK293.",
                 "required" => false,
@@ -276,12 +271,9 @@ class CellType extends SaveableType
                 "empty_data" => null,
                 "placeholder" => "Select a cell line",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("engineeringPlasmid", EntityType::class, [
+            ->add("engineeringPlasmid", FancyEntityType::class, [
                 "class" => Plasmid::class,
                 "label" => "Plasmid",
                 "help" => "Which plasmid has been used to construct this cell line?",
@@ -297,10 +289,7 @@ class CellType extends SaveableType
                 "empty_data" => null,
                 "placeholder" => "Select a cell line",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
             ->add("engineeringDescription", CKEditorType::class, [
                 "label" => "Engineering description",

@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace App\Form\Search;
 
 use App\Entity\Epitope;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\BasicType\FancyEntityType;
 use App\Genie\Enums\AntibodyType;
 use App\Twig\Components\Live\SubstanceTable;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -42,7 +43,7 @@ class AntibodySearchType extends AbstractType
                 "label" => "RRID",
                 "required" => false,
             ])
-            ->add("hasEpitope", EntityType::class, [
+            ->add("hasEpitope", FancyEntityType::class, [
                 "label" => "Has epitopes",
                 "class" => Epitope::class,
                 "query_builder" => function (EntityRepository $er) {
@@ -60,12 +61,9 @@ class AntibodySearchType extends AbstractType
                 "placeholder" => "Empty",
                 "required" => false,
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("targetsEpitope", EntityType::class, [
+            ->add("targetsEpitope", FancyEntityType::class, [
                 "label" => "Targets epitope",
                 "class" => Epitope::class,
                 "query_builder" => function (EntityRepository $er) {
@@ -83,12 +81,9 @@ class AntibodySearchType extends AbstractType
                 "placeholder" => "Empty",
                 "required" => false,
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
+                "allow_empty" => true,
             ])
-            ->add("hasAvailableLots", ChoiceType::class, [
+            ->add("hasAvailableLots", FancyChoiceType::class, [
                 "label" => "Has available lots",
                 "choices" => [
                     "Yes" => "true",
@@ -97,7 +92,7 @@ class AntibodySearchType extends AbstractType
                 "empty_data" => null,
                 "required" => false,
             ])
-            ->add("internallyValidated", ChoiceType::class, [
+            ->add("internallyValidated", FancyChoiceType::class, [
                 "label" => "Internally validated",
                 "choices" => [
                     "Yes" => "true",
@@ -106,7 +101,7 @@ class AntibodySearchType extends AbstractType
                 "empty_data" => null,
                 "required" => false,
             ])
-            ->add("externallyValidated", ChoiceType::class, [
+            ->add("externallyValidated", FancyChoiceType::class, [
                 "label" => "Externally Validated",
                 "choices" => [
                     "Yes" => "true",

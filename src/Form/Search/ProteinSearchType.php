@@ -6,6 +6,8 @@ namespace App\Form\Search;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Entity\Organism;
+use App\Form\BasicType\FancyChoiceType;
+use App\Form\BasicType\FancyEntityType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -36,7 +38,7 @@ class ProteinSearchType extends AbstractType
                 "label" => "Sequence",
                 "required" => false,
             ])
-            ->add("hasAvailableLots", ChoiceType::class, [
+            ->add("hasAvailableLots", FancyChoiceType::class, [
                 "label" => "Has available lots",
                 "choices" => [
                     "Yes" => "true",
@@ -45,7 +47,7 @@ class ProteinSearchType extends AbstractType
                 "empty_data" => null,
                 "required" => false,
             ])
-            ->add("originOrganism", EntityType::class, [
+            ->add("originOrganism", FancyEntityType::class, [
                 "class" => Organism::class,
                 "label" => "Origin organism",
                 "required" => false,
@@ -58,12 +60,8 @@ class ProteinSearchType extends AbstractType
                 },
                 "placeholder" => "Empty",
                 "multiple" => false,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "true",
-                ],
             ])
-            ->add("hasAntibodies", ChoiceType::class, [
+            ->add("hasAntibodies", FancyChoiceType::class, [
                 "label" => "Has antibodies",
                 "choices" => [
                     "Yes" => "true",

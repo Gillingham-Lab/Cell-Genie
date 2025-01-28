@@ -5,11 +5,11 @@ namespace App\Form\Instrument;
 
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\NameType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
-use App\Repository\Instrument\InstrumentRepository;
 use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\TextEditorType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -21,7 +21,6 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -90,7 +89,7 @@ class InstrumentType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                 ])
-                ->add("parent", EntityType::class, [
+                ->add("parent", FancyEntityType::class, [
                     "label" => "Part of",
                     "help" => "Select the instrument that this entry is a part of. Only works with modular or collective instruments.",
                     "class" => Instrument::class,
@@ -107,17 +106,14 @@ class InstrumentType extends SaveableType
 
                         return $qb;
                     },
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                     'empty_data' => null,
                     'by_reference' => true,
                     "multiple" => false,
                     "required" => false,
                     "placeholder" => "Empty",
                 ])
-                ->add("children", EntityType::class, [
+                ->add("children", FancyEntityType::class, [
                     "label" => "Modules / Instruments",
                     "help" => "Select instruments that are part of this instrument.",
                     "class" => Instrument::class,
@@ -142,10 +138,7 @@ class InstrumentType extends SaveableType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(
@@ -190,7 +183,7 @@ class InstrumentType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                 ])
-                ->add("consumables", EntityType::class, [
+                ->add("consumables", FancyEntityType::class, [
                     "label" => "Consumables",
                     "help" => "Select consumables used by this instrument.",
                     "class" => Consumable::class,
@@ -209,10 +202,7 @@ class InstrumentType extends SaveableType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(

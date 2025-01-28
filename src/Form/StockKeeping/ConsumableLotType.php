@@ -6,7 +6,8 @@ namespace App\Form\StockKeeping;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
 use App\Entity\DoctrineEntity\Storage\Rack;
-use App\Form\PriceType;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\CompositeType\PriceType;
 use App\Form\SaveableType;
 use App\Form\UserEntityType;
 use App\Genie\Enums\Availability;
@@ -56,7 +57,7 @@ class ConsumableLotType extends SaveableType
             ->add("pricePerPackage", PriceType::class, [
                 "label" => "Price per package",
             ])
-            ->add("location", EntityType::class, [
+            ->add("location", FancyEntityType::class, [
                 "class" => Rack::class,
                 "label" => "Location",
                 "help" => "Location of this lot.",
@@ -75,10 +76,7 @@ class ConsumableLotType extends SaveableType
                 'by_reference' => false,
                 "placeholder" => "Empty",
                 "required" => true,
-                "attr"  => [
-                    "class" => "gin-fancy-select",
-                    "data-allow-empty" => "false",
-                ],
+                "allow_empty" => true,
             ])
             ->add("boughtBy", UserEntityType::class, [
                 "label" => "Bought by",

@@ -4,17 +4,24 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\DoctrineEntity\User\User;
+use App\Form\BasicType\FancyEntityType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserEntityType extends EntityType
+/**
+ * @extends AbstractType<User>
+ */
+class UserEntityType extends AbstractType
 {
+    public function getParent(): string
+    {
+        return FancyEntityType::class;
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             "class" => User::class,
             "query_builder" => function (EntityRepository $er) {
@@ -28,10 +35,7 @@ class UserEntityType extends EntityType
             "empty_data" => null,
             "placeholder" => "Select a user",
             "multiple" => false,
-            "attr"  => [
-                "class" => "gin-fancy-select",
-                "data-allow-empty" => "true",
-            ],
+            "allow_empty" => true,
         ]);
     }
 }

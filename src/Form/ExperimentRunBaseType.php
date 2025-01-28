@@ -11,13 +11,13 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\ExperimentalCondition;
 use App\Entity\ExperimentalMeasurement;
 use App\Entity\InputType;
+use App\Form\BasicType\FancyChoiceType;
 use App\Repository\LotRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\Substance\ProteinRepository;
 use App\Repository\Substance\SubstanceRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -51,8 +51,8 @@ class ExperimentRunBaseType extends AbstractType
         $type = match ($inputType->getType()) {
             InputType::INTEGER_TYPE => IntegerType::class,
             InputType::FLOAT_TYPE => NumberType::class,
-            InputType::CHOICE_TYPE => ChoiceType::class,
-            InputType::CHEMICAL_TYPE, InputType::PROTEIN_TYPE , InputType::SUBSTANCE_TYPE, InputType::LOT_TYPE => ChoiceType::class,
+            InputType::CHOICE_TYPE => FancyChoiceType::class,
+            InputType::CHEMICAL_TYPE, InputType::PROTEIN_TYPE , InputType::SUBSTANCE_TYPE, InputType::LOT_TYPE => FancyChoiceType::class,
             InputType::CHECK_TYPE => CheckboxType::class,
             default => TextType::class,
         };
@@ -85,6 +85,7 @@ class ExperimentRunBaseType extends AbstractType
                 },
                 "expanded" => false,
                 "multiple" => false,
+                "allow_empty" => true,
             ];
         } elseif (
             $inputType->getType() === InputType::SUBSTANCE_TYPE or
@@ -123,9 +124,7 @@ class ExperimentRunBaseType extends AbstractType
                 "group_by" => function ($choice) use ($choiceIdToCategory) {
                     return $choiceIdToCategory[$choice];
                 },
-                "attr" => [
-                    "class" => "gin-fancy-select",
-                ],
+                "allow_empty" => true,
             ];
         } elseif ($inputType->getType() === InputType::LOT_TYPE) {
             $substanceLots = $this->substanceRepository->findAllSubstanceLots();
@@ -164,9 +163,7 @@ class ExperimentRunBaseType extends AbstractType
                 "group_by" => function ($choice) use ($choiceIdToCategory) {
                     return $choiceIdToCategory[$choice];
                 },
-                "attr" => [
-                    "class" => "gin-fancy-select",
-                ],
+                "allow_empty" => true,
             ];
         } elseif ($inputType->getType() === InputType::CHECK_TYPE) {
             $options = [

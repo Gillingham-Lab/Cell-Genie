@@ -5,9 +5,9 @@ namespace App\Form\Storage;
 
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
-use App\Form\User\PrivacyAwareType;
-use App\Repository\Storage\RackRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -50,7 +50,7 @@ class BoxType extends SaveableType
                     "label" => "Number of columns in the box",
                     "required" => false,
                 ])
-                ->add("rack", EntityType::class, [
+                ->add("rack", FancyEntityType::class, [
                     "label" => "Location.",
                     "class" => Rack::class,
                     "group_by" => function(Rack $rack) { return ($rack->getMaxBoxes() > 0 && $rack->getBoxes()->count() >= $rack->getMaxBoxes()) ? "Full" : "Space available"; },
@@ -67,10 +67,7 @@ class BoxType extends SaveableType
                     },
                     "placeholder" => "Empty",
                     "required" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,

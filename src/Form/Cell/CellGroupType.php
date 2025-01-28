@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\Morphology;
 use App\Entity\Organism;
 use App\Entity\Tissue;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\SaveableType;
 use App\Form\Traits\VocabularyTrait;
 use App\Repository\Cell\CellRepository;
@@ -71,7 +72,7 @@ class CellGroupType extends SaveableType
                     "empty_data" => "",
                     "help" => "Set the culture type (if known). Are the cells adherent or suspension? In clusters? Both?",
                 ]))
-                ->add("parent", EntityType::class, [
+                ->add("parent", FancyEntityType::class, [
                     "label" => "Parent",
                     "help" => "A parent cell group. For organisation of cell group only, and it should not imply direct origin. For that, cell line should be used instead.",
                     "required" => false,
@@ -92,12 +93,9 @@ class CellGroupType extends SaveableType
                     "empty_data" => null,
                     "placeholder" => "Select a cell group",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("children", EntityType::class, [
+                ->add("children", FancyEntityType::class, [
                     "label" => "Children",
                     "help" => "A list of child groups. For organisation of cell groups only, and it should not imply direct origin. For that, cell line should be used instead.",
                     "required" => false,
@@ -119,10 +117,7 @@ class CellGroupType extends SaveableType
                     "empty_data" => [],
                     "placeholder" => "Select cell groups",
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(
@@ -130,7 +125,7 @@ class CellGroupType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Cell information",
                 ])
-                ->add("organism", EntityType::class, [
+                ->add("organism", FancyEntityType::class, [
                     "label" => "Organism",
                     "required" => false,
                     "class" => Organism::class,
@@ -142,12 +137,9 @@ class CellGroupType extends SaveableType
                     "empty_data" => null,
                     "placeholder" => "Select an organism",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("morphology", EntityType::class, [
+                ->add("morphology", FancyEntityType::class, [
                     "label" => "Morphology",
                     "required" => false,
                     "class" => Morphology::class,
@@ -159,12 +151,9 @@ class CellGroupType extends SaveableType
                     "empty_data" => null,
                     "placeholder" => "Select a morphology",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("tissue", EntityType::class, [
+                ->add("tissue", FancyEntityType::class, [
                     "label" => "Tissue type",
                     "required" => false,
                     "class" => Tissue::class,
@@ -176,10 +165,7 @@ class CellGroupType extends SaveableType
                     "empty_data" => null,
                     "placeholder" => "Select a tissue type",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("isCancer", CheckboxType::class, [
                     "label" => "Cancer?",

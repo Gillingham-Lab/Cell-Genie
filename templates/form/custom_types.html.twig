@@ -1,4 +1,4 @@
-{% block privacy_aware_row %}
+{% block __privacy_aware_row %}
     <div class="mb-3">
         <label class="form-label" for="{{ form.vars.id }}">
             {{ form.vars.label }}
@@ -6,10 +6,8 @@
         <div id="{{ form.vars.id }}" class="row form-group">
             <div class="col-4">
                 <legend class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text py-3">
-                            {{ form.owner.vars.label }}
-                        </div>
+                    <div class="input-group-text py-3">
+                        {{ form.owner.vars.label }}
                     </div>
 
                     {{ form_widget(form.owner) }}
@@ -19,10 +17,8 @@
 
             <div class="col-4">
                 <legend class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text py-3">
-                            {{ form.group.vars.label }}
-                        </div>
+                    <div class="input-group-text py-3">
+                        {{ form.group.vars.label }}
                     </div>
 
                     {{ form_widget(form.group) }}
@@ -32,10 +28,8 @@
 
             <div class="col-4">
                 <legend class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text py-3">
-                            {{ form.privacyLevel.vars.label }}
-                        </div>
+                    <div class="input-group-text py-3">
+                        {{ form.privacyLevel.vars.label }}
                     </div>
 
                     {{ form_widget(form.privacyLevel) }}
@@ -215,7 +209,12 @@
 
 {% block form_group_row %}
     <div class="form-fieldset {{ form.vars.errors|length > 0 ? "form-fieldset-error" : "" }}">
-        <label for="{{ form.vars.id }}" class="form-label">{{ form_label(form) }}</label>
+        <label for="{{ form.vars.id }}" class="form-label">
+            {% if icon %}
+                <twig:Icon :icon="icon" :stack="icon_stack" />
+            {% endif %}
+            {{ form.vars.label }}
+        </label>
 
         {% if form.vars.errors|length > 0 %}
             <div class="form-errors">
@@ -252,6 +251,15 @@
                 <twig:Icon icon="generate" />
             </div>
 
+            {{ form_widget(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block fancy_choice_widget %}
+    <div {{ stimulus_controller("FancyCollection") }}>
+        <div>
             {{ form_widget(form) }}
         </div>
     </div>

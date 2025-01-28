@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Traits;
 
+use App\Form\BasicType\FancyChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,13 +33,12 @@ trait VocabularyTrait
 
         $options = array_merge_recursive([
             "attr"  => [
-                "class" => "gin-fancy-select",
-                "data-allow-empty" => "true",
+                "allow_empty" => true,
             ],
         ], $options);
 
         if ($vocabEntries) {
-            $type = ChoiceType::class;
+            $type = FancyChoiceType::class;
 
             $options["choices"] = array_combine($vocabEntries, $vocabEntries);
         } else {

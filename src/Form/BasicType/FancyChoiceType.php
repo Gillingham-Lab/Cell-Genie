@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\BasicType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,15 +22,23 @@ class FancyChoiceType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes("allow_add", "bool");
+
+        $resolver->define("allow_empty")
+            ->allowedTypes("bool")
+            ->default(false);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if ($options["required"] === false) {
-            $view->vars["attr"]["data-allow-empty"] = true;
+            $view->vars["attr"]["data-allow-empty"] = "true";
         }
 
-        $view->vars["attr"]["class"] = "gin-fancy-select";
+        $view->vars["attr"]["class"] = "gin-fancy-select-2";
+
+        if ($options["allow_empty"]) {
+            $view->vars["attr"]["data-allow-empty"] = "true";
+        }
     }
 
     public function getParent(): string

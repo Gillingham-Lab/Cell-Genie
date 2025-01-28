@@ -7,10 +7,11 @@ use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Organism;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\Collection\SequenceAnnotationCollectionType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\Traits\VocabularyTrait;
-use App\Form\User\PrivacyAwareType;
 use App\Form\UserEntityType;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
@@ -90,7 +91,7 @@ class PlasmidType extends SubstanceType
                     "by_reference" => false,
                     "required" => true,
                 ]))
-                ->add("expressionIn", EntityType::class, [
+                ->add("expressionIn", FancyEntityType::class, [
                     "label" => "Expression system",
                     "help" => "Which organism or bacterial strain should be used to express this protein?",
                     "required" => true,
@@ -103,10 +104,7 @@ class PlasmidType extends SubstanceType
                     "empty_data" => null,
                     "placeholder" => "Select an organism",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("expressionResistance", ... $this->getTextOrChoiceOptions("plasmidResistance", [
                     "label" => "Expression resistance",
@@ -119,7 +117,7 @@ class PlasmidType extends SubstanceType
                     "label" => "Can the plasmid be used for production of the protein?",
                     "required" => false,
                 ])
-                ->add("expressedProteins", EntityType::class, [
+                ->add("expressedProteins", FancyEntityType::class, [
                     "label" => "Expressed Proteins",
                     "help" => "Note which proteins are expressed specifically on this vector. Helper-proteins (like lacI for the lac repressor or the resistance gene) should not be mentioned. "
                         . "If the protein gets cleaved directly after the expression (like with a special linker), both parts are for the purpose of this vector separate proteins. However, "
@@ -135,10 +133,7 @@ class PlasmidType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(
@@ -146,7 +141,7 @@ class PlasmidType extends SubstanceType
                     "inherit_data" => true,
                     "label" => "Structure",
                 ])
-                ->add("parent", EntityType::class, [
+                ->add("parent", FancyEntityType::class, [
                     "label" => "Parent plasmid",
                     "class" => Plasmid::class,
                     "query_builder" => function (EntityRepository $er) use ($builder) {
@@ -157,17 +152,14 @@ class PlasmidType extends SubstanceType
                             ->setParameter("current", $builder->getData()->getUlid(), "ulid")
                             ;
                     },
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                     'empty_data' => null,
                     'by_reference' => true,
                     "multiple" => false,
                     "required" => false,
                     "placeholder" => "Empty",
                 ])
-                ->add("children", EntityType::class, [
+                ->add("children", FancyEntityType::class, [
                     "label" => "Children plasmids",
                     "class" => Plasmid::class,
                     "query_builder" => function (EntityRepository $er) use ($builder) {
@@ -178,10 +170,7 @@ class PlasmidType extends SubstanceType
                             ->setParameter("current", $builder->getData()->getUlid(), "ulid")
                         ;
                     },
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                     'empty_data' => [],
                     "multiple" => true,
                     'by_reference' => false,

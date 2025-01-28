@@ -7,10 +7,10 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Epitope;
 use App\Entity\Organism;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
-use App\Form\NameType;
+use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\Traits\VocabularyTrait;
-use App\Form\User\PrivacyAwareType;
 use App\Repository\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -60,7 +60,7 @@ class ProteinType extends SubstanceType
                     "help" => "A link to the protein atlas entry",
                     "required" => false,
                 ])
-                ->add("organism", EntityType::class, [
+                ->add("organism", FancyEntityType::class, [
                     "label" => "Origin organism",
                     "help" => "Which organism does this specific protein come from? Please remember to group similar proteins together by using a parent/child structure.",
                     "required" => true,
@@ -73,10 +73,7 @@ class ProteinType extends SubstanceType
                     "empty_data" => null,
                     "placeholder" => "Select an organism",
                     "multiple" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
@@ -102,7 +99,7 @@ class ProteinType extends SubstanceType
                     "help" => "In the form of G12C, for example. Make sure the sequence is correct.",
                     "required" => false,
                 ])
-                ->add("epitopes", EntityType::class, [
+                ->add("epitopes", FancyEntityType::class, [
                     "label" => "Epitopes",
                     "class" => Epitope::class,
                     "query_builder" => function (EntityRepository $er) {
@@ -115,11 +112,7 @@ class ProteinType extends SubstanceType
                     "placeholder" => "Empty",
                     "required" => false,
                     "multiple" => true,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                        //"data-allow-add" => true,
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(
@@ -127,7 +120,7 @@ class ProteinType extends SubstanceType
                     "inherit_data" => true,
                     "label" => "Relations",
                 ])
-                ->add("children", EntityType::class, [
+                ->add("children", FancyEntityType::class, [
                     "class" => Protein::class,
                     "label" => "Children proteins",
                     "help" => "Add any protein that can be regarded as a derivative from this protein.",
@@ -141,12 +134,9 @@ class ProteinType extends SubstanceType
                     'empty_data' => [],
                     "placeholder" => "Empty",
                     "required" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
-                ->add("parents", EntityType::class, [
+                ->add("parents", FancyEntityType::class, [
                     "class" => Protein::class,
                     "label" => "Parent proteins",
                     "help" => "Add any protein that can be regarded as a 'parent' of this protein.",
@@ -160,10 +150,7 @@ class ProteinType extends SubstanceType
                     'empty_data' => [],
                     "placeholder" => "Empty",
                     "required" => false,
-                    "attr"  => [
-                        "class" => "gin-fancy-select",
-                        "data-allow-empty" => "true",
-                    ],
+                    "allow_empty" => true,
                 ])
             )
             ->add(
