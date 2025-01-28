@@ -11,6 +11,7 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Epitope;
 use App\Form\BasicType\EnumeratedType;
 use App\Form\BasicType\FancyEntityType;
+use App\Form\BasicType\FormGroupType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Genie\Enums\OligoTypeEnum;
@@ -74,54 +75,60 @@ class OligoType extends SubstanceType
                     "help" => "The DNA oligomer sequence (5' to 3'). Add modified bases using the square bracket notation (e.g., [Hexylamine]ATG[FAM])",
                     "required" => false,
                 ])
-                ->add("startConjugate", FancyEntityType::class, [
-                    "class" => Substance::class,
-                    "query_builder" => function (EntityRepository $er) use ($currentId) {
-                        return $er->createQueryBuilder("e")
-                            ->addOrderBy("e.shortName", "ASC")
-                            ->andWhere("e.ulid != :currentId")
-                            ->setParameter("currentId", $currentId)
-                            ;
-                    },
-                    "group_by" => function (Substance $e) {
-                        return match($e::class) {
-                            Antibody::class => "Antibody",
-                            Chemical::class => "Compound",
-                            Oligo::class => "Oligo",
-                            Protein::class => "Protein",
-                            default => "Other",
-                        };
-                    },
-                    'empty_data' => null,
-                    "placeholder" => "Empty",
-                    "required" => false,
-                    "multiple" => false,
-                    "allow_empty" => true,
-                ])
-                ->add("endConjugate", FancyEntityType::class, [
-                    "class" => Substance::class,
-                    "query_builder" => function (EntityRepository $er) use ($currentId) {
-                        return $er->createQueryBuilder("e")
-                            ->addOrderBy("e.shortName", "ASC")
-                            ->andWhere("e.ulid != :currentId")
-                            ->setParameter("currentId", $currentId)
-                            ;
-                    },
-                    "group_by" => function (Substance $e) {
-                        return match($e::class) {
-                            Antibody::class => "Antibody",
-                            Chemical::class => "Compound",
-                            Oligo::class => "Oligo",
-                            Protein::class => "Protein",
-                            default => "Other",
-                        };
-                    },
-                    'empty_data' => null,
-                    "placeholder" => "Empty",
-                    "required" => false,
-                    "multiple" => false,
-                    "allow_empty" => true,
-                ])
+                ->add(
+                    $builder->create("_conjugate", FormGroupType::class, [
+                        "label" => "Conjugate",
+                        "inherit_data" => true,
+                    ])
+                    ->add("startConjugate", FancyEntityType::class, [
+                        "class" => Substance::class,
+                        "query_builder" => function (EntityRepository $er) use ($currentId) {
+                            return $er->createQueryBuilder("e")
+                                ->addOrderBy("e.shortName", "ASC")
+                                ->andWhere("e.ulid != :currentId")
+                                ->setParameter("currentId", $currentId)
+                                ;
+                        },
+                        "group_by" => function (Substance $e) {
+                            return match($e::class) {
+                                Antibody::class => "Antibody",
+                                Chemical::class => "Compound",
+                                Oligo::class => "Oligo",
+                                Protein::class => "Protein",
+                                default => "Other",
+                            };
+                        },
+                        'empty_data' => null,
+                        "placeholder" => "Empty",
+                        "required" => false,
+                        "multiple" => false,
+                        "allow_empty" => true,
+                    ])
+                    ->add("endConjugate", FancyEntityType::class, [
+                        "class" => Substance::class,
+                        "query_builder" => function (EntityRepository $er) use ($currentId) {
+                            return $er->createQueryBuilder("e")
+                                ->addOrderBy("e.shortName", "ASC")
+                                ->andWhere("e.ulid != :currentId")
+                                ->setParameter("currentId", $currentId)
+                                ;
+                        },
+                        "group_by" => function (Substance $e) {
+                            return match($e::class) {
+                                Antibody::class => "Antibody",
+                                Chemical::class => "Compound",
+                                Oligo::class => "Oligo",
+                                Protein::class => "Protein",
+                                default => "Other",
+                            };
+                        },
+                        'empty_data' => null,
+                        "placeholder" => "Empty",
+                        "required" => false,
+                        "multiple" => false,
+                        "allow_empty" => true,
+                    ])
+                )
                 ->add("molecularMass", NumberType::class, [
                     "label" => "Molecular mass [Da]",
                     "required" => false,

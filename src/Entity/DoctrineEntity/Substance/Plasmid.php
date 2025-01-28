@@ -14,6 +14,7 @@ use App\Entity\Traits\LabJournalTrait;
 use App\Entity\Traits\SequenceAnnotationTrait;
 use App\Entity\Traits\SequenceTrait;
 use App\Repository\Substance\PlasmidRepository;
+use App\Validator\Constraint\NotLooped;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlasmidRepository::class)]
 #[Gedmo\Loggable]
+#[NotLooped("parent", "children")]
 class Plasmid extends Substance implements AnnotateableInterface
 {
     use NumberTrait;

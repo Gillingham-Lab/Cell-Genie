@@ -323,8 +323,9 @@ class ExperimentalDataFormRowService
             DatumEnum::Date,
         ];
     }
+
     /**
-     * @return array{class-string<EntityType|ChoiceType>, array<string, mixed>, DatumEnum::EntityReference}
+     * @return array{class-string<FancyEntityType<mixed>|FancyChoiceType<mixed>>, array<string, mixed>, DatumEnum::EntityReference}
      */
     public function getEntityTypeConfig(FormRow $formRow): array
     {

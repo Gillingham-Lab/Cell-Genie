@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\Organism;
 use App\Form\BasicType\EnumeratedType;
 use App\Form\BasicType\FancyEntityType;
+use App\Form\BasicType\FormGroupType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\Collection\SequenceAnnotationCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
@@ -141,42 +142,62 @@ class PlasmidType extends SubstanceType
                     "inherit_data" => true,
                     "label" => "Structure",
                 ])
-                ->add("parent", FancyEntityType::class, [
-                    "label" => "Parent plasmid",
-                    "class" => Plasmid::class,
-                    "query_builder" => function (EntityRepository $er) use ($builder) {
-                        return $er
-                            ->createQueryBuilder("e")
-                            ->orderBy("e.number", "ASC")
-                            ->where("e.ulid != :current")
-                            ->setParameter("current", $builder->getData()->getUlid(), "ulid")
+                ->add(
+                    $builder->create("_relations", FormGroupType::class, [
+                        "inherit_data" => true,
+                        "label" => "Relations",
+                    ])
+                    ->add("parent", FancyEntityType::class, [
+                        "label" => "Parent plasmid",
+                        "class" => Plasmid::class,
+                        "query_builder" => function (EntityRepository $er) use ($builder) {
+                            $query = $er
+                                ->createQueryBuilder("e")
+                                ->orderBy("e.number", "ASC")
                             ;
-                    },
-                    "allow_empty" => true,
-                    'empty_data' => null,
-                    'by_reference' => true,
-                    "multiple" => false,
-                    "required" => false,
-                    "placeholder" => "Empty",
-                ])
-                ->add("children", FancyEntityType::class, [
-                    "label" => "Children plasmids",
-                    "class" => Plasmid::class,
-                    "query_builder" => function (EntityRepository $er) use ($builder) {
-                        return $er
-                            ->createQueryBuilder("e")
-                            ->orderBy("e.number", "ASC")
-                            ->where("e.ulid != :current")
-                            ->setParameter("current", $builder->getData()->getUlid(), "ulid")
-                        ;
-                    },
-                    "allow_empty" => true,
-                    'empty_data' => [],
-                    "multiple" => true,
-                    'by_reference' => false,
-                    "required" => false,
-                    "placeholder" => "Empty",
-                ])
+
+                            if ($builder->getData()->getUlid()) {
+                                $query = $query
+                                    ->where("e.ulid != :current")
+                                    ->setParameter("current", $builder->getData()->getUlid(), "ulid")
+                                ;
+                            }
+
+                            return $query;
+                        },
+                        "allow_empty" => true,
+                        'empty_data' => null,
+                        'by_reference' => true,
+                        "multiple" => false,
+                        "required" => false,
+                        "placeholder" => "Empty",
+                    ])
+                    ->add("children", FancyEntityType::class, [
+                        "label" => "Children plasmids",
+                        "class" => Plasmid::class,
+                        "query_builder" => function (EntityRepository $er) use ($builder) {
+                            $query = $er
+                                ->createQueryBuilder("e")
+                                ->orderBy("e.number", "ASC")
+                            ;
+
+                            if ($builder->getData()->getUlid()) {
+                                $query = $query
+                                    ->where("e.ulid != :current")
+                                    ->setParameter("current", $builder->getData()->getUlid(), "ulid")
+                                ;
+                            }
+
+                            return $query;
+                        },
+                        "allow_empty" => true,
+                        'empty_data' => [],
+                        "multiple" => true,
+                        'by_reference' => false,
+                        "required" => false,
+                        "placeholder" => "Empty",
+                    ])
+                )
                 ->add("sequence", TextareaType::class, [
                     "label" => "Sequence",
                     "help" => "The plasmid sequence (5' to 3').",

@@ -223,7 +223,7 @@
         {% endif %}
 
         <div id="{{ form.vars.id }}" class="row">
-            {% for child in form.children %}
+            {% for child in form %}
                 <div class="col">
                     {{ form_row(child) }}
                 </div>
