@@ -246,8 +246,8 @@ class ExperimentController extends AbstractController
      * @return Response
      * @throws \Exception
      */
-    #[Route('/api/experiment/run/viewData/{run}', name: "app_api_experiments_run_view_data")]
-    #[IsGranted("view", "run")]
+    #[Route('/api/public/experiment/run/viewData/{run}', name: "app_api_experiments_run_view_data")]
+    ##[IsGranted("view", "run")]
     public function downloadConditionData(
         ExperimentalDataService $dataService,
         ExperimentalRun $run,

@@ -88,8 +88,6 @@ class ExperimentalRun implements PrivacyAwareInterface
             $clonedConditions->add($condition);
         }
 
-        dump($clonedConditions);
-
         foreach ($this->dataSets as $dataSet) {
             $dataSet = clone $dataSet;
             $dataSet->setExperiment($this);
