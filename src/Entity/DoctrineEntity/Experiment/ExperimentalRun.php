@@ -13,6 +13,7 @@ use App\Entity\Traits\TimestampTrait;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalRunRepository;
+use App\Twig\Components\Date;
 use App\Validator\Constraint\UniqueCollectionField;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -71,6 +72,38 @@ class ExperimentalRun implements PrivacyAwareInterface
         $this->conditions = new ArrayCollection();
         $this->dataSets = new ArrayCollection();
         $this->data = new ArrayCollection();
+    }
+
+    public function __clone(): void
+    {
+        $this->id = null;
+        $this->name = $this->name . " (copy)";
+
+        $clonedConditions = new ArrayCollection();
+        $dataSets = new ArrayCollection();
+        $data = new ArrayCollection();
+        foreach ($this->conditions as $condition) {
+            $condition = clone $condition;
+            $condition->setExperimentalRun($this);
+            $clonedConditions->add($condition);
+        }
+
+        dump($clonedConditions);
+
+        foreach ($this->dataSets as $dataSet) {
+            $dataSet = clone $dataSet;
+            $dataSet->setExperiment($this);
+            $dataSets->add($dataSet);
+        }
+        foreach ($this->data as $datum) {
+            $datum = clone $datum;
+            $data->add($datum);
+        }
+
+        $this->createdAt = null;
+        $this->conditions = $clonedConditions;
+        $this->dataSets = $dataSets;
+        $this->data = $data;
     }
 
     public function getScientist(): ?User

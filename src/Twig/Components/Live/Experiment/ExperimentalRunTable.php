@@ -64,6 +64,12 @@ class ExperimentalRunTable extends AbstractController
                         buttonClass: "btn-secondary",
                         tooltip: "Download data as tsv"
                     ),
+                    new Tool(
+                        $this->generateUrl("app_experiments_run_clone", ["run" => $run->getId()]),
+                        icon: "clone",
+                        buttonClass: "btn-warning",
+                        tooltip: "Clone run",
+                    ),
                     new EditTool(
                         path: $this->generateUrl("app_experiments_run_edit", ["run" => $run->getId()]),
                         tooltip: "Edit run",

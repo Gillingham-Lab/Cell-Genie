@@ -48,6 +48,7 @@ class Icon
             "import" => "fas fa-fw fa-file-import",
             "search" => "fas fa-fw fa-search",
             "clipboard" => "far fa-fw fa-clipboard",
+            "clone" => "fa fa-clone fa-fw",
 
             "rack", "location", "storage" => "fas fa-fw fa-boxes",
             "box" => "fas fa-fw fa-box",

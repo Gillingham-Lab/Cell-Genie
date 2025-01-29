@@ -28,6 +28,7 @@ use App\Twig\Components\Experiment\Datum;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunDataForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunForm;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -388,6 +389,18 @@ class ExperimentController extends AbstractController
             design: $design,
             title: "Add experimental run",
         );
+    }
+
+    #[Route("/experiment/design/cloneRun/{run}", name: "app_experiments_run_clone")]
+    #[IsGranted("ROLE_USER")]
+    public function cloneExperimentalRun(
+        EntityManagerInterface $entityManager,
+        ExperimentalRun $run
+    ): Response {
+        $newRun = clone $run;
+        $entityManager->persist($newRun);
+        $entityManager->flush();
+        return $this->redirectToRoute("app_experiments_run_edit", ["run" => $newRun->getId()->toRfc4122()]);
     }
 
     #[Route("/experiment/design/editRun/{run}", name: "app_experiments_run_edit")]

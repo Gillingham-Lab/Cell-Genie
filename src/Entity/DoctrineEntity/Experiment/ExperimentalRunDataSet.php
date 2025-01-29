@@ -46,6 +46,17 @@ class ExperimentalRunDataSet
         $this->data = new ArrayCollection();
     }
 
+    public function __clone(): void
+    {
+        $this->id = null;
+        $data = new ArrayCollection();
+        foreach ($this->data as $datum) {
+            $datum = clone $datum;
+            $data->add($datum);
+        }
+        $this->data = $data;
+    }
+
     public function getExperiment(): ?ExperimentalRun
     {
         return $this->experiment;
