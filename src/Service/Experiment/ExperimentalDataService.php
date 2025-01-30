@@ -114,7 +114,8 @@ readonly class ExperimentalDataService
         array $searchFields = [],
         int $page = 0,
         int $limit = 30,
-        ?ExperimentalDesign $design = null
+        ?ExperimentalDesign $design = null,
+        ?int $limitRows = null,
     ): array {
         if ($design === null) {
             throw new \Exception("You must give an experimental design.");
@@ -169,7 +170,7 @@ readonly class ExperimentalDataService
         $entities = $this->fetchEntitiesFromList($entitiesToFetch);
 
         // Create the data array
-        return $this->createDataArray($paginatedConditions, $entities, $design);
+        return $this->createDataArray($paginatedConditions, $entities, $design, maxRows: $limitRows);
     }
 
     /**
@@ -300,7 +301,7 @@ readonly class ExperimentalDataService
      * @param array{str: array{str: object}} $entitiesToFetch
      * @return array<int, mixed>
      */
-    public function createDataArray(Paginator $conditions, array $entitiesToFetch, ExperimentalDesign $design): array
+    public function createDataArray(Paginator $conditions, array $entitiesToFetch, ExperimentalDesign $design, ?int $maxRows=null): array
     {
         $data = [];
 
@@ -347,8 +348,6 @@ readonly class ExperimentalDataService
 
             $row["data"] = [];
 
-            $maxRows = 10;
-
             foreach ($condition->getExperimentalRun()->getDataSets() as $dataSet) {
                 if ($dataSet->getCondition() !== $condition) {
                     continue;
@@ -360,7 +359,7 @@ readonly class ExperimentalDataService
 
                 $row["data"] = array_unique($row["data"], SORT_REGULAR);
 
-                if (count($row["data"]) == $maxRows) {
+                if ($maxRows !== null and count($row["data"]) === $maxRows) {
                     break;
                 }
             }

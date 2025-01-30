@@ -181,7 +181,7 @@ class ExperimentalRunDataTable extends AbstractController
         }
 
 
-        $dataRows = $this->dataService->getPaginatedResults(searchFields: $searchQuery, design: $this->design, page: $this->page, limit: $this->limit);
+        $dataRows = $this->dataService->getPaginatedResults(searchFields: $searchQuery, page: $this->page, limit: $this->limit, design: $this->design, limitRows: 10);
 
         $columns = $this->getTableColumns(... $conditionFields);
 
