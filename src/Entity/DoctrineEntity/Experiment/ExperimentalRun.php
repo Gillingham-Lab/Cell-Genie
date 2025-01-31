@@ -13,6 +13,7 @@ use App\Entity\Traits\TimestampTrait;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalRunRepository;
+use App\Service\Doctrine\Type\Ulid;
 use App\Twig\Components\Date;
 use App\Validator\Constraint\UniqueCollectionField;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -76,32 +77,55 @@ class ExperimentalRun implements PrivacyAwareInterface
 
     public function __clone(): void
     {
-        $this->id = null;
-        $this->name = $this->name . " (copy)";
+        if ($this->id) {
+            $this->id = null;
+            $this->name = $this->name . " (copy)";
 
-        $clonedConditions = new ArrayCollection();
-        $dataSets = new ArrayCollection();
-        $data = new ArrayCollection();
-        foreach ($this->conditions as $condition) {
-            $condition = clone $condition;
-            $condition->setExperimentalRun($this);
-            $clonedConditions->add($condition);
-        }
+            $oldConditions = $this->conditions;
+            $oldDataSets = $this->dataSets;
+            $oldData = $this->data;
 
-        foreach ($this->dataSets as $dataSet) {
-            $dataSet = clone $dataSet;
-            $dataSet->setExperiment($this);
-            $dataSets->add($dataSet);
-        }
-        foreach ($this->data as $datum) {
-            $datum = clone $datum;
-            $data->add($datum);
-        }
+            $clonedConditionIdToCondition = [];
+            $this->conditions = new ArrayCollection();
+            $this->dataSets = new ArrayCollection();
+            $this->data = new ArrayCollection();
 
-        $this->createdAt = null;
-        $this->conditions = $clonedConditions;
-        $this->dataSets = $dataSets;
-        $this->data = $data;
+            foreach ($oldConditions as $condition) {
+                $oldId = $condition->getId()->toRfc4122();
+                $condition = clone $condition;
+                $condition->setExperimentalRun($this);
+                $this->conditions->add($condition);
+                $clonedConditionIdToCondition[$oldId] = $condition;
+            }
+
+            foreach ($oldDataSets as $oldDataSet) {
+                $newDataSet = clone $oldDataSet;
+                $newDataSet->setExperiment($this);
+
+                if ($oldDataSet->getCondition()) {
+                    // Search condition
+                    $oldId = $oldDataSet->getCondition()->getId()->toRfc4122();
+                    $clonedCondition = $clonedConditionIdToCondition[$oldId];
+                    $newDataSet->setCondition($clonedCondition);
+                }
+
+                if ($oldDataSet->getControlCondition()) {
+                    // Search condition
+                    $oldId = $oldDataSet->getControlCondition()->getId()->toRfc4122();
+                    $clonedCondition = $clonedConditionIdToCondition[$oldId];
+                    $newDataSet->setControlCondition($clonedCondition);
+                }
+
+                $this->dataSets->add($newDataSet);
+            }
+
+            foreach ($oldData as $datum) {
+                $datum = clone $datum;
+                $this->data->add($datum);
+            }
+
+            $this->createdAt = null;
+        }
     }
 
     public function getScientist(): ?User

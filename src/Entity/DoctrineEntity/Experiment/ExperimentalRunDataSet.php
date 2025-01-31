@@ -6,6 +6,7 @@ namespace App\Entity\DoctrineEntity\Experiment;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\DatumEnum;
 use App\Repository\Experiment\ExperimentalRunDataSetRepository;
+use App\Service\Doctrine\Type\Ulid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,13 +49,16 @@ class ExperimentalRunDataSet
 
     public function __clone(): void
     {
-        $this->id = null;
-        $data = new ArrayCollection();
-        foreach ($this->data as $datum) {
-            $datum = clone $datum;
-            $data->add($datum);
+        if ($this->id) {
+            $this->id = null;
+
+            $oldData = $this->data;
+            $this->data = new ArrayCollection();
+            foreach ($oldData as $datum) {
+                $datum = clone $datum;
+                $this->data->add($datum);
+            }
         }
-        $this->data = $data;
     }
 
     public function getExperiment(): ?ExperimentalRun
