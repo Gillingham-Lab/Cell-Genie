@@ -159,6 +159,9 @@ class ExperimentController extends AbstractController
         $columns = [
             new Column("Run", fn ($x) => $x["run"]->getId()),
             new Column("Condition", fn ($x) => $x["set"]->getId()),
+            new Column("Scientist", fn ($x) => $entitiesAsId ? $x["run"]?->getScientist()?->getId() : $x["run"]?->getScientist()?->getFullName()),
+            new Column("Created", fn ($x) => $x["run"]->getCreatedAt()?->format("Y-m-d H:i:s")),
+            new Column("Modified", fn ($x) => $x["run"]->getModifiedAt()?->format("Y-m-d H:i:s")),
         ];
 
         foreach ($conditionFields as $field) {
