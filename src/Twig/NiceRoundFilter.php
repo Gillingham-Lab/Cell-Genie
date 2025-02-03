@@ -11,9 +11,12 @@ class NiceRoundFilter extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter("roundScientifically", function (float $x) {
+            new TwigFilter("roundScientifically", function (string|float $x, int $digits = 3) {
+                if (is_string($x)) {
+                    $x = floatval($x);
+                }
+
                 $log = (int)floor(log10($x));
-                $digits = 3;
                 $roundDigits = ($log - ($digits - 1));
 
                 return round($x, -$roundDigits);
