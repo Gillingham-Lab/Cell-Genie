@@ -52,6 +52,15 @@ class ExperimentalDesign implements PrivacyAwareInterface
     )]
     private ?string $number = null;
 
+    /** @var Collection<int, ExperimentalModel> */
+    #[ORM\ManyToMany(targetEntity: ExperimentalModel::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\JoinTable(name: "new_experimental_design_models")]
+    #[ORM\JoinColumn(name: "design_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: "model_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]
+    #[Assert\Valid]
+    #[UniqueCollectionField(field: "name")]
+    private Collection $models;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
@@ -105,6 +114,32 @@ class ExperimentalDesign implements PrivacyAwareInterface
         if ($this->runs->contains($run)) {
             $this->runs->removeElement($run);
             $run->setDesign(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExperimentalModel>
+     */
+    public function getModels(): Collection
+    {
+        return $this->models;
+    }
+
+    public function addModel(ExperimentalModel $model): self
+    {
+        if (!$this->models->contains($model)) {
+            $this->models->add($model);
+        }
+
+        return $this;
+    }
+
+    public function removeModel(ExperimentalModel $model): self
+    {
+        if ($this->models->contains($model)) {
+            $this->models->removeElement($model);
         }
 
         return $this;

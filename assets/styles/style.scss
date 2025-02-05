@@ -113,7 +113,7 @@ tr.disabled td {
     padding: 0px;
     min-height: 3rem;
 
-    > div {
+    >div {
       margin-top: -1rem;
     }
 
@@ -143,6 +143,27 @@ tr.disabled td {
     }
   }
 }
+
+form {
+  .tab-content {
+    fieldset {
+      &:not(.no-fieldset) {
+        border-top: 1px solid grey;
+        border-bottom: 1px solid grey;
+
+        >legend.col-form-label {
+          font-weight: bold;
+          font-size: 120%;
+        }
+
+        >div {
+          padding-left: 1em;
+        }
+      }
+    }
+  }
+}
+
 
 .form-fieldset {
   margin-bottom: 1rem;

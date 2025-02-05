@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Experiment;
 
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Form\Form\FormRowType;
 use App\Genie\Enums\ExperimentalFieldRole;
@@ -25,6 +26,11 @@ class ExperimentalDesignFieldType extends AbstractType
         $resolver->setDefaults([
             "data_class" => ExperimentalDesignField::class,
         ]);
+
+        $resolver->define("design")
+            ->allowedTypes( ExperimentalDesign::class)
+            ->required()
+            ;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -49,7 +55,11 @@ class ExperimentalDesignFieldType extends AbstractType
                     ."repeated for each condition.",
             ])
             ->add("formRow", FormRowType::class, [
-                "label" => "Field settings",
+                "label" => " ",
+                "design" => $options["design"],
+                "row_attr" => [
+                    "class" => "no-fieldset",
+                ]
             ])
         ;
     }

@@ -142,16 +142,19 @@
             </h4>
         </div>
         <div class="card-body">
+            {# First, render 'direct' fields in columns #}
             <twig:Layout:Row cols="1" md="2" lg="3" xl="4">
-                {% for formElement in form|filter(elm => elm|length == 0) %}
+                {% for formElement in form|filter(elm => not elm.vars.compound) %}
                     <twig:Layout:Col type="none">
                         {{ form_row(formElement) }}
                     </twig:Layout:Col>
                 {% endfor %}
             </twig:Layout:Row>
 
-            {% for formElement in form|filter(elm => elm|length > 0) %}
-                <twig:Layout:Row cols="1" class="mt-2 pt-2 border-top">
+            {# Then, render composite fields #}
+            {% for formElement in form|filter(elm => elm.vars.compound) %}
+                {{ form_row(formElement) }}
+                {# <twig:Layout:Row cols="1" class="mt-2 pt-2 border-top">
                     <twig:Layout:Col class="px-2">
                         <h6><strong>{{ formElement.vars.label }}</strong></h6>
                     </twig:Layout:Col>
@@ -179,7 +182,7 @@
                             </twig:Layout:Col>
                         {% endfor %}
                     </twig:Layout:Row>
-                {% endfor %}
+                {% endfor %} #}
             {% endfor %}
         </div>
     </div>
@@ -262,5 +265,37 @@
         <div>
             {{ form_widget(form) }}
         </div>
+    </div>
+{% endblock %}
+
+{% block experimental_model_param_row %}
+    <div>
+        <strong>{{ form_label(form) }}</strong>
+        <small>{{ form_help(form) }}</small>
+
+        <div class="mt-3">
+            {{ form_widget(form) }}
+        </div>
+
+        <div class="small text-danger">{{ form_errors(form) }}</div>
+    </div>
+{% endblock %}
+
+{% block experimental_model_param_widget %}
+    <div class="input-group input-group-sm">
+        {% for formRow in form %}
+            {% if formRow.vars.name == "vary" %}
+                <div class="input-group-text">{{ form_widget(formRow) }}</div>
+            {% else %}
+                <div class="input-group-text">{{ form_label(formRow) }}</div>
+                {{ form_widget(formRow) }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="small text-danger">
+        {% for formRow in form %}
+            {{ form_errors(formRow) }}
+        {% endfor %}
     </div>
 {% endblock %}

@@ -6,6 +6,7 @@
 imports:
     - { resource: services/ }
 parameters:
+    .container.dumper.inline_factories: true
 
 services:
     # default configuration for services in *this* file
@@ -28,6 +29,11 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
+
+    App\Service\Experiment\ExperimentalModelService:
+        arguments:
+            $projectDir: "%kernel.project_dir%"
+            $pythonPath: "%env(PYTHON_PATH)%"
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

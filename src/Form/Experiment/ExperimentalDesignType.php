@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Form\CompositeType\PrivacyAwareType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,6 +27,8 @@ class ExperimentalDesignType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $design = $builder->getData();
+
         $builder
             ->add(
                 $builder->create("_general", FormType::class, [
@@ -58,6 +61,32 @@ class ExperimentalDesignType extends AbstractType
                 ->add("fields", LiveCollectionType::class, [
                     "entry_type" => ExperimentalDesignFieldType::class,
                     "by_reference" => false,
+                    "entry_options" => [
+                        "design" => $design,
+                    ],
+                    "button_delete_options" => [
+                        "attr" => [
+                            "class" => "btn btn-outline-danger",
+                        ],
+                    ],
+                    "button_add_options" => [
+                        "attr" => [
+                            "class" => "btn btn-outline-primary",
+                        ],
+                    ],
+                ])
+            )
+            ->add(
+                $builder->create("_models", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Models",
+                ])
+                ->add("models", LiveCollectionType::class, [
+                    "entry_type" => ExperimentalModelType::class,
+                    "by_reference" => false,
+                    "entry_options" => [
+                        "design" => $design,
+                    ],
                     "button_delete_options" => [
                         "attr" => [
                             "class" => "btn btn-outline-danger",
