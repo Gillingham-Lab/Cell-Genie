@@ -6,6 +6,8 @@ namespace App\Twig\Components\Live\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Form\Experiment\ExperimentalRunDataType;
+use App\Service\Experiment\ExperimentalDataService;
+use App\Service\Experiment\ExperimentalModelService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -40,7 +42,9 @@ class ExperimentalRunDataForm extends AbstractController
     public string $saveButtonLabel = "Save";
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface   $entityManager,
+        private readonly ExperimentalModelService $modelService,
+        private readonly ExperimentalDataService  $dataService, private readonly ExperimentalDataService $experimentalDataService,
     ) {
 
     }
@@ -58,6 +62,9 @@ class ExperimentalRunDataForm extends AbstractController
         $this->submitForm();
         $formEntity = $this->getForm()->getData();
         $formEntity->updateTimestamps();
+
+        $this->modelService->fit($formEntity);
+        $this->experimentalDataService->evaluateDependentFields($formEntity);
 
         try {
             $this->entityManager->flush();

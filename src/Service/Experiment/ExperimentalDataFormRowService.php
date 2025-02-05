@@ -182,6 +182,7 @@ class ExperimentalDataFormRowService
             FormRowTypeEnum::EntityType => $this->getEntityTypeConfig($row),
             FormRowTypeEnum::DateType => $this->getDateTypeConfig($row),
             FormRowTypeEnum::ImageType => $this->getImageTypeConfig($row),
+            FormRowTypeEnum::ModelParameterType, FormRowTypeEnum::ExpressionType => $this->getModelParameterTypeConfig($row),
             default => [TextType::class, [], DatumEnum::String],
         };
     }
@@ -393,6 +394,20 @@ class ExperimentalDataFormRowService
             CropImageType::class,
             $fieldConfig,
             DatumEnum::Image,
+        ];
+    }
+
+    /**
+     * @param FormRow $formRow
+     * @return array{class-string<CropImageType>, array<string, mixed>, DatumEnum::String}
+     */
+    public function getModelParameterTypeConfig(FormRow $formRow): array
+    {
+        return [
+            TextType::class, [
+                "disabled" => true,
+            ],
+            DatumEnum::String
         ];
     }
 }

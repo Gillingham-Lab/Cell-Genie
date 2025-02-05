@@ -14,6 +14,7 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\DoctrineEntity\Vendor;
 use App\Entity\Lot;
+use App\Form\BasicType\FormGroupType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,6 +25,11 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class EntityTypeConfigurationType extends AbstractType
 {
+    public function getParent()
+    {
+        return FormGroupType::class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

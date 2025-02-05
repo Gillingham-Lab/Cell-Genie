@@ -6,12 +6,14 @@ namespace App\Service\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
+use App\Form\BasicType\ModelType;
 use App\Form\Search\NumberSearchTransformer;
 use App\Genie\Codec\ExperimentValueCodec;
 use App\Genie\Enums\DatumEnum;
@@ -20,9 +22,7 @@ use App\Genie\Enums\FloatTypeEnum;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Enums\IntegerTypeEnum;
 use App\Repository\LotRepository;
-use App\Repository\Substance\SubstanceRepository;
 use App\Service\Doctrine\SearchService;
-use App\Twig\Components\Experiment\Datum;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
@@ -30,13 +30,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Uid\Uuid;
 
 readonly class ExperimentalDataService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SearchService $searchService,
+        private EntityManagerInterface   $entityManager,
+        private SearchService            $searchService,
+        private ExperimentalModelService $modelService, private ModelType $modelType,
     ) {
 
     }
@@ -565,5 +567,78 @@ readonly class ExperimentalDataService
         }
 
         return (string)$value;
+    }
+
+    public function evaluateDependentFields(ExperimentalRun $run): void
+    {
+        $design = $run->getDesign();
+        $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
+
+        foreach ($modelFields as $field) {
+            $fieldConfig = $field->getFormRow()->getConfiguration();
+            $fieldName = $field->getFormRow()->getFieldName();
+            $model = $fieldConfig["model"];
+            $param = $fieldConfig["param"];
+
+            if (!$model or !$param) {
+                $value = NAN;
+            }
+
+            if ($field->getRole() === ExperimentalFieldRole::Condition) {
+                foreach ($run->getConditions() as $condition) {
+                    $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+                    $modelResult = $conditionModel->getResult() ?? [];
+                    $value = $modelResult["params"][$param]["value"] ?? NAN;
+
+                    $condition->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::Float64)->setValue($value));
+                }
+            } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
+                $values = [];
+                foreach ($run->getConditions() as $condition) {
+                    $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+                    $modelResult = $conditionModel->getResult() ?? [];
+                    $values[] = $modelResult["params"][$param]["value"] ?? NAN;
+                }
+
+                $value = array_sum($values) / count($values);
+
+                $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::Float64)->setValue($value));
+            }
+        }
+
+        $expressionFields = $run->getDesign()->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
+
+        foreach ($expressionFields as $expressionField) {
+            $expression = $expressionField->getFormRow()->getConfiguration()["expression"] ?? null;
+            $expressionFieldName = $expressionField->getFormRow()->getFieldName();
+
+            if ($expressionField->getRole() === ExperimentalFieldRole::Condition) {
+                foreach ($run->getConditions() as $condition) {
+                    $environment = $this->modelService->getValueEnvironmentForCondition($condition);
+                    $expressionLanguage = new ExpressionLanguage();
+
+                    try {
+                        $value = $expressionLanguage->evaluate($expression, $environment);
+                    } catch (\Exception $e) {
+                        $value = NAN;
+                    }
+
+                    $condition->addData((new ExperimentalDatum())->setName($expressionFieldName)->setType(DatumEnum::Float64)->setValue($value));
+                }
+            } elseif ($expressionField->getRole() === ExperimentalFieldRole::Datum) {
+                foreach ($run->getDataSets() as $dataSet) {
+                    $environment = $this->modelService->getValueEnvironmentForDataSet($dataSet);
+                    $expressionLanguage = new ExpressionLanguage();
+
+                    try {
+                        $value = $expressionLanguage->evaluate($expression, $environment);
+                    } catch (\Exception $e) {
+                        $value = NAN;
+                    }
+
+                    $dataSet->addData((new ExperimentalDatum())->setName($expressionFieldName)->setType(DatumEnum::Float64)->setValue($value));
+                }
+            }
+        }
     }
 }

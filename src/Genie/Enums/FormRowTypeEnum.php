@@ -12,6 +12,8 @@ enum FormRowTypeEnum: string
     case EntityType = "entity";
     case DateType = "date";
     case ImageType = "image";
+    case ExpressionType = "expression";
+    case ModelParameterType = "modelParameter";
 
     public function getLabel(): string
     {
@@ -23,6 +25,8 @@ enum FormRowTypeEnum: string
             self::EntityType => "Database entity",
             self::DateType => "Date",
             self::ImageType => "Image",
+            self::ExpressionType => "Expression",
+            self::ModelParameterType => "Model parameter",
         };
     }
 }

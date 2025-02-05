@@ -7,6 +7,7 @@ use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\DatumEnum;
 use App\Repository\Experiment\ExperimentalRunConditionRepository;
 use App\Service\Doctrine\Type\Ulid;
+use App\Validator\Constraint\UniqueCollectionField;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -41,9 +42,19 @@ class ExperimentalRunCondition
     #[ORM\InverseJoinColumn("datum_id", onDelete: "CASCADE")]
     private Collection $data;  // @phpstan-ignore doctrine.associationType
 
+    /** @var Collection<int, ExperimentalModel> */
+    #[ORM\ManyToMany(targetEntity: ExperimentalModel::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\JoinTable(name: "new_experimental_run_condition_model")]
+    #[ORM\JoinColumn(name: "condition_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    #[ORM\InverseJoinColumn(name: "model_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]
+    #[Assert\Valid]
+    #[UniqueCollectionField(field: "name")]
+    private Collection $models;
+
     public function __construct()
     {
         $this->data = new ArrayCollection();
+        $this->models = new ArrayCollection();
     }
 
     public function __clone(): void
@@ -133,6 +144,32 @@ class ExperimentalRunCondition
     public function removeData(ExperimentalDatum $data): static
     {
         $this->data->remove($data->getName());
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExperimentalModel>
+     */
+    public function getModels(): Collection
+    {
+        return $this->models;
+    }
+
+    public function addModel(ExperimentalModel $model): self
+    {
+        if (!$this->models->contains($model)) {
+            $this->models->add($model);
+        }
+
+        return $this;
+    }
+
+    public function removeModel(ExperimentalModel $model): self
+    {
+        if ($this->models->contains($model)) {
+            $this->models->removeElement($model);
+        }
 
         return $this;
     }

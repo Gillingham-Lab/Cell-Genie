@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\Form;
 
+use App\Form\BasicType\FormGroupType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,6 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TextAreaTypeConfigurationType extends AbstractType
 {
+    public function getParent()
+    {
+        return FormGroupType::class;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
