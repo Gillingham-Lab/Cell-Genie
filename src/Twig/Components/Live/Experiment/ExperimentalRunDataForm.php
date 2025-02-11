@@ -42,9 +42,8 @@ class ExperimentalRunDataForm extends AbstractController
     public string $saveButtonLabel = "Save";
 
     public function __construct(
-        private readonly EntityManagerInterface   $entityManager,
-        private readonly ExperimentalModelService $modelService,
-        private readonly ExperimentalDataService  $dataService, private readonly ExperimentalDataService $experimentalDataService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ExperimentalDataService $experimentalDataService,
     ) {
 
     }
@@ -63,8 +62,7 @@ class ExperimentalRunDataForm extends AbstractController
         $formEntity = $this->getForm()->getData();
         $formEntity->updateTimestamps();
 
-        $this->modelService->fit($formEntity);
-        $this->experimentalDataService->evaluateDependentFields($formEntity);
+        $this->experimentalDataService->postUpdate($formEntity);
 
         try {
             $this->entityManager->flush();

@@ -192,7 +192,7 @@ class ExperimentalModelType extends AbstractType
 
     /**
      * @param FormBuilderInterface<ExperimentalModel> $builder
-     * @param FormInterface<ExperimentalModel> $builder
+     * @param FormInterface<ExperimentalModel> $form
      * @param array<string, mixed> $model
      * @param array<string, mixed> $options
      * @return void

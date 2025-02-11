@@ -1,0 +1,19 @@
+<div {{ attributes.defaults({}) }}>
+    {% set table = computed.table %}
+
+    <div {{ stimulus_controller("ModelView", {
+        "model": model|serialize,
+        "fits": conditionModels.toArray,
+    }) }}>
+        <twig:Layout:Row sm="1" md="1" xl="1">
+            <twig:Layout:Col>
+                <div {{ stimulus_target("ModelView", "plot") }}>
+
+                </div>
+            </twig:Layout:Col>
+            <twig:Layout:Col>
+                <twig:Table small="true" :table="table" />
+            </twig:Layout:Col>
+        </twig:Layout:Row>
+    </div>
+</div>

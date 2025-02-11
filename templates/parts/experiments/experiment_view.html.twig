@@ -2,6 +2,9 @@
 
 {%- block title -%}Gin :: Experiment :: {{ design.number }}{%- endblock -%}
 
+{% set has_models = design.models|length > 0 and run.conditions|map((c) => c.models|length)|sum > 0 ? true : false %}
+
+
 {%- block body_main -%}
 <div class="row">
     <div class="container container-fluid w-100 p-0 m-0">
@@ -15,7 +18,7 @@
             </twig:Layout:Row>
         {% endif %}
 
-        <twig:Layout:Row cols="1">
+        <twig:Layout:Row cols="{{ has_models ? 2 : 1 }}">
             <twig:Layout:Col type="outer">
                 <twig:ElementCard title="Overview" class="mb-3">
                     <twig:Metadata
@@ -37,22 +40,57 @@
                 </twig:ElementCard>
 
                 {%- if design.fields|filter((f) => f.role.name == "Top" and f.isExposed == true)|length > 0 -%}
-                <twig:ElementCard title="Run data" class="mb-3">
-                    {%- set metaData = {} -%}
-                    {%- for field in design.fields|filter((f) => f.role.name == "Top") -%}
-                        {%- set metaData = metaData|merge({(field.label): ["datum", {
-                            "field": field,
-                            "formRow": field.formRow,
-                            "datum": run.data[field.formRow.fieldName] is defined ? run.data[field.formRow.fieldName].value : "",
-                        }]}) -%}
-                    {%- endfor -%}
-                    <twig:Metadata
-                        columns="4"
-                        :data="metaData"
-                    />
-                </twig:ElementCard>
+                    <twig:ElementCard title="Run data" class="mb-3">
+                        {%- set metaData = {} -%}
+                        {%- for field in design.fields|filter((f) => f.role.name == "Top") -%}
+                            {%- set metaData = metaData|merge({(field.label): ["datum", {
+                                "field": field,
+                                "formRow": field.formRow,
+                                "datum": run.data[field.formRow.fieldName] is defined ? run.data[field.formRow.fieldName].value : "",
+                            }]}) -%}
+                        {%- endfor -%}
+                        <twig:Metadata
+                            columns="4"
+                            :data="metaData"
+                        />
+                    </twig:ElementCard>
                 {%- endif -%}
+            </twig:Layout:Col>
 
+            {% if has_models %}
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Models" class="mb-3">
+                        <twig:Layout:Tabbed>
+                            <twig:Layout:Tabs>
+                                {% for model in design.models %}
+                                    <twig:Layout:Tab
+                                        :key="model.model"
+                                        :label="model.name"
+                                        active="{{ loop.index0 == 0 ? true : false }}"
+                                    />
+                                {% endfor %}
+                            </twig:Layout:Tabs>
+
+
+                            <twig:Layout:TabContentContainer>
+                                {% for model in design.models %}
+                                    <twig:Layout:TabContent
+                                        :key="model.model"
+                                        :label="model.name"
+                                        active="{{ loop.index0 == 0 ? true : false }}"
+                                    >
+                                        <twig:Experiment:ModelView :model="model" :run="run" />
+                                    </twig:Layout:TabContent>
+                                {% endfor %}
+                            </twig:Layout:TabContentContainer>
+                        </twig:Layout:Tabbed>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            {% endif %}
+        </twig:Layout:Row>
+
+        <twig:Layout:Row cols="1">
+            <twig:Layout:Col type="outer">
                 {%- if conditionTable.data|length > 0 -%}
                 <twig:ElementCard title="Conditions" class="mb-3">
                     <twig:Table :table="conditionTable" />

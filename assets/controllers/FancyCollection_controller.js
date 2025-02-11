@@ -29,6 +29,10 @@ export default class extends Controller {
             this.fancySelect.destroy();
         }
 
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+
         this.cleanupTomSelect();
 
         super.disconnect();

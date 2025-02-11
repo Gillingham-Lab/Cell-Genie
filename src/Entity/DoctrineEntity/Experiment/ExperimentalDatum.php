@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @template TType of DatumEnum
+ * @phpstan-import-type DatumReturnType from ExperimentValueCodec
  */
 #[ORM\Entity(repositoryClass: ExperimentalDatumRepository::class)]
 #[ORM\Table("new_experimental_datum")]
@@ -87,17 +88,7 @@ class ExperimentalDatum
     }
 
     /**
-     * @return (
-     *  TType is DatumEnum::EntityReference ? array{Ulid|int, class-string} : (
-     *      TType is DatumEnum::Uuid ? Uuid : (
-     *          TType is DatumEnum::Date ? DateTime : (
-     *              TType is DatumEnum::String|DatumEnum::Image ? string : (
-     *                  TType is DatumEnum::Float32|DatumEnum::Float64 ? float : int
-     *              )
-     *          )
-     *      )
-     *  )
-     * )
+     * @return DatumReturnType
      * @throws LogicException
      */
     public function getValue(): mixed

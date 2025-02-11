@@ -7,6 +7,9 @@ use App\Service\Experiment\ExperimentalModelService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<string>
+ */
 class ModelType extends AbstractType
 {
     public function __construct(

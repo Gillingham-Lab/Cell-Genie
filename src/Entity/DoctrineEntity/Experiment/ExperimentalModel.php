@@ -95,4 +95,15 @@ class ExperimentalModel
         $this->result = $result;
         return $this;
     }
+
+    public function getParent(): ?ExperimentalModel
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?ExperimentalModel $parent): static
+    {
+        $this->parent = $parent;
+        return $this;
+    }
 }

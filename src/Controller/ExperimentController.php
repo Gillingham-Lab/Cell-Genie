@@ -182,6 +182,12 @@ class ExperimentController extends AbstractController
                     }
                 } elseif ($formRow->getType() === FormRowTypeEnum::EntityType and $entitiesAsId === true) {
                     return method_exists($value, "getId") ? $value->getId() : $value->getUlid();
+                } elseif ($formRow->getType() === FormRowTypeEnum::ModelParameterType) {
+                    if (is_array($value)) {
+                        return $dataService->convertFloatToString($value[1], $formRow);
+                    } else {
+                        return $dataService->convertFloatToString($value, $formRow);
+                    }
                 }
 
                 return $value;

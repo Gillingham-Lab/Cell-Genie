@@ -261,9 +261,11 @@
 
 
 {% block fancy_choice_widget %}
-    <div {{ stimulus_controller("FancyCollection") }}>
-        <div>
-            {{ form_widget(form) }}
+    <div data-skip-morph>
+        <div {{ stimulus_controller("FancyCollection") }}>
+            <div>
+                {{ form_widget(form) }}
+            </div>
         </div>
     </div>
 {% endblock %}

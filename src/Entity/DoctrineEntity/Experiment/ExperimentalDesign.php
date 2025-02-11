@@ -65,6 +65,7 @@ class ExperimentalDesign implements PrivacyAwareInterface
     {
         $this->fields = new ArrayCollection();
         $this->runs = new ArrayCollection();
+        $this->models = new ArrayCollection();
     }
 
     /** @return Collection<int, ExperimentalDesignField>  */

@@ -12,8 +12,6 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Exceptions\FitException;
-use App\Genie\Exceptions\GinException;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -84,12 +82,16 @@ readonly class ExperimentalModelService
                     $warnings[] = $matches[1];
                 } elseif (str_contains($line, "Exception") or str_contains($line, "Error")) {
                     preg_match("#[\w].*?:[\d].*?: [\w].*?: (.*)#", $line, $matches, PREG_UNMATCHED_AS_NULL);
-                    $errors[] = $matches[1];
-                    $this->logger->critical("Error while running fit.py: " . $matches[1]);
+                    if (count($matches) === 2) {
+                        $errors[] = $matches[1];
+                        $this->logger->critical("Error while running fit.py: " . $matches[1]);
+                    } else {
+                        $this->logger->critical("Error while running fit.py: " . $line);
+                    }
                 }
             }
 
-            dump($params, $content, $errorContent);
+            #dump($params, $content, $errorContent);
             throw new FitException($warnings, $errors, $content);
         }
 
@@ -130,6 +132,7 @@ readonly class ExperimentalModelService
                 if (!$conditionModel) {
                     $conditionModel = clone $model;
                     $condition->addModel($conditionModel);
+                    $conditionModel->setParent($model);
                 }
 
                 try {
@@ -137,7 +140,7 @@ readonly class ExperimentalModelService
                 } catch (FitException $e) {
                     $errors = $e->getErrors();
                     $warnings = $e->getWarnings();
-                    $result = json_decode($e->getMessage(), true);
+                    $result = json_decode($e->getContent(), true);
 
                     if ($result === null) {
                         $result = [];
@@ -174,7 +177,7 @@ readonly class ExperimentalModelService
         if (count($xValues) !== count($yValues)) {
             $xCount = count($xValues);
             $yCount = count($yValues);
-            throw new GinException("Both x and y values must have the same length. Length of x is {$xCount}, y is {$yCount}");
+            throw new FitException(errors: ["Both x and y values must have the same length. Length of x is {$xCount}, y is {$yCount}"]);
         }
 
         $params = [];
@@ -225,7 +228,9 @@ readonly class ExperimentalModelService
         if ($field->getRole() === ExperimentalFieldRole::Datum) {
             $dataSets = $condition->getExperimentalRun()->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition() === $condition);
             foreach ($dataSets as $data) {
-                $values[] = $data->getDatum($fieldName)->getValue();
+                if ($data->getData()->containsKey($fieldName)) {
+                    $values[] = $data->getDatum($fieldName)->getValue();
+                }
             }
         }
 

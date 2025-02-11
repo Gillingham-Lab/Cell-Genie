@@ -14,6 +14,7 @@ use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
 use App\Form\BasicType\ModelType;
+use App\Form\ScientificNumberTransformer;
 use App\Form\Search\NumberSearchTransformer;
 use App\Genie\Codec\ExperimentValueCodec;
 use App\Genie\Enums\DatumEnum;
@@ -569,44 +570,17 @@ readonly class ExperimentalDataService
         return (string)$value;
     }
 
-    public function evaluateDependentFields(ExperimentalRun $run): void
+    public function postUpdate(ExperimentalRun $run): void
+    {
+        $this->updateExpressionFields($run);
+        $this->modelService->fit($run);
+        $this->updateModelFields($run);
+    }
+
+    public function updateExpressionFields(ExperimentalRun $run): void
     {
         $design = $run->getDesign();
-        $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
-
-        foreach ($modelFields as $field) {
-            $fieldConfig = $field->getFormRow()->getConfiguration();
-            $fieldName = $field->getFormRow()->getFieldName();
-            $model = $fieldConfig["model"];
-            $param = $fieldConfig["param"];
-
-            if (!$model or !$param) {
-                $value = NAN;
-            }
-
-            if ($field->getRole() === ExperimentalFieldRole::Condition) {
-                foreach ($run->getConditions() as $condition) {
-                    $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
-                    $modelResult = $conditionModel->getResult() ?? [];
-                    $value = $modelResult["params"][$param]["value"] ?? NAN;
-
-                    $condition->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::Float64)->setValue($value));
-                }
-            } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
-                $values = [];
-                foreach ($run->getConditions() as $condition) {
-                    $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
-                    $modelResult = $conditionModel->getResult() ?? [];
-                    $values[] = $modelResult["params"][$param]["value"] ?? NAN;
-                }
-
-                $value = array_sum($values) / count($values);
-
-                $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::Float64)->setValue($value));
-            }
-        }
-
-        $expressionFields = $run->getDesign()->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
+        $expressionFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
 
         foreach ($expressionFields as $expressionField) {
             $expression = $expressionField->getFormRow()->getConfiguration()["expression"] ?? null;
@@ -638,6 +612,55 @@ readonly class ExperimentalDataService
 
                     $dataSet->addData((new ExperimentalDatum())->setName($expressionFieldName)->setType(DatumEnum::Float64)->setValue($value));
                 }
+            }
+        }
+    }
+
+    public function updateModelFields(ExperimentalRun $run): void
+    {
+        $design = $run->getDesign();
+        $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
+
+        $numberTransformer = new ScientificNumberTransformer(["NAN"], ["Inf"], ["-Inf"], "NAN", "Inf", "-Inf");
+
+        foreach ($modelFields as $field) {
+            $fieldConfig = $field->getFormRow()->getConfiguration();
+            $fieldName = $field->getFormRow()->getFieldName();
+            $model = $fieldConfig["model"];
+            $param = $fieldConfig["param"];
+
+            if (!$model or !$param) {
+                $value = NAN;
+            }
+
+            if ($field->getRole() === ExperimentalFieldRole::Condition) {
+                foreach ($run->getConditions() as $condition) {
+                    $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+                    $modelResult = $conditionModel->getResult() ?? [];
+
+                    $value = [
+                        $modelResult["params"][$param]["value"] ?? NAN,
+                        $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN),
+                        $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN),
+                        $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN),
+                    ];
+
+                    $condition->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($value));
+                }
+            } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
+                $values = [[], [], [], []];
+                foreach ($run->getConditions() as $condition) {
+                    $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+                    $modelResult = $conditionModel->getResult() ?? [];
+                    $values[0][] = $modelResult["params"][$param]["value"] ?? NAN;
+                    $values[1][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN);
+                    $values[2][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN);
+                    $values[3][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN);
+                }
+
+                $values = array_map(fn ($v) => array_sum($v) / count($v), $values);
+
+                $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($values));
             }
         }
     }
