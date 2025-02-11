@@ -570,10 +570,13 @@ readonly class ExperimentalDataService
         return (string)$value;
     }
 
-    public function postUpdate(ExperimentalRun $run): void
+    /**
+     * @param array<string, list<string>> $models
+     */
+    public function postUpdate(ExperimentalRun $run, array $models = []): void
     {
         $this->updateExpressionFields($run);
-        $this->modelService->fit($run);
+        $this->modelService->fit($run, $models);
         $this->updateModelFields($run);
     }
 

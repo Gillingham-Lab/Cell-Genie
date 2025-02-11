@@ -38,7 +38,9 @@
                 {{ entityReference|raw }}
             {%- endif -%}
         {%- else -%}
-            {%- if datum is float or formRow.type.value == "float" -%}
+            {%- if datum is same as(null) -%}
+
+            {%- elseif datum is float or formRow.type.value == "float" -%}
                 {{ datum|roundScientifically }}
             {%- elseif datum is instanceof("\\DateTime") -%}
                 <twig:Date dateTime="{{ datum }}" />

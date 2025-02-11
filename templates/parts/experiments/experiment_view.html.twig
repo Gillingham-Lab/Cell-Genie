@@ -60,9 +60,10 @@
             {% if has_models %}
                 <twig:Layout:Col type="outer">
                     <twig:ElementCard title="Models" class="mb-3">
+                        {% set reduced_models = design.models|filter(m => run.conditions|map(c => c.models|filter(cm => m.model == cm.model)|length)|sum > 0)  %}
                         <twig:Layout:Tabbed>
                             <twig:Layout:Tabs>
-                                {% for model in design.models %}
+                                {% for model in reduced_models %}
                                     <twig:Layout:Tab
                                         :key="model.model"
                                         :label="model.name"
@@ -73,7 +74,7 @@
 
 
                             <twig:Layout:TabContentContainer>
-                                {% for model in design.models %}
+                                {% for model in reduced_models %}
                                     <twig:Layout:TabContent
                                         :key="model.model"
                                         :label="model.name"

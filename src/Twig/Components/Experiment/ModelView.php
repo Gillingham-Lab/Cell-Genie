@@ -85,6 +85,14 @@ class ModelView
             $vary = $modelConfiguration["params"][$param]["vary"] ? "" : " (constant)";
             $table->addColumn(new ComponentColumn(
                 $param . $vary, function ($row) use ($param) {
+                    if ($row["model"] === null) {
+                        return [
+                            Datum::class, [
+                                "datum" => null,
+                            ]
+                        ];
+                    }
+
                     $modelResults = $row["model"]->getResult();
 
                     return [

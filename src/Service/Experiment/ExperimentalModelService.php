@@ -12,6 +12,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Exceptions\FitException;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -26,6 +27,7 @@ readonly class ExperimentalModelService
         private LoggerInterface $logger,
         private StopWatch $stopWatch,
         private TagAwareCacheInterface $cache,
+        private EntityManagerInterface $entityManager,
     ) {
 
     }
@@ -118,7 +120,10 @@ readonly class ExperimentalModelService
         return $models;
     }
 
-    public function fit(ExperimentalRun $run): void
+    /**
+     * @param array<string, list<string>> $selectedModels
+     */
+    public function fit(ExperimentalRun $run, array $selectedModels = []): void
     {
         $this->stopWatch->start("ExperimentalModelService.fit");
 
@@ -129,6 +134,20 @@ readonly class ExperimentalModelService
         foreach ($conditions as $condition) {
             foreach ($designModels as $model) {
                 $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model->getName());
+
+                // If the condition appears in the selected model list, we restrict the models that will be fitted
+                if (isset($selectedModels[$condition->getName()])) {
+                    // If the model does not appear in the list, we skip the 'fitting'
+                    if (!in_array($model->getModel(), $selectedModels[$condition->getName()])) {
+                        // If a condition model already exist, we mark it for removal.
+                        if ($conditionModel) {
+                            $this->entityManager->remove($conditionModel);
+                        }
+
+                        continue;
+                    }
+                }
+
                 if (!$conditionModel) {
                     $conditionModel = clone $model;
                     $condition->addModel($conditionModel);

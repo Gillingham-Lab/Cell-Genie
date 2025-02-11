@@ -36,7 +36,7 @@ class Datum
 
     public function isComponent(): bool
     {
-        return match($this->formRow->getType()) {
+        return match($this->formRow?->getType()) {
             FormRowTypeEnum::EntityType => true,
             default => false,
         };

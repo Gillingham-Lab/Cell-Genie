@@ -39,10 +39,15 @@ export default class extends Controller {
     }
 
     createFancyChoice(element) {
+        let pluginList = {
+            dropdown_input: true,
+            remove_button: {
+                title: "Remove",
+            }
+        }
+
         this.fancySelect = new TomSelect(element, {
-            plugins: {
-                dropdown_input: true,
-            },
+            plugins: pluginList,
             maxOptions: 1000,
             sortField: [{field:'$order'},{field:'$score'}],
             create: !!element.dataset["allowAdd"],
