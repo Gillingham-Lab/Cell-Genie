@@ -5,11 +5,14 @@ namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
+use App\Form\BasicType\FancyEntityType;
 use App\Form\CompositeType\PrivacyAwareType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
@@ -81,24 +84,75 @@ class ExperimentalDesignType extends AbstractType
                     "inherit_data" => true,
                     "label" => "Models",
                 ])
-                ->add("models", LiveCollectionType::class, [
-                    "entry_type" => ExperimentalModelType::class,
-                    "by_reference" => false,
-                    "entry_options" => [
-                        "design" => $design,
-                    ],
-                    "button_delete_options" => [
-                        "attr" => [
-                            "class" => "btn btn-outline-danger",
-                        ],
-                    ],
-                    "button_add_options" => [
-                        "attr" => [
-                            "class" => "btn btn-outline-primary",
-                        ],
-                    ],
-                ])
+                ->add(... $this->getModelsCollectionTypeParameters($design))
             )
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->onPreSetData($event, $design));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->onPreSubmitData($event, $design));
+    }
+
+    public function onPreSetData(FormEvent $event, ExperimentalDesign $design): void
+    {
+        $form = $event->getForm();
+        $formData = $event->getData();
+
+        $modelChoices = [];
+        foreach ($formData->getModels() as $model) {
+            $modelChoices[$model->getName()] = $model->getModel();
+        }
+
+        $data = $form->get("_models")->get("models")->getData();
+
+        $form->get("_models")->add(... $this->getModelsCollectionTypeParameters($design, $modelChoices));
+        $form->get("_models")->get("models")->setData($data);
+    }
+
+    public function onPreSubmitData(FormEvent $event, ExperimentalDesign $design): void
+    {
+        $form = $event->getForm();
+        $formData = $event->getData();
+        $modelChoices = [];
+
+        foreach ($formData["_models"]["models"] as $model) {
+            if (!(isset($model["name"]) and isset($model["model"]))) {
+                continue;
+            }
+
+            $modelChoices[$model["name"]] = $model["model"];
+        }
+
+        $data = $form->get("_models")->get("models")->getData();
+
+        $form->get("_models")->add(... $this->getModelsCollectionTypeParameters($design, $modelChoices));
+        $form->get("_models")->get("models")->setData($data);
+    }
+
+    /**
+     * @param array<string, string> $modelChoices
+     * @return array{"models", class-string<LiveCollectionType>, array<string, mixed>}
+     */
+    private function getModelsCollectionTypeParameters(ExperimentalDesign $design, array $modelChoices = []): array
+    {
+        return [
+            "models", LiveCollectionType::class, [
+                "entry_type" => ExperimentalModelType::class,
+                "by_reference" => true,
+                "entry_options" => [
+                    "design" => $design,
+                    "referenceModels" => $modelChoices,
+                ],
+                "button_delete_options" => [
+                    "attr" => [
+                        "class" => "btn btn-outline-danger",
+                    ],
+                ],
+                "button_add_options" => [
+                    "attr" => [
+                        "class" => "btn btn-outline-primary",
+                    ],
+                ],
+            ]
+        ];
     }
 }

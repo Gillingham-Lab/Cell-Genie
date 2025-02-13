@@ -12,8 +12,11 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Exceptions\FitException;
+use App\Repository\Experiment\ExperimentalRunConditionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use ErrorException;
 use Psr\Log\LoggerInterface;
+use stdClass;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -28,6 +31,7 @@ readonly class ExperimentalModelService
         private StopWatch $stopWatch,
         private TagAwareCacheInterface $cache,
         private EntityManagerInterface $entityManager,
+        private ExperimentalRunConditionRepository $conditionRepository,
     ) {
 
     }
@@ -66,12 +70,16 @@ readonly class ExperimentalModelService
             throw new \RuntimeException("Failed read models");
         }
 
+        $this->logger->debug("Running the fit module with parameters: " . implode(", ", $params));
+
         $content = trim(stream_get_contents($pipes[1]));
         $errorContent = trim(stream_get_contents($pipes[2]));
 
         proc_close($proc);
 
         if ($errorContent) {
+            $this->logger->debug("Error content contains something: " . $errorContent);
+
             $lines = array_map(fn (string $str) => trim($str, characters: "\r"), explode("\n", $errorContent));
 
             $warnings = [];
@@ -80,16 +88,24 @@ readonly class ExperimentalModelService
                 $matches = [];
                 if (str_contains($line, "Warning")) {
                     preg_match("#[\w].*?:[\d].*?: [\w].*?: (.*)#", $line, $matches, PREG_UNMATCHED_AS_NULL);
-                    $this->logger->warning("Warning while running fit.py: " . $matches[1]);
-                    $warnings[] = $matches[1];
+                    if (count($matches) === 2) {
+                        $warnings[] = $matches[1];
+                        $this->logger->warning("Warning while running fit.py: " . $matches[1]);
+                    } else {
+                        $warnings[] = $line;
+                        $this->logger->warning("Warning while running fit.py: " . $line);
+                    }
                 } elseif (str_contains($line, "Exception") or str_contains($line, "Error")) {
-                    preg_match("#[\w].*?:[\d].*?: [\w].*?: (.*)#", $line, $matches, PREG_UNMATCHED_AS_NULL);
+                    preg_match("#[\w].*?:[\d].*?: [\w.].*?: (.*)#", $line, $matches, PREG_UNMATCHED_AS_NULL);
                     if (count($matches) === 2) {
                         $errors[] = $matches[1];
                         $this->logger->critical("Error while running fit.py: " . $matches[1]);
                     } else {
+                        $errors[] = $line;
                         $this->logger->critical("Error while running fit.py: " . $line);
                     }
+
+                    $this->logger->critical("Fit parameters: " . implode(", ", $params));
                 }
             }
 
@@ -153,6 +169,9 @@ readonly class ExperimentalModelService
                     $condition->addModel($conditionModel);
                     $conditionModel->setParent($model);
                 }
+
+                // Overwrite the model with new parameters from the parent
+                $conditionModel->setConfiguration($model->getConfiguration());
 
                 try {
                     $result = $this->fitModel($conditionModel, $condition);
@@ -279,7 +298,7 @@ readonly class ExperimentalModelService
     /**
      * @return array<string, mixed>
      */
-    public function getValueEnvironmentForCondition(ExperimentalRunCondition $condition): array
+    public function getValueEnvironmentForCondition(ExperimentalRunCondition $condition, bool $getReference = true): array
     {
         $run = $condition->getExperimentalRun();
         $fields = $run->getDesign()->getFields();
@@ -289,23 +308,97 @@ readonly class ExperimentalModelService
             $fieldName = $field->getFormRow()->getFieldName();
 
             if (!in_array($field->getFormRow()->getType(), [FormRowTypeEnum::IntegerType, FormRowTypeEnum::FloatType])) {
-                continue;
+                if (!($getReference === false and in_array($field->getFormRow()->getType(), [FormRowTypeEnum::ModelParameterType]))) {
+                    continue;
+                }
             }
 
             if ($field->getRole() === ExperimentalFieldRole::Datum) {
                 $dataSets = $condition->getExperimentalRun()->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition() === $condition and $dataSet->getControlCondition() === null);
-                $values = array_map(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getData()->containsKey($fieldName) ? $dataSet->getDatum($fieldName)?->getValue() : null, $dataSets->toArray());
+                $values = array_map(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getData()->containsKey($fieldName) ? $dataSet->getDatum($fieldName)->getValue() : null, $dataSets->toArray());
                 $environment[$fieldName] = $values;
             } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
                 $environment[$fieldName] = $run->getData()->containsKey($fieldName) ? $run->getDatum($fieldName)->getValue() : null;
             } elseif ($field->getRole() === ExperimentalFieldRole::Condition) {
                 $environment[$fieldName] = $condition->getData()->containsKey($fieldName) ? $condition->getDatum($fieldName)->getValue() : null;
             }
+
+            // Model parameter types return 4 values - value, stderr, lower_ci and upper_ci. We only need the value. Indecies start at 1 though!
+            if ($field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType) {
+                if (is_array($environment[$fieldName])) {
+                    $environment[$fieldName] = $environment[$fieldName][1];
+                }
+            }
+        }
+
+        if ($getReference) {
+            $environment["ref"] = $this->getReferenceValueEnvironmentForCondition($condition);
         }
 
         return $environment;
     }
 
+    /**
+     * @return object
+     */
+    public function getReferenceValueEnvironmentForCondition(ExperimentalRunCondition $condition): object
+    {
+        $references = $this->conditionRepository->getReferenceConditions($condition);
+        $values = [];
+        foreach ($references as $reference) {
+            $referenceValues = $this->getValueEnvironmentForCondition($reference, false);
+
+            foreach ($referenceValues as $key => $referenceValue) {
+                if (!isset($values[$key])) {
+                    $values[$key] = [];
+                }
+
+                if (
+                    $referenceValue === null or $referenceValue === "NAN" or $referenceValue === "+Inf" or $referenceValue === "-Inf"
+                        or (is_array($referenceValue) and $referenceValue === [])
+                ) {
+                    continue;
+                }
+
+                $values[$key][] = $referenceValue;
+            }
+        }
+
+        $values = array_map(function (array $value) {
+            if (count($value) > 0 and is_array($value[0])) {
+                $value = array_map(fn ($v) => array_sum($v)/count($v), $value);
+            }
+
+            if (count($value) === 0) {
+                return null;
+            }
+
+            try {
+                $value = array_filter($value, fn ($v) => !(is_nan($v) or is_infinite($v)));
+                return array_sum($value)/count($value);
+            } catch (ErrorException $e) {
+                return 0;
+            }
+
+        }, $values);
+
+        $object = new class {
+            public function __get(string $name)
+            {
+                return null;
+            }
+        };
+
+        foreach ($values as $key => $value) {
+            $object->{$key} = $value;
+        }
+
+        return $object;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function getValueEnvironmentForDataSet(ExperimentalRunDataSet $dataSet): array
     {
         $run = $dataSet->getExperiment();
@@ -349,5 +442,68 @@ readonly class ExperimentalModelService
             $expression = new ExpressionLanguage();
             return $expression->evaluate($value, $environment);
         }
+    }
+
+    /**
+     * @param ExperimentalModel ...$models
+     * @return array<string, mixed>
+     */
+    public function getAverageFitResult(ExperimentalModel ...$models): array
+    {
+        if (count($models) === 0) {
+            return [];
+        }
+
+        $average = [
+            "x" => [],
+            "y" => [],
+            "params" => [],
+            "evaluation" => [
+                "min" => null,
+                "max" => null,
+            ],
+        ];
+
+        foreach ($models as $model) {
+            $result = $model->getResult();
+            array_push($average["x"], ...$result["x"]);
+            array_push($average["y"], ...$result["y"]);
+            $average["params"] = array_merge_recursive($average["params"], $result["params"]);
+            $average["evaluation"] = array_merge_recursive($average["evaluation"], $result["evaluation"]);
+        }
+
+        sort($average["x"]);
+        sort($average["y"]);
+
+        foreach ($average["params"] as $param => $value) {
+            $average["params"][$param] = array_sum($value["value"]) / count($value["value"]);
+        }
+
+        $average["evaluation"]["N"] = max($average["evaluation"]["N"]);
+        $average["evaluation"]["spacing"] = $average["evaluation"]["spacing"][0];
+
+        // This is always true but for now required from PHP stan.
+        if (count($average["x"]) > 0) {
+            $average["evaluation"]["min"] = min($average["x"]);
+            $average["evaluation"]["max"] = max($average["x"]);
+        }
+
+        $this->stopWatch->start("ExperimentalModelService.eval");
+
+        try {
+            $reply = $this->run("eval", $models[0]->getModel(), json_encode($average));
+        } catch (FitException $e) {
+            $reply = $e->getContent();
+        }
+
+        $reply = json_decode($reply, true);
+
+        $this->stopWatch->stop("ExperimentalModelService.eval");
+
+        return [
+            "x" => $average["x"],
+            "y" => $average["y"],
+            "fit" => $reply,
+        ];
     }
 }

@@ -59,6 +59,7 @@ class ExperimentalDesign implements PrivacyAwareInterface
     #[ORM\InverseJoinColumn(name: "model_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]
     #[Assert\Valid]
     #[UniqueCollectionField(field: "name")]
+    #[ORM\OrderBy(["model" => "ASC", "name" => "ASC"])]
     private Collection $models;
 
     public function __construct()

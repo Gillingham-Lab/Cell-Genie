@@ -23,11 +23,14 @@ use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Enums\PrivacyLevel;
+use App\Repository\Experiment\ExperimentalRunConditionRepository;
 use App\Service\Experiment\ExperimentalDataService;
+use App\Twig\Components\EntityReference;
 use App\Twig\Components\Experiment\Datum;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunDataForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunForm;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -498,6 +501,7 @@ class ExperimentController extends AbstractController
     #[IsGranted("view", "run")]
     public function viewRun(
         Request $request,
+        ExperimentalRunConditionRepository $conditionRepository,
         ExperimentalDataService $dataService,
         ExperimentalRun $run,
     ): Response {
@@ -574,6 +578,16 @@ class ExperimentController extends AbstractController
                 data: $run->getConditions(),
                 columns: [
                     new Column("Name", fn (ExperimentalRunCondition $condition) => $condition->getName()),
+                    new ComponentColumn("Reference", function (ExperimentalRunCondition $condition) use ($conditionRepository){
+                        $referenceConditions = new ArrayCollection($conditionRepository->getReferenceConditions($condition));
+
+                        return [
+                            EntityReference::class, [
+                                "entity" => $referenceConditions,
+                                "displayMax" => 3,
+                            ]
+                        ];
+                    }, widthRecommendation: 10),
                     new ToggleColumn("Control", fn (ExperimentalRunCondition $condition) => $condition->isControl()),
                     ... $conditionColumns,
                 ],

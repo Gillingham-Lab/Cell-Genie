@@ -54,6 +54,16 @@ class ExperimentalDesignFieldType extends AbstractType
                     ." multiple entries will be summarized in the same table cell, for fields the Role 'Top', the value will be "
                     ."repeated for each condition.",
             ])
+            ->add("referenced", CheckboxType::class, [
+                "required" => false,
+                "help" => "If turned on, this field will be used to retrieve reference data to draw comparisons. "
+                    ."Will only be used on Top or Condition fields.",
+            ])
+            ->add("referenceValue", TextType::class, [
+                "required" => false,
+                "help" => "Reference value for comparison. Will only be used on Top or Condition fields and if 'Referenced' is turned on."
+                    ." This can be used to limit the search for example to conditions where the concentration of something is 0 or to overwrite exact comparisons.",
+            ])
             ->add("formRow", FormRowType::class, [
                 "label" => " ",
                 "design" => $options["design"],

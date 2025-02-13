@@ -8,8 +8,8 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent]
 class UncertainFloat
 {
-    public float|string $value;
-    public float|string $stderr;
+    public null|float|string $value;
+    public null|float|string $stderr;
     public null|float|string $lower;
     public null|float|string $upper;
     public ?float $ci;

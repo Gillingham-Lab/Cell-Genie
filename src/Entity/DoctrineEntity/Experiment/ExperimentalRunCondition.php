@@ -57,6 +57,12 @@ class ExperimentalRunCondition
         $this->models = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        $name = $this->name ?? "New Condition";
+        return "{$this->experimentalRun->getName()}/{$name}";
+    }
+
     public function __clone(): void
     {
         if ($this->id) {

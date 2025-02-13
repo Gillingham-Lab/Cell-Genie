@@ -9,6 +9,9 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\Table;
+use App\Repository\Experiment\ExperimentalModelRepository;
+use App\Repository\Experiment\ExperimentalRunConditionRepository;
+use App\Service\Experiment\ExperimentalModelService;
 use App\Twig\Components\UncertainFloat;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,8 +30,16 @@ class ModelView
 {
     public ExperimentalModel $model;
     public ExperimentalRun $run;
-    /** @var ArrayCollection<int, array{condition: string, fit: ExperimentalModel}]>  */
+    /** @var ArrayCollection<int, array{condition: string, fit: ExperimentalModel}>  */
     public ArrayCollection $conditionModels;
+
+    public function __construct(
+        private readonly ExperimentalRunConditionRepository $conditionRepository,
+        private readonly ExperimentalModelRepository $modelRepository,
+        private readonly ExperimentalModelService $modelService,
+    ) {
+
+    }
 
     /**
      * @param AttributeStructure $attributes
@@ -51,12 +62,26 @@ class ModelView
         $attributes = $resolver->resolve($attributes);
 
         $attributes["conditionModels"] = $attributes["run"]->getConditions()->map(
-            fn (ExperimentalRunCondition $condition) => [
-                "condition" => $condition->getName(),
-                "fit" => $condition->getModels()->findFirst(
+            function (ExperimentalRunCondition $condition) use ($attributes) {
+                $referenceConditions = $this->conditionRepository->getReferenceConditions($condition);
+
+                $modelFit = $condition->getModels()->findFirst(
                     fn (int $index, ExperimentalModel $model) => $model->getModel() === $attributes["model"]->getModel()
-                )
-            ]
+                );
+
+                $referenceModel = $modelFit->getReferenceModel();
+                $referenceFits = [];
+                if ($referenceModel) {
+                    $referenceFits = $this->modelRepository->getModelsForConditions($referenceModel, ... $referenceConditions);
+                    $referenceFits = $this->modelService->getAverageFitResult(... $referenceFits);
+                }
+
+                return [
+                    "condition" => $condition->getName(),
+                    "fit" => $modelFit,
+                    "referenceFit" => $referenceFits,
+                ];
+            }
         );
 
         return $attributes;
@@ -95,15 +120,23 @@ class ModelView
 
                     $modelResults = $row["model"]->getResult();
 
-                    return [
-                        UncertainFloat::class, [
-                            "value" => $modelResults["params"][$param]["value"],
-                            "stderr" => $modelResults["params"][$param]["stderr"],
-                            "ci" => $modelResults["ci"],
-                            "lowerCi" => $modelResults["params"][$param]["ci"][0] ?? null,
-                            "upperCi" => $modelResults["params"][$param]["ci"][1] ?? null,
-                        ]
-                    ];
+                    if (isset($modelResults["params"])) {
+                        return [
+                            UncertainFloat::class, [
+                                "value" => $modelResults["params"][$param]["value"],
+                                "stderr" => $modelResults["params"][$param]["stderr"],
+                                "ci" => $modelResults["ci"],
+                                "lowerCi" => $modelResults["params"][$param]["ci"][0] ?? null,
+                                "upperCi" => $modelResults["params"][$param]["ci"][1] ?? null,
+                            ]
+                        ];
+                    } else {
+                        return [
+                            Datum::class, [
+                                "datum" => null,
+                            ]
+                        ];
+                    }
                 }
             ));
         }

@@ -13,6 +13,9 @@
             </twig:Layout:Col>
             <twig:Layout:Col>
                 <twig:Table small="true" :table="table" />
+
+                <div {{ stimulus_target("ModelView", "warnings") }}></div>
+                <div {{ stimulus_target("ModelView", "errors") }}></div>
             </twig:Layout:Col>
         </twig:Layout:Row>
     </div>

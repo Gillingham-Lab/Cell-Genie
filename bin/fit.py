@@ -1,11 +1,14 @@
 from typing import Optional, TypeAlias, Literal
 import json
+import warnings
 
 import argh
 from argh import arg
 from argh.decorators import named
 import lmfit
 import numpy as np
+from lmfit.minimizer import MinimizerException
+from uncertainties import unumpy as unp
 
 MODELS = {}
 
@@ -265,6 +268,37 @@ def array_replace_recursive(default, configuration):
 
     return new_dict
 
+@named("eval")
+@arg("configuration", help="A JSON encoded configuration to set up the model parameters")
+def command_eval(model: Model, configuration: str):
+    try:
+        model_name = model
+        model_class = MODELS[model]
+        model = model_class.get_model()
+    except KeyError:
+        raise argh.CommandError("Model is not known")
+
+    try:
+        configuration = json.loads(configuration)
+    except json.decoder.JSONDecodeError:
+        raise argh.CommandError("JSON configuration was incorrect")
+
+    evaluation = configuration["evaluation"]
+
+    if evaluation["spacing"] == "linear":
+        x_eval = np.linspace(evaluation["min"], evaluation["max"], evaluation["N"])
+    else:
+        x_eval = np.logspace(np.log10(evaluation["min"]), np.log10(evaluation["max"]), evaluation["N"])
+
+    y_eval = model_class.model(x_eval, **configuration["params"])
+
+    reply = {
+        "x": [float_to_string(x) for x in x_eval.tolist()],
+        "y": [float_to_string(x) for x in y_eval.tolist()],
+    }
+
+    print(json.dumps(reply))
+
 
 @named("fit")
 @arg("configuration", help="A JSON encoded configuration to set up the model parameters")
@@ -340,7 +374,11 @@ def command_fit(model: Model, configuration: str):
     fit = model.fit(y, params, x=x)
 
     # Evaluate some parameters
-    ci = fit.conf_interval(sigmas=[ci_value])
+    try:
+        ci = fit.conf_interval(sigmas=[ci_value])
+    except MinimizerException as e:
+        ci = None
+        warnings.warn(f"ConfidenceIntervalWarning: Determination of the confidence intervals was not possible. Reason: {e}")
 
     if evaluation["spacing"] == "linear":
         x_fit = np.linspace(evaluation["min"], evaluation["max"], evaluation["N"])
@@ -368,13 +406,16 @@ def command_fit(model: Model, configuration: str):
         reply["params"][param] = {
             "value": float_to_string(fit.params[param].value),
             "stderr": float_to_string(fit.params[param].stderr),
-            "ci": (float_to_string(ci[param][0][1]), float_to_string(ci[param][-1][1])) if configuration["params"][param]["vary"] is True else None,
+            "ci": (float_to_string(ci[param][0][1]), float_to_string(ci[param][-1][1])) if configuration["params"][param]["vary"] is True and ci is not None else None,
             "vary": configuration["params"][param]["vary"],
         }
 
     print(json.dumps(reply))
 
 def float_to_string(float):
+    if float is None:
+        return None
+
     if np.isnan(float):
         return "NAN"
     elif np.isinf(float):
@@ -385,4 +426,4 @@ def float_to_string(float):
     else:
         return float
 
-argh.dispatch_commands([command_list, command_fit], old_name_mapping_policy=False)
+argh.dispatch_commands([command_list, command_fit, command_eval], old_name_mapping_policy=False)

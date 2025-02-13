@@ -5,6 +5,8 @@ namespace App\Service;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\DoctrineEntity\Substance\Antibody;
@@ -56,6 +58,7 @@ class IconService
                 Box::class => "box",
                 Rack::class => "location",
                 Lot::class => "lot",
+                ExperimentalRunCondition::class, ExperimentalRun::class => "experiment",
                 default => null,
             }
         };

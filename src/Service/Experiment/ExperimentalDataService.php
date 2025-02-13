@@ -639,6 +639,11 @@ readonly class ExperimentalDataService
             if ($field->getRole() === ExperimentalFieldRole::Condition) {
                 foreach ($run->getConditions() as $condition) {
                     $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+
+                    if (!$conditionModel) {
+                        continue;
+                    }
+
                     $modelResult = $conditionModel->getResult() ?? [];
 
                     $value = [
@@ -654,6 +659,11 @@ readonly class ExperimentalDataService
                 $values = [[], [], [], []];
                 foreach ($run->getConditions() as $condition) {
                     $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+
+                    if (!$conditionModel) {
+                        continue;
+                    }
+
                     $modelResult = $conditionModel->getResult() ?? [];
                     $values[0][] = $modelResult["params"][$param]["value"] ?? NAN;
                     $values[1][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN);
