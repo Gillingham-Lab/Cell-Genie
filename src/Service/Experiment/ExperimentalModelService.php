@@ -394,7 +394,7 @@ readonly class ExperimentalModelService
                 $value = array_filter($value, fn ($v) => !(is_nan($v) or is_infinite($v)));
                 return array_sum($value)/count($value);
             } catch (ErrorException | DivisionByZeroError $e) {
-                return NAN;
+                return 0;
             }
 
         }, $values);
