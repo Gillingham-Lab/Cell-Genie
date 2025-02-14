@@ -104,6 +104,10 @@ class ExperimentalRunDataForm extends AbstractController
 
         $conditions = $form->get("_conditions")->get("conditions");
         foreach ($conditions as $child) {
+            if (!$child->has("models")) {
+                continue;
+            }
+
             $name = $child->get("name")->getData();
             $child->get("models")->setData($conditionsToModels[$name]);
         }
