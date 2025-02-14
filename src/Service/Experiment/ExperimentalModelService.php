@@ -493,7 +493,11 @@ readonly class ExperimentalModelService
         sort($average["y"]);
 
         foreach ($average["params"] as $param => $value) {
-            $average["params"][$param] = array_sum($value["value"]) / count($value["value"]);
+            if (is_array($value["value"])) {
+                $average["params"][$param] = array_sum($value["value"]) / count($value["value"]);
+            } else {
+                $average["params"][$param] = $value["value"];
+            }
         }
 
         $average["evaluation"]["N"] = max($average["evaluation"]["N"]);
