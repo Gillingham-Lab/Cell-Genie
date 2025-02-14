@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Twig\Components\Live\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Form\Experiment\ExperimentalRunDataType;
 use App\Service\Experiment\ExperimentalDataService;
@@ -11,6 +12,7 @@ use App\Service\Experiment\ExperimentalModelService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -42,29 +44,36 @@ class ExperimentalRunDataForm extends AbstractController
     public string $saveButtonLabel = "Save";
 
     public function __construct(
-        private readonly EntityManagerInterface   $entityManager,
-        private readonly ExperimentalModelService $modelService,
-        private readonly ExperimentalDataService  $dataService, private readonly ExperimentalDataService $experimentalDataService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ExperimentalDataService $experimentalDataService,
     ) {
 
     }
 
     #[LiveAction]
-    public function submit(): Response
-    {
-        $formEntity = $this->save();
+    public function submit(
+        Request $request,
+    ): Response {
+        $formEntity = $this->save($request);
         return $this->redirectToRoute("app_experiments_view", ["design" => $this->design->getId()->toRfc4122()]);
     }
 
     #[LiveAction]
-    public function save(): ?ExperimentalRun
-    {
+    public function save(
+        Request $request,
+    ): ?ExperimentalRun {
         $this->submitForm();
+        $form = $this->getForm();
         $formEntity = $this->getForm()->getData();
         $formEntity->updateTimestamps();
 
-        $this->modelService->fit($formEntity);
-        $this->experimentalDataService->evaluateDependentFields($formEntity);
+        $conditions = $form->get("_conditions")->get("conditions");
+        $modelForConditions = [];
+        foreach ($conditions as $child) {
+            $modelForConditions[$child->get("name")->getData()] = $child->get("models")->getData();
+        }
+
+        $this->experimentalDataService->postUpdate($formEntity, $modelForConditions);
 
         try {
             $this->entityManager->flush();
@@ -80,12 +89,25 @@ class ExperimentalRunDataForm extends AbstractController
      */
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(
+        $form = $this->createForm(
             ExperimentalRunDataType::class,
             $this->initialFormData,
             [
                 "design" => $this->design,
             ]
         );
+
+        $conditionsToModels = [];
+        foreach ($this->initialFormData->getConditions() as $condition) {
+            $conditionsToModels[$condition->getName()] = array_map(fn (ExperimentalModel $model) => $model->getModel(), $condition->getModels()->toArray());
+        }
+
+        $conditions = $form->get("_conditions")->get("conditions");
+        foreach ($conditions as $child) {
+            $name = $child->get("name")->getData();
+            $child->get("models")->setData($conditionsToModels[$name]);
+        }
+
+        return $form;
     }
 }

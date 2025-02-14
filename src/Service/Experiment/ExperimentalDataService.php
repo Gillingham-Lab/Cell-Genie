@@ -14,6 +14,7 @@ use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\Lot;
 use App\Form\BasicType\ModelType;
+use App\Form\ScientificNumberTransformer;
 use App\Form\Search\NumberSearchTransformer;
 use App\Genie\Codec\ExperimentValueCodec;
 use App\Genie\Enums\DatumEnum;
@@ -30,15 +31,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Uid\Uuid;
 
 readonly class ExperimentalDataService
 {
     public function __construct(
-        private EntityManagerInterface   $entityManager,
-        private SearchService            $searchService,
-        private ExperimentalModelService $modelService, private ModelType $modelType,
+        private EntityManagerInterface $entityManager,
+        private SearchService $searchService,
+        private ExperimentalModelService $modelService,
+        private Stopwatch $stopwatch,
+        private LoggerInterface $logger,
     ) {
 
     }
@@ -56,9 +61,11 @@ readonly class ExperimentalDataService
 
         return $qb
             ->select("exrc")
+            ->addSelect("exrcmodel")
             ->from(ExperimentalRunCondition::class, "exrc")
 
             ->leftJoin("exrc.experimentalRun", "exr")
+            ->leftJoin("exrc.models", "exrcmodel")
             ->addSelect("exr")
             ->where("exr.design = :design")
 
@@ -130,11 +137,16 @@ readonly class ExperimentalDataService
             ->setMaxResults($limit)
         ;
 
+        $this->logger->debug("ExperimentalDataService.getPaginatedResults: Create Paginator");
+
         // Retrieve rows
         /** @var Paginator<ExperimentalRunCondition> $paginatedConditions */
         $paginatedConditions = new Paginator($queryBuilder->getQuery(), fetchJoinCollection: true);
 
         $conditionIds = array_unique(array_map(fn (ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(), $paginatedConditions->getIterator()->getArrayCopy()));
+
+        $this->logger->debug("ExperimentalDataService.getPaginatedResults: Retrieving collected conditions");
+        $this->stopwatch->start("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
 
         // Prefetch run and condition data
         $hydratedConditionDatum = $this->entityManager->createQueryBuilder()
@@ -143,13 +155,17 @@ readonly class ExperimentalDataService
             ->addSelect("data")
             ->addSelect("run")
             ->addSelect("runData")
+            ->addSelect("models")
             ->leftJoin("condition.experimentalRun", "run")
+            ->leftJoin("condition.models", "models")
             ->leftJoin("run.data", "runData", indexBy: "runData.name")
             ->leftJoin("condition.data", "data", indexBy: "data.name")
             ->where("condition.id IN (:conditions)")
             ->setParameter("conditions", $conditionIds)
             ->getQuery()
             ->getResult();
+
+        $this->stopwatch->stop("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
 
         // Prefetch run datasets
         $runIds = array_map(fn (ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum);
@@ -569,44 +585,20 @@ readonly class ExperimentalDataService
         return (string)$value;
     }
 
-    public function evaluateDependentFields(ExperimentalRun $run): void
+    /**
+     * @param array<string, list<string>> $models
+     */
+    public function postUpdate(ExperimentalRun $run, array $models = []): void
+    {
+        $this->updateExpressionFields($run);
+        $this->modelService->fit($run, $models);
+        $this->updateModelFields($run);
+    }
+
+    public function updateExpressionFields(ExperimentalRun $run): void
     {
         $design = $run->getDesign();
-        $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
-
-        foreach ($modelFields as $field) {
-            $fieldConfig = $field->getFormRow()->getConfiguration();
-            $fieldName = $field->getFormRow()->getFieldName();
-            $model = $fieldConfig["model"];
-            $param = $fieldConfig["param"];
-
-            if (!$model or !$param) {
-                $value = NAN;
-            }
-
-            if ($field->getRole() === ExperimentalFieldRole::Condition) {
-                foreach ($run->getConditions() as $condition) {
-                    $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
-                    $modelResult = $conditionModel->getResult() ?? [];
-                    $value = $modelResult["params"][$param]["value"] ?? NAN;
-
-                    $condition->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::Float64)->setValue($value));
-                }
-            } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
-                $values = [];
-                foreach ($run->getConditions() as $condition) {
-                    $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
-                    $modelResult = $conditionModel->getResult() ?? [];
-                    $values[] = $modelResult["params"][$param]["value"] ?? NAN;
-                }
-
-                $value = array_sum($values) / count($values);
-
-                $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::Float64)->setValue($value));
-            }
-        }
-
-        $expressionFields = $run->getDesign()->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
+        $expressionFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
 
         foreach ($expressionFields as $expressionField) {
             $expression = $expressionField->getFormRow()->getConfiguration()["expression"] ?? null;
@@ -638,6 +630,65 @@ readonly class ExperimentalDataService
 
                     $dataSet->addData((new ExperimentalDatum())->setName($expressionFieldName)->setType(DatumEnum::Float64)->setValue($value));
                 }
+            }
+        }
+    }
+
+    public function updateModelFields(ExperimentalRun $run): void
+    {
+        $design = $run->getDesign();
+        $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
+
+        $numberTransformer = new ScientificNumberTransformer(["NAN"], ["Inf"], ["-Inf"], "NAN", "Inf", "-Inf");
+
+        foreach ($modelFields as $field) {
+            $fieldConfig = $field->getFormRow()->getConfiguration();
+            $fieldName = $field->getFormRow()->getFieldName();
+            $model = $fieldConfig["model"];
+            $param = $fieldConfig["param"];
+
+            if (!$model or !$param) {
+                $value = NAN;
+            }
+
+            if ($field->getRole() === ExperimentalFieldRole::Condition) {
+                foreach ($run->getConditions() as $condition) {
+                    $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+
+                    if (!$conditionModel) {
+                        continue;
+                    }
+
+                    $modelResult = $conditionModel->getResult() ?? [];
+
+                    $value = [
+                        $modelResult["params"][$param]["value"] ?? NAN,
+                        $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN),
+                        $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN),
+                        $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN),
+                    ];
+
+                    $condition->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($value));
+                }
+            } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
+                $values = [[], [], [], []];
+                foreach ($run->getConditions() as $condition) {
+                    $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+
+                    if (!$conditionModel) {
+                        continue;
+                    }
+
+                    $modelResult = $conditionModel->getResult() ?? [];
+                    $values[0][] = $modelResult["params"][$param]["value"] ?? NAN;
+                    $values[1][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN);
+                    $values[2][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN);
+                    $values[3][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN);
+                }
+
+                $values = array_map(fn ($v) => array_sum($v) / count($v), $values);
+
+                $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($values));
             }
         }
     }

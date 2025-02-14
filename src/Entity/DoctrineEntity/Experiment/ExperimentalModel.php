@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Experiment;
 
 use App\Entity\Traits\Fields\IdTrait;
+use App\Repository\Experiment\ExperimentalModelRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 
-#[ORM\Entity()]
+#[ORM\Entity(repositoryClass: ExperimentalModelRepository::class)]
 class ExperimentalModel
 {
     use IdTrait;
@@ -17,6 +18,9 @@ class ExperimentalModel
 
     #[ORM\Column(type: "string", nullable: false)]
     public ?string $model = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    public ?string $referenceModel = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, fetch: "LAZY")]
     #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
@@ -93,6 +97,28 @@ class ExperimentalModel
     public function setResult(?array $result): static
     {
         $this->result = $result;
+        return $this;
+    }
+
+    public function getParent(): ?ExperimentalModel
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?ExperimentalModel $parent): static
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    public function getReferenceModel(): ?string
+    {
+        return $this->referenceModel;
+    }
+
+    public function setReferenceModel(?string $referenceModel): static
+    {
+        $this->referenceModel = $referenceModel;
         return $this;
     }
 }

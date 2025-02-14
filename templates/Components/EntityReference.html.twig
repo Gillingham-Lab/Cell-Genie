@@ -3,29 +3,25 @@
             none
     {%- else -%}
         {%- if entity is iterable -%}
-            {%- for e in entity -%}
-                {%- if e is iterable -%}
+            {%- if entity|length > 5 -%}
+                {%- for e in entity|slice(0, 3) -%}
+                    <twig:EntityReference :entity="e" />
+                {% endfor %}
+                and {{ entity|length - 3 }} more.
+            {%- else %}
+                {%- for e in entity -%}
                     <twig:EntityReference :entity="e" />
                 {%- else -%}
-                    {% cache 'gin-pill-cache-' ~ (e.ulid is defined ? e.ulid : e.id) %}
-                        <a class="badge {{ this.class(e) }} rounded-pill text-decoration-none" href="{{ this.href(e) ?? "#" }}">
-                            {% cache "gin-icon-cache-" ~ icon %}
-                                <twig:Icon :icon="icon" />
-                            {% endcache %}
-                            {{ e }}
-                        </a>
-                    {% endcache %}
-                {%- endif -%}
-            {%- else -%}
-                none
-            {%- endfor -%}
+                    none
+                {%- endfor -%}
+            {%- endif -%}
         {%- else -%}
             {% cache 'gin-pill-cache-' ~ (entity.ulid is defined ? entity.ulid : entity.id) %}
                 <a class="badge {{ this.class(entity) }} rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
                     {% cache "gin-icon-cache-" ~ icon %}
                     <twig:Icon :icon="icon" />
                     {% endcache %}
-                    {{ entity }}
+                    {{ entity|shorten(30) }}
                 </a>
             {% endcache %}
         {%- endif -%}

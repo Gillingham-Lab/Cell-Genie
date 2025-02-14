@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Form\Experiment;
 
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
+use App\Form\BasicType\FancyChoiceType;
 use App\Service\Experiment\ExperimentalDataFormRowService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,6 +34,11 @@ class ExperimentConditionRowType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes("fields", Collection::class);
+        $resolver
+            ->define("models")
+            ->allowedTypes("string[]")
+            ->default([])
+        ;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -47,6 +54,19 @@ class ExperimentConditionRowType extends AbstractType
                 "required" => false,
             ])
         ;
+
+        if (count($options["models"]) > 0) {
+            $builder
+                ->add("models", FancyChoiceType::class, [
+                    "label" => "Models",
+                    "allow_empty" => true,
+                    "required" => false,
+                    "multiple" => true,
+                    "choices" => $options["models"],
+                    "empty_data" => [],
+                    "mapped" => false,
+                ]);
+        }
 
         $this->formRowService->createBuilder($builder, "data", ... $options["fields"]);
     }

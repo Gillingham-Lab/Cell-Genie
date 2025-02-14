@@ -20,4 +20,5 @@ enum DatumEnum: string
     case EntityReference = "entityReference";
     case Date = "date";
     case Image = "image";
+    case ErrorFloat = "errorFloat";
 }

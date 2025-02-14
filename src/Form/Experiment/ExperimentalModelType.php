@@ -42,6 +42,10 @@ class ExperimentalModelType extends AbstractType
             ->allowedTypes(ExperimentalDesign::class)
             ->required()
         ;
+
+        $resolver->define("referenceModels")
+            ->allowedTypes("string[]")
+            ->default([]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -52,6 +56,14 @@ class ExperimentalModelType extends AbstractType
             ->add("model", ModelType::class, [])
             ->add("name", TextType::class, [
                 "help" => "The model name is used to reference this model",
+            ])
+            ->add("referenceModel", FancyChoiceType::class, [
+                "help" => "A reference model is used to overlay a reference line from a condition's references. Leave empty to not display external references.",
+                "choices" => $options["referenceModels"],
+                "allow_empty" => true,
+                "required" => false,
+                "empty_data" => null,
+                "placeholder" => "Choose a model to use as a reference or leave empty",
             ])
             ->add(
                 $builder->create("configuration", FormType::class, [
@@ -77,7 +89,7 @@ class ExperimentalModelType extends AbstractType
             )
         ;
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, fn (FormEvent $event) => $this->onPreSetData($builder, $event, $availableModels, $options));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->onPreSetData($builder, $event, $availableModels, $options));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->onPreSubmit($builder, $event, $availableModels, $options));
     }
 
@@ -192,7 +204,7 @@ class ExperimentalModelType extends AbstractType
 
     /**
      * @param FormBuilderInterface<ExperimentalModel> $builder
-     * @param FormInterface<ExperimentalModel> $builder
+     * @param FormInterface<ExperimentalModel> $form
      * @param array<string, mixed> $model
      * @param array<string, mixed> $options
      * @return void
@@ -217,7 +229,7 @@ class ExperimentalModelType extends AbstractType
             $params->add($param, ExperimentalModelParamType::class, [
                 "label" => $model["param_help"][$param]["label"] ?? $param,
                 "help" => $model["param_help"][$param]["help"] ?? null,
-                "environment" => array_map(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName(), $design->getFields()->toArray()),
+                "environment" => ["ref", ... array_map(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName(), $design->getFields()->toArray())],
             ]);
         }
     }

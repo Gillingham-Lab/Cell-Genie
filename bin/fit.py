@@ -1,11 +1,14 @@
 from typing import Optional, TypeAlias, Literal
 import json
+import warnings
 
 import argh
 from argh import arg
 from argh.decorators import named
 import lmfit
 import numpy as np
+from lmfit.minimizer import MinimizerException
+from uncertainties import unumpy as unp
 
 MODELS = {}
 
@@ -128,6 +131,108 @@ class BindingModel(AbstractModel):
             }
         }
 
+@model
+class CompetitiveBindingModel(AbstractModel):
+    label = "Competitive binding model"
+    formula = "Z.-X. Wang, FEBS Letters 360 (1995), 111-114"
+    param_help = {
+        "x": {
+            "label": "Variable concentration x",
+            "help": "The initial concentration of the titrated compound."
+        },
+        "y": {
+            "label": "Signal y",
+            "help": "The measured signal.",
+        },
+        "c_p": {
+            "label": "Probe concentration c_p",
+            "help": "The initial concentration of the probe.",
+        },
+        "c_c": {
+            "label": "Competitor concentration c_c",
+            "help": "The initial concentration of the competitor."
+        },
+        "KD_p": {
+            "label": "Probe's dissociation constant KD_p",
+            "help": "The probe's dissociation constant measuring the stability of the complex. "
+                "Should be known from previous experiments.",
+        },
+        "KD_c": {
+            "label": "Competitor's dissociation constant KD_c",
+            "help": "The competitor's dissociation constant measuring its complex."
+                "Usually what is tried to find with this experiment."
+        },
+        "scaling": {
+            "label": "Scaling factor",
+            "help": "The scaling of the signal",
+        },
+        "offset": {
+            "label": "Offset",
+            "help": "The offset from the y-axis"
+        },
+    }
+
+    @staticmethod
+    def model(x, KD_p=1, c_p=1, KD_c=1, c_c=1, scaling=1, offset=0):
+        A0 = c_p
+        B0 = c_c
+        P0 = x
+        KA = KD_p
+        KB = KD_c
+
+        a = KA + KB + A0 + B0 - P0
+        b = KB*(A0 - P0) + KA*(B0 - P0) + KA*KB
+        c = - KA*KB*P0
+
+        θ = np.arccos(
+            (- 2*a**3 + 9*a*b - 27*c) / (2 * ((a**2 - 3*b)**3)**(1/2))
+        )
+        r = 2*(a**2 - 3*b)**(1/2) * np.cos(θ/3) - a
+        q = lambda A, K: (A*r / (3 * K + r))
+
+        f = q(A0, KA) / A0
+        y = f*scaling + offset
+        return y
+
+    @classmethod
+    def get_model(cls):
+        return lmfit.Model(cls.model)
+
+    @staticmethod
+    def get_defaults():
+        return {
+            **AbstractModel.get_defaults(),
+            **{
+                "params": {
+                    "KD_c": {
+                        "min": 0,
+                        "vary": True,
+                    },
+                    "c_c": {
+                        "min": 0,
+                        "vary": False,
+                    },
+                    "KD_p": {
+                        "min": 0,
+                        "vary": False,
+                    },
+                    "c_p": {
+                        "min": 0,
+                        "vary": False,
+                    },
+                    "offset": {
+                        "vary": True,
+                    },
+                    "scaling": {
+                        "vary": True,
+                    }
+                },
+                "evaluation": {
+                    "spacing": "log",
+                }
+            }
+        }
+
 Model: TypeAlias = Literal[*MODELS.keys()]
 
 
@@ -162,6 +267,37 @@ def array_replace_recursive(default, configuration):
             new_dict[key] = value
 
     return new_dict
+
+@named("eval")
+@arg("configuration", help="A JSON encoded configuration to set up the model parameters")
+def command_eval(model: Model, configuration: str):
+    try:
+        model_name = model
+        model_class = MODELS[model]
+        model = model_class.get_model()
+    except KeyError:
+        raise argh.CommandError("Model is not known")
+
+    try:
+        configuration = json.loads(configuration)
+    except json.decoder.JSONDecodeError:
+        raise argh.CommandError("JSON configuration was incorrect")
+
+    evaluation = configuration["evaluation"]
+
+    if evaluation["spacing"] == "linear":
+        x_eval = np.linspace(evaluation["min"], evaluation["max"], evaluation["N"])
+    else:
+        x_eval = np.logspace(np.log10(evaluation["min"]), np.log10(evaluation["max"]), evaluation["N"])
+
+    y_eval = model_class.model(x_eval, **configuration["params"])
+
+    reply = {
+        "x": [float_to_string(x) for x in x_eval.tolist()],
+        "y": [float_to_string(x) for x in y_eval.tolist()],
+    }
+
+    print(json.dumps(reply))
 
 
 @named("fit")
@@ -238,7 +374,11 @@ def command_fit(model: Model, configuration: str):
     fit = model.fit(y, params, x=x)
 
     # Evaluate some parameters
-    ci = fit.conf_interval(sigmas=[ci_value])
+    try:
+        ci = fit.conf_interval(sigmas=[ci_value])
+    except MinimizerException as e:
+        ci = None
+        warnings.warn(f"ConfidenceIntervalWarning: Determination of the confidence intervals was not possible. Reason: {e}")
 
     if evaluation["spacing"] == "linear":
         x_fit = np.linspace(evaluation["min"], evaluation["max"], evaluation["N"])
@@ -256,22 +396,34 @@ def command_fit(model: Model, configuration: str):
         "x": x,
         "y": y,
         "fit": {
-            "x": x_fit.tolist(),
-            "y": y_fit.tolist(),
-            "yerr": y_unc.tolist(),
+            "x": [float_to_string(x) for x in x_fit.tolist()],
+            "y": [float_to_string(y) for y in y_fit.tolist()],
+            "yerr": [float_to_string(y) for y in y_unc.tolist()],
         },
     }
 
     for param in fit.params:
         reply["params"][param] = {
-            "value": fit.params[param].value,
-            "stderr": fit.params[param].stderr,
-            "ci": (ci[param][0][1], ci[param][-1][1]) if configuration["params"][param]["vary"] is True else None,
+            "value": float_to_string(fit.params[param].value),
+            "stderr": float_to_string(fit.params[param].stderr),
+            "ci": (float_to_string(ci[param][0][1]), float_to_string(ci[param][-1][1])) if configuration["params"][param]["vary"] is True and ci is not None else None,
             "vary": configuration["params"][param]["vary"],
         }
 
     print(json.dumps(reply))
 
+def float_to_string(float):
+    if float is None:
+        return None
 
+    if np.isnan(float):
+        return "NAN"
+    elif np.isinf(float):
+        if float < 0:
+            return "-Inf"
+        else:
+            return "Inf"
+    else:
+        return float
 
-argh.dispatch_commands([command_list, command_fit], old_name_mapping_policy=False)
+argh.dispatch_commands([command_list, command_fit, command_eval], old_name_mapping_policy=False)

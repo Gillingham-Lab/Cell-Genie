@@ -1,0 +1,36 @@
+<div {{ attributes.defaults({}) }}>
+    {% if model is same as(null) %}
+        <div class="text-muted">Model not fitted</div>
+    {% else %}
+        {% set table = showParams ? computed.table : null %}
+
+        {% set style_width = "" %}
+        {% if width %}{% set style_width %}style='width: {{ width }}px; height: {{ width/3*2 }}px; '{% endset %}{% endif %}
+
+        <div {{ stimulus_controller("ModelView", {
+            "model": model|serialize,
+            "fits": conditionModels.toArray,
+            "showWarnings": showWarnings,
+            "showErrors": showErrors,
+            "oneTraceOnly": oneTraceOnly,
+            "width": width,
+            "height": width ? width/3*2 : null,
+        }) }} {{ style_width }}>
+            <twig:Layout:Row sm="1" md="1" xl="1">
+                <twig:Layout:Col>
+                    <div {{ stimulus_target("ModelView", "plot") }}>
+
+                    </div>
+                </twig:Layout:Col>
+                <twig:Layout:Col>
+                    {% if table %}
+                        <twig:Table small="true" :table="table" />
+                    {% endif %}
+
+                    <div {{ stimulus_target("ModelView", "warnings") }}></div>
+                    <div {{ stimulus_target("ModelView", "errors") }}></div>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
+        </div>
+    {% endif %}
+</div>

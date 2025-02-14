@@ -42,6 +42,12 @@ class ExperimentalDesignField
     #[ORM\Column(type: Types::BOOLEAN, options: ["default" => false])]
     private ?bool $exposed = null;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ["default" => false])]
+    private ?bool $referenced = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $referenceValue = null;
+
     public function __construct()
     {
         $this->formRow = new FormRow();
@@ -120,6 +126,28 @@ class ExperimentalDesignField
     public function setExposed(bool $exposed): static
     {
         $this->exposed = $exposed;
+        return $this;
+    }
+
+    public function isReferenced(): ?bool
+    {
+        return $this->referenced;
+    }
+
+    public function setReferenced(bool $referenced): static
+    {
+        $this->referenced = $referenced;
+        return $this;
+    }
+
+    public function getReferenceValue(): ?string
+    {
+        return $this->referenceValue;
+    }
+
+    public function setReferenceValue(?string $referenceValue): static
+    {
+        $this->referenceValue = $referenceValue;
         return $this;
     }
 }

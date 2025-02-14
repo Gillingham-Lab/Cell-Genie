@@ -1,0 +1,10 @@
+<div>
+    {% if stderr != 0 %}
+        {{ value|roundScientifically }}±{{ stderr|roundScientifically }}
+    {% else %}
+        {{ value|roundScientifically }}
+    {% endif %}
+    {% if lowerCi and upperCi %}
+        ({{ lowerCi|roundScientifically }} … {{ upperCi|roundScientifically }})
+    {% endif %}
+</div>

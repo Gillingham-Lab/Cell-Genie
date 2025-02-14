@@ -19,8 +19,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * @template TData
- * @extends AbstractType<TData>
+ * @phpstan-type DataType = array{model: string, param: string}
+ * @extends AbstractType<DataType>
  */
 class ModelParameterTypeConfigurationType extends AbstractType
 {
@@ -102,7 +102,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
             return;
         }
 
-        if (!isset($formData["model"]) or $formData["model"] === null) {
+        if (!isset($formData["model"])) {
             return;
         }
 

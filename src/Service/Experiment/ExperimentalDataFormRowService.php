@@ -115,6 +115,10 @@ class ExperimentalDataFormRowService
     {
         $modelData = [];
         foreach ($normData as $fieldName => $fieldValue) {
+            if (!isset($mappedFields[$fieldName])) {
+                continue;
+            }
+
             $datumType = $mappedFields[$fieldName];
 
             if ($fieldValue === null) {
@@ -142,6 +146,11 @@ class ExperimentalDataFormRowService
     {
         $mappedFields = [];
         foreach ($fields as $field) {
+            // Skip Expression and ModelParameterType, as they are not meant to be edited.
+            if (in_array($field->getFormRow()->getType(), [FormRowTypeEnum::ExpressionType, FormRowTypeEnum::ModelParameterType])) {
+                continue;
+            }
+
             $datumType = $this->addField($builder, $field);
             $mappedFields[$field->getFormRow()->getFieldName()] = $datumType;
         }
@@ -399,7 +408,7 @@ class ExperimentalDataFormRowService
 
     /**
      * @param FormRow $formRow
-     * @return array{class-string<CropImageType>, array<string, mixed>, DatumEnum::String}
+     * @return array{class-string<TextType>, array<string, mixed>, DatumEnum::String}
      */
     public function getModelParameterTypeConfig(FormRow $formRow): array
     {

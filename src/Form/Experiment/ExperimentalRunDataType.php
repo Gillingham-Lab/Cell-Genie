@@ -94,6 +94,12 @@ class ExperimentalRunDataType extends AbstractType
             return;
         }
 
+        $models = $design->getModels();
+        $modelChoices = [];
+        foreach ($models as $model) {
+            $modelChoices[$model->getName()] = $model->getModel();
+        }
+
         $builder->add(
             $builder->create("_conditions", FormType::class, [
                 "label" => "Conditions",
@@ -112,6 +118,7 @@ class ExperimentalRunDataType extends AbstractType
                 "entry_type" => ExperimentConditionRowType::class,
                 "entry_options" => [
                     "fields" => $fields,
+                    "models" => $modelChoices,
                 ],
             ])
         );

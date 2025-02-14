@@ -1,8 +1,12 @@
 <div {{ attributes.defaults({}) }}>
     {%- if datum is array -%}
-        {%- for subDatum in datum -%}
-            <twig:Experiment:Datum :datum="subDatum" :field="field" :formRow="formRow" />
-        {%- endfor -%}
+        {% if formRow.type.value == "modelParameter" %}
+            {{ datum[1]|roundScientifically }}±{{ datum[2]|roundScientifically }} ({{ datum[3]|roundScientifically }}–{{ datum[4]|roundScientifically }})
+        {% else %}
+            {%- for subDatum in datum -%}
+                <twig:Experiment:Datum :datum="subDatum" :field="field" :formRow="formRow" />
+            {%- endfor -%}
+        {% endif %}
     {%- else -%}
         {%- if this.isComponent -%}
             {%- set chemical = this.getChemical() -%}
@@ -34,7 +38,9 @@
                 {{ entityReference|raw }}
             {%- endif -%}
         {%- else -%}
-            {%- if datum is float or formRow.type.value == "float" -%}
+            {%- if datum is same as(null) -%}
+
+            {%- elseif datum is float or formRow.type.value == "float" -%}
                 {{ datum|roundScientifically }}
             {%- elseif datum is instanceof("\\DateTime") -%}
                 <twig:Date dateTime="{{ datum }}" />
