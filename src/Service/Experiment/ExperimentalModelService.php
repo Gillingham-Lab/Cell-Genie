@@ -500,8 +500,8 @@ readonly class ExperimentalModelService
             }
         }
 
-        $average["evaluation"]["N"] = max($average["evaluation"]["N"]);
-        $average["evaluation"]["spacing"] = $average["evaluation"]["spacing"][0];
+        $average["evaluation"]["N"] = is_array($average["evaluation"]["N"]) ? max($average["evaluation"]["N"]) : $average["evaluation"]["N"];
+        $average["evaluation"]["spacing"] = is_array($average["evaluation"]["spacing"]) ? $average["evaluation"]["spacing"][0] : $average["evaluation"]["spacing"];
 
         // This is always true but for now required from PHP stan.
         if (count($average["x"]) > 0) {
