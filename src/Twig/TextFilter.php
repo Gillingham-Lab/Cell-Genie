@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use Symfony\Component\String\UnicodeString;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use function Symfony\Component\String\u;
+use function App\mb_str_shorten;
 
 class TextFilter extends AbstractExtension
 {

@@ -33,6 +33,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use function App\mb_str_shorten;
 
 /**
  * @phpstan-import-type ArrayTableShape from Table
@@ -184,7 +185,7 @@ class ExperimentalRunDataTable extends AbstractController
                         "oneTraceOnly" => true,
                     ]
                 ];
-            }, widthRecommendation: 40);
+            }, widthRecommendation: 10);
         }
 
         $columns[] = new Column("Path", fn ($x) => mb_str_shorten("{$x['run']->getName()}/{$x['set']->getName()}", 30));

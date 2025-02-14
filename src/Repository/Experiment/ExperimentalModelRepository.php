@@ -19,6 +19,9 @@ class ExperimentalModelRepository extends ServiceEntityRepository
         parent::__construct($registry, ExperimentalModel::class);
     }
 
+    /**
+     * @return ExperimentalModel[]
+     */
     public function getModelsForConditions(string $model, ExperimentalRunCondition ... $conditions): array
     {
         if (count($conditions) === 0) {

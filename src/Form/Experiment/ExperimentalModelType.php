@@ -143,7 +143,7 @@ class ExperimentalModelType extends AbstractType
         }
 
         // Append form
-        $this->appendForm($builder, $form, $selectedModel, $options, $eventData);
+        $this->appendForm($builder, $form, $selectedModel, $options);
     }
 
     /**
@@ -199,7 +199,7 @@ class ExperimentalModelType extends AbstractType
             ]);
         }
 
-        $this->appendForm($builder, $form, $selectedModel, $options, $eventData);
+        $this->appendForm($builder, $form, $selectedModel, $options);
     }
 
     /**
@@ -209,7 +209,7 @@ class ExperimentalModelType extends AbstractType
      * @param array<string, mixed> $options
      * @return void
      */
-    public function appendForm(FormBuilderInterface $builder, FormInterface $form, array $model, array $options, object|array|null $eventData = null): void
+    public function appendForm(FormBuilderInterface $builder, FormInterface $form, array $model, array $options): void
     {
         $design = $options["design"];
 

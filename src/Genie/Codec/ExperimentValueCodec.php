@@ -108,7 +108,7 @@ readonly class ExperimentValueCodec
             $value = [$value, 0, 0, 0];
         } elseif (count($value) === 2) {
             $value = [...$value, 0, 0];
-        } elseif (!count($value) === 4) {
+        } elseif (!(count($value) === 4)) {
             throw new InvalidArgumentException("An ErrorFloat must either be a single value, two values, or four values");
         }
 

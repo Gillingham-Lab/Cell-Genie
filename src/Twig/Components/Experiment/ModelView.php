@@ -133,20 +133,26 @@ class ModelView
      */
     public function table(): array
     {
-        if ($this->model === null) {
-            return [];
-        }
+        $table = new Table();
 
-        $modelConfiguration = $this->model->getConfiguration();
+        $modelConfiguration = $this->model?->getConfiguration();
 
         $data = [];
         $i = 0;
-        foreach ($this->run->getConditions() as $condition) {
-            $data[] = ["condition" => $condition, "model" => $this->conditionModels[$i++]["fit"]];
+
+        if ($this->condition === null) {
+            foreach ($this->run->getConditions() as $condition) {
+                $data[] = ["condition" => $condition, "model" => $this->conditionModels[$i++]["fit"]];
+            }
+        } else {
+            $data[] = ["condition" => $this->condition, "model" => $this->conditionModels[$i]["fit"]];
         }
 
-        $table = new Table();
         $table->setData($data);
+
+        if ($modelConfiguration === null) {
+            return $table->toArray();
+        }
 
         $table->addColumn(new Column("Condition", fn ($row) => $row["condition"]->getName()));
 

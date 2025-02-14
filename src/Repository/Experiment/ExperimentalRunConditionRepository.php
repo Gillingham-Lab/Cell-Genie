@@ -19,7 +19,11 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
         parent::__construct($registry, ExperimentalRunCondition::class);
     }
 
-    public function getReferenceConditions(ExperimentalRunCondition $condition)
+    /**
+     * @param ExperimentalRunCondition $condition
+     * @return ExperimentalRunCondition[]
+     */
+    public function getReferenceConditions(ExperimentalRunCondition $condition): array
     {
         $run = $condition->getExperimentalRun();
         $fields = $run?->getDesign()?->getFields();

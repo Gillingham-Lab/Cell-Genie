@@ -37,9 +37,9 @@ use Symfony\Component\Uid\Uuid;
 readonly class ExperimentalDataService
 {
     public function __construct(
-        private EntityManagerInterface   $entityManager,
-        private SearchService            $searchService,
-        private ExperimentalModelService $modelService, private ModelType $modelType,
+        private EntityManagerInterface $entityManager,
+        private SearchService $searchService,
+        private ExperimentalModelService $modelService,
     ) {
 
     }

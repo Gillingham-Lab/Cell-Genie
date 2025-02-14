@@ -1,7 +1,14 @@
 <?php
 declare(strict_types=1);
 
-if (!function_exists("mb_str_shorten")) {
+namespace App;
+
+// Required for phpstan ... ?
+class functions {
+
+}
+
+if (!function_exists("App\\mb_str_shorten")) {
     function mb_str_shorten(string $string, int $length, string $encoding = "UTF-8"): string
     {
         $partLengths = intdiv($length, 2);

@@ -408,7 +408,7 @@ class ExperimentalDataFormRowService
 
     /**
      * @param FormRow $formRow
-     * @return array{class-string<CropImageType>, array<string, mixed>, DatumEnum::String}
+     * @return array{class-string<TextType>, array<string, mixed>, DatumEnum::String}
      */
     public function getModelParameterTypeConfig(FormRow $formRow): array
     {

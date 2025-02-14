@@ -238,6 +238,7 @@ readonly class ExperimentalModelService
      * @param string $model
      * @param list<numeric> $xValues
      * @param list<numeric> $yValues
+     * @param array<string, mixed> $params
      * @return array<string, mixed>
      */
     public function runFit(string $model, array $xValues, array $yValues, array $params): array
@@ -383,7 +384,7 @@ readonly class ExperimentalModelService
         }, $values);
 
         $object = new class {
-            public function __get(string $name)
+            public function __get(string $name): null
             {
                 return null;
             }

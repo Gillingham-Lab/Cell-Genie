@@ -102,7 +102,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
             return;
         }
 
-        if (!isset($formData["model"]) or $formData["model"] === null) {
+        if (!isset($formData["model"])) {
             return;
         }
 
