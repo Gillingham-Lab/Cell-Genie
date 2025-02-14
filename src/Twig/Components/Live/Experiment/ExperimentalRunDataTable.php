@@ -28,6 +28,7 @@ use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
@@ -62,6 +63,7 @@ class ExperimentalRunDataTable extends AbstractController
     public function __construct(
         private readonly ExperimentalDataService $dataService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly Stopwatch $stopwatch,
     ) {
 
     }
@@ -199,6 +201,8 @@ class ExperimentalRunDataTable extends AbstractController
      */
     public function getTable(): array
     {
+        $this->stopwatch->start("ExperimentalRunDataTable.getTable");
+
         $conditionFields = $this->dataService->getFields($this->design);
 
         $searchQuery = $this->searchQuery;
@@ -218,7 +222,11 @@ class ExperimentalRunDataTable extends AbstractController
             maxRows: $this->dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $this->design)
         );
 
-        return $table->toArray();
+        $data = $table->toArray();
+
+        $this->stopwatch->stop("ExperimentalRunDataTable.getTable");
+
+        return $data;
     }
 
     /**

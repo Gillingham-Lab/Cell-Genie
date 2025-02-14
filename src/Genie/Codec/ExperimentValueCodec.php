@@ -48,16 +48,27 @@ readonly class ExperimentValueCodec
         return $value;
     }
 
-    public function normalizeEntityDatum(object $value): string
+    /**
+     * @param array{AbstractUid, class-string}|object $value
+     * @return string
+     */
+    public function normalizeEntityDatum(array|object $value): string
     {
-        // Check if id method exists
-        if (method_exists($value, "getUlid")) {
-            $id = $value->getUlid();
-        } elseif (method_exists($value, "getId")) {
-            $id = $value->getId();
+        if (is_object($value)) {
+            // Check if id method exists
+            if (method_exists($value, "getUlid")) {
+                $id = $value->getUlid();
+            } elseif (method_exists($value, "getId")) {
+                $id = $value->getId();
+            } else {
+                dump($value);
+                throw new InvalidArgumentException("A value for entityReference must have an getId / getUlid method");
+            }
+
+            $className = ClassUtils::getClass($value);
         } else {
-            dump($value);
-            throw new InvalidArgumentException("A value for entityReference must have an getId / getUlid method");
+            $id = $value[0];
+            $className = $value[1];
         }
 
         // Convert ID to binary. Uuid is 16 Bytes.
@@ -71,8 +82,6 @@ readonly class ExperimentValueCodec
             throw new InvalidArgumentException("The ID of the entity must either be an uid or an number, {$type} given.");
         }
 
-        // Finally, we add the FQCN
-        $className = ClassUtils::getClass($value);
         return $normalizedValue . $className;
     }
 

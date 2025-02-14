@@ -43,7 +43,7 @@ class ExperimentalRunCondition
     private Collection $data;  // @phpstan-ignore doctrine.associationType
 
     /** @var Collection<int, ExperimentalModel> */
-    #[ORM\ManyToMany(targetEntity: ExperimentalModel::class, cascade: ["persist", "remove"], orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: ExperimentalModel::class, cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
     #[ORM\JoinTable(name: "new_experimental_run_condition_model")]
     #[ORM\JoinColumn(name: "condition_id", referencedColumnName: "id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(name: "model_id", referencedColumnName: "id", unique: true, onDelete: "CASCADE")]

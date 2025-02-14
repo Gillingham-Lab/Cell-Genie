@@ -6,16 +6,24 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Genie\Codec\ExperimentValueCodec;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
+use App\Service\CacheKeyService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 /**
  * @extends ServiceEntityRepository<ExperimentalRunCondition>
  */
 class ExperimentalRunConditionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly TagAwareCacheInterface $cache,
+        private readonly CacheKeyService $keyService,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct($registry, ExperimentalRunCondition::class);
     }
 
@@ -46,12 +54,16 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
         // Query runs with matching conditions first
         $query = $this->createQueryBuilder("c")
             ->addSelect("run")
+            ->addSelect("cm")
             ->leftJoin("c.experimentalRun", "run")
+            ->leftJoin("c.models", "cm")
             ->where("run.design = :experimentalDesign")
             ->setParameter("experimentalDesign", $run->getDesign()->getId())
             ->orderBy("run.name", "ASC")
             ->addOrderBy("c.name", "ASC")
         ;
+
+        $cacheKey = "";
 
         $c = 0;
         foreach ($topFields as $field) {
@@ -75,6 +87,13 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
             } else {
                 $value = $run->getDatum($datumName)->getValue();
                 $notValue = null;
+            }
+
+            if ($notValue !== null) {
+                $cacheKey .= "&{$datumName}=" . $codec->encode($notValue);
+                $cacheKey .= "&{$datumName}!=" . $codec->encode($value);
+            } else {
+                $cacheKey .= "&{$datumName}=" . $codec->encode($value);
             }
 
             if ($field->getFormRow()->getType() === FormRowTypeEnum::EntityType) {
@@ -131,6 +150,13 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
                 $notValue = null;
             }
 
+            if ($notValue !== null) {
+                $cacheKey .= "&{$datumName}=" . $codec->encode($notValue);
+                $cacheKey .= "&{$datumName}!=" . $codec->encode($value);
+            } else {
+                $cacheKey .= "&{$datumName}=" . $codec->encode($value);
+            }
+
             if ($field->getFormRow()->getType() === FormRowTypeEnum::EntityType) {
                 $query = $query->andWhere("data$c.referenceUuid = :value$c");
                 $value = $value[0];
@@ -163,8 +189,14 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
             $c++;
         }
 
-        $results = $query->getQuery()->getResult();
+        $this->logger->debug("Accessing cache: $cacheKey");
 
-        return $results;
+        return $this->cache->get(
+            $this->keyService->getCacheKeyFromString($cacheKey, "ExperimentalRunCondition.getReferenceConditions"),
+            function (ItemInterface $item) use ($query) {
+                $item->expiresAfter(300);
+                return $query->getQuery()->getResult();
+            }
+        );
     }
 }

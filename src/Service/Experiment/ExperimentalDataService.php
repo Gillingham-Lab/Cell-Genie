@@ -31,7 +31,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Uid\Uuid;
 
 readonly class ExperimentalDataService
@@ -40,6 +42,8 @@ readonly class ExperimentalDataService
         private EntityManagerInterface $entityManager,
         private SearchService $searchService,
         private ExperimentalModelService $modelService,
+        private Stopwatch $stopwatch,
+        private LoggerInterface $logger,
     ) {
 
     }
@@ -57,9 +61,11 @@ readonly class ExperimentalDataService
 
         return $qb
             ->select("exrc")
+            ->addSelect("exrcmodel")
             ->from(ExperimentalRunCondition::class, "exrc")
 
             ->leftJoin("exrc.experimentalRun", "exr")
+            ->leftJoin("exrc.models", "exrcmodel")
             ->addSelect("exr")
             ->where("exr.design = :design")
 
@@ -131,11 +137,16 @@ readonly class ExperimentalDataService
             ->setMaxResults($limit)
         ;
 
+        $this->logger->debug("ExperimentalDataService.getPaginatedResults: Create Paginator");
+
         // Retrieve rows
         /** @var Paginator<ExperimentalRunCondition> $paginatedConditions */
         $paginatedConditions = new Paginator($queryBuilder->getQuery(), fetchJoinCollection: true);
 
         $conditionIds = array_unique(array_map(fn (ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(), $paginatedConditions->getIterator()->getArrayCopy()));
+
+        $this->logger->debug("ExperimentalDataService.getPaginatedResults: Retrieving collected conditions");
+        $this->stopwatch->start("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
 
         // Prefetch run and condition data
         $hydratedConditionDatum = $this->entityManager->createQueryBuilder()
@@ -144,13 +155,17 @@ readonly class ExperimentalDataService
             ->addSelect("data")
             ->addSelect("run")
             ->addSelect("runData")
+            ->addSelect("models")
             ->leftJoin("condition.experimentalRun", "run")
+            ->leftJoin("condition.models", "models")
             ->leftJoin("run.data", "runData", indexBy: "runData.name")
             ->leftJoin("condition.data", "data", indexBy: "data.name")
             ->where("condition.id IN (:conditions)")
             ->setParameter("conditions", $conditionIds)
             ->getQuery()
             ->getResult();
+
+        $this->stopwatch->stop("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
 
         // Prefetch run datasets
         $runIds = array_map(fn (ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum);
