@@ -13,6 +13,7 @@ use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Exceptions\FitException;
 use App\Repository\Experiment\ExperimentalRunConditionRepository;
+use DivisionByZeroError;
 use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
 use Psr\Log\LoggerInterface;
@@ -377,8 +378,8 @@ readonly class ExperimentalModelService
             try {
                 $value = array_filter($value, fn ($v) => !(is_nan($v) or is_infinite($v)));
                 return array_sum($value)/count($value);
-            } catch (ErrorException $e) {
-                return 0;
+            } catch (ErrorException | DivisionByZeroError $e) {
+                return NAN;
             }
 
         }, $values);
