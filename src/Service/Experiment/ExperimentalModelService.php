@@ -257,7 +257,15 @@ readonly class ExperimentalModelService
             "evaluation" => $evaluation,
         ];
 
-        return json_decode($this->run("fit", $model, json_encode($fitConfiguration)), associative: true);
+        $json = json_encode($fitConfiguration);
+        if ($json === false) {
+            $jsonError = json_last_error();
+            $this->logger->critical("Failed to encode json: " . $jsonError);
+
+            throw new FitException(errors: [$jsonError]);
+        }
+
+        return json_decode($this->run("fit", $model, $json), associative: true);
     }
 
     /**
