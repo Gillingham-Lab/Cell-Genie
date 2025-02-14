@@ -8,6 +8,17 @@ export default class extends Controller {
     static values = {
         model: Object,
         fits: Array,
+        showWarnings: Boolean,
+        showErrors: Boolean,
+        oneTraceOnly: Boolean,
+        width: {
+            type: Number,
+            default: 0,
+        },
+        height: {
+            type: Number,
+            default: 0,
+        }
     }
 
     static targets = [
@@ -50,11 +61,11 @@ export default class extends Controller {
             }
         }
 
-        if (warnings.length > 0) {
+        if (this.showWarningsValue && warnings.length > 0) {
             this.warnings.render(<div className="alert border-warning-subtle bg-warning-subtle text-black">{warnings}</div>)
         }
 
-        if (errors.length > 0) {
+        if (this.showErrorsValue && errors.length > 0) {
             this.errors.render(<div className="alert border-danger-subtle bg-danger-subtle text-black">{errors}</div>);
         }
     }
@@ -74,7 +85,10 @@ export default class extends Controller {
         let max = Math.max(... values.map(e => e.fit.result.evaluation.max));
 
         return {
+            width: this.widthValue > 0 ? this.widthValue : null,
+            height: this.heightValue > 0 ? this.heightValue : null,
             xaxis: {
+                linewidth: 1,
                 type: scale,
                 min: min,
                 max: max,
@@ -83,15 +97,17 @@ export default class extends Controller {
                 },
             },
             yaxis: {
+                linewidth: 1,
                 title: {
                     text: this.modelValue.configuration.y,
+                    standoff: 20,
                 },
             },
             margin: {
                 l: 50,
                 r: 20,
                 t: 20,
-                b: 20,
+                b: 30,
             },
             legend: {
                 orientation: "h",
@@ -100,6 +116,7 @@ export default class extends Controller {
                 y: -0.2,
                 x: 0.5,
             },
+            showlegend: !this.oneTraceOnlyValue,
         };
     }
 

@@ -5,7 +5,9 @@ namespace App\Twig\Components\Live\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
+use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\SubstanceLot;
 use App\Entity\Table\Column;
@@ -20,6 +22,7 @@ use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Service\Experiment\ExperimentalDataService;
 use App\Twig\Components\Experiment\Datum;
+use App\Twig\Components\Experiment\ModelView;
 use App\Twig\Components\Trait\PaginatedRepositoryTrait;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\Common\Collections\Collection;
@@ -72,11 +75,13 @@ class ExperimentalRunDataTable extends AbstractController
     }
 
     /**
-     * @param ExperimentalDesignField ...$fields
+     * @param ExperimentalDesign $design
      * @return Column[]
      */
-    private function getTableColumns(ExperimentalDesignField ... $fields): array
+    private function getTableColumns(ExperimentalDesign $design): array
     {
+        $fields = $this->dataService->getFields($this->design)->toArray();
+
         $columns = [
             new ToolboxColumn("", function ($x) {
                 return new Toolbox([
@@ -161,7 +166,28 @@ class ExperimentalRunDataTable extends AbstractController
             ]);
         }
 
-        $columns[] = new Column("Path", fn ($x) => "{$x['run']->getName()}/{$x['set']->getName()}");
+        // Add models
+        foreach ($design->getModels() as $model) {
+            $columns[] = new ComponentColumn($model->getName(), function (array $x) use ($model) {
+                /** @var ExperimentalRunCondition $condition */
+                $condition = $x["set"];
+                $conditionModel = $condition->getModels()->findFirst(fn (int $i, ExperimentalModel $conditionModel) => $conditionModel->getParent() === $model);
+                return [
+                    ModelView::class, [
+                        "run" => $x["run"],
+                        "condition" => $x["set"],
+                        "model" => $conditionModel,
+                        "showParams" => false,
+                        "showWarnings" => false,
+                        "showErrors" => false,
+                        "width" => 400,
+                        "oneTraceOnly" => true,
+                    ]
+                ];
+            }, widthRecommendation: 40);
+        }
+
+        $columns[] = new Column("Path", fn ($x) => mb_str_shorten("{$x['run']->getName()}/{$x['set']->getName()}", 30));
 
         return $columns;
     }
@@ -183,7 +209,7 @@ class ExperimentalRunDataTable extends AbstractController
 
         $dataRows = $this->dataService->getPaginatedResults(searchFields: $searchQuery, page: $this->page, limit: $this->limit, design: $this->design, limitRows: 10);
 
-        $columns = $this->getTableColumns(... $conditionFields);
+        $columns = $this->getTableColumns($this->design);
 
         $table = new Table(
             data: $dataRows,

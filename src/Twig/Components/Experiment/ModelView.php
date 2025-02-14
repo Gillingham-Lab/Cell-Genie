@@ -16,8 +16,6 @@ use App\Twig\Components\UncertainFloat;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
-use Symfony\UX\TwigComponent\Attribute\PostMount;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 /**
@@ -28,10 +26,17 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent]
 class ModelView
 {
-    public ExperimentalModel $model;
+    public ?ExperimentalModel $model;
     public ExperimentalRun $run;
+    public ?ExperimentalRunCondition $condition;
     /** @var ArrayCollection<int, array{condition: string, fit: ExperimentalModel}>  */
     public ArrayCollection $conditionModels;
+
+    public bool $showParams = true;
+    public bool $showWarnings = true;
+    public bool $showErrors = true;
+    public ?int $width = null;
+    public bool $oneTraceOnly = false;
 
     public function __construct(
         private readonly ExperimentalRunConditionRepository $conditionRepository,
@@ -51,38 +56,73 @@ class ModelView
         $resolver = new OptionsResolver();
         $resolver
             ->define('model')
-            ->allowedTypes(ExperimentalModel::class)
-            ->required();
+            ->allowedTypes(ExperimentalModel::class, "null")
+            ->default(null)
+        ;
 
         $resolver
             ->define('run')
             ->allowedTypes(ExperimentalRun::class)
             ->required();
 
+        $resolver->define("condition")
+            ->allowedTypes(ExperimentalRunCondition::class, "null")
+            ->default(null)
+        ;
+
+        $resolver->define("width")->allowedTypes("int", "null")->default(null);
+        $resolver->define("showParams")->allowedTypes("bool")->default(true);
+        $resolver->define("showWarnings")->allowedTypes("bool")->default(true);
+        $resolver->define("showErrors")->allowedTypes("bool")->default(true);
+        $resolver->define("oneTraceOnly")->allowedTypes("bool")->default(false);
+
         $attributes = $resolver->resolve($attributes);
 
-        $attributes["conditionModels"] = $attributes["run"]->getConditions()->map(
-            function (ExperimentalRunCondition $condition) use ($attributes) {
-                $referenceConditions = $this->conditionRepository->getReferenceConditions($condition);
+        if ($attributes["model"] !== null) {
+            if ($attributes["condition"] !== null) {
+                $referenceModel = $attributes["model"]->getReferenceModel();
 
-                $modelFit = $condition->getModels()->findFirst(
-                    fn (int $index, ExperimentalModel $model) => $model->getModel() === $attributes["model"]->getModel()
-                );
-
-                $referenceModel = $modelFit->getReferenceModel();
+                $referenceConditions = $this->conditionRepository->getReferenceConditions($attributes["condition"]);
                 $referenceFits = [];
                 if ($referenceModel) {
                     $referenceFits = $this->modelRepository->getModelsForConditions($referenceModel, ... $referenceConditions);
                     $referenceFits = $this->modelService->getAverageFitResult(... $referenceFits);
                 }
 
-                return [
-                    "condition" => $condition->getName(),
-                    "fit" => $modelFit,
+                $conditionModel = [
+                    "condition" => $attributes["condition"]->getName(),
+                    "fit" => $attributes["model"],
                     "referenceFit" => $referenceFits,
                 ];
+
+                $attributes["conditionModels"] = new ArrayCollection([$conditionModel]);
+            } else {
+                $attributes["conditionModels"] = $attributes["run"]->getConditions()->map(
+                    function (ExperimentalRunCondition $condition) use ($attributes) {
+                        $referenceConditions = $this->conditionRepository->getReferenceConditions($condition);
+
+                        $modelFit = $condition->getModels()->findFirst(
+                            fn (int $index, ExperimentalModel $model) => $model->getModel() === $attributes["model"]->getModel()
+                        );
+
+                        $referenceModel = $modelFit->getReferenceModel();
+                        $referenceFits = [];
+                        if ($referenceModel) {
+                            $referenceFits = $this->modelRepository->getModelsForConditions($referenceModel, ... $referenceConditions);
+                            $referenceFits = $this->modelService->getAverageFitResult(... $referenceFits);
+                        }
+
+                        return [
+                            "condition" => $condition->getName(),
+                            "fit" => $modelFit,
+                            "referenceFit" => $referenceFits,
+                        ];
+                    }
+                );
             }
-        );
+        } else {
+            $attributes["conditionModels"] = new ArrayCollection();
+        }
 
         return $attributes;
     }
@@ -93,6 +133,10 @@ class ModelView
      */
     public function table(): array
     {
+        if ($this->model === null) {
+            return [];
+        }
+
         $modelConfiguration = $this->model->getConfiguration();
 
         $data = [];

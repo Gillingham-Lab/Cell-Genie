@@ -21,12 +21,7 @@
                     {% cache "gin-icon-cache-" ~ icon %}
                     <twig:Icon :icon="icon" />
                     {% endcache %}
-                    {% set l = entity|length %}
-                    {% if l > 30 %}
-                        {{ entity|slice(0, 15) }}…{{ entity|slice(l-15, l) }}
-                    {% else %}
-                        {{ entity }}
-                    {% endif %}
+                    {{ entity|shorten(30) }}
                 </a>
             {% endcache %}
         {%- endif -%}
