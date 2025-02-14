@@ -191,12 +191,6 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
 
         $this->logger->debug("Accessing cache: $cacheKey");
 
-        return $this->cache->get(
-            $this->keyService->getCacheKeyFromString($cacheKey, "ExperimentalRunCondition.getReferenceConditions"),
-            function (ItemInterface $item) use ($query) {
-                $item->expiresAfter(300);
-                return $query->getQuery()->getResult();
-            }
-        );
+        return $query->getQuery()->getResult();
     }
 }
