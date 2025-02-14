@@ -230,7 +230,12 @@ readonly class ExperimentalModelService
             ];
         }
 
-        $reply = $this->runFit($model->getModel(), $xValues, $yValues, $params);
+        $evaluation = [
+            "min" => $modelConfig["evaluation"]["min"] ?? null,
+            "max" => $modelConfig["evaluation"]["max"] ?? null,
+        ];
+
+        $reply = $this->runFit($model->getModel(), $xValues, $yValues, $params, $evaluation);
 
         return $reply;
     }
@@ -240,14 +245,16 @@ readonly class ExperimentalModelService
      * @param list<numeric> $xValues
      * @param list<numeric> $yValues
      * @param array<string, mixed> $params
+     * @param array<string, mixed> $evaluation
      * @return array<string, mixed>
      */
-    public function runFit(string $model, array $xValues, array $yValues, array $params): array
+    public function runFit(string $model, array $xValues, array $yValues, array $params, array $evaluation = []): array
     {
         $fitConfiguration = [
             "x" => $xValues,
             "y" => $yValues,
             "params" => $params,
+            "evaluation" => $evaluation,
         ];
 
         return json_decode($this->run("fit", $model, json_encode($fitConfiguration)), associative: true);

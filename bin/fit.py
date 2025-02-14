@@ -351,6 +351,17 @@ def command_fit(model: Model, configuration: str):
             if configuration["evaluation"]["spacing"] in ["linear", "log"]:
                 evaluation["spacing"] = configuration["evaluation"]["spacing"]
 
+        if evaluation["spacing"] == "log":
+            if evaluation["min"] == 0:
+                evaluation["min"] = min(x)
+
+            if evaluation["max"] == 0:
+                evaluation["max"] = max(x)
+
+            if evaluation["min"] > evaluation["max"]:
+                evaluation["min"], evaluation["max"] = evaluation["max"], evaluation["min"]
+
+
     # Create params based on configuration
     params = model.make_params()
     if "params" in configuration:

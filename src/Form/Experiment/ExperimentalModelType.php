@@ -7,14 +7,13 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Form\BasicType\FancyChoiceType;
-use App\Form\BasicType\FancyEntityType;
 use App\Form\BasicType\FormGroupType;
 use App\Form\BasicType\ModelType;
 use App\Form\CompositeType\XYFieldType;
-use App\Service\ArrayTools;
 use App\Service\Experiment\ExperimentalModelService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -84,6 +83,20 @@ class ExperimentalModelType extends AbstractType
                         "help" => "Set initial values for the parameters. These values will be used as default values 
                             for the model before optimisation is run. By setting min or max, you can limit the valid
                             bounds for the parameter fit. Turn off 'vary' to fix the parameter to the initial value.",
+                    ])
+                )
+                ->add(
+                    $builder->create("evaluation", FormGroupType::class, [
+                        "label" => "Additional settings",
+                        "allow_extra_fields" => true,
+                    ])
+                    ->add("min", NumberType::class, [
+                        "label" => "Minimum value for fit",
+                        "empty_data" => null,
+                    ])
+                    ->add("max", NumberType::class, [
+                        "label" => "Maximum value for fit",
+                        "empty_data" => null,
                     ])
                 )
             )
