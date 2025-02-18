@@ -15,6 +15,7 @@ use App\Service\Experiment\ExperimentalModelService;
 use App\Twig\Components\UncertainFloat;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
@@ -30,7 +31,7 @@ class ModelView
     public ExperimentalRun $run;
     public ?ExperimentalRunCondition $condition;
     /** @var ArrayCollection<int, array{condition: string, fit: ExperimentalModel}>  */
-    public ArrayCollection $conditionModels;
+    #public ArrayCollection $conditionModels;
 
     public bool $showParams = true;
     public bool $showWarnings = true;
@@ -42,6 +43,7 @@ class ModelView
         private readonly ExperimentalRunConditionRepository $conditionRepository,
         private readonly ExperimentalModelRepository $modelRepository,
         private readonly ExperimentalModelService $modelService,
+        private readonly Stopwatch $stopwatch,
     ) {
 
     }
@@ -76,13 +78,23 @@ class ModelView
         $resolver->define("showErrors")->allowedTypes("bool")->default(true);
         $resolver->define("oneTraceOnly")->allowedTypes("bool")->default(false);
 
-        $attributes = $resolver->resolve($attributes);
+        return $resolver->resolve($attributes);
+    }
 
-        if ($attributes["model"] !== null) {
-            if ($attributes["condition"] !== null) {
-                $referenceModel = $attributes["model"]->getReferenceModel();
+    /**
+     * @return ArrayCollection<int, array{condition: string, fit: ExperimentalModel, referenceFit: mixed[]}>
+     */
+    public function conditionModels(): ArrayCollection
+    {
+        $this->stopwatch->start("Component.ModelView.conditionModels");
 
-                $referenceConditions = $this->conditionRepository->getReferenceConditions($attributes["condition"]);
+        $conditionModels = new ArrayCollection();
+
+        if ($this->model !== null) {
+            if ($this->condition !== null) {
+                $referenceModel = $this->model->getReferenceModel();
+
+                $referenceConditions = $this->conditionRepository->getReferenceConditions($this->condition);
                 $referenceFits = [];
                 if ($referenceModel) {
                     $referenceFits = $this->modelRepository->getModelsForConditions($referenceModel, ... $referenceConditions);
@@ -90,19 +102,19 @@ class ModelView
                 }
 
                 $conditionModel = [
-                    "condition" => $attributes["condition"]->getName(),
-                    "fit" => $attributes["model"],
+                    "condition" => $this->condition->getName(),
+                    "fit" => $this->model,
                     "referenceFit" => $referenceFits,
                 ];
 
-                $attributes["conditionModels"] = new ArrayCollection([$conditionModel]);
+                $conditionModels = new ArrayCollection([$conditionModel]);
             } else {
-                $attributes["conditionModels"] = $attributes["run"]->getConditions()->map(
-                    function (ExperimentalRunCondition $condition) use ($attributes) {
+                $conditionModels = $this->run->getConditions()->map(
+                    function (ExperimentalRunCondition $condition) {
                         $referenceConditions = $this->conditionRepository->getReferenceConditions($condition);
 
                         $modelFit = $condition->getModels()->findFirst(
-                            fn (int $index, ExperimentalModel $model) => $model->getModel() === $attributes["model"]->getModel()
+                            fn (int $index, ExperimentalModel $model) => $model->getModel() === $this->model->getModel()
                         );
 
                         $referenceModel = $modelFit->getReferenceModel();
@@ -120,19 +132,22 @@ class ModelView
                     }
                 );
             }
-        } else {
-            $attributes["conditionModels"] = new ArrayCollection();
         }
 
-        return $attributes;
+        $this->stopwatch->stop("Component.ModelView.conditionModels");
+
+        return $conditionModels;
     }
 
 
     /**
+     * @param ArrayCollection<int, array{condition: string, fit: ExperimentalModel, referenceFit: mixed[]}> $conditionModels
      * @return ArrayTableShape
      */
-    public function table(): array
+    public function table(ArrayCollection $conditionModels): array
     {
+        $this->stopwatch->start("Component.ModelView.table");
+
         $table = new Table();
 
         $modelConfiguration = $this->model?->getConfiguration();
@@ -142,10 +157,10 @@ class ModelView
 
         if ($this->condition === null) {
             foreach ($this->run->getConditions() as $condition) {
-                $data[] = ["condition" => $condition, "model" => $this->conditionModels[$i++]["fit"]];
+                $data[] = ["condition" => $condition, "model" => $conditionModels[$i++]["fit"]];
             }
         } else {
-            $data[] = ["condition" => $this->condition, "model" => $this->conditionModels[$i]["fit"]];
+            $data[] = ["condition" => $this->condition, "model" => $conditionModels[$i]["fit"]];
         }
 
         $table->setData($data);
@@ -190,6 +205,8 @@ class ModelView
                 }
             ));
         }
+
+        $this->stopwatch->start("Component.ModelView.table");
 
         return $table->toArray();
     }

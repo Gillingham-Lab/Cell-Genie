@@ -13,11 +13,13 @@ use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Exceptions\FitException;
 use App\Repository\Experiment\ExperimentalRunConditionRepository;
+use App\Service\CacheKeyService;
 use DivisionByZeroError;
 use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
 use Psr\Log\LoggerInterface;
 use stdClass;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -33,6 +35,7 @@ readonly class ExperimentalModelService
         private TagAwareCacheInterface $cache,
         private EntityManagerInterface $entityManager,
         private ExperimentalRunConditionRepository $conditionRepository,
+        private CacheKeyService $cacheKeyService,
     ) {
 
     }
@@ -511,13 +514,22 @@ readonly class ExperimentalModelService
 
         $this->stopWatch->start("ExperimentalModelService.eval");
 
-        try {
-            $reply = $this->run("eval", $models[0]->getModel(), json_encode($average));
-        } catch (FitException $e) {
-            $reply = $e->getContent();
-        }
+        $json = json_encode($average);
+        $modelId = $models[0]->getId();
 
-        $reply = json_decode($reply, true);
+        $cacheKey = $this->cacheKeyService->getCacheKeyFromString($json, "ExperimentalModelService.eval.{$modelId}");
+
+        $reply = $this->cache->get($cacheKey, function (CacheItem $item) use ($json, $models): array {
+            $item->expiresAfter(3600);
+
+            try {
+                $reply = $this->run("eval", $models[0]->getModel(), $json);
+            } catch (FitException $e) {
+                $reply = $e->getContent();
+            }
+
+            return json_decode($reply, true);
+        });
 
         $this->stopWatch->stop("ExperimentalModelService.eval");
 
