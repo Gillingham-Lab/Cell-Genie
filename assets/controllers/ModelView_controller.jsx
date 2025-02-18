@@ -45,7 +45,10 @@ export default class extends Controller {
         let i = 0;
 
         for (const fit of this.fitsValue) {
-            console.log(fit);
+            if (fit.fit === null) {
+                continue;
+            }
+
             if ("warnings" in fit.fit.result) {
                 for (const warning of fit.fit.result.warnings) {
                     warnings.push(<p key={i}><strong>{fit.condition}:</strong> {warning}</p>);
@@ -78,7 +81,7 @@ export default class extends Controller {
     }
 
     getLayout() {
-        let values = this.fitsValue.filter((e) => "evaluation" in e.fit.result);
+        let values = this.fitsValue.filter((e) => e.fit !== null && "evaluation" in e.fit.result);
 
         let scale = values.length >= 1 ? values[0].fit.result.evaluation.spacing : "linear";
         let min = Math.min(... values.map(e => e.fit.result.evaluation.min));
@@ -128,7 +131,9 @@ export default class extends Controller {
         for (const fit of this.fitsValue) {
             let color = colorscheme[i % 10];
 
-            if (!("fit" in fit.fit.result)) {
+            console.log(fit);
+
+            if (!("fit" in fit && fit.fit !== null) || !("fit" in fit.fit.result)) {
                 continue;
             }
 

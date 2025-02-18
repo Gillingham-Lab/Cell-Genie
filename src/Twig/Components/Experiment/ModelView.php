@@ -117,7 +117,7 @@ class ModelView
                             fn (int $index, ExperimentalModel $model) => $model->getModel() === $this->model->getModel()
                         );
 
-                        $referenceModel = $modelFit->getReferenceModel();
+                        $referenceModel = $modelFit?->getReferenceModel();
                         $referenceFits = [];
                         if ($referenceModel) {
                             $referenceFits = $this->modelRepository->getModelsForConditions($referenceModel, ... $referenceConditions);
@@ -131,6 +131,8 @@ class ModelView
                         ];
                     }
                 );
+
+                $conditionModels = $conditionModels->filter(fn ($x) => isset($x["condition"]));
             }
         }
 

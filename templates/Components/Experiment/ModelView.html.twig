@@ -5,9 +5,9 @@
         {% set cacheKey = "" %}
         {% set cachetime = 3600*24 %}
         {% if condition %}
-            {% set cacheKey = "model-view-condition" ~ condition.id ~ (condition.experimentalRun.modifiedAt|date("YmdHis"))  %}
+            {% set cacheKey = "model-view-condition-" ~ model.name ~ "-" ~ condition.id ~ "-" ~ (condition.experimentalRun.modifiedAt|date("YmdHis"))  %}
         {% else %}
-            {% set cacheKey = "model-view-run-" ~ run.id ~ (run.modifiedAt|date("ymdHis")) %}
+            {% set cacheKey = "model-view-run-" ~ model.name ~ "-" ~ run.id ~ "-" ~ (run.modifiedAt|date("ymdHis")) %}
         {% endif %}
 
 
