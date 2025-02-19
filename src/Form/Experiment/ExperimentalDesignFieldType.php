@@ -28,9 +28,9 @@ class ExperimentalDesignFieldType extends AbstractType
         ]);
 
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class)
-            ->required()
-            ;
+            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->default(null)
+        ;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

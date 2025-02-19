@@ -92,14 +92,16 @@ class ExperimentalDesignType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->onPreSubmitData($event, $design));
     }
 
-    public function onPreSetData(FormEvent $event, ExperimentalDesign $design): void
+    public function onPreSetData(FormEvent $event, ?ExperimentalDesign $design): void
     {
         $form = $event->getForm();
         $formData = $event->getData();
 
         $modelChoices = [];
-        foreach ($formData->getModels() as $model) {
-            $modelChoices[$model->getName()] = $model->getModel();
+        if ($formData) {
+            foreach ($formData->getModels() as $model) {
+                $modelChoices[$model->getName()] = $model->getModel();
+            }
         }
 
         $data = $form->get("_models")->get("models")->getData();
@@ -108,11 +110,15 @@ class ExperimentalDesignType extends AbstractType
         $form->get("_models")->get("models")->setData($data);
     }
 
-    public function onPreSubmitData(FormEvent $event, ExperimentalDesign $design): void
+    public function onPreSubmitData(FormEvent $event, ?ExperimentalDesign $design): void
     {
         $form = $event->getForm();
         $formData = $event->getData();
         $modelChoices = [];
+
+        if (!isset($formData["_models"]) or !isset($formData["_models"]["models"])) {
+            return;
+        }
 
         foreach ($formData["_models"]["models"] as $model) {
             if (!(isset($model["name"]) and isset($model["model"]))) {
@@ -132,7 +138,7 @@ class ExperimentalDesignType extends AbstractType
      * @param array<string, string> $modelChoices
      * @return array{"models", class-string<LiveCollectionType>, array<string, mixed>}
      */
-    private function getModelsCollectionTypeParameters(ExperimentalDesign $design, array $modelChoices = []): array
+    private function getModelsCollectionTypeParameters(?ExperimentalDesign $design, array $modelChoices = []): array
     {
         return [
             "models", LiveCollectionType::class, [

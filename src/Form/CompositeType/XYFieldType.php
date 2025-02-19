@@ -49,8 +49,12 @@ class XYFieldType extends AbstractType
     /**
      * @return array{array<string, string>, array<string, string>}
      */
-    public function getFieldChoices(ExperimentalDesign $design): array
+    public function getFieldChoices(?ExperimentalDesign $design): array
     {
+        if ($design === null) {
+            return [[], []];
+        }
+
         $fieldChoices = [];
         $fieldGroups = [];
         foreach ($design->getFields() as $field) {

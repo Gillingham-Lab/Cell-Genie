@@ -38,8 +38,8 @@ class ExperimentalModelType extends AbstractType
         ]);
 
         $resolver->define("design")
-            ->allowedTypes(ExperimentalDesign::class)
-            ->required()
+            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->default(null)
         ;
 
         $resolver->define("referenceModels")

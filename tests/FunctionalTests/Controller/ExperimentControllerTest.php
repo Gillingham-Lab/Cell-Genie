@@ -116,12 +116,12 @@ class ExperimentControllerTest extends WebTestCase
 
         $this->assertStringStartsWith("#TotalNumberOfRows\t2\n", $response->getContent());
         $this->assertCount(4, $content_lines);
-        $this->assertCount(5, $content_lines[1]);
+        $this->assertCount(8, $content_lines[1]);
 
-        $this->assertSame($pen1->getShortName(), $content_lines[2][2]);
-        $this->assertSame($pen1->getSmiles(), $content_lines[2][3]);
-        $this->assertSame($pen2->getShortName(), $content_lines[3][2]);
-        $this->assertSame($pen2->getSmiles(), $content_lines[3][3]);
+        $this->assertSame($pen1->getShortName(), $content_lines[2][5]);
+        $this->assertSame($pen1->getSmiles(), $content_lines[2][6]);
+        $this->assertSame($pen2->getShortName(), $content_lines[3][5]);
+        $this->assertSame($pen2->getSmiles(), $content_lines[3][6]);
     }
 
     public function testDownloadConditionDataAsGroupScientist(): void
@@ -130,7 +130,7 @@ class ExperimentControllerTest extends WebTestCase
         $user = $client->getContainer()->get(UserRepository::class)->findOneBy(["email" => "scientist1@example.com"]);
         $client->loginUser($user);
 
-        $crawler = $client->request("GET", "/api/experiment/run/viewData/0");
+        $crawler = $client->request("GET", "/api/public/experiment/run/viewData/0");
         $response = $client->getResponse();
         $this->assertSame(404, $response->getStatusCode());
 
@@ -147,7 +147,7 @@ class ExperimentControllerTest extends WebTestCase
 
         $run = $design->getRuns()[0];
 
-        $crawler = $client->request("GET", "/api/experiment/run/viewData/" . $run->getId());
+        $crawler = $client->request("GET", "/api/public/experiment/run/viewData/" . $run->getId());
         $response = $client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -223,16 +223,16 @@ class ExperimentControllerTest extends WebTestCase
         $this->assertSame(ExperimentalFieldVariableRoleEnum::Group->value, $currentValues['experimental_design[_fields][fields][0][variableRole]']);
         $this->assertSame('0', $currentValues['experimental_design[_fields][fields][0][weight]']);
         $this->assertSame('1', $currentValues['experimental_design[_fields][fields][0][exposed]']);
-        $this->assertSame(FormRowTypeEnum::EntityType->value, $currentValues['experimental_design[_fields][fields][0][formRow][type]']);
-        $this->assertSame("compound", $currentValues['experimental_design[_fields][fields][0][formRow][label]']);
-        $this->assertSame("", $currentValues['experimental_design[_fields][fields][0][formRow][help]']);
+        $this->assertSame(FormRowTypeEnum::EntityType->value, $currentValues['experimental_design[_fields][fields][0][formRow][_type][type]']);
+        $this->assertSame("compound", $currentValues['experimental_design[_fields][fields][0][formRow][_type][label]']);
+        $this->assertSame("", $currentValues['experimental_design[_fields][fields][0][formRow][_type][help]']);
         $this->assertSame(Chemical::class, $currentValues['experimental_design[_fields][fields][0][formRow][configuration][entityType]']);
 
         $this->assertSame(ExperimentalFieldRole::Condition->value, $currentValues['experimental_design[_fields][fields][1][role]']);
-        $this->assertSame('time', $currentValues['experimental_design[_fields][fields][1][formRow][label]']);
+        $this->assertSame('time', $currentValues['experimental_design[_fields][fields][1][formRow][_type][label]']);
 
         $this->assertSame(ExperimentalFieldRole::Datum->value, $currentValues['experimental_design[_fields][fields][2][role]']);
-        $this->assertSame('MIC', $currentValues['experimental_design[_fields][fields][2][formRow][label]']);
+        $this->assertSame('MIC', $currentValues['experimental_design[_fields][fields][2][formRow][_type][label]']);
 
         $client->submit($form);
 

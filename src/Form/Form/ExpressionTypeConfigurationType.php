@@ -27,8 +27,8 @@ class ExpressionTypeConfigurationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class)
-            ->required()
+            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->default(null)
         ;
     }
 
@@ -41,7 +41,10 @@ class ExpressionTypeConfigurationType extends AbstractType
     {
         $design = $options['design'];
 
-        $environment = $this->modelService->getValidEnvironment($design);
+        $environment = [];
+        if ($design instanceof ExperimentalDesign) {
+            $environment = $this->modelService->getValidEnvironment($design);
+        }
 
         $builder
             ->add(

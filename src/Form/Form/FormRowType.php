@@ -29,8 +29,8 @@ class FormRowType extends AbstractType
         ]);
 
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class)
-            ->required()
+            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->default(null)
         ;
     }
 
@@ -92,7 +92,7 @@ class FormRowType extends AbstractType
         }
 
         if (is_array($formRow)) {
-            $type = $formRow["_type"]["type"];
+            $type = $formRow["_type"]["type"] ?? null;
         } else {
             $type = $formRow->getType()->value;
         }

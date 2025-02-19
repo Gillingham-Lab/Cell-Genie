@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\FunctionalTests\Twig\Components\Live\Experiment;
 
+use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -62,12 +63,26 @@ class ExperimentalDesignFormTest extends WebTestCase
                             "role" => ExperimentalFieldRole::Top->value,
                             "variableRole" => ExperimentalFieldVariableRoleEnum::Group->value,
                             "weight" => 0,
+                            "exposed" => true,
+                            "referenced" => false,
+                            "referenceValue" => null,
                             "formRow" => [
-                                "type" => FormRowTypeEnum::TextType->value,
-                                "label" => "Test",
-                                "help" => "",
+                                "_type" => [
+                                    "type" => FormRowTypeEnum::TextType->value,
+                                    "label" => "Test",
+                                    "help" => "",
+                                ],
+                            ],
+                            "configuration" => [
+                                "length_min" => null,
+                                "length_max" => null,
                             ]
                         ]
+                    ]
+                ],
+                "_models" => [
+                    "models" => [
+
                     ]
                 ]
             ])
@@ -105,9 +120,11 @@ class ExperimentalDesignFormTest extends WebTestCase
                             "variableRole" => ExperimentalFieldVariableRoleEnum::Group->value,
                             "weight" => 0,
                             "formRow" => [
-                                "type" => FormRowTypeEnum::TextType->value,
-                                "label" => "Test",
-                                "help" => "",
+                                "_type" => [
+                                    "type" => FormRowTypeEnum::TextType->value,
+                                    "label" => "Test",
+                                    "help" => "",
+                                ],
                             ]
                         ]
                     ]

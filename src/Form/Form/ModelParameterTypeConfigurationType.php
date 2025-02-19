@@ -27,8 +27,8 @@ class ModelParameterTypeConfigurationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class)
-            ->required()
+            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->default(null)
         ;
     }
 
@@ -40,10 +40,13 @@ class ModelParameterTypeConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $design = $options['design'];
-        $models = $design->getModels();
+
         $modelChoices = [];
-        foreach ($models as $model) {
-            $modelChoices[$model->getName()] = $model->getName();
+        if ($design instanceof ExperimentalDesign) {
+            $models = $design->getModels();
+            foreach ($models as $model) {
+                $modelChoices[$model->getName()] = $model->getName();
+            }
         }
 
         $builder
