@@ -30,8 +30,6 @@ class ModelView
     public ?ExperimentalModel $model;
     public ExperimentalRun $run;
     public ?ExperimentalRunCondition $condition;
-    /** @var ArrayCollection<int, array{condition: string, fit: ExperimentalModel}>  */
-    #public ArrayCollection $conditionModels;
 
     public bool $showParams = true;
     public bool $showWarnings = true;

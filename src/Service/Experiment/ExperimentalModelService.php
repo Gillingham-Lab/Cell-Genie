@@ -262,7 +262,7 @@ readonly class ExperimentalModelService
 
         $json = json_encode($fitConfiguration);
         if ($json === false) {
-            $jsonError = json_last_error();
+            $jsonError = json_last_error_msg();
             $this->logger->critical("Failed to encode json: " . $jsonError);
 
             throw new FitException(errors: [$jsonError]);
@@ -519,7 +519,7 @@ readonly class ExperimentalModelService
 
         $cacheKey = $this->cacheKeyService->getCacheKeyFromString($json, "ExperimentalModelService.eval.{$modelId}");
 
-        $reply = $this->cache->get($cacheKey, function (CacheItem $item) use ($json, $models): array {
+        $reply = $this->cache->get($cacheKey, function (ItemInterface $item) use ($json, $models): array {
             $item->expiresAfter(3600);
 
             try {

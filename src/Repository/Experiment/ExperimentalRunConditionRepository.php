@@ -20,8 +20,6 @@ class ExperimentalRunConditionRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly TagAwareCacheInterface $cache,
-        private readonly CacheKeyService $keyService,
         private readonly LoggerInterface $logger,
     ) {
         parent::__construct($registry, ExperimentalRunCondition::class);
