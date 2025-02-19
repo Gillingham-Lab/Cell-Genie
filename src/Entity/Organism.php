@@ -41,7 +41,7 @@ class Organism
     {
         if ($this->name === null and $this->type === null) {
             return "unknown";
-        } elseif ($this->name !== null) {
+        } elseif ($this->name === null) {
             return "unknown, {$this->type}";
         } else {
             return "{$this->name}, {$this->type}";
