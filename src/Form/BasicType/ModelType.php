@@ -18,12 +18,12 @@ class ModelType extends AbstractType
 
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return FancyChoiceType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $availableModels = $this->modelService->list();
         $modelsIdentifier = array_keys($availableModels);

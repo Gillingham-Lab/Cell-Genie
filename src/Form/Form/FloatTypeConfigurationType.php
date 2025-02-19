@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
  */
 class FloatTypeConfigurationType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return FormGroupType::class;
     }

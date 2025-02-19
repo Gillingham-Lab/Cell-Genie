@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TextAreaTypeConfigurationType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return FormGroupType::class;
     }

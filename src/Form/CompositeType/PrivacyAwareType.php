@@ -22,7 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PrivacyAwareType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return FormGroupType::class;
     }
@@ -33,7 +33,7 @@ class PrivacyAwareType extends AbstractType
 
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "icon" => "privacy",

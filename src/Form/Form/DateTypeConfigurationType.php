@@ -12,7 +12,7 @@ use Symfony\Component\Form\AbstractType;
  */
 class DateTypeConfigurationType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return FormGroupType::class;
     }

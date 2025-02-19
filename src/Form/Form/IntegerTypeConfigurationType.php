@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class IntegerTypeConfigurationType extends AbstractType
 {
-    public function getParent()
+    public function getParent(): string
     {
         return FormGroupType::class;
     }

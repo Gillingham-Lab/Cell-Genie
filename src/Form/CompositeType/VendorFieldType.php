@@ -21,7 +21,7 @@ class VendorFieldType extends AbstractType
         return FormGroupType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             "icon" => "vendor",

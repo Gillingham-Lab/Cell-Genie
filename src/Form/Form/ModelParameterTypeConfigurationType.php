@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ModelParameterTypeConfigurationType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->define("design")
             ->allowedTypes( ExperimentalDesign::class, "null")
@@ -32,7 +32,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
         ;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return FormGroupType::class;
     }
