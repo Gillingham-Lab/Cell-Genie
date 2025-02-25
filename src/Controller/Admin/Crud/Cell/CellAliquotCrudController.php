@@ -7,7 +7,7 @@ use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\Traits\HasBoxTrait;
 use App\Genie\Enums\PrivacyLevel;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;

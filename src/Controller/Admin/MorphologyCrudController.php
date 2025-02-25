@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Morphology;
+use App\Entity\DoctrineEntity\Vocabulary\Morphology;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class MorphologyCrudController extends AbstractCrudController

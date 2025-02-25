@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Tissue;
+use App\Entity\DoctrineEntity\Vocabulary\Tissue;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class TissueCrudController extends AbstractCrudController

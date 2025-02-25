@@ -6,23 +6,18 @@ namespace App\Controller;
 use App\Entity\DoctrineEntity\Barcode;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
-use App\Entity\DoctrineEntity\Substance\Chemical;
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
-use App\Entity\Lot;
 use App\Entity\SubstanceLot;
 use App\Form\BarcodeType;
 use App\Repository\BarcodeRepository;
-use App\Repository\Cell\CellCultureRepository;
-use App\Repository\Cell\CellRepository;
-use App\Repository\Substance\SubstanceRepository;
 use App\Service\BarcodeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Uid\Ulid;
 
 class BarcodeController extends AbstractController
 {

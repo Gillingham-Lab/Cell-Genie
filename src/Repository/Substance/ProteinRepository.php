@@ -4,13 +4,12 @@ declare(strict_types=1);
 namespace App\Repository\Substance;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
+use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Substance\Protein;
-use App\Entity\Epitope;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

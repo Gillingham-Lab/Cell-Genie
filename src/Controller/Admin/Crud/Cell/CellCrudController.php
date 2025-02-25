@@ -9,7 +9,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Form\CellularProteinType;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;

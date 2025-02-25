@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Substance;
 
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\Experiment;
-use App\Entity\Lot;
 use App\Entity\Traits\Fields\MolecularMassTrait;
 use App\Entity\Traits\LabJournalTrait;
 use App\Entity\Traits\VendorTrait;

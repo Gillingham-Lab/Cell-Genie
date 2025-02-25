@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Cell;
 
-use App\Entity\Morphology;
-use App\Entity\Organism;
-use App\Entity\Tissue;
+use App\Entity\DoctrineEntity\Vocabulary\Morphology;
+use App\Entity\DoctrineEntity\Vocabulary\Organism;
+use App\Entity\DoctrineEntity\Vocabulary\Tissue;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\HasRRID;
 use App\Repository\Cell\CellGroupRepository;

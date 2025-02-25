@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Form\Substance;
 
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Lot;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
@@ -13,7 +13,6 @@ use App\Form\CompositeType\VendorFieldType;
 use App\Form\SaveableType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;

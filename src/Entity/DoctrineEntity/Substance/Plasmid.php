@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\AnnotateableInterface;
+use App\Entity\DoctrineEntity\File\File;
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\File;
-use App\Entity\Organism;
+use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\NumberTrait;
 use App\Entity\Traits\HasRRID;

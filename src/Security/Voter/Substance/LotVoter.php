@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Security\Voter\Substance;
 
-use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Lot;
 use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

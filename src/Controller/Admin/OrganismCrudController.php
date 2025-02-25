@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Organism;
+use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class OrganismCrudController extends AbstractCrudController

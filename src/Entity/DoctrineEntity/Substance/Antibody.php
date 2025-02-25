@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Substance;
 
-use App\Entity\Epitope;
-use App\Entity\File;
-use App\Entity\Lot;
+use App\Entity\DoctrineEntity\Epitope;
+use App\Entity\DoctrineEntity\File\File;
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\Traits\HasRRID;
 use App\Entity\Traits\VendorTrait;
 use App\Genie\Enums\AntibodyType;

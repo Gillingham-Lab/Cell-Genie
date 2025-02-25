@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Form\Substance;
 
+use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Substance\Antibody;
-use App\Entity\Epitope;
 use App\Form\BasicType\EnumeratedType;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
@@ -13,10 +13,9 @@ use App\Form\CompositeType\VendorFieldType;
 use App\Form\NameType;
 use App\Form\Traits\VocabularyTrait;
 use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;

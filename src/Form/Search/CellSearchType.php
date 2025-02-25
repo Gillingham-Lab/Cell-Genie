@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Form\Search;
 
 use App\Entity\DoctrineEntity\User\UserGroup;
-use App\Entity\Organism;
-use App\Entity\Tissue;
+use App\Entity\DoctrineEntity\Vocabulary\Organism;
+use App\Entity\DoctrineEntity\Vocabulary\Tissue;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

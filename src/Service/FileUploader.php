@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\DoctrineEntity\File\File;
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\File;
 use App\Form\DocumentationType;
 use App\Form\VisualisationType;
 use Symfony\Bundle\SecurityBundle\Security;

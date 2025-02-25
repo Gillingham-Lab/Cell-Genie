@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Live;
 
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Lot;
 use App\Entity\Table\Column;
 use App\Entity\Table\ComponentColumn;
 use App\Entity\Table\ProgressColumn;

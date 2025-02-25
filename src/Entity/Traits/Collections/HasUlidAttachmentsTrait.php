@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits\Collections;
 
-use App\Entity\File;
+use App\Entity\DoctrineEntity\File\File;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;

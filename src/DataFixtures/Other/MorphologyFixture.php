@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Other;
 
-use App\Entity\Morphology;
+use App\Entity\DoctrineEntity\Vocabulary\Morphology;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class MorphologyFixture extends Fixture

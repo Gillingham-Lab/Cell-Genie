@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Service\Doctrine\Type\Ulid;
 

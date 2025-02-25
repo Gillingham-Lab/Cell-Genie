@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\AnnotateableInterface;
-use App\Entity\File;
+use App\Entity\DoctrineEntity\File\File;
 use App\Entity\SequenceAnnotation;
 use App\Genie\Import\GenBankImport;
 use App\Genie\Import\ImportError;

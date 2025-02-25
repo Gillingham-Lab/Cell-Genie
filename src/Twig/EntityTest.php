@@ -8,6 +8,8 @@ use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureOtherEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
+use App\Entity\DoctrineEntity\Epitope;
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\DoctrineEntity\Substance\Antibody;
@@ -16,8 +18,6 @@ use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Epitope;
-use App\Entity\Lot;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;
 

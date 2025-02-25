@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Other;
 
-use App\Entity\Organism;
+use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 

@@ -9,7 +9,7 @@ use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Form\AdminCrud\DocumentationType;
 use App\Genie\Enums\AntibodyType;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -22,7 +22,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class AntibodyCrudController extends ExtendedAbstractCrudController

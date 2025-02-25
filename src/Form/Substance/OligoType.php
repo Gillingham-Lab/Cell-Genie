@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Form\Substance;
 
+use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Epitope;
 use App\Form\BasicType\EnumeratedType;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\BasicType\FormGroupType;
@@ -16,7 +16,6 @@ use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Genie\Enums\OligoTypeEnum;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;

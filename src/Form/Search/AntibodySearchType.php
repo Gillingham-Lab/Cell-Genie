@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace App\Form\Search;
 
-use App\Entity\Epitope;
+use App\Entity\DoctrineEntity\Epitope;
 use App\Form\BasicType\FancyChoiceType;
 use App\Form\BasicType\FancyEntityType;
 use App\Genie\Enums\AntibodyType;
 use App\Twig\Components\Live\SubstanceTable;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

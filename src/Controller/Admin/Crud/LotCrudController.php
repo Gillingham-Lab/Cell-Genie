@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Crud;
 
-use App\Entity\Lot;
+use App\Entity\DoctrineEntity\Lot;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use SebastianBergmann\CodeCoverage\Report\Text;
 
 class LotCrudController extends AbstractCrudController
 {

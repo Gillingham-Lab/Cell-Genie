@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Substance;
 
-use App\Entity\Interface\GroupAwareInterface;
-use App\Entity\Lot;
-use App\Entity\Traits\Privacy\GroupOwnerTrait;
-use App\Entity\Traits\Privacy\OwnerTrait;
+use App\Entity\DoctrineEntity\Lot;
 
 class SubstanceLot implements \JsonSerializable
 {

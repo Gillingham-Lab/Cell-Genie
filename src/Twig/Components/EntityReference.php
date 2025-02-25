@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\DoctrineEntity\Cell\Cell;
-use App\Entity\DoctrineEntity\Cell\CellGroup;
-use App\Entity\Epitope;
+use App\Entity\DoctrineEntity\Epitope;
 use App\Service\EntityResolver;
 use App\Service\IconService;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Collection\CollectionInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Symfony\UX\TwigComponent\Attribute\PreMount;

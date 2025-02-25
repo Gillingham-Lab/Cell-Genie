@@ -8,13 +8,11 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\FormEntity\BarcodeEntry;
-use App\Entity\Lot;
 use App\Entity\SubstanceLot;
 use App\Repository\Cell\CellCultureRepository;
 use App\Repository\Cell\CellRepository;
 use App\Repository\LotRepository;
 use App\Repository\Substance\SubstanceRepository;
-use Symfony\Component\Uid\Ulid;
 
 class BarcodeService
 {

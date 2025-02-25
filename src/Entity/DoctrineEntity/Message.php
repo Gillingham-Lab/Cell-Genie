@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Repository\MessageRepository;

@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Form\AdminCrud;
 
-use App\Entity\File;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Entity\DoctrineEntity\File\File;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;

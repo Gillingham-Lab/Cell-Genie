@@ -6,7 +6,7 @@ namespace App\Controller\Admin\Crud\Substance;
 use App\Controller\Admin\Crud\LotCrudController;
 use App\Controller\Admin\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -16,7 +16,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class PlasmidCrudController extends AbstractCrudController
 {

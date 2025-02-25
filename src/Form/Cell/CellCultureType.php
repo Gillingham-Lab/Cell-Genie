@@ -7,7 +7,7 @@ use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Form\BasicType\EnumeratedType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\Traits\VocabularyTrait;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

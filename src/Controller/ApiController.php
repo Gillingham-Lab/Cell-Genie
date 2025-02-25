@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\Recipe;
+use App\Entity\DoctrineEntity\RecipeIngredient;
 use App\Entity\Experiment;
 use App\Entity\ExperimentalRun;
-use App\Entity\Recipe;
-use App\Entity\RecipeIngredient;
 use App\Genie\DataSet;
 use App\Genie\Pole\Calculator;
 use App\Genie\Pole\Quantity;

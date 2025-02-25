@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits\Fields;
 
-use App\Entity\File;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\DoctrineEntity\File\File;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 trait VisualisationTrait
 {

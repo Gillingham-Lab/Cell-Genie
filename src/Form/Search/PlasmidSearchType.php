@@ -3,19 +3,15 @@ declare(strict_types=1);
 
 namespace App\Form\Search;
 
+use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Substance\Protein;
-use App\Entity\Epitope;
-use App\Entity\Organism;
+use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use App\Form\BasicType\FancyChoiceType;
 use App\Form\BasicType\FancyEntityType;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**

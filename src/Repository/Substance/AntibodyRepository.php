@@ -4,18 +4,13 @@ declare(strict_types=1);
 namespace App\Repository\Substance;
 
 use App\Entity\DoctrineEntity\Substance\Antibody;
-use App\Entity\Epitope;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use function \str_ends_with;
-use function \str_starts_with;
 
 /**
  * @extends SubstanceRepository<Antibody>

@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Repository\FileRepository;
-use Doctrine\DBAL\Types\ConversionException;
+use App\Repository\File\FileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
 

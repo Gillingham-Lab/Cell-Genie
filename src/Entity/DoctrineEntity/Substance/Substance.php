@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\Substance;
 
-use App\Entity\Epitope;
+use App\Entity\DoctrineEntity\Epitope;
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\Interface\PrivacyAwareInterface;
-use App\Entity\Lot;
 use App\Entity\Traits\Collections\HasUlidAttachmentsTrait;
 use App\Entity\Traits\Fields\NameTrait;
 use App\Entity\Traits\Fields\NewIdTrait;

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Entity\Lot;
 use App\Entity\SubstanceLot;
 use App\Genie\Enums\Availability;
 use App\Genie\Enums\PrivacyLevel;

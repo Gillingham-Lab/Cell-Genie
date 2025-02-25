@@ -2,10 +2,10 @@
 
 namespace App\Repository\Substance;
 
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\Substance\SubstanceLot;
-use App\Entity\Lot;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

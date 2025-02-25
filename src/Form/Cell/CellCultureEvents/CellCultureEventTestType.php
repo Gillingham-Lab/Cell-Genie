@@ -5,7 +5,7 @@ namespace App\Form\Cell\CellCultureEvents;
 
 use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use App\Form\Traits\VocabularyTrait;
-use App\Repository\VocabularyRepository;
+use App\Repository\Vocabulary\VocabularyRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;

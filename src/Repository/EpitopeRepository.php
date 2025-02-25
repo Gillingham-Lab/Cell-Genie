@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Epitope;
+use App\Entity\DoctrineEntity\Epitope;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

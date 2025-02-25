@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Entity\DoctrineEntity\File;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\FileType;
-use App\Repository\FileRepository;
+use App\Repository\File\FileRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;

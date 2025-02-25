@@ -5,6 +5,7 @@ namespace App\Form\Form;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
+use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
@@ -13,7 +14,6 @@ use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\DoctrineEntity\Vendor;
-use App\Entity\Lot;
 use App\Form\BasicType\FormGroupType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
