@@ -13,12 +13,14 @@ use App\Repository\ExperimentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExperimentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ["name", "experimentType"])]
+#[Deprecated]
 class Experiment
 {
     use IdTrait;

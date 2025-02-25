@@ -7,6 +7,7 @@ use App\Repository\ExperimentalConditionRepository;
 use App\Repository\ExperimentalMeasurementRepository;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ExperimentalMeasurementRepository::class)]
 #[ORM\UniqueConstraint(columns: ["experiment_id", "title"])]
 #[UniqueEntity(["title", "experiment"], message: "The same title cannot be used for two measurements.")]
+#[Deprecated]
 class ExperimentalMeasurement extends InputType
 {
     #[ORM\Id]

@@ -10,6 +10,7 @@ use App\Repository\ExperimentalRunRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ["name", "experiment"], message: "This name is already in use for this experiment.")]
 #[ORM\UniqueConstraint(fields: ["experiment", "name"])]
+#[Deprecated]
 class ExperimentalRun
 {
     use IdTrait;

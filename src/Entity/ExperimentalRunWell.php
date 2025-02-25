@@ -6,6 +6,7 @@ namespace App\Entity;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Repository\ExperimentalRunWellRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ExperimentalRunWellRepository::class)]
 #[UniqueEntity(fields: ["wellNumber", "experimentalRun"], message: "Each well number can only be used once.")]
 #[ORM\UniqueConstraint(fields: ["experimentalRun", "wellNumber"])]
+#[Deprecated]
 class ExperimentalRunWell
 {
     use IdTrait;

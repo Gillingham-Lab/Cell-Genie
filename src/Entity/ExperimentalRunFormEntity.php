@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
+#[Deprecated]
 class ExperimentalRunFormEntity extends AbstractExperimentalFormEntity
 {
     private Experiment $experiment;

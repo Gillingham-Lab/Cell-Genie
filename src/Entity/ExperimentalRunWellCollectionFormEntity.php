@@ -5,8 +5,10 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[Deprecated]
 class ExperimentalRunWellCollectionFormEntity extends AbstractExperimentalFormEntity
 {
     private Experiment $experiment;

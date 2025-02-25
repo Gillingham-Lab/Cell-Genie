@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[Deprecated]
 class ExperimentalRunWellFormEntity extends AbstractExperimentalFormEntity
 {
     private Experiment $experiment;

@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Bridge\Doctrine\IdGenerator\UlidGenerator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ExperimentalConditionRepository::class)]
 #[ORM\UniqueConstraint(columns: ["experiment_id", "title"])]
 #[UniqueEntity(["title", "experiment"], message: "The same title cannot be used for two conditions.")]
+#[Deprecated]
 class ExperimentalCondition extends InputType
 {
     #[ORM\Id]
