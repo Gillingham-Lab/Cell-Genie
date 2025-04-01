@@ -6,7 +6,9 @@ namespace App\Entity;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 
+#[Deprecated]
 abstract class InputType
 {
     const CHECK_TYPE = "check";

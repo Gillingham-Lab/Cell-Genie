@@ -186,6 +186,10 @@ class GenBankImport
                     $complement = false;
                 }
 
+                if (count($span) == 1) {
+                    $span[1] = $span[0];
+                }
+
                 $features[$f]["span"] = [
                     intval(str_starts_with("<", $span[0]) ? substr($span[0], 1) : $span[0]),
                     intval(str_ends_with(">", $span[1]) ? substr($span[1], 0, -1) : $span[1]),
@@ -197,7 +201,13 @@ class GenBankImport
                 // If the first part is empty, the feature continues with annotations
                 if (str_starts_with($secondPart, "/")) {
                     // If the string starts with a /, a new annotation begins
-                    [$annotationName, $annotation] = explode("=", $secondPart, 2);
+                    $partsOfSecondPart = explode("=", $secondPart, 2);
+
+                    if (count($partsOfSecondPart) == 2) {
+                        [$annotationName, $annotation] = $partsOfSecondPart;
+                    } else {
+                        continue;
+                    }
 
                     $currentAnnotation = substr($annotationName, 1);
 
