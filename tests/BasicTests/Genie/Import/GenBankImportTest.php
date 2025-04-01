@@ -37,12 +37,30 @@ class GenBankImportTest extends TestCase
 
     public function testAddgenePlasmid2Import(): void
     {
-
         $content = file_get_contents(__DIR__ . "/../../../fixtures/import/addgene_plasmid_2.gbk");
         $import = new GenBankImport($content);
 
         // Assertions
         $this->assertSame("GFHX2KHFA8", $import->getLocusName());
+    }
+
+    public function testAddgenePlasmidImportJoin(): void
+    {
+        $content = file_get_contents(__DIR__ . "/../../../fixtures/import/addgene_plasmid_join.gbk");
+        $import = new GenBankImport($content);
+
+        $this->assertSame("X7YWLCSBMF", $import->getLocusName());
+
+
+        // Assert features
+        $features = $import->getFeatures();
+        $this->assertCount(3, $features);
+
+        $this->assertSame([2622, 3338], $features[1]["span"]);
+        $this->assertFalse($features[1]["complement"]);
+
+        $this->assertSame([6038, 6068], $features[2]["span"]);
+        $this->assertTrue($features[2]["complement"]);
     }
 
     public function testBenchlingExport(): void

@@ -179,11 +179,27 @@ class GenBankImport
                 ];
 
                 if (str_starts_with($secondPart, "complement(")) {
-                    $span = explode("..", substr($secondPart, strlen("complement("), -1));
+                    $secondPart = substr($secondPart, strlen("complement("), -1);
                     $complement = true;
                 } else {
-                    $span = explode("..", $secondPart);
                     $complement = false;
+                }
+
+                if (str_starts_with($secondPart, "join(")) {
+                    $spans = explode(",", substr($secondPart, strlen("join("), -1));
+                    $spans = array_map(fn ($x) => explode("..", $x, 2), $spans);
+
+                    $firstSpan = $spans[0][0];
+
+                    if (count($spans) > 1) {
+                        $lastSpan = $spans[count($spans)-1][1] ?? $spans[count($spans)-1][0];
+                    } else {
+                        $lastSpan = $spans[0][1] ?? $spans[0][0];
+                    }
+
+                    $span = [$firstSpan, $lastSpan];
+                } else {
+                    $span = explode("..", $secondPart);
                 }
 
                 if (count($span) == 1) {
