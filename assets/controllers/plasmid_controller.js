@@ -43,9 +43,15 @@ export default class extends Controller {
         return `M ${origin[0]} ${origin[1]} A ${radius} ${radius} 0 0 1 ${midPoint[0]} ${midPoint[1]} A ${radius} ${radius} 0 0 1 ${target[0]} ${target[1]}`;
     }
 
-    getFeaturePath(width, height, radius, fromAngle, toAngle, radiusWidth=10) {
+    getFeaturePath(width, height, radius, fromAngle, toAngle, radiusWidth=10, forwardDirection=true) {
         let innerRadius = radius-radiusWidth/2;
         let outerRadius = radius+radiusWidth/2;
+
+        if (!forwardDirection) {
+            let _ = fromAngle;
+            fromAngle = toAngle - 360;
+            toAngle = _;
+        }
 
         let innerOrigin = this.angleToCoordinates(innerRadius, fromAngle)
         let innerMidPoint = this.angleToCoordinates(innerRadius, (toAngle+fromAngle)/2)
@@ -83,8 +89,21 @@ export default class extends Controller {
     }
 
     drawFeature(feature, svg, totalWidth, totalHeight, radius) {
-        let angleStart = (feature["start"]-1) / this.sequenceLengthValue * 360;
-        let angleEnd = (feature["end"]) / this.sequenceLengthValue * 360;
+        let featureStart = feature["start"]-1;
+        let featureEnd = feature["end"];
+        let normalDirection = true;
+
+        // The start can be larger than the end if the feature crosses the 1-coordinate
+        if (featureStart > featureEnd) {
+            featureStart = feature["end"];
+            featureEnd = feature["start"]-1;
+            normalDirection = false;
+        }
+
+        let angleStart = (featureStart) / this.sequenceLengthValue * 360;
+        let angleEnd = (featureEnd) / this.sequenceLengthValue * 360;
+
+        console.log(featureStart, featureEnd, angleStart, angleEnd);
 
         if (Math.round(angleStart) === 0 && Math.round(angleEnd) === 360) {
             return;
@@ -104,7 +123,7 @@ export default class extends Controller {
         plasmidFeature.append("path")
             //.attr("d", this.makeCircularPath(totalWidth, totalHeight, radius-5, angleStart, angleEnd))
             .attr("id", "plasmid-feature-element-" + feature["id"])
-            .attr("d", this.getFeaturePath(totalWidth, totalHeight, radius + level*20, angleStart, angleEnd, 10))
+            .attr("d", this.getFeaturePath(totalWidth, totalHeight, radius + level*20, angleStart, angleEnd, 10, normalDirection))
             .attr("stroke-width", 1)
             .attr("stroke", "black")
             .attr("fill", (feature["color"] && feature["color"] !== "#000000") ? feature["color"] : this.getFeatureColorForType(feature["type"]))
