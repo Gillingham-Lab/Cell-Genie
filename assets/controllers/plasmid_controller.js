@@ -103,8 +103,6 @@ export default class extends Controller {
         let angleStart = (featureStart) / this.sequenceLengthValue * 360;
         let angleEnd = (featureEnd) / this.sequenceLengthValue * 360;
 
-        console.log(featureStart, featureEnd, angleStart, angleEnd);
-
         if (Math.round(angleStart) === 0 && Math.round(angleEnd) === 360) {
             return;
         }
