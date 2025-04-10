@@ -16,6 +16,7 @@ use App\Form\Traits\VocabularyTrait;
 use App\Form\UserEntityType;
 use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -24,14 +25,19 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends SubstanceType<Plasmid>
+ * @extends AbstractType<Plasmid>
  */
-class PlasmidType extends SubstanceType
+class PlasmidType extends AbstractType
 {
     /**
      * @phpstan-use VocabularyTrait<Plasmid>
      */
     use VocabularyTrait;
+
+    public function getParent(): string
+    {
+        return SubstanceType::class;
+    }
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository
@@ -230,8 +236,6 @@ class PlasmidType extends SubstanceType
                 ])
             )
         ;
-
-        parent::buildForm($builder, $options);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -239,7 +243,5 @@ class PlasmidType extends SubstanceType
         $resolver->setDefaults([
             "data_class" => Plasmid::class,
         ]);
-
-        parent::configureOptions($resolver);
     }
 }

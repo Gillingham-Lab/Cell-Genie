@@ -16,6 +16,7 @@ use App\Genie\Enums\AntibodyType as AntibodyTypeEnum;
 use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -25,14 +26,19 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends SubstanceType<Antibody>
+ * @extends AbstractType<Antibody>
  */
-class AntibodyType extends SubstanceType
+class AntibodyType extends AbstractType
 {
     /**
      * @phpstan-use VocabularyTrait<Antibody>
      */
     use VocabularyTrait;
+
+    public function getParent(): string
+    {
+        return SubstanceType::class;
+    }
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository

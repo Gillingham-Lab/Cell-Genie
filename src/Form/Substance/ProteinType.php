@@ -13,6 +13,7 @@ use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\Traits\VocabularyTrait;
 use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,12 +24,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @extends SubstanceType<Protein>
  */
-class ProteinType extends SubstanceType
+class ProteinType extends AbstractType
 {
     /**
      * @phpstan-use VocabularyTrait<Protein>
      */
     use VocabularyTrait;
+
+    public function getParent(): string
+    {
+        return SubstanceType::class;
+    }
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository

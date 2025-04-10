@@ -16,6 +16,7 @@ use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Genie\Enums\OligoTypeEnum;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -27,8 +28,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @extends SubstanceType<Oligo>
  */
-class OligoType extends SubstanceType
+class OligoType extends AbstractType
 {
+    public function getParent(): string
+    {
+        return SubstanceType::class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $currentId = $builder->getData()->getUlid();

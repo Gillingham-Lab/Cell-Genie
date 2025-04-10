@@ -10,6 +10,7 @@ use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,10 +19,15 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends SubstanceType<Chemical>
+ * @extends AbstractType<Chemical>
  */
-class ChemicalType extends SubstanceType
+class ChemicalType extends AbstractType
 {
+    public function getParent(): string
+    {
+        return SubstanceType::class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
