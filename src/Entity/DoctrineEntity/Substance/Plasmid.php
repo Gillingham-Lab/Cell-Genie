@@ -54,16 +54,19 @@ class Plasmid extends Substance implements AnnotateableInterface
     #[ORM\ManyToOne(targetEntity: Organism::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Gedmo\Versioned]
+    #[Assert\NotBlank]
     private ?Organism $expressionIn = null;
 
     /** @var null|string[] */
     #[ORM\Column(type: "simple_array")]
     #[Gedmo\Versioned]
+    #[Assert\NotBlank]
     private ?array $growthResistance = null;
 
     /** @var null|string[] */
     #[ORM\Column(type: "simple_array")]
     #[Gedmo\Versioned]
+    #[Assert\NotBlank]
     private ?array $expressionResistance = null;
 
     #[ORM\Column(type: "boolean")]

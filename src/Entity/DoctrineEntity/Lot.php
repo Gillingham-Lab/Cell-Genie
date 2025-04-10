@@ -59,10 +59,12 @@ class Lot implements \JsonSerializable, PrivacyAwareInterface
 
     #[ORM\Column(type: "string", length: 10)]
     #[Assert\Length(max: 10)]
+    #[Assert\NotBlank]
     private ?string $amount = null;
 
     #[ORM\Column(type: "string", length: 15)]
     #[Assert\Length(max: 15)]
+    #[Assert\NotBlank]
     private ?string $purity = null;
 
     #[ORM\Column(type: "string", length: 15, nullable: true)]
