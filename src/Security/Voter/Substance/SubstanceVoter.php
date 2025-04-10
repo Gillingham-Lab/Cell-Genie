@@ -40,7 +40,7 @@ class SubstanceVoter extends AbstractPrivacyAwareVoter
             return true;
         }
 
-        if ($subject === "Substance" and $attribute !== self::NEW) {
+        if ($subject === "Substance" and $attribute === self::NEW) {
             return true;
         }
 
