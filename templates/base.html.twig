@@ -29,7 +29,9 @@
 
             <twig:block name="navsearch">{% block search %}{% endblock %}</twig:block>
 
-            {% cache "gin_top_navigation_general-" ~ (app.user.id is defined ? app.user.id : "anonymous") %}
+            {% set protocol = app.request[0].server.https is defined ? "https" : "http" %}
+
+            {% cache "gin_top_navigation_general-" ~ protocol ~ "-" ~ (app.user.id is defined ? app.user.id : "anonymous") %}
                 <twig:Layout:NavSeparator />
                 <twig:Layout:NavDropdown id="gin-navbar-cell" label="Cells" icon="cell" href="{{ url("app_cells") }}">
                     <twig:Layout:NavDropdownItem label="Browse cells" href="{{ url("app_cells") }}" icon="cell" iconStack="view" />
