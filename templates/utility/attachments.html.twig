@@ -48,7 +48,7 @@
 
                         <span class="fas {{ icon }} mr-1"></span>
                         {{ file.title }}
-                        <a class="ml-3" href="{{ url("file_download", {"fileid": file.id}) }}"><span class="fa fa-download"></span></a>
+                        <a class="ml-3" href="{{ url("file_download", {"id": file.id}) }}"><span class="fa fa-download"></span></a>
                     </h5>
                     <p class="card-text">{{ file.description ?? "(no description)" }}</p>
                     <p class="card-text"><small class="text-muted">{{ file.originalFileName }} ({{ _self.format_file_size(file.contentSize)|trim }})</small></p>

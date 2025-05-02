@@ -3,7 +3,12 @@
             <section class="mb-2 border-start ps-3">
                     <header class="d-flex justify-content-between">
                             <h3 class="flex-column h4"><twig:Icon icon="file.{{ attachment.fileType.value }}" class="me-2" />{{ attachment.title }}</h3>
-                            <div class="flex-column align-content-lg-end"><a class="btn btn-outline-primary btn-md"><twig:Icon icon="download" /> Download</a></div>
+                            <div class="flex-column align-content-lg-end">
+                                    <a class="btn btn-outline-primary btn-md" href="{{ url('file_download', {"id": attachment.id}) }}">
+                                            <twig:Icon icon="download" />
+                                            Download
+                                    </a>
+                            </div>
                     </header>
 
                     <div>

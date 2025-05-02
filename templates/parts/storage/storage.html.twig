@@ -169,7 +169,7 @@
                     }%}
                         {% block body %}
                             <figure  style="overflow: clip;">
-                                <img src="{{ path("picture", {"fileid": rack.visualisation.id}) }}" class="img-fluid">
+                                <img src="{{ path("picture", {"id": rack.visualisation.id}) }}" class="img-fluid">
                             </figure>
                         {% endblock %}
                     {% endembed %}

@@ -62,7 +62,7 @@
             <div class="border-top border-bottom" style="max-height: 15rem; min-height: 15rem; overflow: clip;">
                 {% if consumable.visualisation %}
                     <figure  style="overflow: clip;">
-                        <img src="{{ path("picture", {"fileid": consumable.visualisation.id}) }}" class="img-fluid">
+                        <img src="{{ path("picture", {"id": consumable.visualisation.id}) }}" class="img-fluid">
                     </figure>
                 {% else %}
                     <div class="align-content-center align-middle text-center">

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DoctrineEntity\File\File;
 use App\Repository\File\FileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -17,15 +18,9 @@ class DownloadController extends AbstractController
     ) {
     }
 
-    #[Route("download/{fileid}", name: "file_download")]
-    public function download(string $fileid): Response
+    #[Route("download/{id}", name: "file_download")]
+    public function download(File $file): Response
     {
-        $file = $this->fileRepository->find($fileid);
-
-        if (!$file) {
-            throw new FileNotFoundException("The desired file was not found.");
-        }
-
         $fileBlob = $file->getFileBlob();
 
         $content = stream_get_contents($fileBlob->getContent());
@@ -41,7 +36,7 @@ class DownloadController extends AbstractController
         );
     }
 
-    #[Route("/ressource/picture/{fileid}", name: "picture")]
+    #[Route("/download/picture/{id}", name: "picture", priority: 10)]
     #[Cache(
         expires: "+3600 seconds",
         maxage: 3600,
@@ -49,14 +44,8 @@ class DownloadController extends AbstractController
         public: true,
     )]
     public function picture(
-        string $fileid
+        File $file
     ): Response {
-        $file = $this->fileRepository->find($fileid);
-
-        if (!$file) {
-            throw new FileNotFoundException("The desired file was not found.");
-        }
-
         $fileBlob = $file->getFileBlob();
 
         $content = stream_get_contents($fileBlob->getContent());
