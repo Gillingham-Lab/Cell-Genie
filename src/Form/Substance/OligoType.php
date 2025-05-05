@@ -26,7 +26,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends SubstanceType<Oligo>
+ * @extends AbstractType<Oligo>
  */
 class OligoType extends AbstractType
 {

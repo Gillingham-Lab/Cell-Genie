@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @template TData
- * @extends SaveableType<TData>
+ * @extends AbstractType<TData>
  */
 class SubstanceType extends AbstractType
 {

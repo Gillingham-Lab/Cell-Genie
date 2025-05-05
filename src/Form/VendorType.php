@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends SaveableType<Vendor>
+ * @extends AbstractType<Vendor>
  */
 class VendorType extends AbstractType
 {

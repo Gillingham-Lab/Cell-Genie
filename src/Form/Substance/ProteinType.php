@@ -22,7 +22,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @extends SubstanceType<Protein>
+ * @extends AbstractType<Protein>
  */
 class ProteinType extends AbstractType
 {
