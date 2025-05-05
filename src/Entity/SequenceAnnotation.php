@@ -30,15 +30,15 @@ class SequenceAnnotation implements \JsonSerializable
 
     #[ORM\Column(type: "string", length: 50, nullable: false)]
     #[Gedmo\Versioned]
-    private ?string $annotationLabel;
+    private ?string $annotationLabel = null;
 
     #[ORM\Column(type: "string", length: 50, nullable: false)]
     #[Gedmo\Versioned]
-    private ?string $annotationType;
+    private ?string $annotationType = null;
 
     #[ORM\Column(type: "string", length: 50, nullable: true)]
     #[Gedmo\Versioned]
-    private ?string $color;
+    private ?string $color = null;
 
     #[ORM\Column(type: "boolean", options: ["default" => false])]
     private bool $isComplement = false;
@@ -46,12 +46,12 @@ class SequenceAnnotation implements \JsonSerializable
     #[ORM\Column(type: "integer", nullable: false)]
     #[Assert\Range(min: 1)]
     #[Assert\Positive]
-    private ?int $annotationStart;
+    private ?int $annotationStart = null;
 
     #[ORM\Column(type: "integer", nullable: false)]
     #[Assert\Range(min: 1)]
     #[Assert\Positive]
-    private ?int $annotationEnd;
+    private ?int $annotationEnd = null;
 
     /**
      * @var null|array<mixed>
