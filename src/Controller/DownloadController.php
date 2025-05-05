@@ -13,11 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DownloadController extends AbstractController
 {
-    public function __construct(
-        readonly private FileRepository $fileRepository,
-    ) {
-    }
-
     #[Route("download/{id}", name: "file_download")]
     public function download(File $file): Response
     {
