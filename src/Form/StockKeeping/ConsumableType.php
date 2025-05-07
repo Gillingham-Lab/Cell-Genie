@@ -79,7 +79,7 @@ class ConsumableType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                 ])
-                ->add("location", FancyCurrencyType::class, [
+                ->add("location", FancyEntityType::class, [
                     "class" => Rack::class,
                     "label" => "Location",
                     "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
