@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
+use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
 class Toolbox
 {
     public string $size = "md";
-    public \App\Entity\Toolbox\Toolbox $toolbox;
+    public ToolboxEntity $toolbox;
+    public bool $asDropdown = false;
 
     public function getGroupSize(): string
     {

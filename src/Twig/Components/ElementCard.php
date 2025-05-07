@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
+use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use App\Twig\Components\Trait\GeneratedIdTrait;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
@@ -15,6 +16,7 @@ class ElementCard
     public ?string $iconStack = null;
     public bool $collapsed = true;
     public bool $noPadding = false;
+    public ?ToolboxEntity $toolbox = null;
 
     #[ExposeInTemplate]
     public function getId(): string

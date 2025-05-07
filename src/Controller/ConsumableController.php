@@ -8,6 +8,8 @@ use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Embeddable\Price;
+use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\Toolbox;
 use App\Form\StockKeeping\ConsumableCategoryType;
 use App\Form\StockKeeping\ConsumableLotType;
 use App\Form\StockKeeping\ConsumableType;
@@ -17,6 +19,7 @@ use App\Genie\Enums\PrivacyLevel;
 use App\Repository\StockKeeping\ConsumableCategoryRepository;
 use App\Repository\StockKeeping\ConsumableRepository;
 use App\Service\FileUploader;
+use App\Service\TreeView\ConsumableTreeViewService;
 use DateTime;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -137,11 +140,30 @@ class ConsumableController extends AbstractController
         ?ConsumableLot $lot = null,
         array $options = [],
     ): Response {
+        $categoryToolbox = new Toolbox([
+            new AddTool(
+                $this->generateUrl("app_consumables_category_new"),
+                icon: "box",
+                tooltip: "Add a new consumable category",
+                iconStack: "add",
+            ),
+            new AddTool(
+                $this->generateUrl("app_consumables_item_add_to", ["category" => $category?->getId()]),
+                icon: "consumable",
+                tooltip: "Add a new consumable",
+                iconStack: "add",
+            ),
+        ]);
+
         return $this->render("parts/consumables/consumables.html.twig", [
             "categories" => $categoryRepository->findAllWithConsumablesAndLots(),
             "currentCategory" => $category,
             "currentConsumable" => $consumable,
             "currentLot" => $lot,
+            "toolbox" => [
+                "category" => $categoryToolbox,
+            ],
+            "treeViewService" => ConsumableTreeViewService::class,
             ... $options,
         ]);
     }
@@ -359,13 +381,20 @@ class ConsumableController extends AbstractController
         if ($route === "app_consumables_item_add_to") {
             $this->denyAccessUnlessGranted("add_to", $category);
             $newEntity = true;
-            $title = "Consumable Category :: Add To :: {$category->getLongName()}";
+
+            if ($category) {
+                $title = "Consumable Category :: Add To :: {$category->getLongName()}";
+            } else {
+                $title = "Consumable Category :: Add Item";
+            }
+
             $consumable = (new Consumable())
                 ->setOwner($user)
                 ->setGroup($user->getGroup())
                 ->setPrivacyLevel(PrivacyLevel::Group)
                 ->setCategory($category)
             ;
+
         } else {
             $newEntity = false;
             $title = "Consumable :: Edit :: {$consumable->getLongName()}";

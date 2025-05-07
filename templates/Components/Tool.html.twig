@@ -1,25 +1,61 @@
-<a {{- attributes.defaults({
-    class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
-}) -}}
-    {%- if tool.path %}
-        href="{{ tool.path }}"
-    {% endif -%}
+{% if asDropdown %}
+    <li>
+        <a
+            {{- attributes.defaults({
+                class: "dropdown-item",
+            }) -}}
 
-    {%- if tool.tooltip %}
-        data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
-    {% endif -%}
+            {%- if tool.path %}
+                href="{{ tool.path }}"
+            {% endif -%}
 
-    {%- if tool.confirmationRequired %}
-        onclick='return confirm("{{ tool.confirmationText }}")'
-    {% endif -%}
+            {%- if tool.tooltip %}
+                data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
+            {% endif -%}
 
-    {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
-        data-clipboard-text="{{ tool.clipboardText }}"
-    {% endif -%}
->
-    {%- if tool.icon %}
-        {%- cache "gin-icon-" ~ tool.icon ~ "-" ~ tool.iconStack %}
-            <twig:Icon :icon="tool.icon" :stack="tool.iconStack"/>
-        {% endcache -%}
-    {% endif -%}
-</a>
+            {%- if tool.confirmationRequired %}
+                onclick='return confirm("{{ tool.confirmationText }}")'
+            {% endif -%}
+
+            {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
+                data-clipboard-text="{{ tool.clipboardText }}"
+            {% endif -%}
+        >
+            {%- if tool.icon %}
+                {%- cache "gin-icon-" ~ tool.icon ~ "-" ~ tool.iconStack %}
+                    <twig:Icon :icon="tool.icon" :stack="tool.iconStack"/>
+                {% endcache -%}
+            {% endif -%}
+
+            {% if tool.tooltip %}
+                {{ tool.tooltip }}
+            {% endif %}
+        </a>
+    </li>
+{% else %}
+    <a {{- attributes.defaults({
+        class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
+    }) -}}
+        {%- if tool.path %}
+            href="{{ tool.path }}"
+        {% endif -%}
+
+        {%- if tool.tooltip %}
+            data-toggle="tooltip" data-placement="bottom" title="{{ tool.tooltip }}"
+        {% endif -%}
+
+        {%- if tool.confirmationRequired %}
+            onclick='return confirm("{{ tool.confirmationText }}")'
+        {% endif -%}
+
+        {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
+            data-clipboard-text="{{ tool.clipboardText }}"
+        {% endif -%}
+    >
+        {%- if tool.icon %}
+            {%- cache "gin-icon-" ~ tool.icon ~ "-" ~ tool.iconStack %}
+                <twig:Icon :icon="tool.icon" :stack="tool.iconStack"/>
+            {% endcache -%}
+        {% endif -%}
+    </a>
+{% endif %}
