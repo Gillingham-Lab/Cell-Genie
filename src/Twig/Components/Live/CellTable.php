@@ -18,6 +18,7 @@ use App\Entity\Toolbox\Toolbox;
 use App\Entity\Toolbox\ViewTool;
 use App\Form\Search\CellSearchType;
 use App\Repository\Cell\CellRepository;
+use App\Security\Voter\Cell\CellVoter;
 use App\Service\Doctrine\Type\Ulid;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,6 +64,7 @@ class CellTable extends AbstractController
 
     public function __construct(
         private CellRepository $cellRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -148,10 +150,13 @@ class CellTable extends AbstractController
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_cell_edit", ["cell" => $cell->getCellNumber()]),
+                        enabled: $this->isGranted(CellVoter::ATTR_EDIT, $cell),
                         tooltip: "Edit cell",
                     ),
                     new AddTool(
-                        path: $this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()])
+                        path: $this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()]),
+                        enabled: $this->isGranted(CellVoter::ATTR_ADD_ALIQUOT, $cell),
+                        tooltip: "Add aliquot",
                     )
                 ])),
                 new Column("Nr", fn(Cell $cell) => $cell->getCellNumber()),
@@ -164,8 +169,13 @@ class CellTable extends AbstractController
                     ] : null;
                 }),
                 new Column("Aliquots", function(Cell $cell) {
-                    $unique = $cell->getCellAliquotes()->count();
-                    $total = array_sum($cell->getCellAliquotes()->map(fn(CellAliquot $aliquot) => $aliquot->getVials())->toArray());
+                    $unique = $cell->getCellAliquots()->count();
+
+                    if ($unique === 0) {
+                        return "";
+                    }
+
+                    $total = array_sum($cell->getCellAliquots()->map(fn(CellAliquot $aliquot) => $aliquot->getVials())->toArray());
 
                     return "Total: {$total}, Unique: {$unique}";
                 }),

@@ -44,6 +44,9 @@ label.required:after {
 .list-group.list-group-root .list-group-item {
     border-radius: 0;
     border-width: 1px 0 0 0;
+}
+
+.gin-tree-view .list-group-item {
     padding: 0;
 }
 
@@ -67,31 +70,31 @@ label.required:after {
     border-top-width: 0;
 }
 
-.list-group.list-group-root > .list-group > .list-group-item > .list-group-item-label,
+.list-group.list-group-root > .list-group > .list-group-item,
 .list-group.list-group-root > .list-group > div > .list-group-item > .list-group-item-label
 {
     padding-left: 40px;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group-item > .list-group-item-label,
+.list-group.list-group-root > .list-group > .list-group > .list-group-item,
 .list-group.list-group-root > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label
 {
     padding-left: 80px;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group-item > .list-group-item-label,
+.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group-item,
 .list-group.list-group-root > .list-group > div > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label
 {
     padding-left: 120px;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group .list-group-item > .list-group-item-label,
+.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group .list-group-item,
 .list-group.list-group-root > .list-group > div > .list-group > div > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label
 {
     padding-left: 160px;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group > .list-group .list-group-item > .list-group-item-label,
+.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group > .list-group .list-group-item,
 .list-group.list-group-root > .list-group > div > .list-group > div > .list-group > div > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label
 {
     padding-left: 200px;

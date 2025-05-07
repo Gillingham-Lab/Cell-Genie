@@ -199,6 +199,7 @@ class CellController extends AbstractController
     ): Response {
         // Get all boxes that contain aliquots of the current cell line
         $boxes = $boxService->getBoxes($cell);
+        dump($boxes);
 
         // Get corresponding box maps
         $boxMaps = $boxService->getBoxMaps($cell, $boxes);
@@ -222,8 +223,18 @@ class CellController extends AbstractController
                 clipboardText: $cell->getName() . ($cell->getRrid() ? " (RRID:{$cell->getRrid()})" : ""),
                 tooltip: "Copy citation on cell",
             ),
-            new EditTool($this->generateUrl("app_cell_edit", ["cell" => $cell->getCellNumber()]), tooltip: "Edit cell", iconStack: "edit", icon: "cell"),
-            new AddTool($this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()]), tooltip: "Add aliquot"),
+            new EditTool(
+                $this->generateUrl("app_cell_edit", ["cell" => $cell->getCellNumber()]),
+                icon: "cell",
+                enabled: $this->isGranted(CellVoter::ATTR_EDIT, $cell),
+                tooltip: "Edit cell",
+                iconStack: "edit",
+            ),
+            new AddTool(
+                $this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()]),
+                enabled: $this->isGranted(CellVoter::ATTR_ADD_ALIQUOT, $cell),
+                tooltip: "Add aliquot",
+            ),
         ]);
 
         return $this->render('parts/cells/cell.html.twig', [

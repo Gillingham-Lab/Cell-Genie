@@ -10,6 +10,7 @@ use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -45,9 +46,18 @@ readonly class StorageBoxService
     public function getBoxes(Cell|Substance $entity): array
     {
         $boxes = [];
+
         /** @var CellAliquot|Lot $entry */
         foreach ($this->getEntries($entity) as $entry) {
             $box = $entry->getBox();
+
+            try {
+                if (!$this->security->isGranted("view", $box)) {
+                    continue;
+                }
+            } catch (EntityNotFoundException $e) {
+                continue;
+            }
 
             if (!$box) {
                 continue;
@@ -74,7 +84,11 @@ readonly class StorageBoxService
         // Create a list of maps
         $maps = [];
         foreach ($boxes as $box) {
-            $maps[$box->getUlid()->toRfc4122()] = BoxMap::fromBox($box);
+            try {
+                $maps[$box->getUlid()->toRfc4122()] = BoxMap::fromBox($box);
+            } catch (EntityNotFoundException $e) {
+                dump($e);
+            }
         }
 
         // Fill the maps
