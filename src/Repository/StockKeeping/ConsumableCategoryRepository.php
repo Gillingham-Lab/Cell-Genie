@@ -5,6 +5,7 @@ namespace App\Repository\StockKeeping;
 
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -12,8 +13,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ConsumableCategoryRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private EntityManagerInterface $em,
+    ) {
         parent::__construct($registry, ConsumableCategory::class);
     }
 
@@ -40,14 +43,45 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
      * @return ConsumableCategory[]
      */
     public function findAllWithConsumablesAndLots(): array {
-        return $this->createQueryBuilder("cc")
+        $result = $this->createQueryBuilder("cc")
             ->addSelect("c")
             ->addSelect("cl")
+            ->indexBy("cc", "cc.id")
             ->leftJoin("cc.consumables", "c")
             ->leftJoin("c.lots", "cl")
             ->groupBy("cc")
             ->addGroupBy("c")
             ->addGroupBy("cl")
             ->getQuery()->getResult();
+
+        return $this->setUpRelations($result);
+    }
+
+    private function setUpRelations(array $categories): array {
+        $metadata = $this->em->getClassMetadata(ConsumableCategory::class);
+        $idField = $metadata->reflFields["id"];
+        $parentField = $metadata->reflFields["parent"];
+        #$parentIdField = $metadata->reflFields["parentId"];
+        $childrenField = $metadata->reflFields["children"];
+
+        foreach ($categories as $category) {
+            $children = $childrenField->getValue($category);
+            $children->setInitialized(true);
+
+            $parent = $categories[$parentField->getValue($category)?->getId()->toRfc4122()] ?? null;
+
+            if ($parent === null) {
+                continue;
+            }
+
+            $children = $childrenField->getValue($parent);
+
+            if (!$children->contains($category)) {
+                $parentField->setValue($category, $parent);
+                $children->add($category);
+            }
+        }
+
+        return array_values($categories);
     }
 }

@@ -8,7 +8,10 @@ use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
+use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\Lot;
+use App\Entity\DoctrineEntity\StockManagement\Consumable;
+use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\DoctrineEntity\Substance\Antibody;
@@ -29,9 +32,9 @@ class IconService
 
     /**
      * @param object|array{object}|null $object
-     * @return string|null
+     * @return string|null|array{string, string}
      */
-    public function get(null|object|array $object): ?string
+    public function get(null|object|array $object): string|array|null
     {
         if ($object === null) {
             return null;
@@ -59,6 +62,9 @@ class IconService
                 Rack::class => "location",
                 Lot::class => "lot",
                 ExperimentalRunCondition::class, ExperimentalRun::class => "experiment",
+                Instrument::class => "instrument",
+                Consumable::class => "consumable",
+                ConsumableCategory::class => ["consumable", "box"],
                 default => null,
             }
         };

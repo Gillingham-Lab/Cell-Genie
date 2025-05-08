@@ -1,5 +1,5 @@
 {% set outerTreeViewAttributes = {
-    class: "list-group list-group-root well border-1 border"
+    class: "list-group list-group-root well border-1 border gin-tree-view"
 } %}
 
 <div {{ attributes.defaults(treeLevel == 0 ? outerTreeViewAttributes : {}) }}>
@@ -44,28 +44,35 @@
                     </div>
                 {% endif %}
             </div>
-
         </div>
 
-        {% set component = this.preChildComponent(node) %}
-        {% if component is not null %}
-            <div class="ms-3">
-                {{ component(component[0], component[1]) }}
-            </div>
+        {% if this.active(node) %}
+            {% set component = this.preChildComponent(node) %}
+            {% if component is not null %}
+                <div class="ms-5 list-group-item">
+                    <div class="list-group-item-label p-0">
+                        {{ component(component[0], component[1]|merge(childComponentParams)) }}
+                    </div>
+                </div>
+            {% endif %}
         {% endif %}
 
         {# Children categories #}
         <div class="list-group collapse" id="{{ nodeId }}">
             {% if node.children|length > 0 %}
-                <twig:TreeView tree="{{ node.children }}" treeLevel="{{ treeLevel + 1 }}" currentNode="{{ currentNode }}" :service="service" />
+                <twig:TreeView tree="{{ node.children }}" treeLevel="{{ treeLevel + 1 }}" currentNode="{{ currentNode }}" :service="service" :childComponentParams="childComponentParams" />
             {% endif %}
         </div>
 
-        {% set component = this.postChildComponent(node) %}
-        {% if component is not null %}
-            <div class="ms-3">
-                {{ component(component[0], component[1]) }}
-            </div>
+        {% if this.active(node) %}
+            {% set component = this.postChildComponent(node) %}
+            {% if component is not null %}
+                <div class="ms-5 list-group-item">
+                    <div class="list-group-item-label p-0">
+                        {{ component(component[0], component[1]|merge(childComponentParams)) }}
+                    </div>
+                </div>
+            {% endif %}
         {% endif %}
     {% endfor %}
 </div>

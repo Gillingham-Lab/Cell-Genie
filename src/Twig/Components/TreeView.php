@@ -37,6 +37,11 @@ class TreeView implements TreeViewServiceInterface
     /** @var TreeViewServiceInterface<T>  */
     public ?TreeViewServiceInterface $service = null;
 
+    /**
+     * @var array<string, mixed>
+     */
+    public array $childComponentParams = [];
+
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
@@ -80,6 +85,15 @@ class TreeView implements TreeViewServiceInterface
         return $data;
     }
 
+    /**
+     * @param T $node
+     * @return bool
+     */
+    public function isActive(object $node): bool
+    {
+        return $this->currentNode === $node;
+    }
+
     public function getNodeIcon(): ?string
     {
         return $this->service?->getNodeIcon();
@@ -112,6 +126,6 @@ class TreeView implements TreeViewServiceInterface
 
     public function getPostChildComponent(object $node): ?array
     {
-        return $this->service?->getPreChildComponent($node);
+        return $this->service?->getPostChildComponent($node);
     }
 }

@@ -18,9 +18,15 @@
         {%- else -%}
             {% cache 'gin-pill-cache-' ~ (entity.ulid is defined ? entity.ulid : entity.id) %}
                 <a class="badge {{ this.class(entity) }} rounded-pill text-decoration-none" href="{{ this.href() ?? "#" }}">
-                    {% cache "gin-icon-cache-" ~ icon %}
-                    <twig:Icon :icon="icon" />
-                    {% endcache %}
+                    {% if icon is iterable %}
+                            {% cache "_in-icon-cache-" ~ icon[0] ~ "-" ~ icon[1] %}
+                                <twig:Icon :icon="icon[0]" :stack="icon[1]" />
+                            {% endcache %}
+                        {% else %}
+                            {% cache "gin-icon-cache-" ~ icon %}
+                                <twig:Icon :icon="icon" />
+                            {% endcache %}
+                    {% endif %}
                     {{ entity|shorten(30) }}
                 </a>
             {% endcache %}

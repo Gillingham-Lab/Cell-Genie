@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Embeddable\Price;
 use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Form\StockKeeping\ConsumableCategoryType;
 use App\Form\StockKeeping\ConsumableLotType;
@@ -18,6 +19,7 @@ use App\Genie\Enums\Availability;
 use App\Genie\Enums\PrivacyLevel;
 use App\Repository\StockKeeping\ConsumableCategoryRepository;
 use App\Repository\StockKeeping\ConsumableRepository;
+use App\Security\Voter\ConsumableVoter;
 use App\Service\FileUploader;
 use App\Service\TreeView\ConsumableTreeViewService;
 use DateTime;
@@ -41,6 +43,7 @@ class ConsumableController extends AbstractController
         return $this->consumableHelper($categoryRepository, $category);
     }
 
+    #[Route("/consumables/item/{category}/{consumable}", name: "app_consumables_item_view_with_category")]
     #[Route("/consumables/item/{consumable}", name: "app_consumables_item_view")]
     public function consumable(
         Request $request,
@@ -49,8 +52,9 @@ class ConsumableController extends AbstractController
         EntityManagerInterface $entityManager,
         ConsumableCategoryRepository $categoryRepository,
         Consumable $consumable,
+        ?ConsumableCategory $category = null,
     ): Response {
-        $category = $consumable->getCategory();
+        $category = $category ?? $consumable->getCategory();
 
         $data = [
             "times" => 1,
@@ -144,16 +148,38 @@ class ConsumableController extends AbstractController
             new AddTool(
                 $this->generateUrl("app_consumables_category_new"),
                 icon: "box",
+                enabled: $this->isGranted(ConsumableVoter::NEW, "ConsumableCategory"),
                 tooltip: "Add a new consumable category",
                 iconStack: "add",
             ),
             new AddTool(
                 $this->generateUrl("app_consumables_item_add_to", ["category" => $category?->getId()]),
                 icon: "consumable",
+                enabled: $this->isGranted(ConsumableVoter::ATTR_ADD_TO, $category),
                 tooltip: "Add a new consumable",
                 iconStack: "add",
             ),
         ]);
+
+        $consumableToolbox = null;
+        if ($consumable) {
+            $consumableToolbox = new Toolbox([
+                new EditTool(
+                    $this->generateUrl("app_consumables_item_edit", ["consumable" => $consumable?->getId()]),
+                    icon: "consumable",
+                    enabled: $this->isGranted(ConsumableVoter::ATTR_EDIT, $consumable),
+                    tooltip: "Edit this consumable",
+                    iconStack: "edit",
+                ),
+                new AddTool(
+                    $this->generateUrl("app_consumables_item_add_lot", ["consumable" => $consumable?->getId()]),
+                    icon: "lot",
+                    enabled: $this->isGranted(ConsumableVoter::ATTR_ADD_TO, $consumable),
+                    tooltip: "Add a new lot",
+                    iconStack: "add",
+                ),
+            ]);
+        }
 
         return $this->render("parts/consumables/consumables.html.twig", [
             "categories" => $categoryRepository->findAllWithConsumablesAndLots(),
@@ -162,152 +188,11 @@ class ConsumableController extends AbstractController
             "currentLot" => $lot,
             "toolbox" => [
                 "category" => $categoryToolbox,
+                "consumable" => $consumableToolbox,
             ],
             "treeViewService" => ConsumableTreeViewService::class,
             ... $options,
         ]);
-    }
-
-    private function quickOrder(
-        EntityManagerInterface $entityManager,
-        User $user,
-        Consumable $consumable,
-        mixed $data,
-    ): int {
-        $lotCount = 0;
-
-        for ($i = 0; $i < $data["times"]; $i++) {
-            $lot = $consumable->createLot();
-            $lot->setNumberOfUnits($data["numberOfUnits"]);
-            $lot->setUnitSize($data["unitSize"]);
-            $lot->setPricePerPackage(
-                (new Price())
-                    ->setPriceValue($data["priceValue"])
-                    ->setPriceCurrency($data["priceCurrency"])
-            );
-            $lot->setBoughtBy($user);
-            $lot->setAvailability($data["status"]);
-            $lot->setBoughtOn(new DateTime("now"));
-
-            if ($data["location"]) {
-                $lot->setLocation($data["location"]);
-            }
-
-            $lotIdentifier = $data["lotIdentifier"] ?? date("ymd");
-            if ($data["times"] > 1) {
-                $lot->setLotIdentifier($lotIdentifier . ".{$lotCount}");
-            } else {
-                $lot->setLotIdentifier($lotIdentifier);
-            }
-
-            $consumable->addLot($lot);
-            $entityManager->persist($lot);
-            $lotCount++;
-        }
-
-        return $lotCount;
-    }
-
-    #[Route("/consumables/consume/{lot}", name: "app_consumables_lot_consume")]
-    public function quickLotConsume(
-        EntityManagerInterface $entityManager,
-        ConsumableLot $lot,
-    ): Response {
-        $consumable = $lot->getConsumable();
-        $isNowEmpty = False;
-
-        try {
-            // If the package is pristine, we also set the opened date
-            // We should do this up here because the code throws an exception if consumption is not possible, and
-            // having this further down would require to duplicate this line.
-            if ($lot->isPristine()) {
-                $lot->setOpenedOn(new DateTime("now"));
-            }
-
-            if ($consumable->isConsumePackage()) {
-                if ($lot->getUnitsConsumed() >= $lot->getNumberOfUnits()) {
-                    throw new Exception("There are no packages left.");
-                }
-
-                $lot->consumeUnit(1);
-
-                if ($lot->getUnitsConsumed() == $lot->getNumberOfUnits()) {
-                    $lot->setAvailability(Availability::Empty);
-                    $isNowEmpty = true;
-                }
-            } else {
-                if ($lot->getTotalAvailablePieces() <= 0) {
-                    throw new Exception("There are no pieces left to consume.");
-                }
-
-                $lot->consumePiece(1);
-
-                if ($lot->getTotalAvailablePieces() == 0) {
-                    $lot->setAvailability(Availability::Empty);
-                    $isNowEmpty = true;
-                }
-            }
-
-            $entityManager->flush();
-            $this->addFlash("success", "Consumption complete." . ($isNowEmpty ? " The lot is now empty." : ""));
-        } catch (DBALException $e) {
-            $this->addFlash("error", "Consumption was not possible due to a database error.");
-        } catch (Exception $e) {
-            $this->addFlash("error", $e->getMessage());
-        }
-
-        return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $consumable->getId()]);
-    }
-
-    #[Route("/consumables/makeAvailable/{lot}", name: "app_consumables_lot_makeAvailable")]
-    public function quickLotMakeAvailable(
-        EntityManagerInterface $entityManager,
-        ConsumableLot $lot,
-    ): Response {
-        if ($lot->getAvailability() == Availability::Empty) {
-            $this->addFlash("error", "Cannot make lot {$lot->getLotIdentifier()} available as its empty.");
-        } elseif ($lot->getAvailability() == Availability::Available) {
-            $this->addFlash("info", "Cannot make lot {$lot->getLotIdentifier()} available as it already is.");
-        } else {
-            try {
-                $lot->setAvailability(Availability::Available);
-                $lot->setArrivedOn(new DateTime("now"));
-
-                $entityManager->flush();
-                $this->addFlash("info", "Lot {$lot->getLotIdentifier()} has been made available.");
-            } catch (Exception $e) {
-                $this->addFlash("error", $e->getMessage());
-            }
-        }
-
-        return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $lot->getConsumable()->getId()]);
-    }
-
-    #[Route("/consumables/trashLot/{lot}", name: "app_consumables_lot_trash")]
-    public function quickLotTrash(
-        EntityManagerInterface $entityManager,
-        ConsumableLot $lot
-    ): Response {
-        if ($lot->getAvailability() == Availability::Empty) {
-            $this->addFlash("error", "Cannot make lot {$lot->getLotIdentifier()} available as it is already empty");
-        } else {
-            try {
-                $lot->setAvailability(Availability::Empty);
-
-                if ($lot->getConsumable()->isConsumePackage()) {
-                    $lot->setUnitsConsumed($lot->getNumberOfUnits());
-                } else {
-                    $lot->setPiecesConsumed($lot->getTotalAmountOfPieces());
-                }
-
-                $entityManager->flush();
-                $this->addFlash("info", "Lot {$lot->getLotIdentifier()} has been trashed.");
-            } catch (Exception $e) {
-                $this->addFlash("error", $e->getMessage());
-            }
-        }
-
-        return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $lot->getConsumable()->getId()]);
     }
 
     #[Route("/consumables/new", name: "app_consumables_category_new")]
@@ -373,7 +258,7 @@ class ConsumableController extends AbstractController
         ?Consumable $consumable = null,
     ): Response {
         if (!$consumable and !$category) {
-            $this->createNotFoundException("Not found.");
+            throw $this->createNotFoundException("Not found.");
         }
 
         $route = $request->attributes->get("_route");
@@ -456,7 +341,9 @@ class ConsumableController extends AbstractController
             $title = "Consumable :: {$consumable->getLongName()} :: Add Lot";
             $lot = $consumable->createLot()
                 ->setBoughtBy($user)
-                ->setBoughtOn(new DateTime("now"));
+                ->setBoughtOn(new DateTime("now"))
+                ->setConsumable($consumable)
+            ;
         } else {
             $newEntity = false;
             $consumable = $lot->getConsumable();

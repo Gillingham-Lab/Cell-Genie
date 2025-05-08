@@ -18,7 +18,11 @@ class EntityReference
      */
     public object|array|null $entity;
     public bool $iterable = false;
-    public string $icon;
+
+    /**
+     * @var string|array{string, string}
+     */
+    public string|array $icon;
 
     public function __construct(
         private readonly IconService $iconService,

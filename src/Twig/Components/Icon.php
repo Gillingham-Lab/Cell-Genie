@@ -41,6 +41,7 @@ class Icon
             "lot" => "icon icon-Lot",
 
             "view" => "far fa-fw fa-eye",
+            "hidden" => "far fa-fw fa-eye-slash",
             "add", "increase" => "fas fa-fw fa-plus",
             "minus", "decrease" => "fas fa-fw fa-minus",
             "trash", "remove" => "fas fa-fw fa-trash-alt",
@@ -49,6 +50,7 @@ class Icon
             "search" => "fas fa-fw fa-search",
             "clipboard" => "far fa-fw fa-clipboard",
             "clone" => "fa fa-clone fa-fw",
+            "arrive" => "fas fa-plane-arrival",
 
             "rack", "location", "storage" => "fas fa-fw fa-boxes",
             "box" => "fas fa-fw fa-box",

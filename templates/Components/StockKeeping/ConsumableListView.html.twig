@@ -1,0 +1,47 @@
+<div {{ attributes.defaults({
+    class: "border border-1",
+    style: "border-left-width: 5px !important;"
+}) }}>
+    {% for consumable in this.consumables|natsort %}
+        <div class="d-flex justify-content-between align-items-start {{ loop.index0 > 0 ? "border-top" : "" }} {{ currentConsumable is not null and currentConsumable.id == consumable.id ? "bg-secondary text-whit" : "" }}">
+            <div class="bg-white rounded-left py-2 text-center align-middle" style="width: 5rem; max-width: 5rem; height: 5rem; max-height: 5rem;">
+                {% if consumable.visualisation %}
+                    <figure style="overflow: clip;">
+                        <a href="{{
+                            currentCategory ? path("app_consumables_item_view_with_category", {"consumable": consumable.id, "category": currentCategory.id}) : path("app_consumables_item_view", {"consumable": consumable.id})
+                        }}">
+                            <img src="{{ path("picture", {"id": consumable.visualisation.id}) }}" class="img-fluid">
+                        </a>
+                    </figure>
+                {% else %}
+                    <span class="align-middle">
+                        <twig:Icon icon="consumable" />
+                    </span>
+                {% endif %}
+            </div>
+            <div class="flex-grow-1 ms-2 py-2 pe-2 pe-md-3">
+                <div>
+                    <a
+                        class="text-decoration-none text-black text-reset"
+                        href="{{
+                        currentCategory ? path("app_consumables_item_view_with_category", {"consumable": consumable.id, "category": currentCategory.id}) : path("app_consumables_item_view", {"consumable": consumable.id})
+                        }}">
+                        {{ consumable.longName }}
+                    </a>
+                </div>
+                <div class="text-muted">PN: {{ consumable.productNumber }}</div>
+                <twig:ProgressBar {{ ...this.progressBar(consumable) }} />
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% macro placeholder(props) %}
+    <div>
+        <span class="spinner-border" role="status">
+            <span class="visually-hidden">Loading</span>
+        </span>
+
+        Loading consumables ...
+    </div>
+{% endmacro %}

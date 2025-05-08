@@ -32,10 +32,10 @@ class ConsumableLot
     #[ORM\ManyToOne(targetEntity: Consumable::class, inversedBy: "lots")]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     #[Assert\NotBlank]
-    private ?Consumable $consumable;
+    private ?Consumable $consumable = null;
 
     #[ORM\Column(type: "string", enumType: Availability::class, options: ["default" => Availability::Available])]
-    private ?Availability $availability;
+    private ?Availability $availability = null;
 
     #[ORM\Column(type: "date")]
     #[Assert\NotBlank]
@@ -78,7 +78,7 @@ class ConsumableLot
             if ($this->getId()) {
                 $idFragment = substr($this->getId()->toBase32(), -4);
             } else {
-                $idFragment = "YYMMDD-????";
+                $idFragment = date("Hmi");
             }
 
             if ($lotDate) {

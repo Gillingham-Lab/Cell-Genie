@@ -12,7 +12,7 @@ class NatSortFilterFilter extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter("natsort", function (array|Collection $a) {
+            new TwigFilter("natsort", function (Collection|iterable $a) {
                 $b = [];
 
                 foreach ($a as $value) {
@@ -22,7 +22,7 @@ class NatSortFilterFilter extends AbstractExtension
                 natsort($b);
                 return $b;
             }),
-            new TwigFilter("natcasesort", function (array|Collection $a) {
+            new TwigFilter("natcasesort", function (Collection|iterable $a) {
                 $b = [];
 
                 foreach ($a as $value) {

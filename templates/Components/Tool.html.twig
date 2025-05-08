@@ -2,7 +2,7 @@
     <li>
         <a
             {{- attributes.defaults({
-                class: "dropdown-item",
+                class: "dropdown-item " ~ (tool.enabled ? "" : " disabled"),
             }) -}}
 
             {%- if tool.path %}
@@ -20,6 +20,10 @@
             {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
                 data-clipboard-text="{{ tool.clipboardText }}"
             {% endif -%}
+
+            {% for attribute, value in tool.otherAttributes %}
+                {{ attribute }}="{{ value }}"
+            {% endfor %}
         >
             {%- if tool.icon %}
                 {%- cache "gin-icon-" ~ tool.icon ~ "-" ~ tool.iconStack %}

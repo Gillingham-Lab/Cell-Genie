@@ -2,7 +2,6 @@
 {% import 'layout.html.twig' as layout %}
 {% import 'macros.html.twig' as macros %}
 {% import 'parts/consumables/consumables.helpers.html.twig' as consumable_helpers %}
-{% from 'utility/attachments.html.twig' import attachments %}
 
 {% if currentLot %}
     {% set var_title = "Consumables :: Lot :: " ~ currentLot.lotIdentifier %}
@@ -21,15 +20,6 @@
         <div class="container container-fluid w-100 p-0 m-0">
             <twig:PageHeader :title="var_title" icon="consumable" :barcode="true"  />
 
-            {# Toolbars #}
-            {% if currentLot is not empty %}
-                {{ consumable_helpers.consumable_lot_tools(currentLot, true) }}
-            {% elseif currentConsumable is not empty %}
-                {{ consumable_helpers.consumable_tools(currentConsumable, true) }}
-            {% elseif currentCategory is not empty %}
-            {% endif %}
-
-
             <twig:Layout:Row cols="1" md="2">
                 <twig:Layout:Col type="outer">
                     <twig:ElementCard title="Consumables" icon="consumable" :toolbox="toolbox.category">
@@ -39,6 +29,7 @@
                                 tree="{{ categories|filter(e => not e.parent) }}"
                                 :currentNode="currentCategory"
                                 :service="treeViewService"
+                                childComponentParams="{{ {"currentConsumable": currentConsumable, "currentCategory": currentCategory} }}"
                             >
                             </twig:TreeView>
                         {% endif %}
@@ -46,6 +37,49 @@
                 </twig:Layout:Col>
 
                 <twig:Layout:Col type="outer">
+                    {% if currentCategory is not null %}
+                        <twig:ElementCard class="mb-3 mb-xl-5" title="Consumable Category" icon="consumable" iconStack="box">
+                            <h3>{{ currentCategory.longName }}</h3>
+                            <div>
+                                {{ currentCategory.comment|raw }}
+                            </div>
+                        </twig:ElementCard>
+                    {% endif %}
+
+                    {% if currentConsumable is not null %}
+                        <twig:ElementCard class="mb-3 mb-xl-5"  title="Consumable" icon="consumable" iconStack="view" :toolbox="toolbox.consumable">
+                            {% import 'macros.html.twig' as macros %}
+
+                            <h3>{{ currentConsumable.longName }}</h3>
+
+                            <twig:Metadata
+                                data="{{ {
+                                    "Product Number": ["", currentConsumable.productNumber],
+                                    "Standard #Units per package": ["", currentConsumable.numberOfUnits],
+                                    "Standard #Pieces per unit": ["", currentConsumable.unitSize],
+                                    "Standard location": ["", currentConsumable.location is empty ? "none" : currentConsumable.location.pathName],
+                                    "Package consumption": ["", currentConsumable.consumePackage ? "Yes" : "No"],
+                                    "Vendor": ["raw", macros.vendor_url(currentConsumable.vendor, currentConsumable.vendorPN)],
+                                    "Minimum number of units or packages": ["", currentConsumable.orderLimit],
+                                    "Critical number of units or packages": ["", currentConsumable.criticalLimit],
+                                    "Price per package": ["", currentConsumable.pricePerPackage.priceValue/1000 ~ " " ~ currentConsumable.pricePerPackage.priceCurrency],
+                                    "Expected delivery time": ["", currentConsumable.expectedDeliveryTime],
+                                    "Instruments": ["entity", currentConsumable.instruments]
+                                } }}"
+                            ></twig:Metadata>
+
+                            {{ currentConsumable.comment|raw }}
+                        </twig:ElementCard>
+
+                        <twig:ElementCard class="mb-3 mb-xl-5" title="Consumable Lots" icon="consumable" iconStack="lot">
+                            <twig:StockKeeping:ConsumableLotView loading="lazy" :consumable="currentConsumable" :lot="currentLot" />
+                        </twig:ElementCard>
+
+                        {# Attachments #}
+                        {% from 'utility/attachments.html.twig' import attachments %}
+                        {{ attachments(currentConsumable.attachments) }}
+                    {% endif %}
+
                     {# {% if currentCategory %}
                         <div class="card mx-3 h-100">
                             {{ layout.card_header_collapse("Consumables", "CurrentConsumable") }}
@@ -100,7 +134,7 @@
                 </twig:Layout:Col>
             </twig:Layout:Row>
 
-            {% if currentConsumable %}
+            {# {% if currentConsumable %}
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
                     <div class="col p-0 m-0 mb-3">
                         <div class="card mx-3 h-100">
@@ -191,7 +225,7 @@
                         </div>
                     {% endif %}
 
-                    {# Attachments #}
+                    {# Attachments # }
                     {{ attachments(currentConsumable.attachments) }}
 
                     {% if currentLot %}
@@ -227,7 +261,7 @@
                         </div>
                     {% endif %}
                 </div>
-            {% endif %}
+            {% endif %} #}
         </div>
     </div>
 {% endblock %}

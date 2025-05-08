@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
 use App\Twig\Components\ProgressBar;
+use App\Twig\Components\StockKeeping\ConsumableListView;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -84,7 +85,13 @@ class ConsumableTreeViewService implements TreeViewServiceInterface
 
     public function getPreChildComponent(object $node): ?array
     {
-        return null;
+        return [
+            ConsumableListView::class, [
+                "loading" => "lazy",
+                "category" => $node,
+                "includingChildren" => true,
+            ]
+        ];
     }
 
     public function getPostChildComponent(object $node): ?array

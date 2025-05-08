@@ -1,7 +1,20 @@
+{% macro bar(current, max, colorClass, stripesClass, showNumbers, minimumSize=0) %}
+<div
+    class="progress-bar {{ colorClass }} {{ stripesClass }}"
+    aria-valuenow="{{ current }}"
+    aria-valuemax="{{ max }}"
+    style="width: {{ (max > 0 ? current/max*100 : minimumSize)|round }}%;"
+>
+    {% if showNumbers %}{{ current }}/{{ max }}{% endif %}
+</div>
+{% endmacro %}
+
 <div{{ attributes }}>
-    <div class="progress" role="progressbar" aria-valuenow="{{ current }}" aria-valuemax="{{ max }}">
-        <div class="progress-bar {{ this.colorClass }}" style="width: {{ (max > 0 ? current/max*100 : 0)|round }}%;">
-            {% if showNumbers %}{{ current }}/{{ max }}{% endif %}
-        </div>
+    <div class="progress" role="progressbar">
+        {{ _self.bar(current, max, this.colorClass, striped ? "progress-bar-striped" : "", showNumbers) }}
+
+        {% for bar in subBars %}
+            {{ _self.bar(bar.current, max, this.colorClass(bar.color), bar.striped ? "progress-bar-striped" : "", bar.showNumbers, 5) }}
+        {% endfor %}
     </div>
 </div>

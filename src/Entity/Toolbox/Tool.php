@@ -16,6 +16,7 @@ class Tool
         private readonly bool $confirmationRequired = false,
         private readonly string $confirmationText = "Are you sure?",
         private readonly ?string $iconStack = null,
+        private readonly array $otherAttributes = [],
     ) {
 
     }
@@ -58,5 +59,10 @@ class Tool
     public function getIconStack(): ?string
     {
         return $this->iconStack;
+    }
+
+    public function getOtherAttributes(): array
+    {
+        return $this->otherAttributes;
     }
 }
