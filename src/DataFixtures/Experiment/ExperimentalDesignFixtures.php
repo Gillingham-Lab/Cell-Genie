@@ -36,6 +36,7 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
                     ->setExposed(true)
                     ->setWeight(0)
                     ->setVariableRole(ExperimentalFieldVariableRoleEnum::Group)
+                    ->setReferenced(false)
                     ->setFormRow(
                         (new FormRow())
                             ->setLabel("compound")
@@ -51,6 +52,7 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
                     ->setExposed(true)
                     ->setWeight(1)
                     ->setVariableRole(ExperimentalFieldVariableRoleEnum::X)
+                    ->setReferenced(false)
                     ->setFormRow(
                         (new FormRow())
                             ->setLabel("time")
@@ -67,6 +69,7 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
                     ->setExposed(true)
                     ->setWeight(1)
                     ->setVariableRole(ExperimentalFieldVariableRoleEnum::Y)
+                    ->setReferenced(false)
                     ->setFormRow(
                         (new FormRow())
                             ->setLabel("MIC")
