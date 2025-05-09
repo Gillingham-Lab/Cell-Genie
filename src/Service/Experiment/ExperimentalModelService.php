@@ -113,7 +113,6 @@ readonly class ExperimentalModelService
                 }
             }
 
-            #dump($params, $content, $errorContent);
             throw new FitException($warnings, $errors, $content);
         }
 

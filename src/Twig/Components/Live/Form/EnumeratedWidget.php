@@ -26,6 +26,5 @@ class EnumeratedWidget
     #[LiveAction]
     public function generate(): void
     {
-        dump($this->formView);
     }
 }

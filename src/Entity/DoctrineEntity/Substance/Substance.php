@@ -102,7 +102,6 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
 
     public function addEpitope(Epitope $epitope): static
     {
-        var_dump("Add epitope");
         if (!$this->epitopes->contains($epitope)) {
             $this->epitopes[] = $epitope;
             $epitope->addSubstance($this);
@@ -113,7 +112,6 @@ class Substance implements \JsonSerializable, PrivacyAwareInterface
 
     public function removeEpitope(Epitope $epitope): static
     {
-        var_dump("Remove epitope");
         if ($this->epitopes->contains($epitope)) {
             $this->epitopes->removeElement($epitope);
             $epitope->removeSubstance($this);

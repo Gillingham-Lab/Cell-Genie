@@ -87,7 +87,6 @@ readonly class StorageBoxService
             try {
                 $maps[$box->getUlid()->toRfc4122()] = BoxMap::fromBox($box);
             } catch (EntityNotFoundException $e) {
-                dump($e);
             }
         }
 

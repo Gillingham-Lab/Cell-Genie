@@ -199,7 +199,6 @@ class CellController extends AbstractController
     ): Response {
         // Get all boxes that contain aliquots of the current cell line
         $boxes = $boxService->getBoxes($cell);
-        dump($boxes);
 
         // Get corresponding box maps
         $boxMaps = $boxService->getBoxMaps($cell, $boxes);
