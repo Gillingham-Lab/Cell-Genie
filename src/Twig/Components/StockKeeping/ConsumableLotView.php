@@ -42,19 +42,10 @@ class ConsumableLotView extends AbstractController
     public Consumable $consumable;
 
     #[LiveProp(writable: true, url: true)]
-    public ?ConsumableLot $selectedLot = null;
-
-    #[LiveProp(writable: true, url: true)]
     public bool $showEmpty = false;
 
     #[LiveProp]
     public ?array $initialFormData = null;
-
-    public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private Security $security,
-    ) {
-    }
 
     #[LiveAction]
     public function toggleShowEmpty(): void
@@ -77,173 +68,11 @@ class ConsumableLotView extends AbstractController
     }
 
     #[LiveAction]
-    public function viewLot(
-        #[LiveArg]
-        ConsumableLot $lot
-    ): void {
-        $this->selectedLot = $lot;
-    }
-
-    #[LiveAction]
-    public function makeLotArrive(
-        EntityManagerInterface $entityManager,
-        FlashBagAwareSessionInterface $flashBag,
-        #[LiveArg]
-        ConsumableLot $lot,
-    ): void {
-        $lot->setAvailability(Availability::Available);
-        $lot->setArrivedOn(new DateTime("now"));
-
-        $entityManager->flush();
-        $flashBag->getFlashBag()->add("info", "Lot {$lot->getLotIdentifier()} has been made available.");
-    }
-
-    #[LiveAction]
-    public function consumeLot(
-        EntityManagerInterface $entityManager,
-        FlashBagAwareSessionInterface $flashBag,
-        #[LiveArg]
-        ConsumableLot $lot,
-    ): void {
-        $consumable = $lot->getConsumable();
-        $isNowEmpty = False;
-
-        try {
-            // If the package is pristine, we also set the opened date
-            // We should do this up here because the code throws an exception if consumption is not possible, and
-            // having this further down would require to duplicate this line.
-            if ($lot->isPristine()) {
-                $lot->setOpenedOn(new DateTime("now"));
-            }
-
-            if ($consumable->isConsumePackage()) {
-                if ($lot->getUnitsConsumed() >= $lot->getNumberOfUnits()) {
-                    throw new Exception("There are no packages left.");
-                }
-
-                $lot->consumeUnit(1);
-
-                if ($lot->getUnitsConsumed() == $lot->getNumberOfUnits()) {
-                    $lot->setAvailability(Availability::Empty);
-                    $isNowEmpty = true;
-                }
-            } else {
-                if ($lot->getTotalAvailablePieces() <= 0) {
-                    throw new Exception("There are no pieces left to consume.");
-                }
-
-                $lot->consumePiece(1);
-
-                if ($lot->getTotalAvailablePieces() == 0) {
-                    $lot->setAvailability(Availability::Empty);
-                    $isNowEmpty = true;
-                }
-            }
-
-            $entityManager->flush();
-            $flashBag->getFlashBag()->add("success", "Consumption complete." . ($isNowEmpty ? " The lot is now empty." : ""));
-        } catch (DBALException $e) {
-            $flashBag->getFlashBag()->add("error", "Consumption was not possible due to a database error.");
-        } catch (Exception $e) {
-            $flashBag->getFlashBag()->add("error", $e->getMessage());
-        }
-    }
-
-    #[LiveAction]
-    public function trashLot(
-        EntityManagerInterface $entityManager,
-        FlashBagAwareSessionInterface $flashBag,
-        #[LiveArg]
-        ConsumableLot $lot,
-    ): void {
-        if ($lot->getAvailability() == Availability::Empty) {
-            $flashBag->getFlashBag()->add("error", "Cannot make lot {$lot->getLotIdentifier()} available as it is already empty");
-        } else {
-            try {
-                $lot->setAvailability(Availability::Empty);
-
-                if ($lot->getConsumable()->isConsumePackage()) {
-                    $lot->setUnitsConsumed($lot->getNumberOfUnits());
-                } else {
-                    $lot->setPiecesConsumed($lot->getTotalAmountOfPieces());
-                }
-
-                $entityManager->flush();
-                $flashBag->getFlashBag()->add("info", "Lot {$lot->getLotIdentifier()} has been trashed.");
-            } catch (Exception $e) {
-                $flashBag->getFlashBag()->add("error", $e->getMessage());
-            }
-        }
-    }
-
-    public function lotTools(ConsumableLot $lot): ToolboxEntity
-    {
-        $isEmpty = $lot->getAvailability() === Availability::Empty;
-
-        return new ToolboxEntity([
-            new Tool(
-                path: "",
-                icon: "lot",
-                enabled: $this->security->isGranted("view", $lot) and !$isEmpty,
-                tooltip: "View details",
-                iconStack: "view",
-                otherAttributes: [
-                    "data-action" => "live#action",
-                    "data-live-action-param" => "viewLot",
-                    "data-live-lot-param" => $lot->getId()->toRfc4122(),
-                ],
-            ),
-            new Tool(
-                path: "",
-                icon: "lot",
-                enabled: $this->security->isGranted("edit", $lot) and !$isEmpty,
-                tooltip: "Consume from lot",
-                iconStack: "minus",
-                otherAttributes: [
-                    "data-action" => "live#action",
-                    "data-live-action-param" => "consumeLot",
-                    "data-live-lot-param" => $lot->getId()->toRfc4122(),
-                ],
-            ),
-            new EditTool(
-                path: $this->urlGenerator->generate("app_consumables_lot_edit", ["lot" => $lot->getId()->toRfc4122()]),
-                icon: "lot",
-                enabled: ($this->security->isGranted("edit", $lot) and !$isEmpty) or $this->security->isGranted("ROLE_GROUP_ADMIN"),
-                tooltip: "Edit lot",
-                iconStack: "edit",
-            ),
-            new Tool(
-                path: "",
-                icon: "arrive",
-                enabled: $lot->getAvailability() === Availability::Ordered or $lot->getAvailability() === Availability::InPreparation,
-                tooltip: "Make available",
-                otherAttributes: [
-                    "data-action" => "live#action",
-                    "data-live-action-param" => "makeLotArrive",
-                    "data-live-lot-param" => $lot->getId()->toRfc4122(),
-                ],
-            ),
-            new Tool(
-                path: "",
-                icon: "lot",
-                enabled: $this->security->isGranted("trash", $lot) and !$isEmpty,
-                tooltip: "Trash lot",
-                iconStack: "trash",
-                otherAttributes: [
-                    "data-action" => "live#action",
-                    "data-live-action-param" => "trashLot",
-                    "data-live-lot-param" => $lot->getId()->toRfc4122(),
-                ]
-            )
-        ]);
-    }
-
-    #[LiveAction]
     public function placeQuickOrder(
         EntityManagerInterface $entityManager,
         #[CurrentUser]
         User $user,
-    ) {
+    ): void {
         $this->submitForm();
 
         $data = $this->getForm()->getData();

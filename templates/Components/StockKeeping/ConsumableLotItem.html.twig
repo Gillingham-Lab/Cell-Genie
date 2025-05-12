@@ -1,0 +1,66 @@
+<li {{ attributes.defaults({
+    class: "list-group-item px-0 " ~ this.lotClass,
+    }) }}>
+    <div class="list-group-item-tools">
+        <div class="" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-fw"></i>
+        </div>
+
+        <twig:Toolbox asDropdown="true" :toolbox="this.lotTools" size="sm" />
+    </div>
+
+    <div class="list-group-item-label">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            {% if showConsumableImage  %}
+                <div style="max-height: 2.5rem; min-width: 3.0rem; max-width: 3.0rem;">
+                    {% if lot.consumable.visualisation %}
+                        <figure>
+                            <img src="{{ path("picture", {"id": lot.consumable.visualisation.id}) }}" class="img-fluid">
+                        </figure>
+                    {% else %}
+                    <span class="align-middle text-center">
+                        <twig:Icon icon="consumable" />
+                    </span>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="ms-2 me-auto">
+                <div><strong>{{ showConsumableName ? (lot.consumable.longName ~ " | " ~ lot.lotIdentifier) : lot.lotIdentifier }}</strong></div>
+                <div>Location: {{ lot.location is empty ? "unknown" : lot.location.pathName }}</div>
+            </div>
+            <div class="text-end">
+                {% if lot.availability.value == "available" %}
+                    <div>{{ lot.availability.value }}</div>
+                    <div class="text-muted">{{ lot.arrivedOn is empty ? "unknown" : lot.arrivedOn|date("D, d M Y") }}</div>
+                {% elseif lot.availability.value == "ordered" or lot.availability.value == "in preparation" %}
+                    <div>{{ lot.availability.value }}</div>
+                    <div class="text-muted">{{ lot.boughtOn is empty ? "unknown" : lot.boughtOn|date("D, d M Y") }}</div>
+                {% else %}
+                    <div>{{ lot.availability.value }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if expanded %}
+            <twig:Metadata data="{{ {
+                "Identifier": ["", lot.lotIdentifier],
+                "Consumable": ["entity", lot.consumable],
+                "Category": ["entity", lot.consumable.category],
+                "#Units per package": ["", lot.numberOfUnits],
+                "#Pieces per unit": ["", lot.unitSize],
+                "Location": ["", lot.location is empty ? "unknown" : lot.location.pathName],
+                "Price per package": ["", lot.pricePerPackage.priceValue/1000 ~ " " ~ lot.pricePerPackage.priceCurrency],
+                "Bought by": ["", lot.boughtBy],
+                "Bought on": ["date", lot.boughtOn],
+                "Arrived on": lot.arrivedOn ? ["date", lot.arrivedOn] : ["", "never"],
+                "Time to arrive": ["", lot.arrivedOn is empty or lot.boughtOn is empty ? "n.d." : (
+                ((lot.boughtOn.diff(lot.arrivedOn).days/7)|round(0, "floor")) ~ " weeks, " ~
+                ((lot.boughtOn.diff(lot.arrivedOn).days%7)|round(0, "floor")) ~ " days"
+                )],
+                "Opened on": lot.openedOn ? ["date", lot.openedOn] : ["", "never"],
+            } }}" />
+        {% endif %}
+
+        <twig:ProgressBar :current="lot.totalAvailablePieces" :max="lot.totalAmountOfPieces" />
+    </div>
+</li>

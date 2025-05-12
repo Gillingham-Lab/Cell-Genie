@@ -124,11 +124,11 @@
                         <div class="card-body px-lg-5">
                             {% if rack is not same as(null) %}
                                 {% if consumables|length > 0 %}
-                                    {% for lot in consumables %}
-                                        <ul class="list-group">
-                                            {{ consumable_helpers.display_lot(lot) }}
-                                        </ul>
-                                    {% endfor %}
+                                    <ul class="list-group">
+                                        {% for lot in consumables %}
+                                            <twig:StockKeeping:ConsumableLotItem :lot="lot" showConsumableImage="true" showConsumableName="true" />
+                                        {% endfor %}
+                                    </ul>
                                 {% else %}
                                     No consumables in this location.
                                 {% endif %}

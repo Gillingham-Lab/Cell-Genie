@@ -56,48 +56,13 @@ class ConsumableController extends AbstractController
     ): Response {
         $category = $category ?? $consumable->getCategory();
 
-        $data = [
-            "times" => 1,
-            "numberOfUnits" => $consumable->getNumberOfUnits(),
-            "unitSize" => $consumable->getUnitSize(),
-            "priceValue" => $consumable->getPricePerPackage()?->getPriceValue(),
-            "priceCurrency" => $consumable->getPricePerPackage()?->getPriceCurrency() ?? "CHF",
-            "status" => Availability::Ordered,
-            "location" => $consumable->getLocation(),
-        ];
-        $quickOrderForm = $this->createForm(QuickOrderType::class, $data, [
-            "save_button" => true,
-            "save_label" => "Register",
-        ]);
-        $emptyForm = clone $quickOrderForm;
-        $quickOrderForm->handleRequest($request);
-
-        if ($quickOrderForm->isSubmitted() and $quickOrderForm->isValid()) {
-            $data = $quickOrderForm->getData();
-            $lotCount = $this->quickOrder($entityManager, $user, $consumable, $data);
-
-            try {
-                $entityManager->flush();
-                $this->addFlash("success", "Successfully created {$lotCount}");
-                $quickOrderForm = $emptyForm;
-
-                return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $consumable->getId()]);
-            } catch (\Error $e) {
-                $this->addFlash("error", "An error occured while creating the lots: {$e->getMessage()}");
-            }
-        }
-
-        return $this->consumableHelper($categoryRepository, $category, $consumable, options: [
-            "quickOrderForm" => $quickOrderForm,
-        ]);
+        return $this->consumableHelper($categoryRepository, $category, $consumable);
     }
 
     #[Route("consumables/toOrder", name: "app_consumables_to_order")]
     #[Route("consumables/toOrder/critical", name: "app_consumables_to_order_critical")]
     public function consumableToOrder(
         Request $request,
-        #[CurrentUser]
-        User $user,
         ConsumableRepository $consumableRepository,
     ): Response {
         /** @var "app_consumables_to_order"|"app_consumables_to_order_critical" $currentRoute */
@@ -110,22 +75,6 @@ class ConsumableController extends AbstractController
         return $this->render("parts/consumables/consumable_list.html.twig", [
             "title" => $request->attributes->get("_route") === "app_consumables_to_order_critical" ? "Critical order list" : "Order list",
             "consumables" => $consumables,
-        ]);
-    }
-
-    #[Route("/consumables/lot/{lot}", name: "app_consumables_lot_view")]
-    public function consumableLot(
-        Request $request,
-        #[CurrentUser]
-        User $user,
-        EntityManagerInterface $entityManager,
-        ConsumableCategoryRepository $categoryRepository,
-        ConsumableLot $lot,
-    ): Response {
-        $consumable = $lot->getConsumable();
-        $category = $consumable->getCategory();
-
-        return $this->consumableHelper($categoryRepository, $category, $consumable, $lot, options: [
         ]);
     }
 
@@ -330,7 +279,7 @@ class ConsumableController extends AbstractController
         ?ConsumableLot $lot = null,
     ): Response {
         if (!$consumable and !$lot) {
-            $this->createNotFoundException("Not found.");
+            throw $this->createNotFoundException("Not found.");
         }
 
         $route = $request->attributes->get("_route");
