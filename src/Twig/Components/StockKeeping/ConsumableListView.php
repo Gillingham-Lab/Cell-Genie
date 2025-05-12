@@ -6,9 +6,12 @@ namespace App\Twig\Components\StockKeeping;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Twig\Components\ProgressBar;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 /**
  * @phpstan-import-type ProgressBarColor from ProgressBar
@@ -20,7 +23,15 @@ class ConsumableListView
     use DefaultActionTrait;
 
     #[LiveProp]
-    public ConsumableCategory $category;
+    public ?ConsumableCategory $category = null;
+
+    /**
+     * @var Consumable[] $consumables
+     */
+    #[LiveProp(useSerializerForHydration: true, serializationContext: [
+        "groups" => ["twig", "component"],
+    ])]
+    public array $allConsumables = [];
 
     #[LiveProp]
     public ?Consumable $currentConsumable = null;
@@ -31,19 +42,35 @@ class ConsumableListView
     #[LiveProp]
     public bool $includingChildren = false;
 
+    #[PreMount]
+    public function preMount(array $props): array
+    {
+        if (isset($props["allConsumables"]) and $props["allConsumables"] instanceof Collection) {
+            $props["allConsumables"] = $props["allConsumables"]->toArray();
+        }
+
+        return $props;
+    }
+
     public function getConsumables(?ConsumableCategory $category = null): iterable
     {
-        if (!$this->includingChildren) {
-            yield from $this->category->getConsumables();
-        } else {
-            if (!$category) {
-                $category = $this->category;
+        if ($this->category === null) {
+            foreach ($this->allConsumables as $consumable) {
+                yield $consumable;
             }
+        } else {
+            if (!$this->includingChildren) {
+                yield from $this->category->getConsumables();
+            } else {
+                if (!$category) {
+                    $category = $this->category;
+                }
 
-            yield from $category->getConsumables();
+                yield from $category->getConsumables();
 
-            foreach ($category->getChildren() as $child) {
-                yield from $this->getConsumables($child);
+                foreach ($category->getChildren() as $child) {
+                    yield from $this->getConsumables($child);
+                }
             }
         }
     }

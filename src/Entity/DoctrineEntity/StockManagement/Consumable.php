@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Loggable;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ConsumableRepository::class)]
@@ -37,6 +38,7 @@ class Consumable implements PrivacyAwareInterface
     #[ORM\ManyToOne(targetEntity: ConsumableCategory::class, inversedBy: "consumables")]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
+    #[Groups(["extended"])]
     private ?ConsumableCategory $category = null;
 
     #[ORM\Column]
@@ -65,6 +67,7 @@ class Consumable implements PrivacyAwareInterface
     #[ORM\OneToMany(mappedBy: "consumable", targetEntity: ConsumableLot::class, cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
     #[ORM\OrderBy(["boughtOn" => "ASC"])]
     #[Assert\Valid]
+    #[Groups(["extended"])]
     private Collection $lots;
 
     /** @var Collection<int, Instrument> */

@@ -3,7 +3,6 @@
 {% import 'layout.html.twig' as layout %}
 {% from 'utility/attachments.html.twig' import attachments %}
 {% from 'parts/instruments/instruments.html.twig' import row_tools %}
-{% from 'parts/consumables/consumables.helpers.html.twig' import display_consumable_card %}
 
 {% block title %}Gin :: Instrument :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}{% endblock %}
 
@@ -246,21 +245,11 @@
 
                 {# Consumables #}
                 {% if instrument.consumables|length %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Consumables", "Consumables") }}
-
-                            {{ layout.card_body_collapse_start("Consumables") }}
-                            <div class="card-body px-lg-5 mx-0">
-                                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
-                                    {% for consumable in instrument.consumables %}
-                                        {{ display_consumable_card(consumable) }}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
+                    <twig:Layout:Col>
+                        <twig:ElementCard class="h-100" title="Consumables" icon="consumable" iconStack="instrument">
+                            <twig:StockKeeping:ConsumableListView :allConsumables="instrument.consumables" />
+                        </twig:ElementCard>
+                    </twig:Layout:Col>
                 {% endif %}
 
                 {# Modular or Collective #}
