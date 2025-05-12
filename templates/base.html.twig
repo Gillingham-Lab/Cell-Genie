@@ -129,6 +129,10 @@
             {% endif %}
         </twig:Layout:Navbar>
 
+        {% if is_granted("ROLE_USER") %}
+            <twig:NoticeView />
+        {% endif %}
+
         {% block body %}{% endblock %}
 
         {% block script_bottom %}{% endblock %}

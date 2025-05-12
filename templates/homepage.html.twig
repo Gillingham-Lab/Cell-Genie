@@ -7,14 +7,6 @@
         <div class="row justify-content-center h-100">
             {# main content #}
             <main class="col p-3 bg-secondary" role="main">
-                {% if app.session.flashbag.peekAll|length > 0 %}
-                    {% for type, messages in app.session.flashbag.all %}
-                        {% for message in messages %}
-                            <twig:Layout:Alert message="{{ message }}" type="{{ type }}"/>
-                        {% endfor %}
-                    {% endfor %}
-                {% endif %}
-
                 {% block body_main -%}
                     <div class="row">
                         <div class="container container-fluid w-100 p-0 m-0">
