@@ -10,6 +10,7 @@ use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\NameType;
 use App\Form\SaveableType;
+use App\Form\VisualisationType;
 use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\TextEditorType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -236,6 +237,17 @@ class InstrumentType extends SaveableType
                 ->add("users", InstrumentUserCollectionType::class, [
                     "label" => "Users",
                     "help" => "Configure users and their levels",
+                    "required" => false,
+                ])
+            )
+            ->add(
+                $builder->create("_visualisation", FormType::class, [
+                    "inherit_data" => true,
+                    "label" => "Picture",
+                ])
+                ->add("visualisation", VisualisationType::class, [
+                    #"inherit_data" => true,
+                    "label" => "Visualisation",
                     "required" => false,
                 ])
             )

@@ -1,21 +1,21 @@
-<div{{ attributes }}>
-    <dl class="row {{ columnClass }} gy-4">
-        {% for title, datum in data %}
-            <div class="col">
-                <dt>{{ title }}</dt>
+<dl {{ attributes.defaults({
+    class: "row gy-2 " ~ columnClass,
+}) }}>
+    {% for title, datum in data %}
+        <div class="col">
+            <dt>{{ title }}</dt>
 
-                <dd>
-                    {% if datum[0] is defined %}
-                        {{ component(datum[0], datum[1]) }}
+            <dd>
+                {% if datum[0] is defined %}
+                    {{ component(datum[0], datum[1]) }}
+                {% else %}
+                    {% if datum %}
+                        {{ datum }}
                     {% else %}
-                        {% if datum %}
-                            {{ datum }}
-                        {% else %}
-                            <span class="text-muted">empty</span>
-                        {% endif %}
+                        <span class="text-muted">empty</span>
                     {% endif %}
-                </dd>
-            </div>
-        {% endfor %}
-    </dl>
-</div>
+                {% endif %}
+            </dd>
+        </div>
+    {% endfor %}
+</dl>

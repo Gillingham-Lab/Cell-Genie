@@ -4,7 +4,11 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\DoctrineEntity\File\File;
+use App\Entity\DoctrineEntity\User\User;
+use App\Form\BasicType\FancyEntityType;
+use App\Form\BasicType\FormGroupType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,26 +30,43 @@ class DocumentationType extends AbstractType
             ->add("description", TextareaType::class, options: [
                 "label" => "Short file description.",
             ])
-            ->add("uploadedBy", options: ["disabled" => true])
-            ->add("uploadedOn", options: ["disabled" => true])
-            ->add("originalFileName", options: [
-                "disabled" => true,
-            ])
-            ->add("contentType", options: [
-                "label" => "Content type",
-                "disabled" => true,
-            ])
-            ->add("contentSize", options: [
-                "label" => "Size (in bytes)",
-                "disabled" => true,
-            ])
+
+            ->add(
+                $builder->create("_upload", FormGroupType::class, [
+                    "label" => "Upload information",
+                    "inherit_data" => true,
+                    "icon" => "upload",
+                    "icon_stack" => "view",
+                ])
+                ->add("uploadedBy", FancyEntityType::class, options: ["class" => User::class, "disabled" => true, "allow_empty" => true])
+                ->add("uploadedOn", DateTimeType::class, options: ["disabled" => true])
+            )
+            ->add(
+                $builder->create("_metadata", FormGroupType::class, [
+                    "label" => "File details",
+                    "inherit_data" => true,
+                    "icon" => "file",
+                    "icon_stack" => "view",
+                ])
+                ->add("originalFileName", options: [
+                    "disabled" => true,
+                ])
+                ->add("contentType", options: [
+                    "label" => "Content type",
+                    "disabled" => true,
+                ])
+                ->add("contentSize", options: [
+                    "label" => "Size (in bytes)",
+                    "disabled" => true,
+                ])
+            )
             ->add("uploadedFile", FileType::class, options: [
                 "label" => "Upload or replace file",
                 "help" => "Maximum file size is 20 MiB",
                 "mapped" => false,
                 "required" => true,
                 "constraints" => [
-                    new Assert\File(maxSize: "20480k")
+                    new Assert\File(maxSize: "20M")
                 ]
             ])
         ;

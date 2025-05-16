@@ -2,7 +2,7 @@
     <li>
         <a
             {{- attributes.defaults({
-                class: "dropdown-item " ~ (tool.enabled ? "" : " disabled"),
+                class: "dropdown-item " ~ (tool.enabled ? "" : " disabled ") ~ (this.clipboard ? "btn-clipboard " : ""),
             }) -}}
 
             {%- if tool.path %}
@@ -17,8 +17,8 @@
                 onclick='return confirm("{{ tool.confirmationText }}")'
             {% endif -%}
 
-            {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
-                data-clipboard-text="{{ tool.clipboardText }}"
+            {%- if this.clipboard and tool.clipboardText is defined %}
+                data-clipboard-text="{{ tool.clipboardText|escape("html_attr") }}"
             {% endif -%}
 
             {% for attribute, value in tool.otherAttributes %}
@@ -38,7 +38,7 @@
     </li>
 {% else %}
     <a {{- attributes.defaults({
-        class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled"),
+        class: "btn " ~ tool.buttonClass ~ (tool.enabled ? "" : " disabled ") ~ (this.clipboard ? "btn-clipboard " : ""),
     }) -}}
         {%- if tool.path %}
             href="{{ tool.path }}"
@@ -52,8 +52,8 @@
             onclick='return confirm("{{ tool.confirmationText }}")'
         {% endif -%}
 
-        {%- if tool is instanceof("App\\Entity\\Toolbox\\ClipwareTool") %}
-            data-clipboard-text="{{ tool.clipboardText }}"
+        {%- if this.clipboard and tool.clipboardText is defined %}
+            data-clipboard-text="{{ tool.clipboardText|escape("html_attr") }}"
         {% endif -%}
     >
         {%- if tool.icon %}

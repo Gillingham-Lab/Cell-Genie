@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Log;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\InstrumentRole;
 use App\Genie\Enums\PrivacyLevel;
+use App\Security\UserRole;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -33,6 +34,10 @@ class InstrumentVoter extends Voter
         }
 
         if ($subject instanceof Instrument) {
+            return true;
+        }
+
+        if ($attribute === self::NEW and $subject === "Instrument") {
             return true;
         }
 
@@ -116,11 +121,15 @@ class InstrumentVoter extends Voter
         };
     }
 
-    private function canCreate(Instrument $instrument, User $user): bool
+    private function canCreate(string|Instrument $instrument, User $user): bool
     {
-        // For now, all people can register machines
-        // Specific roles will be made later.
-        return true;
+        if (is_string($instrument) and $instrument === "Instrument") {
+            if (in_array(UserRole::InstrumentManagement->value, $user->getRoles()) or in_array(UserRole::GroupAdmin->value, $user->getRoles())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function canBook(Instrument $instrument, User $user): bool

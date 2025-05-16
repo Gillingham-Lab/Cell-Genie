@@ -8,9 +8,6 @@
 
         <div class="list-group-item {% if currentNode is same as(node) %}active{% endif %}">
             <div class="list-group-item-tools">
-                <div class="" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-ellipsis-v fa-fw"></i>
-                </div>
                 <twig:Toolbox asDropdown="true" :toolbox="this.nodeTools(node)" size="sm" />
             </div>
 

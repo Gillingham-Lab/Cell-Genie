@@ -58,6 +58,8 @@ class File
 
     private bool $freshlyUploaded = false;
 
+    private bool $markedForRemoval = false;
+
     public function setFromFile(UploadedFile $uploadedFile): void
     {
         try {
@@ -77,6 +79,8 @@ class File
         $this->fileBlob->setContent($uploadedFile->getContent());
         $this->setUploadedOn(new DateTime("now"));
         $this->freshlyUploaded = true;
+
+        dump($uploadedFile);
     }
 
     public function __toString(): string
@@ -228,5 +232,16 @@ class File
     {
         $parts = explode(".", $this->originalFileName);
         return end($parts);
+    }
+
+    public function isMarkedForRemoval(): bool
+    {
+        return $this->markedForRemoval;
+    }
+
+    public function setMarkedForRemoval(bool $markedForRemoval): static
+    {
+        $this->markedForRemoval = $markedForRemoval;
+        return $this;
     }
 }

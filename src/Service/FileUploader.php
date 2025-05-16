@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\File\File;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\DocumentationType;
 use App\Form\VisualisationType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -17,6 +18,7 @@ readonly class FileUploader
 
     public function __construct(
         private Security $security,
+        private EntityManagerInterface $entityManager,
     ) {
         $user = $this->security->getUser();
 
@@ -62,6 +64,10 @@ readonly class FileUploader
                 $uploader = $this->getUser();
                 $entity->setUploadedBy($uploader);
             }
+
+            if ($entity->getTitle() === null) {
+                $entity->setTitle($uploadedFile->getClientOriginalName());
+            }
         }
     }
 
@@ -85,7 +91,8 @@ readonly class FileUploader
             /** @var File $visualisation */
             $visualisation = $object->getVisualisation();
 
-            if (method_exists($object, "setVisualisation") && ($visualisation->getTitle() === null or $visualisation->getFileBlob() === null)) {
+            if ($visualisation !== null && method_exists($object, "setVisualisation") && $visualisation->isMarkedForRemoval() === true) {
+                $this->entityManager->remove($visualisation);
                 $object->setVisualisation(null);
             }
         }

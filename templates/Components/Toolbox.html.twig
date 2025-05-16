@@ -1,4 +1,8 @@
 {% if asDropdown %}
+    <div class="" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-fw"></i>
+    </div>
+
     <ul{{ attributes.defaults({class: "dropdown-menu"}) }} role="group" aria-label="tools">
         {% for tool in toolbox %}
             <twig:Tool class="btn-sm" :tool="tool" asDropdown="true" />

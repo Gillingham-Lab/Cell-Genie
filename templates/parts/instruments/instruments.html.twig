@@ -33,138 +33,31 @@
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header("Instruments") }}
+            <twig:PageHeader title="Instruments" icon="instrument" barcode />
 
-            {{ layout.toolbox([
-                {
-                    "type": "add",
-                    "target": url("app_instruments_add"),
-                    "tooltipText": "Add new instrument",
-                    "disabled": not is_granted("new", createEmptyInstrument()),
-                },
-            ]) }}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox" />
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
 
-            {% set accessible_instruments = instruments|filter(e => e.instrument.parent is same as (null) and e.role != "untrained") %}
-            {% set untrained_instruments = instruments|filter(e => e.instrument.parent is same as (null) and e.role == "untrained") %}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Instruments" icon="instrument">
+                        <twig:Layout:Row cols="1" md="2" xl="3" class="gx-3 gy-5">
+                            {% for row in instruments|filter(e => e.instrument.parent is null)|sort((a, b) => a.role == b.role ? a.instrument.instrumentNumber <=> b.instrument.instrumentNumber : (a.role == "untrained" ? 1 : 0)) %}
+                                {% set role = row.role %}
+                                {% set instrument = row.instrument %}
 
-            <div class="row">
-                <div class="col col-12 p-0 m-0 mb-3 overflow-auto">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Accessible Instruments", "Accessible") }}
-
-                        {{ layout.card_body_collapse_start("Accessible") }}
-                        <div class="card-body px-lg-5">
-                            {% if accessible_instruments|length > 0 %}
-                                <table class="table table-hover fancyTable mb-5" data-ft-sort-column=1>
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" style="width: 100px">
-                                        </th>
-                                        <th scope="col">Number</th>
-                                        <th scope="col">Short name</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Group</th>
-                                        <th scope="col">Booking?</th>
-                                        <th scope="col">Training?</th>
-                                        <th scope="col">My Status</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    {% for instrumentAndRole in accessible_instruments %}
-                                        {% set instrument = instrumentAndRole.instrument %}
-                                        {% set role = instrumentAndRole.role %}
-                                        <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
-                                            <td class="align-middle">
-                                                {{ _self.row_tools(instrument) }}
-                                            </td>
-                                            <td>
-                                                <strong>{{ instrument.instrumentNumber }}</strong>
-                                            </td>
-                                            <td>
-                                                <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
-                                            </td>
-                                            <td>{{ instrument.location }}</td>
-                                            <td>{{ instrument.group ?? "unknown" }}</td>
-                                            <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
-                                            <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
-                                            <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
-                                        </tr>
-                                    {% else %}
-                                        <tr>
-                                            <td colspan="5">No instruments registered</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <p>No accessible instruments</p>
-                            {% endif %}
-                        </div>
-
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Training required", "Training") }}
-
-                        {{ layout.card_body_collapse_start("Training") }}
-                        <div class="card-body px-lg-5">
-                            {% if untrained_instruments|length > 0 %}
-                                <table class="table table-hover fancyTable" data-ft-sort-column=1>
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" style="width: 100px">
-                                        </th>
-                                        <th scope="col">Number</th>
-                                        <th scope="col">Short name</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Group</th>
-                                        <th scope="col">Booking?</th>
-                                        <th scope="col">Training?</th>
-                                        <th scope="col">My Status</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    {% for instrumentAndRole in untrained_instruments %}
-                                        {% set instrument = instrumentAndRole.instrument %}
-                                        {% set role = instrumentAndRole.role %}
-                                        <tr class="{{ role == 'untrained' ? 'bg-light' : '' }}">
-                                            <td class="align-middle">
-                                               {{ _self.row_tools(instrument) }}
-                                            </td>
-                                            <td>
-                                                <strong>{{ instrument.instrumentNumber }}</strong>
-                                            </td>
-                                            <td>
-                                                <span data-toggle="tooltip" data-placement="bottom" title="{{ instrument.longName }}">{{ instrument.shortName }}</span>
-                                            </td>
-                                            <td>{{ instrument.location }}</td>
-                                            <td>{{ instrument.group ?? "unknown" }}</td>
-                                            <td>{{ instrument.requiresReservation ? "yes" : "no" }}</td>
-                                            <td>{{ instrument.requiresTraining ? "yes" : "no" }}</td>
-                                            <td><span class="{{ role == "untrained" ? "text-danger" : "text-success" }}">{{ role }}</span></td>
-                                        </tr>
-                                    {% else %}
-                                        <tr>
-                                            <td colspan="5">No instruments registered</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                No instruments with open training
-                            {% endif %}
-                        </div>
-
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-            </div>
+                                <twig:Layout:Col type="normal">
+                                    <twig:Instrument:InstrumentCard :instrument="instrument" :userRole="role" />
+                                </twig:Layout:Col>
+                            {% endfor %}
+                        </twig:Layout:Row>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
         </div>
     </div>
 {% endblock %}

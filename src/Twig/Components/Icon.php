@@ -85,7 +85,9 @@ class Icon
             "file.excel" => "fas fa-fw fa-file-excel",
             "file.word" => "fas fa-fw fa-file-word",
             "file.pdf" => "fas fa-fw fa-file-pdf",
-            "download" => "fa fa-fw fa-download",
+            "download" => "fas fa-fw fa-download",
+            "upload" => "fas fa-fw fa-upload",
+
             "attachment" => "fas fa-fw fa-paperclip",
 
             "other" => "fas fa-fw fa-ellipsis-v",

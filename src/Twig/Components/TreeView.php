@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use App\Service\TreeView\TreeViewServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 

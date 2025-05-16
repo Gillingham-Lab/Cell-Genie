@@ -49,6 +49,8 @@
                                             role="tabpanel"
                                             aria-labelledby="form-tab-navigation-tab-{{ group.vars.name }}"
                                     >
+                                        {{ form_errors(group) }}
+
                                         <div class="row row-cols-1">
                                             {% for child in group %}
                                                 {% if not child.rendered %}

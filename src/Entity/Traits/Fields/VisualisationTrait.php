@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait VisualisationTrait
 {
-    #[ORM\ManyToOne(targetEntity: File::class, cascade: ["persist", "remove"], fetch: "EAGER", )]
+    #[ORM\ManyToOne(targetEntity: File::class, cascade: ["persist", "remove"], fetch: "EAGER")]
     #[ORM\JoinColumn(onDelete: "SET NULL")]
     private ?File $visualisation;
 
@@ -22,6 +22,4 @@ trait VisualisationTrait
         $this->visualisation = $visualisation;
         return $this;
     }
-
-
 }

@@ -1,0 +1,7 @@
+<img
+    {{ attributes.defaults({
+        "class": "img-fluid"
+    }) }}
+    src="{{ path("picture", {"id": picture.id}) }}"
+    alt="{{ picture.description|escape("html_attr") }}"
+>

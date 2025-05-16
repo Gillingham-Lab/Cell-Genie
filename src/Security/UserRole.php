@@ -11,6 +11,8 @@ enum UserRole: string
     case Admin = "ROLE_ADMIN";
     case GroupAdmin = "ROLE_GROUP_ADMIN";
 
+    case InstrumentManagement = "INSTRUMENT_MANAGEMENT";
+
     /**
      * @param Security $security
      * @return array<string, value-of<self>>

@@ -7,6 +7,8 @@ use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\InstrumentUser;
 use App\Entity\DoctrineEntity\Log;
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\Toolbox;
 use App\Form\Instrument\InstrumentType;
 use App\Form\Instrument\InstrumentUserType;
 use App\Form\Instrument\LogType;
@@ -24,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class InstrumentController extends AbstractController
 {
@@ -35,15 +38,22 @@ class InstrumentController extends AbstractController
 
     #[Route("/instruments", name: "app_instruments")]
     public function instruments(
-        Security $security,
+        #[CurrentUser]
+        User $user,
     ): Response {
-        $user = $security->getUser();
-        assert($user instanceof User);
-
         $instruments = $this->instrumentRepository->findAllWithUserRole($user);
 
         return $this->render("parts/instruments/instruments.html.twig", [
             "instruments" => $instruments,
+            "toolbox" => new Toolbox([
+                new AddTool(
+                    path: $this->generateUrl("app_instruments_add"),
+                    icon: "instrument",
+                    enabled: $this->isGranted("new", "Instrument"),
+                    tooltip: "Add new instrument",
+                    iconStack: "add",
+                )
+            ])
         ]);
     }
 
@@ -112,9 +122,9 @@ class InstrumentController extends AbstractController
         if ($form->isSubmitted() and $form->isValid()) {
             $fileUploader->upload($form);
             $fileUploader->updateFileSequence($instrument);
+            $entityManager->persist($instrument);
 
             try {
-                $entityManager->persist($instrument);
                 $entityManager->flush();
 
                 if ($new) {

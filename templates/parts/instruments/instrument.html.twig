@@ -30,7 +30,7 @@
 
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {{ layout.header(instrument.instrumentNumber ~ " | " ~ instrument.shortName) }}
+            <twig:PageHeader title="{{ [instrument.instrumentNumber, instrument.shortName]|join(" | ") }}" icon="instrument" barcode />
 
             {% set tools = [
                 {
@@ -262,10 +262,12 @@
                             <div class="card-body px-lg-5 mx-0">
                                 <table class="table table-sm table-borderless table-hover">
                                     <thead>
-                                        <th scope="col" style="width: 50px;"></th>
-                                        <th scope="col">Number</th>
-                                        <th scope="col">Short name</th>
-                                    </thead>
+                                        <tr>
+                                            <th scope="col" style="width: 50px;"></th>
+                                            <th scope="col">Number</th>
+                                            <th scope="col">Short name</th>
+                                        </tr>
+                                        </thead>
                                     <tbody>
                                         {% for instrumentPart in instrument.children %}
                                             <tr>

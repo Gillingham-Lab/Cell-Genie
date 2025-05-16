@@ -1,0 +1,35 @@
+<div class="card h-100 rounded-2 {{ this.cardColor }}">
+    <div class="row g-0 h-100">
+        <div class="col-md-4 h-100 rounded-start-2 bg-secondary overflow-hidden align-content-center" style="max-height: 15rem;">
+            {% if instrument.visualisation %}
+                <twig:Picture :picture="instrument.visualisation" class=" {{ this.enabled ? "" : "greyscale" }}" />
+            {% endif %}
+        </div>
+        <div class="col-md-8 h-100 rounded-2 overflow-hidden">
+            <div class="overflow-y-auto" style="max-height: 15rem;">
+                <div class="card-header text-bold border-bottom sticky-top {{ this.enabled ? "bg-white" : "bg-secondary text-secondary" }} pb-0 pt-2 ps-1 d-flex">
+                    <twig:Toolbox :toolbox="this.toolbox" asDropdown="true" />
+                    <h5 class="card-title">
+                        <span class="badge text-bg-primary rounded-pill">
+                            <twig:Icon icon="instrument" />
+                            {{ instrument.instrumentNumber }}
+                        </span>
+                        {{ instrument.shortName }}
+                    </h5>
+                </div>
+                <div class="card-body">
+
+                    <twig:Metadata class="gy-1" columns="1" lg="1" xl="2" data="{{ {
+                        "My training level": userRole.value,
+                        "Training required": ["boolean", instrument.requiresTraining],
+                        "Group": instrument.group.shortName,
+                        "Contact": "",
+                        "Room": instrument.location,
+                        "Reservation needed": ["boolean", instrument.requiresReservation],
+                    } }}"/>
+                    <p class="card-text">{{ instrument.description|raw }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

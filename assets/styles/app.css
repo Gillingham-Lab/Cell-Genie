@@ -99,3 +99,8 @@ label.required:after {
 {
     padding-left: 200px;
 }
+
+img.greyscale {
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+}
