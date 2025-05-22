@@ -63,10 +63,10 @@ readonly class FileUploader
                 // Set uploader
                 $uploader = $this->getUser();
                 $entity->setUploadedBy($uploader);
-            }
 
-            if ($entity->getTitle() === null) {
-                $entity->setTitle($uploadedFile->getClientOriginalName());
+                if ($entity->getTitle() === null) {
+                    $entity->setTitle($uploadedFile->getClientOriginalName());
+                }
             }
         }
     }
