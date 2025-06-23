@@ -226,15 +226,19 @@
         {% endif %}
 
         <div id="{{ form.vars.id }}" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-            {% for child in form %}
-                <div class="col">
-                    {{ form_row(child) }}
-                </div>
-            {% endfor %}
+            {{ form_widget(form) }}
         </div>
 
         <small>{{ form_help(form) }}</small>
     </div>
+{% endblock %}
+
+{% block form_group_widget %}
+    {% for child in form %}
+        <div class="col">
+            {{ form_row(child) }}
+        </div>
+    {% endfor %}
 {% endblock %}
 
 {% block enumerated_widget %}
@@ -300,5 +304,14 @@
         {% for formRow in form %}
             {{ form_errors(formRow) }}
         {% endfor %}
+    </div>
+{% endblock %}
+
+{% block box_position_widget %}
+    <div class="col">
+        {{ form_row(form.box) }}
+    </div>
+    <div class="col">
+        {{ form_row(form.boxCoordinate) }}
     </div>
 {% endblock %}

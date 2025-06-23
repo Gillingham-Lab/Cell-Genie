@@ -11,6 +11,7 @@ use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\CompositeType\VendorFieldType;
 use App\Form\SaveableType;
+use App\Form\Storage\BoxPositionType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -94,27 +95,8 @@ class LotType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Storage",
                 ])
-                ->add("box", FancyEntityType::class, options: [
-                    "class" => Box::class,
-                    "label" => "Storage location",
-                    "help" => "Which box is the Aliquot located in",
+                ->add("storageCoordinate", BoxPositionType::class, [
 
-                    "query_builder" => function (EntityRepository $er) {
-                        return $er->createQueryBuilder("b")
-                            ->addOrderBy("b.name", "ASC");
-                    },
-                    "group_by" => function(Box $choice, $key, $value) {
-                        return ($choice->getRack());
-                    },
-                    'empty_data' => null,
-                    "placeholder" => "Empty",
-                    "required" => false,
-                    "allow_empty" => true,
-                ])
-                ->add("boxCoordinate", TextType::class, options: [
-                    "label" => "Position in box",
-                    "help" => "Give the position in the box. Use letters for row, and numbers for column (A12 is the first row, 12th column; AA1 is the 27th row, 1st column)",
-                    "required" => false,
                 ])
                 ->add("amount", TextType::class, options: [
                     "label" => "Amount",
