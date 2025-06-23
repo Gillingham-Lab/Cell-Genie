@@ -10,3 +10,11 @@
         Gin :: Instrument :: Edit :: {{ instrument.instrumentNumber }} {{ instrument.shortName }}
     {% endif %}
 {% endblock %}
+
+{% block form_header %}
+    {% if new %}
+        <twig:PageHeader title="Add new instrument" icon="instrument" barcode />
+    {% else %}
+        <twig:PageHeader title="{{ [instrument.instrumentNumber, instrument.shortName]|join(" | ") }}" icon="instrument" barcode />
+    {% endif %}
+{% endblock %}
