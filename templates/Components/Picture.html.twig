@@ -1,6 +1,13 @@
 <img
     {{ attributes.defaults({
-        "class": "img-fluid"
+        "class": "d-none d-md-inline h-100"
+    }) }}
+    src="{{ path("picture", {"id": picture.id}) }}"
+    alt="{{ picture.description|escape("html_attr") }}"
+>
+<img
+    {{ attributes.defaults({
+        "class": "d-lg-none d-sm-inline w-100"
     }) }}
     src="{{ path("picture", {"id": picture.id}) }}"
     alt="{{ picture.description|escape("html_attr") }}"
