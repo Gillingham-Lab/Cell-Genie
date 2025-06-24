@@ -5,6 +5,7 @@ namespace App\Entity\Traits\Privacy;
 
 use App\Entity\DoctrineEntity\User\User;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Context;
 
 trait OwnerTrait
 {

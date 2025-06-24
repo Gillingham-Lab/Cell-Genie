@@ -18,7 +18,6 @@ const formHelpers = (target = null) => {
             let tab_elm = document.getElementById(tab_id);
 
             let error_elements = [].slice.call(tab_elm.querySelectorAll(".is-invalid, .invalid-feedback"));
-            console.log(error_elements);
 
             if (error_elements.length > 0) {
                 navLink.classList.add("border-danger");

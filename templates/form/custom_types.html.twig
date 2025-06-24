@@ -225,20 +225,20 @@
             </div>
         {% endif %}
 
-        <div id="{{ form.vars.id }}" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-            {{ form_widget(form) }}
-        </div>
+        {{ form_widget(form) }}
 
         <small>{{ form_help(form) }}</small>
     </div>
 {% endblock %}
 
 {% block form_group_widget %}
-    {% for child in form %}
-        <div class="col">
-            {{ form_row(child) }}
-        </div>
-    {% endfor %}
+    <div id="{{ form.vars.id }}" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+        {% for child in form %}
+            <div class="col">
+                {{ form_row(child) }}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block enumerated_widget %}
@@ -308,10 +308,42 @@
 {% endblock %}
 
 {% block box_position_widget %}
-    <div class="col">
-        {{ form_row(form.box) }}
-    </div>
-    <div class="col">
-        {{ form_row(form.boxCoordinate) }}
+    <div {{ stimulus_controller('FormBoxPositionType', {
+        "boxName": form.box.vars.full_name,
+        "coordinateName": form.boxCoordinate.vars.full_name,
+        "apiEndpoint": url("app_api_storage_box_view", {"box": "boxId"})
+    }) }}>
+        <div id="{{ form.vars.id }}" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+            <div class="col" {{ stimulus_target('FormBoxPositionType', 'box') }}>
+                {{ form_row(form.box) }}
+            </div>
+
+            <div class="col">
+                <div {{ stimulus_target('FormBoxPositionType', 'coordinate') }}>
+                    <div class="mb-3">
+                        {{ form_label(form.boxCoordinate) }}
+                        {{ form_errors(form.boxCoordinate) }}
+
+                        <div class="input-group">
+                            <button
+                                type="button"
+                                class="input-group-text btn btn-primary"
+                                data-bs-toggle="collapse" data-bs-target="#{{ form.boxCoordinate.vars.id }}-box"
+                                aria-expanded="false" aria-controls="{{ form.boxCoordinate.vars.id }}"
+                            >Map</button>
+                            {{ form_widget(form.boxCoordinate) }}
+                        </div>
+
+                        {{ form_help(form.boxCoordinate) }}
+                    </div>
+
+                    <div id="{{ form.boxCoordinate.vars.id }}-box" class="collapse hidden">
+                        <div {{ stimulus_target('FormBoxPositionType', 'drawing') }}>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

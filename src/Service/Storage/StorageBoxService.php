@@ -9,6 +9,9 @@ use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
+use App\Repository\Cell\CellAliquotRepository;
+use App\Repository\Cell\CellRepository;
+use App\Repository\LotRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
@@ -19,6 +22,8 @@ readonly class StorageBoxService
     public function __construct(
         private LoggerInterface $logger,
         private Security $security,
+        private CellAliquotRepository $cellAliquotRepository,
+        private LotRepository $lotRepository,
     ) {
 
     }
@@ -116,5 +121,31 @@ readonly class StorageBoxService
         }
 
         return $maps;
+    }
+
+    private function enter(BoxMap $map, CellAliquot|Lot $object): void
+    {
+        $coordinate = $object->getBoxCoordinate();
+        $vialCount = $object instanceof CellAliquot ? $object->getVials() : $object->getNumberOfAliquotes();
+        $map->add($object, $vialCount, $coordinate);
+    }
+
+    public function getFilledBoxMap(Box $box): BoxMap
+    {
+        $boxMap = BoxMap::fromBox($box);
+
+        // Get Cell aliquots
+        $cellAliquots = $this->cellAliquotRepository->findAllFromBoxes([$box]);
+
+        foreach ($cellAliquots as $cellAliquot) {
+            $this->enter($boxMap, $cellAliquot);
+        }
+
+        $substances = $this->lotRepository->getLotsFromBoxes([$box]);
+        foreach ($substances as $substance) {
+            $this->enter($boxMap, $substance);
+        }
+
+        return $boxMap;
     }
 }

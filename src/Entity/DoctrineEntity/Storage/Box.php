@@ -9,6 +9,8 @@ use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\Storage\BoxRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BoxRepository::class)]
@@ -27,20 +29,24 @@ class Box implements PrivacyAwareInterface
     )]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
+    #[Groups(["box"])]
     private ?string $name = null;
 
     #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]
     #[Gedmo\Versioned]
+    #[Groups(["box"])]
     private ?int $rows = 1;
 
     #[ORM\Column(type: "integer")]
     #[Assert\GreaterThan(value: 0)]
     #[Gedmo\Versioned]
+    #[Groups(["box"])]
     private ?int $cols = 1;
 
     #[ORM\Column(type: "text", nullable: true)]
     #[Gedmo\Versioned]
+    #[Groups(["box"])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Rack::class, fetch: "LAZY", inversedBy: "boxes")]

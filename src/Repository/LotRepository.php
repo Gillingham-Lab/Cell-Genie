@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\DoctrineEntity\Lot;
+use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\SubstanceLot;
 use App\Genie\Enums\Availability;
@@ -117,5 +118,21 @@ class LotRepository extends ServiceEntityRepository
         }
 
         return $substanceLots;
+    }
+
+    /**
+     * @param array<int, Box> $boxes
+     * @return array<int, Lot>
+     */
+    public function getLotsFromBoxes(array $boxes): array
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select("l")
+            ->from(Lot::class, 'l')
+            ->where("l.box IN (:boxes)")
+            ->setParameter("boxes", $boxes)
+            ->getQuery();
+
+        return $query->getResult();
     }
 }

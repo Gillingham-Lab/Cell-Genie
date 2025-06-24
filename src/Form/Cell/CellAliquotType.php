@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Storage\Box;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
+use App\Form\Storage\BoxPositionType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\UserEntityType;
 use App\Repository\Vocabulary\VocabularyRepository;
@@ -109,22 +110,8 @@ class CellAliquotType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Storage",
                 ])
-                ->add("box", FancyEntityType::class, [
-                    "required" => true,
-                    "label" => "Storage box",
-                    "class" => Box::class,
-                    "query_builder" => function (EntityRepository $er) {
-                        return $er->createQueryBuilder("b")
-                            ->addOrderBy("b.name", "ASC")
-                            ;
-                    },
-                    "group_by" => function (Box $box) {
-                        return $box->getRack()?->getName() ?? "None";
-                    },
-                    "empty_data" => null,
-                    "placeholder" => "Select a box",
-                    "multiple" => false,
-                    "allow_empty" => true,
+                ->add("storageCoordinate", BoxPositionType::class, [
+
                 ])
                 ->add("boxCoordinate", TextType::class, options: [
                     "label" => "Position in box",

@@ -17,12 +17,17 @@ use App\Repository\Storage\BoxRepository;
 use App\Repository\Storage\RackRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Service\FileUploader;
+use App\Service\Storage\StorageBoxService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class StorageController extends AbstractController
 {
@@ -228,5 +233,25 @@ class StorageController extends AbstractController
             "form" => $form,
             "returnTo" => $returnTo($entity),
         ]);
+    }
+
+    #[Route("/api/storage/{box}", name: "app_api_storage_box_view")]
+    #[IsGranted("view", "box")]
+    public function boxApi(
+        Request $request,
+        SerializerInterface $serializer,
+        StorageBoxService $boxService,
+        Box $box,
+    ): Response {
+        $response = [
+            "box" => $box,
+            "map" => $boxService->getFilledBoxMap($box),
+        ];
+
+        $jsonContent = $serializer->serialize($response, "json", context: [
+            "groups" => ["id", "box"],
+        ]);
+
+        return JsonResponse::fromJsonString($jsonContent);
     }
 }
