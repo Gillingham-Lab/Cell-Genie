@@ -71,11 +71,12 @@
             <details>
                 <summary class="mb-1">
                     <twig:Icon icon="import" />
+                    <label class="form-label" for="{{ form.vars.id-importTextarea }}">Import</label>
                 </summary>
                 <div class="mb-5">
                     <div class="row mb-1">
                         <div class="col">
-                            <textarea class="form-control w-100" {{ stimulus_target("TableLiveCollection", "importField") }}></textarea>
+                            <textarea id="{{ form.vars.id-importTextarea }}" class="form-control w-100" {{ stimulus_target("TableLiveCollection", "importField") }}></textarea>
                         </div>
                     </div>
                     <div class="row">
