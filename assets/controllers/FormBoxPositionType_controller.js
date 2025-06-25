@@ -1,6 +1,5 @@
 import {Controller} from "@hotwired/stimulus";
 import BoxDrawer from "../gin/Drawing/BoxDrawer";
-import {Collapse} from "bootstrap";
 
 export default class extends Controller {
     static values = {
