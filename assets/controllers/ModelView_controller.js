@@ -131,8 +131,6 @@ export default class extends Controller {
         for (const fit of this.fitsValue) {
             let color = colorscheme[i % 10];
 
-            console.log(fit);
-
             if (!("fit" in fit && fit.fit !== null) || !("fit" in fit.fit.result)) {
                 continue;
             }
@@ -178,8 +176,6 @@ export default class extends Controller {
             });
 
             if ("referenceFit" in fit && fit.referenceFit !== null) {
-                console.log(fit.referenceFit);
-
                 if ("x" in fit.referenceFit && "y" in fit.referenceFit) {
                     data.push({
                         x: fit.referenceFit.x,
