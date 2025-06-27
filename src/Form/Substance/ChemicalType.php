@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Form\BasicType\EnumeratedType;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
+use App\Form\CompositeType\ChemicalStructureType;
 use App\Form\CompositeType\PrivacyAwareType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -69,17 +70,8 @@ class ChemicalType extends AbstractType
                     "inherit_data" => true,
                     "label" => "Structure",
                 ])
-                ->add("smiles", TextType::class, [
-                    "label" => "SMILES",
-                    "help" => "The SMILES representation of the structure. Use a tool such as ChemDraw to paste the structure.",
-                    "required" => false,
-                    "empty_data" => "",
-                ])
-                ->add("molecularMass", NumberType::class, [
-                    "label" => "Molecular mass [Da]",
-                    "help" => "Molecular mass of the structure.",
-                    "scale" => 3,
-                    "required" => false,
+                ->add("chemicalStructure", ChemicalStructureType::class, [
+                    "label" => "Structure"
                 ])
                 ->add("density", NumberType::class, [
                     "label" => "Density [g/L]",

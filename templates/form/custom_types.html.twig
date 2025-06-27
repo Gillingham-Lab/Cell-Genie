@@ -309,18 +309,18 @@
 {% endblock %}
 
 {% block box_position_widget %}
-    <div {{ stimulus_controller('FormBoxPositionType', {
+    <div {{ stimulus_controller('FormTypes/FormBoxPositionType', {
         "boxName": form.box.vars.full_name,
         "coordinateName": form.boxCoordinate.vars.full_name,
         "apiEndpoint": url("app_api_storage_box_view", {"box": "boxId"})
     }) }}>
         <div id="{{ form.vars.id }}" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-            <div class="col" {{ stimulus_target('FormBoxPositionType', 'box') }}>
+            <div class="col" {{ stimulus_target('FormTypes/FormBoxPositionType', 'box') }}>
                 {{ form_row(form.box) }}
             </div>
 
             <div class="col">
-                <div {{ stimulus_target('FormBoxPositionType', 'coordinate') }}>
+                <div {{ stimulus_target('FormTypes/FormBoxPositionType', 'coordinate') }}>
                     <div class="mb-3">
                         {{ form_label(form.boxCoordinate) }}
                         {{ form_errors(form.boxCoordinate) }}
@@ -339,7 +339,7 @@
                     </div>
 
                     <div id="{{ form.boxCoordinate.vars.id }}-box" class="collapse hidden">
-                        <div {{ stimulus_target('FormBoxPositionType', 'drawing') }}>
+                        <div {{ stimulus_target('FormTypes/FormBoxPositionType', 'drawing') }}>
 
                         </div>
                     </div>
@@ -347,4 +347,20 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block chemical_structure_widget %}
+<div {{ stimulus_controller('FormTypes/ChemicalStructureType', {
+}) }}>
+    <div id="{{ form.vars.id }}" class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+        <div class="col" {{ stimulus_target('FormTypes/ChemicalStructureType', 'smiles') }}>
+            {{ form_row(form.smiles) }}
+            <div {{ stimulus_target("FormTypes/ChemicalStructureType", "smilesView") }}></div>
+        </div>
+
+        <div class="col" {{ stimulus_target('FormTypes/ChemicalStructureType', 'molecularMass') }}>
+            {{ form_row(form.molecularMass) }}
+        </div>
+    </div>
+</div>
 {% endblock %}

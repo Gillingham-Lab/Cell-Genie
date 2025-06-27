@@ -1,5 +1,5 @@
 import {Controller} from "@hotwired/stimulus";
-import BoxDrawer from "../gin/Drawing/BoxDrawer";
+import BoxDrawer from "../../gin/Drawing/BoxDrawer";
 
 export default class extends Controller {
     static values = {
