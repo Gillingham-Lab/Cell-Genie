@@ -9,7 +9,6 @@ use App\Entity\DoctrineEntity\Vocabulary\Morphology;
 use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use App\Entity\DoctrineEntity\Vocabulary\Tissue;
 use App\Entity\Embeddable\Price;
-use App\Entity\Experiment;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\Fields\IdTrait;
@@ -129,10 +128,6 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?string $trypsin = null;
 
-    /** @var Collection<int, Experiment>  */
-    #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "cells")]
-    private Collection $experiments;
-
     #[ORM\Column(type: "text", nullable: true)]
     #[Gedmo\Versioned]
     private ?string $lysing = null;
@@ -164,7 +159,6 @@ class Cell implements PrivacyAwareInterface
     {
         $this->cellAliquotes = new ArrayCollection();
         $this->children = new ArrayCollection();
-        $this->experiments = new ArrayCollection();
         $this->attachments = new ArrayCollection();
         $this->cellProteins = new ArrayCollection();
         $this->price = new Price();
@@ -450,33 +444,6 @@ class Cell implements PrivacyAwareInterface
     public function setTrypsin(?string $trypsin): self
     {
         $this->trypsin = $trypsin;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Experiment>
-     */
-    public function getExperiments(): Collection
-    {
-        return $this->experiments;
-    }
-
-    public function addExperiment(Experiment $experiment): self
-    {
-        if (!$this->experiments->contains($experiment)) {
-            $this->experiments[] = $experiment;
-            $experiment->addCell($this);
-        }
-
-        return $this;
-    }
-
-    public function removeExperiment(Experiment $experiment): self
-    {
-        if ($this->experiments->removeElement($experiment)) {
-            $experiment->removeCell($this);
-        }
 
         return $this;
     }

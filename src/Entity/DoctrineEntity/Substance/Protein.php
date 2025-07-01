@@ -33,11 +33,6 @@ class Protein extends Substance
     #[ORM\InverseJoinColumn(name: "protein_child_ulid", referencedColumnName: "ulid", onDelete: "SET NULL")]
     private Collection $parents;
 
-    /** @var Collection<int, Experiment> */
-    #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "proteinTargets")]
-    #[ORM\JoinColumn(name: "protein_ulid", referencedColumnName: "ulid", nullable: false, onDelete: "CASCADE")]
-    private Collection $experiments;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
     private ?string $proteinType = null;
@@ -57,7 +52,6 @@ class Protein extends Substance
     public function __construct()
     {
         parent::__construct();
-        $this->experiments = new ArrayCollection();
         $this->parents = new ArrayCollection();
         $this->children = new ArrayCollection();
     }
@@ -141,33 +135,6 @@ class Protein extends Substance
     {
         if ($this->children->removeElement($child)) {
             $child->removeParent($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Experiment>
-     */
-    public function getExperiments(): Collection
-    {
-        return $this->experiments;
-    }
-
-    public function addExperiment(Experiment $experiment): self
-    {
-        if (!$this->experiments->contains($experiment)) {
-            $this->experiments[] = $experiment;
-            $experiment->addProteinTarget($this);
-        }
-
-        return $this;
-    }
-
-    public function removeExperiment(Experiment $experiment): self
-    {
-        if ($this->experiments->removeElement($experiment)) {
-            $experiment->removeProteinTarget($this);
         }
 
         return $this;

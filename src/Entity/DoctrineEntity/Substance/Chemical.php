@@ -33,17 +33,12 @@ class Chemical extends Substance
     #[ORM\Column(type: "string", nullable: true)]
     private ?string $casNumber = null;
 
-    /** @var Collection<int, Experiment> */
-    #[ORM\ManyToMany(targetEntity: Experiment::class, mappedBy: "chemicals")]
-    private Collection $experiments;
-
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $iupacName = null;
 
     public function __construct()
     {
         parent::__construct();
-        $this->experiments = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -59,33 +54,6 @@ class Chemical extends Substance
     public function setSmiles(string $smiles): self
     {
         $this->smiles = $smiles;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Experiment>
-     */
-    public function getExperiments(): Collection
-    {
-        return $this->experiments;
-    }
-
-    public function addExperiment(Experiment $experiment): self
-    {
-        if (!$this->experiments->contains($experiment)) {
-            $this->experiments[] = $experiment;
-            $experiment->addChemical($this);
-        }
-
-        return $this;
-    }
-
-    public function removeExperiment(Experiment $experiment): self
-    {
-        if ($this->experiments->removeElement($experiment)) {
-            $experiment->removeChemical($this);
-        }
 
         return $this;
     }
