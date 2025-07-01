@@ -17,7 +17,7 @@ class ChemicalStructureType extends AbstractType
         return FormGroupType::class;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add("smiles", TextType::class, [
@@ -35,7 +35,7 @@ class ChemicalStructureType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault("inherit_data", true);
         $resolver->setDefault("label", "Storage location");

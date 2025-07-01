@@ -15,7 +15,7 @@ doctrine:
         auto_mapping: true
         report_fields_where_declared: true
         controller_resolver:
-            auto_mapping: true
+            auto_mapping: false
         mappings:
             App:
                 is_bundle: false
