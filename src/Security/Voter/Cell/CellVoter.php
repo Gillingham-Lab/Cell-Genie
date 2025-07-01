@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -43,9 +44,10 @@ class CellVoter extends Voter
      * @param self::ATTR_*|self::NEW $attribute
      * @param ($attribute is self::NEW ? 'Cell' : Cell) $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 

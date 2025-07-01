@@ -5,6 +5,7 @@ namespace App\Security\Voter\User;
 
 use App\Entity\DoctrineEntity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -41,9 +42,10 @@ class UserVoter extends Voter
      * @param self::NEW|self::ATTR_* $attribute
      * @param ($attribute is self::NEW ? 'User' : User) $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $currentUser = $token->getUser();
 

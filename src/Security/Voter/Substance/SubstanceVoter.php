@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Security\Voter\AbstractPrivacyAwareVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 
 /**
  * @extends AbstractPrivacyAwareVoter<self::NEW, 'Substance'>
@@ -51,9 +52,10 @@ class SubstanceVoter extends AbstractPrivacyAwareVoter
      * @param self::NEW|self::ATTR_* $attribute
      * @param ($attribute is self::NEW ? 'Substance' : Substance) $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 

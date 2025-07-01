@@ -6,6 +6,7 @@ namespace App\Security\Voter\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -39,9 +40,10 @@ class CellGroupVoter extends Voter
      * @param self::ATTR_NEW|self::ATTR_EDIT|self::ATTR_REMOVE $attribute
      * @param ($attribute is self::ATTR_NEW ? 'CellGroup' : CellGroup) $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 

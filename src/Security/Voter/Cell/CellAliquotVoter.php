@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\PrivacyLevel;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -38,9 +39,10 @@ class CellAliquotVoter extends Voter
      * @param self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_CONSUME|self::ATTR_REMOVE|self::ATTR_OWNS|self::ATTR_ADD_CULTURE $attribute
      * @param CellAliquot $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
         $aliquot = $subject;

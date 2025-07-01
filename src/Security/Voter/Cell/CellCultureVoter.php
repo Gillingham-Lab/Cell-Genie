@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Cell\CellCultureEvent;
 use App\Entity\DoctrineEntity\User\User;
 use App\Security\Voter\AbstractPrivacyAwareVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 
 /**
  * @extends AbstractPrivacyAwareVoter<self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_REMOVE|self::ATTR_TRASH|self::ATTR_OWNS|self::ATTR_ADD_EVENT, CellCulture>
@@ -50,9 +51,10 @@ class CellCultureVoter extends AbstractPrivacyAwareVoter
      * @param self::ATTR_VIEW|self::ATTR_EDIT|self::ATTR_REMOVE|self::ATTR_TRASH|self::ATTR_OWNS|self::ATTR_ADD_EVENT $attribute
      * @param ($attribute is self::ATTR_ADD_EVENT ? CellCulture : CellCulture|CellCultureEvent) $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 

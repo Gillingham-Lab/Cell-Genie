@@ -1,5 +1,8 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
+    property_info:
+        with_constructor_extractor: false
+
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
     http_method_override: true
@@ -15,6 +18,8 @@ framework:
         gc_maxlifetime: 14400
         save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
 
+    profiler:
+        collect_serializer_data: true
 
     #esi: true
     #fragments: true

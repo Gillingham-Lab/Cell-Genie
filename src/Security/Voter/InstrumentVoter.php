@@ -11,6 +11,7 @@ use App\Genie\Enums\InstrumentRole;
 use App\Genie\Enums\PrivacyLevel;
 use App\Security\UserRole;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -52,9 +53,10 @@ class InstrumentVoter extends Voter
      * @param self::NEW|self::ATTR_* $attribute
      * @param Instrument|array{0: Instrument, 1: Log} $subject
      * @param TokenInterface $token
+     * @param ?Vote $vote
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 
