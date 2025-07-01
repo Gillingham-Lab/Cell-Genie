@@ -53,7 +53,6 @@
         "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "*",
         "tecnickcom/tcpdf": "^6.5",
-        "tienvx/ux-collection-js": "1.1",
         "twig/cache-extra": "^3.10",
         "twig/extra-bundle": "^3.6",
         "twig/html-extra": "^3.18",

@@ -14,9 +14,15 @@ export default class extends Controller {
         this.smilesTarget.querySelector("input").addEventListener("change", this.onSmilesChanged.bind(this));
     }
 
-    onSmilesChanged()
+    async onSmilesChanged()
     {
-        const newSmiles = this.smilesTarget.querySelector("input").value;
-        const mol = Molecule.fromSmiles(newSmiles);
+        new Promise((resolve, reject) => {
+            resolve(this.smilesTarget.querySelector("input").value)
+        }).then(function(smiles) {
+            let mol = window.RDKit.get_mol(smiles);
+            console.log(mol);
+        });
+
+        //const mol = Molecule.fromSmiles(newSmiles);
     }
 }

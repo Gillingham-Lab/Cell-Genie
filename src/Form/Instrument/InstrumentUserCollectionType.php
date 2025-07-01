@@ -3,15 +3,18 @@ declare(strict_types=1);
 
 namespace App\Form\Instrument;
 
+use App\Form\BasicType\FancyCollectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
-class InstrumentUserCollectionType extends CollectionJsType
+class InstrumentUserCollectionType extends AbstractType
 {
+    public function getParent(): string
+    {
+        return FancyCollectionType::class;
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             "required" => false,
             "entry_type" => InstrumentUserType::class,

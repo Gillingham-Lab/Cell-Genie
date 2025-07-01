@@ -13,6 +13,7 @@ doctrine:
         quote_strategy: doctrine.orm.quote_strategy.ansi
         enable_lazy_ghost_objects: true
         auto_mapping: true
+        report_fields_where_declared: true
         controller_resolver:
             auto_mapping: true
         mappings:

@@ -667,9 +667,6 @@
     "theseer/tokenizer": {
         "version": "1.2.1"
     },
-    "tienvx/ux-collection-js": {
-        "version": "v1.0.0"
-    },
     "twig/extra-bundle": {
         "version": "v3.6.0"
     },

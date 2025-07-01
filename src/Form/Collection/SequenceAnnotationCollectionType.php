@@ -3,16 +3,20 @@ declare(strict_types=1);
 
 namespace App\Form\Collection;
 
+use App\Form\BasicType\FancyCollectionType;
 use App\Form\SequenceAnnotationType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
-class SequenceAnnotationCollectionType extends CollectionJsType
+class SequenceAnnotationCollectionType extends AbstractType
 {
+    public function getParent(): string
+    {
+        return FancyCollectionType::class;
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             "required" => false,
             "entry_type" => SequenceAnnotationType::class,

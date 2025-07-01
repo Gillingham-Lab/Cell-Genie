@@ -10,7 +10,6 @@
         "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^4.0.0",
-        "@tienvx/ux-collection-js": "file:vendor/tienvx/ux-collection-js/src/Resources/assets",
         "core-js": "^3.23.0",
         "cropperjs": "^1.6.2",
         "regenerator-runtime": "^0.13.9",
@@ -31,6 +30,7 @@
     },
     "dependencies": {
         "@babel/preset-react": "^7.26.3",
+        "@rdkit/rdkit": "^2025.3.3-1.0.0",
         "@scanapp/html5-qrcode": "^0.0.9",
         "bootstrap": "^5.3.0",
         "bootswatch": "^5.3.1",
@@ -42,6 +42,7 @@
         "file-loader": "^6.0.0",
         "jquery": "^3.7.0",
         "jquery.fancytable": "^1.0.34",
+        "openchemlib": "^9.3.0",
         "papaparse": "^5.4.1",
         "plotly.js-dist": "^3.0.0",
         "prop-types": "^15.8.1",

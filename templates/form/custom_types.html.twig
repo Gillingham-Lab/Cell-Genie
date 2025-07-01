@@ -364,3 +364,46 @@
     </div>
 </div>
 {% endblock %}
+
+{% block fancy_collection_row %}
+    <div {{ stimulus_controller("FormTypes/FancyCollectionType", {
+        "index": form.children|length > 0 ? form.children|last.vars.name+1 : 0,
+        "prototype": form_widget(form.vars.prototype),
+    }) }}>
+        <div {{ stimulus_target("FormTypes/FancyCollectionType", "collectionContainer") }}
+            id="{{ form.vars.id }}" class="accordion"
+        >
+            {{ form_row(form) }}
+        </div>
+
+        {% if allow_add %}
+            <button type="button" class="btn btn-outline-primary" {{ stimulus_action("FormTypes/FancyCollectionType", "addCollectionElement") }}>
+                {{ label_button_add }}
+            </button>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block fancy_collection_entry_row %}
+    <div id="{{ form.vars.id }}" class="accordion-item mb-5">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{ form.vars.id }}-content" aria-expanded="true" aria-controls="{{ form.vars.id }}-content">
+                {{ value ?? "New entry" }}
+            </button>
+        </h2>
+
+        <div class="btn-group" role="group" aria-label="Actions">
+            {% if form_parent(form).vars.allow_delete %}
+                <button type="button" class="btn btn-link btn-link-danger" {{ stimulus_action("FormTypes/FancyCollectionType", "removeCollectionElement", "click", {"id": form.vars.id}) }}>
+                    <twig:Icon icon="trash" />
+                </button>
+            {% endif %}
+        </div>
+
+        <div id="{{ form.vars.id }}-content" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                {{ form_widget(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

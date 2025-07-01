@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Form\BasicType\EnumeratedType;
+use App\Form\BasicType\FancyCollectionType;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\CellularProteinCollectionType;
 use App\Form\Collection\AttachmentCollectionType;
@@ -26,7 +27,6 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
 /**
  * @extends SaveableType<Cell>
@@ -83,7 +83,7 @@ class CellType extends SaveableType
                     "inherit_data" => true,
                     "label" => "Expressed proteins",
                 ])
-                    ->add("cellProteins", CollectionJsType::class, [
+                    ->add("cellProteins", FancyCollectionType::class, [
                         "label" => "Expressed proteins in this cell",
                         "required" => false,
                         "entry_type" => CellularProteinCollectionType::class,

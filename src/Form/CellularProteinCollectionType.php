@@ -5,6 +5,7 @@ namespace App\Form;
 
 use App\Entity\DoctrineEntity\Cell\CellProtein;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Form\BasicType\FancyCollectionType;
 use App\Genie\Enums\GeneRegulation;
 use Doctrine\DBAL\Types\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -14,7 +15,6 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Valid;
-use Tienvx\UX\CollectionJs\Form\CollectionJsType;
 
 /**
  * @extends AbstractType<CellProtein>
@@ -36,12 +36,10 @@ class CellularProteinCollectionType extends AbstractType
             ->add("description", options: [
                 "help" => "Context or details about the protein."
             ])
-            ->add("detection", type: CollectionJsType::class, options: [
+            ->add("detection", type: FancyCollectionType::class, options: [
                 "prototype" => true,
                 "allow_add" => true,
                 "allow_delete" => true,
-                "allow_move_up" => true,
-                "allow_move_down" => true,
                 "delete_empty" => true,
                 "by_reference" => false,
                 "entry_type" => DetectionEntryType::class,
