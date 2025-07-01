@@ -55,7 +55,6 @@ final class SubstanceTable extends AbstractController
     use ValidatableComponentTrait;
     use PaginatedTrait;
 
-    /** @var 'antibody'|'chemical'|'oligo'|'plasmid'|'protein' */
     #[LiveProp]
     #[Assert\Choice(choices: ["antibody", "chemical", "oligo", "plasmid", "protein"])]
     public string $type;

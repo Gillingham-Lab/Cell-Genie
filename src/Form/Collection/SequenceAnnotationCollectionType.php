@@ -23,7 +23,6 @@ class SequenceAnnotationCollectionType extends AbstractType
             "by_reference" => false,
             "allow_add" => true,
             "allow_delete" => true,
-            "call_post_add_on_init" => true,
             "attr" => array(
                 "class" => "collection",
             ),

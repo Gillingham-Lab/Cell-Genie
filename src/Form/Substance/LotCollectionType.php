@@ -24,7 +24,6 @@ class LotCollectionType extends AbstractType
             "allow_delete" => true,
             "allow_move_up" => true,
             "allow_move_down" => true,
-            "call_post_add_on_init" => true,
             "attr" => array(
                 "class" => "collection",
             ),

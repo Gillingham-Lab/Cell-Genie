@@ -4,4 +4,3 @@ twig:
         - 'form/custom_types.html.twig'
         - 'form/crop_image.html.twig'
         - 'bootstrap_5_layout.html.twig'
-        - '@CollectionJs/bootstrap_5_layout.html.twig'
