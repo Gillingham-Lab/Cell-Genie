@@ -226,7 +226,7 @@ class StorageController extends AbstractController
             }
         }
 
-        return $this->renderForm("parts/forms/add_or_edit_storage.html.twig", [
+        return $this->render("parts/forms/add_or_edit_storage.html.twig", [
             "type" => $type,
             "rack" => $rack,
             "box" => $box,

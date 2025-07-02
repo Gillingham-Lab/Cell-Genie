@@ -13,6 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<CellCultureTestEvent>
+ */
 class CellCultureTestEventCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

@@ -6,7 +6,7 @@ namespace App\Genie\Codec;
 use App\Genie\Enums\DatumEnum;
 use App\Service\Doctrine\Type\Ulid;
 use DateTime;
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\Proxy;
 use InvalidArgumentException;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
@@ -64,7 +64,11 @@ readonly class ExperimentValueCodec
                 throw new InvalidArgumentException("A value for entityReference must have an getId / getUlid method");
             }
 
-            $className = ClassUtils::getClass($value);
+            if ($value instanceof Proxy) {
+                $className = get_parent_class($value);
+            } else {
+                $className = get_class($value);
+            }
         } else {
             $id = $value[0];
             $className = $value[1];

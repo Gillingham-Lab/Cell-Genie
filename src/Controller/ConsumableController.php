@@ -114,14 +114,14 @@ class ConsumableController extends AbstractController
         if ($consumable) {
             $consumableToolbox = new Toolbox([
                 new EditTool(
-                    $this->generateUrl("app_consumables_item_edit", ["consumable" => $consumable?->getId()]),
+                    $this->generateUrl("app_consumables_item_edit", ["consumable" => $consumable->getId()]),
                     icon: "consumable",
                     enabled: $this->isGranted(ConsumableVoter::ATTR_EDIT, $consumable),
                     tooltip: "Edit this consumable",
                     iconStack: "edit",
                 ),
                 new AddTool(
-                    $this->generateUrl("app_consumables_item_add_lot", ["consumable" => $consumable?->getId()]),
+                    $this->generateUrl("app_consumables_item_add_lot", ["consumable" => $consumable->getId()]),
                     icon: "lot",
                     enabled: $this->isGranted(ConsumableVoter::ATTR_ADD_TO, $consumable),
                     tooltip: "Add a new lot",

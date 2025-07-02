@@ -11,6 +11,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
+/**
+ * @extends AbstractCrudController<Vendor>
+ */
 class VendorCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

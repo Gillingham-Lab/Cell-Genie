@@ -14,6 +14,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
+/**
+ * @extends AbstractCrudController<Chemical>
+ */
 class ChemicalCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

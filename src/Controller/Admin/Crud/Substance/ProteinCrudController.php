@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin\Crud\Substance;
 
 use App\Controller\Admin\Crud\LotCrudController;
-use App\Controller\Admin\VocabularyTrait;
+use App\Controller\Admin\Traits\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Repository\Vocabulary\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -18,6 +18,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
+/**
+ * @extends AbstractCrudController<Protein>
+ */
 class ProteinCrudController extends AbstractCrudController
 {
     use VocabularyTrait;

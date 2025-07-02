@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace App\Form\Instrument;
 
 use App\Form\BasicType\FancyCollectionType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<InstrumentUserType[]>
+ */
 class InstrumentUserCollectionType extends AbstractType
 {
     public function getParent(): string

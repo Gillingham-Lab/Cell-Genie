@@ -8,6 +8,9 @@ use App\Form\SequenceAnnotationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<SequenceAnnotationType[]>
+ */
 class SequenceAnnotationCollectionType extends AbstractType
 {
     public function getParent(): string

@@ -3,19 +3,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Crud\Cell;
 
-use App\Controller\Admin\ExtendedAbstractCrudController;
-use App\Controller\Admin\VocabularyTrait;
+use App\Controller\Admin\Traits\AssetTrait;
+use App\Controller\Admin\Traits\FileUploadTrait;
+use App\Controller\Admin\Traits\VocabularyTrait;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\Traits\Collections\HasAttachmentsTrait;
 use App\Entity\Traits\VendorTrait;
 use App\Form\CellularProteinType;
 use App\Repository\Vocabulary\VocabularyRepository;
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\F;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -23,9 +24,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class CellCrudController extends ExtendedAbstractCrudController
+/**
+ * @extends AbstractCrudController<Cell>
+ */
+class CellCrudController extends AbstractCrudController
 {
     use VocabularyTrait;
+    use AssetTrait;
+    use FileUploadTrait;
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository,

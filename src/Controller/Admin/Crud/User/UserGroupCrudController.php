@@ -15,6 +15,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
+/**
+ * @extends AbstractCrudController<UserGroup>
+ */
 class UserGroupCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

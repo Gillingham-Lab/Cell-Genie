@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Traits;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 

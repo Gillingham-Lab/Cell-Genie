@@ -31,22 +31,6 @@ class ProteinRepository extends SubstanceRepository implements PaginatedReposito
     }
 
     /**
-     * @param Cell $cell
-     * @return Protein[]
-     */
-    public function findByCell(Cell $cell): array
-    {
-        return $this->createQueryBuilder("p")
-            ->leftJoin("p.experiments", "e", conditionType: Join::ON)
-            ->leftJoin("e.cells", "ce", conditionType: Join::ON)
-            ->andWhere("ce = :cell")
-            ->setParameter("cell", $cell)
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
-    /**
      * @param null|array<string, "ASC"|"DESC"> $orderBy
      * @return Protein[]
      */

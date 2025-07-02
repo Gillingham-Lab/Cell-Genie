@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Crud\Cell;
 
-use App\Controller\Admin\VocabularyTrait;
+use App\Controller\Admin\Traits\VocabularyTrait;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\Traits\HasBoxTrait;
 use App\Genie\Enums\PrivacyLevel;
@@ -20,6 +20,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
+/**
+ * @extends AbstractCrudController<CellAliquot>
+ */
 class CellAliquotCrudController extends AbstractCrudController
 {
     use VocabularyTrait;

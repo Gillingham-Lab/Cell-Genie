@@ -6,7 +6,6 @@ namespace App\Twig\Components;
 use App\Entity\Toolbox\ClipwareTool;
 use App\Entity\Toolbox\Tool as ToolEntity;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 #[AsTwigComponent]
 class Tool
@@ -14,10 +13,8 @@ class Tool
     public ToolEntity $tool;
     public bool $asDropdown = false;
 
-    public function isClipboard()
+    public function isClipboard(): bool
     {
-        if ($this->tool instanceof ClipwareTool) {
-            return true;
-        }
+        return $this->tool instanceof ClipwareTool;
     }
 }

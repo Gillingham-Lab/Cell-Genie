@@ -13,6 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<Lot>
+ */
 class LotCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

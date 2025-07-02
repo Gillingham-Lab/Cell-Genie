@@ -6,6 +6,9 @@ namespace App\Controller\Admin;
 use App\Entity\DoctrineEntity\Vocabulary\Tissue;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Tissue>
+ */
 class TissueCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

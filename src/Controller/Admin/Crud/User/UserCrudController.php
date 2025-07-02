@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
+/**
+ * @extends AbstractCrudController<User>
+ */
 class UserCrudController extends AbstractCrudController
 {
     public function __construct(

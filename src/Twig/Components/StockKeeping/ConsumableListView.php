@@ -25,9 +25,7 @@ class ConsumableListView
     #[LiveProp]
     public ?ConsumableCategory $category = null;
 
-    /**
-     * @var Consumable[] $consumables
-     */
+    /** @var array<int, Consumable> */
     #[LiveProp(useSerializerForHydration: true, serializationContext: [
         "groups" => ["twig", "component"],
     ])]
@@ -42,6 +40,10 @@ class ConsumableListView
     #[LiveProp]
     public bool $includingChildren = false;
 
+    /**
+     * @param array<string, mixed> $props
+     * @return array<string, mixed>
+     */
     #[PreMount]
     public function preMount(array $props): array
     {
@@ -52,6 +54,9 @@ class ConsumableListView
         return $props;
     }
 
+    /**
+     * @return iterable<Consumable>
+     */
     public function getConsumables(?ConsumableCategory $category = null): iterable
     {
         if ($this->category === null) {

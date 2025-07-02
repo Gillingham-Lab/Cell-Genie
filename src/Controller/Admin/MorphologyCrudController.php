@@ -6,6 +6,9 @@ namespace App\Controller\Admin;
 use App\Entity\DoctrineEntity\Vocabulary\Morphology;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Morphology>
+ */
 class MorphologyCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

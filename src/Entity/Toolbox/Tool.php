@@ -7,6 +7,17 @@ use Closure;
 
 class Tool
 {
+    /**
+     * @param string $path
+     * @param string|null $icon
+     * @param string $buttonClass
+     * @param bool $enabled
+     * @param string|null $tooltip
+     * @param bool $confirmationRequired
+     * @param string $confirmationText
+     * @param string|null $iconStack
+     * @param array<string, mixed> $otherAttributes
+     */
     public function __construct(
         private readonly string $path,
         private readonly ?string $icon = null,
@@ -61,6 +72,9 @@ class Tool
         return $this->iconStack;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOtherAttributes(): array
     {
         return $this->otherAttributes;

@@ -12,6 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<Epitope>
+ */
 class EpitopeCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

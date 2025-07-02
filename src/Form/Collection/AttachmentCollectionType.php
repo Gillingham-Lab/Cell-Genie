@@ -8,6 +8,9 @@ use App\Form\DocumentationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<DocumentationType[]>
+ */
 class AttachmentCollectionType extends AbstractType
 {
     public function getParent(): string

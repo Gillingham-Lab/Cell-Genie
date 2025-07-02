@@ -108,7 +108,7 @@ class BarcodeController extends AbstractController
             return $this->redirectToRoute("app_homepage");
         }
 
-        return $this->renderForm("parts/barcodes/barcodes_new.html.twig", [
+        return $this->render("parts/barcodes/barcodes_new.html.twig", [
             "barcode" => $barcode,
             "new" => $newEntry,
             "form" => $form,

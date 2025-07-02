@@ -44,6 +44,9 @@ class ConsumableLotView extends AbstractController
     #[LiveProp(writable: true, url: true)]
     public bool $showEmpty = false;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[LiveProp]
     public ?array $initialFormData = null;
 
@@ -88,6 +91,9 @@ class ConsumableLotView extends AbstractController
         }
     }
 
+    /**
+     * @return FormInterface<array<string, mixed>>
+     */
     protected function instantiateForm(): FormInterface
     {
         if ($this->initialFormData === null) {

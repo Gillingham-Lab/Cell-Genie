@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\DoctrineEntity\Vocabulary\Organism;
-use App\Entity\EpitopeProtein;
-use App\Entity\Experiment;
 use App\Repository\Substance\ProteinRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

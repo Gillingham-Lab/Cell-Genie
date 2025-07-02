@@ -6,6 +6,9 @@ namespace App\Controller\Admin;
 use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @extends AbstractCrudController<Organism>
+ */
 class OrganismCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

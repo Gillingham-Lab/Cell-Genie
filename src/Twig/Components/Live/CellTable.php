@@ -63,8 +63,7 @@ class CellTable extends AbstractController
     public array $searchResults = [];
 
     public function __construct(
-        private CellRepository $cellRepository,
-        private readonly Security $security,
+        private readonly CellRepository $cellRepository,
     ) {
     }
 

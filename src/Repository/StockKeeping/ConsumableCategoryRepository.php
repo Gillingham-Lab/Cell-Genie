@@ -57,6 +57,10 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
         return $this->setUpRelations($result);
     }
 
+    /**
+     * @param ConsumableCategory[] $categories
+     * @return ConsumableCategory[]
+     */
     private function setUpRelations(array $categories): array {
         $metadata = $this->em->getClassMetadata(ConsumableCategory::class);
         $idField = $metadata->reflFields["id"];

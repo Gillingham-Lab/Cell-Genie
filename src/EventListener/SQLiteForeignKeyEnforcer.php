@@ -19,10 +19,10 @@ class SQLiteForeignKeyEnforcer implements EventSubscriber
 
     public function preFlush(PreFlushEventArgs $args): void
     {
-        $platform = $args->getEntityManager()->getConnection()->getDatabasePlatform();
+        $platform = $args->getObjectManager()->getConnection()->getDatabasePlatform();
 
         if ($platform instanceof SqlitePlatform) {
-            $args->getEntityManager()->getConnection()->executeQuery("PRAGMA foreign_keys = ON");
+            $args->getObjectManager()->getConnection()->executeQuery("PRAGMA foreign_keys = ON");
         }
     }
 }

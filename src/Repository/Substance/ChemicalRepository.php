@@ -30,22 +30,6 @@ class ChemicalRepository extends SubstanceRepository implements PaginatedReposit
         parent::__construct($registry, Chemical::class);
     }
 
-    /**
-     * @param Cell $cell
-     * @return Chemical[]
-     */
-    public function findByCell(Cell $cell): array
-    {
-        return $this->createQueryBuilder("c")
-            ->leftJoin("c.experiments", "e", conditionType: Join::ON)
-            ->leftJoin("e.cells", "ce", conditionType: Join::ON)
-            ->andWhere("ce = :cell")
-            ->setParameter("cell", $cell)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
     private function getBaseQuery(): QueryBuilder
     {
         $qb = $this->createQueryBuilder("c")

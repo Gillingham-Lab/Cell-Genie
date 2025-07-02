@@ -14,6 +14,3 @@ parameters:
         -
             message: '#Parameter \#. \$.+ of method .+#'
             path: src/Form/*
-    excludePaths:
-        - src/Entity/Experiment.php
-        - src/Entity/Experimental*

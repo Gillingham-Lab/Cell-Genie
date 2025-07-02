@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace App\Controller\Admin\Crud\Substance;
 
 use App\Controller\Admin\Crud\LotCrudController;
-use App\Controller\Admin\ExtendedAbstractCrudController;
-use App\Controller\Admin\VocabularyTrait;
+use App\Controller\Admin\Traits\AssetTrait;
+use App\Controller\Admin\Traits\FileUploadTrait;
+use App\Controller\Admin\Traits\VocabularyTrait;
 use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Form\AdminCrud\DocumentationType;
 use App\Genie\Enums\AntibodyType;
@@ -13,6 +14,7 @@ use App\Repository\Vocabulary\VocabularyRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -24,9 +26,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
-class AntibodyCrudController extends ExtendedAbstractCrudController
+/**
+ * @extends AbstractCrudController<Antibody>
+ */
+class AntibodyCrudController extends AbstractCrudController
 {
     use VocabularyTrait;
+    use AssetTrait;
+    use FileUploadTrait;
 
     public function __construct(
         readonly private VocabularyRepository $vocabularyRepository,

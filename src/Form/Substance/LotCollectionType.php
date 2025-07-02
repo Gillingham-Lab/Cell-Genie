@@ -7,6 +7,9 @@ use App\Form\BasicType\FancyCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<LotType[]>
+ */
 class LotCollectionType extends AbstractType
 {
     public function getParent(): string

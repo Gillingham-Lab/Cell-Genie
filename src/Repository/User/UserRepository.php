@@ -12,7 +12,6 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
- * @implements PasswordUpgraderInterface<User>
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
@@ -33,8 +32,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $user->setPassword($newHashedPassword);
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     /**

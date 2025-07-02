@@ -143,9 +143,12 @@ final class SubstanceTable extends AbstractController
             "oligo" => $this->getOligoTable(),
             "plasmid" => $this->getPlasmidTable(),
             "protein" => $this->getProteinTable(),
+            default => null,
         };
 
-        $this->addData($table);
+        if ($table) {
+            $this->addData($table);
+        }
 
         return $table;
     }
@@ -175,6 +178,7 @@ final class SubstanceTable extends AbstractController
                 "oligo" => Oligo::class,
                 "plasmid" => Plasmid::class,
                 "protein" => Protein::class,
+                default => "",
             };
         }
 
