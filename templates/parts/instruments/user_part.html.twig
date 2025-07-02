@@ -10,23 +10,23 @@
             <p class="text-muted col-12 mb-0">Add a new instrument user or change the role of an existing one.</p>
 
             <div class="col-5">
-                <legend class="input-group py-3">
-                    <div class="input-group-text">
+                <div class="input-group py-3">
+                    <span class="input-group-text">
                         {{ addUserForm.user.vars.label }}
-                    </div>
+                    </span>
 
                     {{ form_widget(addUserForm.user) }}
-                </legend>
+                </div>
             </div>
 
             <div class="col-5">
-                <legend class="input-group py-3">
-                    <div class="input-group-text">
+                <div class="input-group py-3">
+                    <span class="input-group-text">
                         {{ addUserForm.role.vars.label }}
-                    </div>
+                    </span>
 
                     {{ form_widget(addUserForm.role) }}
-                </legend>
+                </div>
             </div>
 
             <div class="col-2 py-3">

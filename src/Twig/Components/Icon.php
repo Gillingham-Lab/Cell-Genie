@@ -72,6 +72,8 @@ class Icon
             "hint", "idea" => "far fa-fw fa-lightbulb",
             "tag", "annotation" => "fa-fw fas fa-tag",
             "tags", "annotations" => "fa-fw fas fa-tags",
+            "logbook", "book" => "fa-fw fas fa-book",
+            "calendar", "booking" => "fa-fw fas fa-calendar",
 
             "data" => "fa-fw fas fa-list",
 

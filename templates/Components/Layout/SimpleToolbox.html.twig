@@ -1,0 +1,17 @@
+{% if asDropdown %}
+    <div class="" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-fw"></i>
+    </div>
+
+    <ul{{ attributes.defaults({class: "dropdown-menu"}) }} role="group" aria-label="tools">
+{% else %}
+    <div{{ attributes.defaults({class: "btn-group " ~ this.groupSize}) }} role="group" aria-label="tools">
+{% endif %}
+
+{% block content %}{% endblock %}
+
+{% if not asDropdown %}
+    </div>
+{% else %}
+    </ul>
+{% endif %}

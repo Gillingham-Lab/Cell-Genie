@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
+use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
@@ -68,6 +69,7 @@ class EntityResolver
                 Rack::class => $this->router->generate("app_storage_view_rack", ["rack" => $object->getUlid()]),
                 Lot::class => $this->router->generate("app_substance_lot_view", ["lot" => $object->getId()]),
                 ExperimentalRunCondition::class => $this->router->generate("app_experiments_run_view", ["run" => $object->getExperimentalRun()->getId()]),
+                Instrument::class => $this->router->generate("app_instruments_view", ["instrument" => $object->getId()]),
                 default => null,
             };
         } catch (MappingException $mappingException) {

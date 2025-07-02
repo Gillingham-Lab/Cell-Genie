@@ -8,13 +8,18 @@ use App\Entity\DoctrineEntity\InstrumentUser;
 use App\Entity\DoctrineEntity\Log;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\ClipwareTool;
+use App\Entity\Toolbox\EditTool;
+use App\Entity\Toolbox\Tool;
 use App\Entity\Toolbox\Toolbox;
 use App\Form\Instrument\InstrumentType;
 use App\Form\Instrument\InstrumentUserType;
 use App\Form\Instrument\LogType;
+use App\Genie\Enums\GeneRegulation;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
 use App\Repository\Instrument\InstrumentUserRepository;
+use App\Service\Doctrine\Type\Ulid;
 use App\Service\FileUploader;
 use App\Service\InstrumentBookingService;
 use DateTime;
@@ -27,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class InstrumentController extends AbstractController
 {
@@ -58,15 +64,41 @@ class InstrumentController extends AbstractController
     }
 
     #[Route("instruments/no/{instrument}", name: "app_instruments_view")]
+    #[IsGranted("view", "instrument")]
     public function viewInstrument(
         InstrumentUserRepository $instrumentUserRepository,
         Instrument $instrument,
     ): Response {
-        $this->denyAccessUnlessGranted("view", $instrument);
+        $toolbox = new Toolbox([
+            new Tool(
+                path: $this->generateUrl("app_instruments"),
+                icon: "up",
+                buttonClass: "btn btn-secondary",
+                tooltip: "View all instruments",
+            ),
+            new Tool(
+                path: $instrument->getParent() ? $this->generateUrl("app_instruments_view", ["instrument" => $instrument->getParent()?->getId()]) : "",
+                icon: "instrument",
+                enabled: (bool)$instrument->getParent(),
+                iconStack: "left",
+            ),
+            new EditTool(
+                path: $this->generateUrl("app_instruments_edit", ["instrument" => $instrument->getId()]),
+                icon: "instrument",
+                enabled: $this->isGranted("edit", $instrument),
+                iconStack: "edit",
+            ),
+            new ClipwareTool(
+                clipboardText: $instrument->getCitationText() ?? "",
+                enabled: !!$instrument->getCitationText(),
+                tooltip: "Copy instrument citation",
+            )
+        ]);
 
         return $this->render("parts/instruments/instrument.html.twig", [
             "instrument" => $instrument,
             "instrumentUsers" => $instrumentUserRepository->findAllInstrumentUsers($instrument),
+            "toolbox" => $toolbox,
         ]);
     }
 

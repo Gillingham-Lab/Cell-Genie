@@ -29,32 +29,47 @@
             {% set accordionClass = logTypeClasses[log.logType.value] %}
 
             <div class="list-group-item d-flex justify-content-between align-items-center">
-                <span>
+                <div class="d-flex">
                     {# Tools #}
-                    <span class="btn-group btn-group-sm me-3">
+                    <twig:Layout:SimpleToolbox asDropdown="true">
                         {% if is_granted("ROLE_ADMIN") or is_granted("log_edit", [entity, log]) %}
-                            <a class="btn btn-primary"
-                               {{ stimulus_action("form-toggler", "edit", "click", {
-                                   "path": path("app_instrument_form_log_partial", {"instrument": entity.id, "log": log.id})
-                               }) }}
-                            >{{ icons.edit() }}</a>
+                            <li>
+                                <a
+                                    class="dropdown-item btn-sm"
+                                    {{ stimulus_action("form-toggler", "edit", "click", {
+                                        "path": path("app_instrument_form_log_partial", {"instrument": entity.id, "log": log.id})
+                                    }) }}
+                                >
+                                    <twig:Icon icon="logbook" stack="edit" />
+                                    Edit
+                                </a>
+                            </li>
                         {% endif %}
+
                         {% if is_granted("ROLE_ADMIN") or is_granted("log_remove", [entity, log]) %}
-                            <a class="btn btn-warning"
-                               {{ stimulus_action("form-toggler", "trash", "click", {
-                                   "path": path("app_instrument_remove_log_partial", {"instrument": entity.id, "log": log.id})}) }}
-                            >{{ icons.trash() }}</a>
+                            <li>
+                                <a
+                                    class="dropdown-item btn-sm"
+                                    {{ stimulus_action("form-toggler", "trash", "click", {
+                                        "path": path("app_instrument_remove_log_partial", {"instrument": entity.id, "log": log.id})
+                                    }) }}
+                                >
+                                    <twig:Icon icon="logbook" stack="trash" />
+                                    Trash
+                                </a>
+                            </li>
                         {% endif %}
-                    </span>
+                    </twig:Layout:SimpleToolbox>
+
                     <a class="text-decoration-none text-black text-reset" id="anchor-for-{{ entryId }}" href="#{{ entryId }}"data-bs-toggle="collapse">
                         <strong>{{ log.title }}</strong>
                     </a>
 
-                </span>
-                <span>
+                </div>
+                <div>
                     {{ log.createdAt|date("d. M. Y, H:i") }}
                     <span class="badge bg-{{ accordionClass }}" style="width: 5rem;">{{ log.logType.value }}</span>
-                </span>
+                </div>
             </div>
 
             <div class="list-group border-top collapse" id="{{ entryId }}">

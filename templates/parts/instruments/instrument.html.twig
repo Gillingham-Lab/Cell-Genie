@@ -32,111 +32,58 @@
         <div class="container container-fluid w-100 p-0 m-0">
             <twig:PageHeader title="{{ [instrument.instrumentNumber, instrument.shortName]|join(" | ") }}" icon="instrument" barcode />
 
-            {% set tools = [
-                {
-                    "type": "up",
-                    "target": url("app_instruments"),
-                    "tooltipText": "Back to all instruments",
-                },
-            ] %}
-
-            {% if instrument.parent is not same as(null) %}
-                {% set tools = tools|merge([
-                    {
-                        "type": "back",
-                        "target": url("app_instruments_view", {"instrument": instrument.parent.id}),
-                        "tooltipText": "Back to parent instrument",
-                    },
-                ]) %}
-            {% endif %}
-
-            {% set tools = tools|merge([
-                {
-                    "type": "edit",
-                    "target": is_granted("edit", instrument) ? url("app_instruments_edit", {"instrument": instrument.id}) : null,
-                    "disabled": not is_granted("edit", instrument),
-                    "tooltipText": "Edit the instrument",
-                },
-                {
-                    "type": "clipboard",
-                    "tooltipText": "Copy information",
-                    "clipboardText": ( instrument.citationText ),
-                    "disabled": not instrument.citationText,
-                }
-            ]) %}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="inner">
+                    <twig:Toolbox :toolbox="toolbox" />
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
 
-            {{ layout.toolbox(tools) }}
+            <twig:Layout:Row>
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Metadata" icon="instrument" iconStack="view">
+                        {% if instrument.requiresTraining and instrumentRole == "untrained" %}
+                            <p class="alert alert-danger">You have not been trained on this instrument yet. Contact a responsible person for this instrument.</p>
+                        {% elseif instrument.requiresTraining %}
+                            <p class="alert alert-success">You have been trained on this instrument. Contact a responsible person or an advanced user for advice if you have any questions.</p>
+                        {% endif %}
 
-            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
-                {# General #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("General", "General") }}
+                        <twig:Metadata data="{{ {
+                            "ID": instrument.id,
+                            "Number": instrument.instrumentNumber,
+                            "Short name": instrument.shortName,
+                            "Full name": instrument.longName,
+                            "Inventory registration": instrument.registrationNumber ?? "none",
+                            "Group": instrument.group ?? "unknown",
+                            "Location": instrument.location,
+                            "Mandatory training": ["boolean", instrument.requiresTraining],
+                            "Mandatory booking": ["boolean", instrument.requiresReservation],
+                            "Model number": instrument.modelNumber,
+                            "Serial number": instrument.serialNumber,
+                            "Company contact": instrument.instrumentContact,
+                            "Acquired on": instrument.acquiredOn ? ["date", instrument.acquiredOn] : "unknown",
+                            "Last Maintenance": instrument.lastMaintenance ? ["date", instrument.lastMaintenance] : "unknown",
+                            "Modules": instrument.isModular or instrument.isCollective ? ["entity", instrument.children] : "not modular",
+                        } }}" />
 
-                        {{ layout.card_body_collapse_start("General") }}
-                        <div class="card-body px-lg-5 mx-0">
-                            <table class="table table-sm table-borderless table-hover">
-                                <tbody>
-                                {{ macros.definition_row("Number", instrument.id) }}
-                                {{ macros.definition_row("Short name", instrument.shortName) }}
-                                {{ macros.definition_row("Name", instrument.longName) }}
-                                {{ macros.definition_row("Registration number", instrument.registrationNumber ?: "none") }}
-                                {{ macros.definition_row("Group", instrument.group ?? "unknown") }}
-                                {{ macros.definition_row("Location", instrument.location) }}
-                                {{ macros.definition_row("Mandatory training", instrument.requiresTraining ? "yes" : "no") }}
-                                {{ macros.definition_row("Booking required", instrument.requiresReservation ? "yes" : "no") }}
-                                </tbody>
-                            </table>
-
-                            <div class="border-bottom mb-3">
-                                <h3>Description</h3>
-                                {{ instrument.description|raw }}
-                            </div>
-
-                            {% if instrument.requiresTraining and instrumentRole == "untrained" %}
-                                <p class="alert alert-danger">You have not been trained on this instrument yet. Contact a responsible person for this instrument.</p>
-                            {% elseif instrument.requiresTraining %}
-                                <p class="alert alert-success">You have been trained on this instrument. Contact a responsible person or an advanced user for advice if you have any questions.</p>
-                            {% endif %}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-
-                {# Instrument details #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Details", "Details") }}
-
-                        {{ layout.card_body_collapse_start("Details") }}
-                        <div class="card-body px-lg-5 mx-0">
-                            <table class="table table-sm table-borderless table-hover">
-                                <tbody>
-                                {{ macros.definition_row("Model number", instrument.modelNumber) }}
-                                {{ macros.definition_row("Serial number", instrument.serialNumber) }}
-                                {{ macros.definition_row("Contact", instrument.instrumentContact ?: "unknown") }}
-                                {{ macros.definition_row("Acquired on", instrument.acquiredOn ? (instrument.acquiredOn|date("d. m. Y")): "never") }}
-                                {{ macros.definition_row("Last Maintenance", instrument.lastMaintenance ? (instrument.lastMaintenance|date("d. m. Y")): "never") }}
-                                </tbody>
-                            </table>
+                        <div class="pt-3">
+                            {{ instrument.description|raw }}
                         </div>
 
                         {% if instrument.citationText %}
-                        <div class="border-top mt-3 mb-3 px-3 px-lg-5 py-3">
-                            <h4>Citation</h4>
-                            {{ instrument.citationText|raw }}
-                        </div>
+                            <div class="pt-3">
+                                <strong>Citation: </strong>
+                                {{ instrument.citationText|raw }}
+                            </div>
                         {% endif %}
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
 
-                {% embed "embed/card.html.twig" with {
-                    "title": "Log Book",
-                    "instrument": instrument,
-                }%}
-                    {% block card_body %}
+            <twig:Layout:Row xl="3">
+                {# Log book #}
+                <twig:Layout:Col>
+                    <twig:ElementCard title="Log Book" icon="instrument" iconStack="logbook" noPadding="true">
                         <div class="overflow-auto card-body p-0" {{ stimulus_controller("form-toggler", {
                             viewPath: path("app_instrument_view_log_partial", {"instrument": instrument.id}),
                             formPath: path("app_instrument_form_log_partial", {"instrument": instrument.id}),
@@ -145,12 +92,12 @@
                             <div class="border-bottom py-1 px-lg-4">
                                 <div class="btn-group btn-group-sm">
                                     {% if is_granted("ROLE_ADMIN") or is_granted("log_new", instrument) %}
-                                    <a
+                                        <a
                                             class="btn btn-primary collapse show"
                                             data-toggle="tooltip" data-placement="bottom" title="Add new log entry"
                                             {{ stimulus_action("form-toggler", "toggle") }}
                                             {{ stimulus_target("form-toggler", "button") }}
-                                    ><span class="fas fa-fw fa-plus" aria-label="Add"></span></a>
+                                        ><span class="fas fa-fw fa-plus" aria-label="Add"></span></a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -159,8 +106,8 @@
                             <div class="py-1 px-lg-4">
                                 {# Logs #}
                                 <div
-                                        class="collapse show"
-                                        {{ stimulus_target("form-toggler", "frame view") }}
+                                    class="collapse show"
+                                    {{ stimulus_target("form-toggler", "frame view") }}
                                 >
                                     <turbo-frame id="gin-turbo-logs" src="{{ path("app_instrument_view_log_partial", {"instrument": instrument.id}) }}"
                                     ></turbo-frame>
@@ -169,8 +116,8 @@
 
                                 {# Form #}
                                 <div
-                                        class="collapse"
-                                        {{ stimulus_target("form-toggler", "frame form") }}
+                                    class="collapse"
+                                    {{ stimulus_target("form-toggler", "frame form") }}
                                 ><turbo-frame id="gin-turbo-form" {# src="{{ path("app_instrument_form_log_partial", {"instrument": instrument.id}) }}" #}></turbo-frame></div>
 
                             </div>
@@ -178,34 +125,24 @@
                         <turbo-frame id="gin-instrument-log">
 
                         </turbo-frame>
-                    {% endblock %}
-                {% endembed %}
+                    </twig:ElementCard>
+                </twig:Layout:Col>
 
                 {# Instrument users #}
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Users", "Users") }}
-
-                        {{ layout.card_body_collapse_start("Users") }}
-                        <div class="card-body">
+                <twig:Layout:Col>
+                    <twig:ElementCard title="Instrument Users" icon="instrument" iconStack="user" noPadding="true">
+                        <div class="pt-3">
                             <turbo-frame id="gin-turbo-instrument-users" src="{{ path("app_instrument_view_user_partial", {"instrument": instrument.id}) }}"
                             ></turbo-frame>
-
-                            <div class="border-bottom py-1 px-lg-4"></div>
                         </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
+                    </twig:ElementCard>
+                </twig:Layout:Col>
 
                 {# Instrument calendar #}
                 {% if instrument.requiresReservation and not instrument.calendarId is null %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse("Calendar", "Calendar") }}
-
-                            {{ layout.card_body_collapse_start("Calendar") }}
-                            <div class="card-body px-lg-5 mx-0">
-                                {% if instrument.bookable %}
+                    <twig:Layout:Col>
+                        <twig:ElementCard title="Calendar" icon="instrument" iconStack="booking">
+                            {% if instrument.bookable %}
                                 <div class="pb-3">
                                     Quick booking:
                                     <form method="post" action="{{ url("app_instruments_book", {"instrument": instrument.id}) }}" class="row row-cols-lg-auto g-3">
@@ -234,57 +171,26 @@
                                         </div>
                                     </form>
                                 </div>
-                                {% endif %}
+                            {% endif %}
 
-                                <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
+                            <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+                        </twig:ElementCard>
+                    </twig:Layout:Col>
                 {% endif %}
 
                 {# Consumables #}
                 {% if instrument.consumables|length %}
                     <twig:Layout:Col>
-                        <twig:ElementCard class="h-100" title="Consumables" icon="consumable" iconStack="instrument">
+                        <twig:ElementCard title="Consumables" icon="consumable" iconStack="instrument">
                             <twig:StockKeeping:ConsumableListView :allConsumables="instrument.consumables" />
                         </twig:ElementCard>
                     </twig:Layout:Col>
                 {% endif %}
 
-                {# Modular or Collective #}
-                {% if instrument.isModular or instrument.isCollective %}
-                    <div class="col p-0 m-0 mb-3">
-                        <div class="card mx-3 h-100">
-                            {{ layout.card_header_collapse(instrument.isModular ? "Modules" : "Instruments", "modules") }}
 
-                            {{ layout.card_body_collapse_start("modules") }}
-                            <div class="card-body px-lg-5 mx-0">
-                                <table class="table table-sm table-borderless table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" style="width: 50px;"></th>
-                                            <th scope="col">Number</th>
-                                            <th scope="col">Short name</th>
-                                        </tr>
-                                        </thead>
-                                    <tbody>
-                                        {% for instrumentPart in instrument.children %}
-                                            <tr>
-                                                <td>{{ row_tools(instrumentPart) }}</td>
-                                                <td>{{ instrumentPart.instrumentNumber }}</td>
-                                                <td>{{ instrumentPart.shortName }}</td>
-                                            </tr>
-                                        {% else %}
-                                            <tr><td colspan="2">No {{ instrument.isModular ? "modules" : "sub instruments"  }} registered</td></tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {{ layout.card_body_collapse_end() }}
-                        </div>
-                    </div>
-                {% endif %}
+            </twig:Layout:Row>
+
+            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
 
                 {# Attachments #}
                 {{ attachments(instrument.attachments) }}
