@@ -74,7 +74,7 @@ readonly class ExperimentalModelService
             throw new \RuntimeException("Failed read models");
         }
 
-        $this->logger->debug("Running the fit module with parameters: " . implode(", ", $params));
+        $this->logger->debug("Running the fit module with parameters ($module): " . implode(", ", $params));
 
         $content = trim(stream_get_contents($pipes[1]));
         $errorContent = trim(stream_get_contents($pipes[2]));
