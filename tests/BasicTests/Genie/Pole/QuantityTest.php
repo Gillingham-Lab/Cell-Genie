@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\BasicTests\Genie\Pole;
 
+use App\Genie\Pole\Exception\UnitNotSupportedException;
 use App\Genie\Pole\Quantity;
 use App\Genie\Pole\Unit\Amount;
 use App\Genie\Pole\Unit\MolarAmount;
@@ -15,7 +16,7 @@ class QuantityTest extends TestCase
      * @param string $unit
      * @param class-string $class
      * @return Quantity
-     * @throws \App\Genie\Pole\Exception\UnitNotSupportedException
+     * @throws UnitNotSupportedException
      */
     protected function getQuantity(float $value = 1.0, string $unit = "mol", string $class = MolarAmount::class): Quantity
     {

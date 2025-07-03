@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use InvalidArgumentException;
+
 class BoxCoordinate
 {
     readonly private int $row;
@@ -15,7 +17,7 @@ class BoxCoordinate
         $matchReturn = preg_match("#^(?P<row>[A-Z]+)(-?)(?P<col>[0-9]+)$#", $coordinate, $matches);
 
         if ($matchReturn !== 1) {
-            throw new \InvalidArgumentException("The given parameter '{$coordinate}' is not a valid coordinate.");
+            throw new InvalidArgumentException("The given parameter '{$coordinate}' is not a valid coordinate.");
         }
 
         $rowNumber = $this->stringCoordinateToNumber($matches["row"]);

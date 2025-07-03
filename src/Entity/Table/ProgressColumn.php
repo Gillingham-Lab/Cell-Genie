@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Entity\Table;
 
 use App\Twig\Components\ProgressBar;
+use Closure;
 
 class ProgressColumn extends Column
 {
@@ -11,7 +12,7 @@ class ProgressColumn extends Column
 
     public function __construct(
         string $title,
-        \Closure $renderCallback,
+        Closure $renderCallback,
         private readonly bool $showNumbers = false,
     ) {
         parent::__construct($title, $renderCallback);

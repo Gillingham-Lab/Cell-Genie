@@ -40,6 +40,7 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -453,7 +454,7 @@ class CellController extends AbstractController
 
                 $this->addFlash("success", "Aliquot was consumed.");
             }
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             if ($e->getCode() === 27_000_000) {
                 $this->addFlash("error", "There are no aliquote left to consume.");
             } else {

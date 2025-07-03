@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-class BoxMapPosition implements \JsonSerializable
+use JsonSerializable;
+
+class BoxMapPosition implements JsonSerializable
 {
     public function __construct(
         private readonly int    $row,

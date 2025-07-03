@@ -14,6 +14,7 @@ use App\Form\BarcodeType;
 use App\Repository\BarcodeRepository;
 use App\Service\BarcodeService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,7 +63,7 @@ class BarcodeController extends AbstractController
                         "lot" => $barcodeEntity->getReferencedId(),
                     ]
                 ],
-                default => throw new \Exception("Unknown barcode entity type.")
+                default => throw new Exception("Unknown barcode entity type.")
             };
 
             // Redirect to target

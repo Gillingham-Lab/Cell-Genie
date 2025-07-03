@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Genie\Exceptions;
 
-class GinException extends \Exception
+use Exception;
+
+class GinException extends Exception
 {
 
 }

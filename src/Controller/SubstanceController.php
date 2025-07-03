@@ -56,6 +56,7 @@ use App\Twig\Components\EntityReference;
 use App\Twig\Components\Metadata;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -209,7 +210,7 @@ class SubstanceController extends AbstractController
                     if ($imported) {
                         $this->addFlash("success", "GenBank files have successfully been imported.");
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->addFlash("error", "GenBank import was not successful: {$e->getMessage()}.");
                 }
             }
@@ -226,7 +227,7 @@ class SubstanceController extends AbstractController
                 $this->addFlash("success", $message);
 
                 return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if ($new) {
                     $this->addFlash("error", "Adding a new {$typeName} was not possible. Reason: {$e->getMessage()}.");
                 } else {
@@ -302,7 +303,7 @@ class SubstanceController extends AbstractController
                 $this->addFlash("success", $message);
 
                 return $this->redirectToRoute("app_substance_view", ["substance" => $substance->getUlid()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if ($new) {
                     $this->addFlash("error", "Adding a new lot was not possible. Reason: {$e->getMessage()}.");
                 } else {
@@ -712,7 +713,7 @@ class SubstanceController extends AbstractController
                 $this->addFlash("success", $message);
 
                 return $this->redirectToRoute("app_epitope_view", ["epitope" => $epitope->getId()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if ($new) {
                     $this->addFlash("error", "Adding a new epitope was not possible. Reason: {$e->getMessage()}.");
                 } else {

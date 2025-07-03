@@ -11,6 +11,7 @@ use App\Entity\Toolbox\Toolbox;
 use App\Form\User\UserSettingsType;
 use App\Form\User\UserType;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -113,7 +114,7 @@ class UserController extends AbstractController
                     $this->addFlash("success", "The user entry was changed.");
                     return $this->redirectToRoute("app_user", ["user" => $user->getId()]);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlash("error", "An error occured: {$e->getMessage()}");
             }
         }

@@ -22,8 +22,11 @@ use App\Repository\Instrument\InstrumentUserRepository;
 use App\Service\Doctrine\Type\Ulid;
 use App\Service\FileUploader;
 use App\Service\InstrumentBookingService;
+use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Google\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -169,7 +172,7 @@ class InstrumentController extends AbstractController
 
                 return $this->redirect($this->generateUrl("app_instruments_view", ["instrument" => $instrument->getId()]));
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 if ($new) {
                     $message = "Creating the entry was not possible. Reason: {$e->getMessage()}.";
                 } else {
@@ -206,8 +209,8 @@ class InstrumentController extends AbstractController
         $this->denyAccessUnlessGranted("book", $instrument);
 
         // Calculate the date and time and stuff
-        $startTime = new DateTime($request->get("start"), new \DateTimeZone("Europe/Zurich"));
-        $endTime = new DateTime($request->get("start"), new \DateTimeZone("Europe/Zurich"));
+        $startTime = new DateTime($request->get("start"), new DateTimeZone("Europe/Zurich"));
+        $endTime = new DateTime($request->get("start"), new DateTimeZone("Europe/Zurich"));
         $length = (float)($request->get("length"));
         if ($length <= 0) {
             $length = $instrument->getDefaultReservationLength();
@@ -216,7 +219,7 @@ class InstrumentController extends AbstractController
         $hours = (int)floor($length);
         $minutes = (int)round(($length - $hours)*60);
 
-        $endTime->add(\DateInterval::createFromDateString("+ {$hours} hours + {$minutes} minutes"));
+        $endTime->add(DateInterval::createFromDateString("+ {$hours} hours + {$minutes} minutes"));
 
         try {
             $instrumentBookingService->book($instrument, $currentUser, $startTime, $endTime);

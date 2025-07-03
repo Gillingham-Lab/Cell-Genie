@@ -16,6 +16,7 @@ use App\Entity\SubstanceLot;
 use App\Form\BasicType\FancyChoiceType;
 use App\Form\BasicType\FancyEntityType;
 use App\Repository\Substance\SubstanceRepository;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\Form\AbstractType;
@@ -67,7 +68,7 @@ class BarcodeType extends AbstractType
                         ->addOrderBy("cc.number", "ASC")
                         ->where("cc.trashedOn > :timepoint")
                         ->orWhere("cc.trashedOn IS NULL")
-                        ->setParameter("timepoint", new \DateTime("now - 1 week"))
+                        ->setParameter("timepoint", new DateTime("now - 1 week"))
                         ;
                 },
                 "placeholder" => "Empty",

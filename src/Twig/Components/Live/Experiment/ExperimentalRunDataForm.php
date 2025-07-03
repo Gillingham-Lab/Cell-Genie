@@ -10,6 +10,7 @@ use App\Form\Experiment\ExperimentalRunDataType;
 use App\Service\Experiment\ExperimentalDataService;
 use App\Service\Experiment\ExperimentalModelService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,7 +79,7 @@ class ExperimentalRunDataForm extends AbstractController
         try {
             $this->entityManager->flush();
             return $formEntity;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash("error", "Saving was not possible: {$e->getMessage()}");
             return null;
         }

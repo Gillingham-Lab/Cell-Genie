@@ -19,6 +19,7 @@ use App\Repository\Substance\SubstanceRepository;
 use App\Service\FileUploader;
 use App\Service\Storage\StorageBoxService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -180,7 +181,7 @@ class StorageController extends AbstractController
             $formType = RackType::class;
             $returnTo = function(Rack $rack) {return $this->generateUrl("app_storage");};
         } else {
-            throw new \Exception("Route name is not handled by this controller.");
+            throw new Exception("Route name is not handled by this controller.");
         }
 
         $formOptions = [
@@ -215,7 +216,7 @@ class StorageController extends AbstractController
                 $this->addFlash("success", $message);
 
                 return $this->redirect($returnTo($entity));
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if ($new) {
                     $message = "Creating the entry was not possible. Reason: {$e->getMessage()}.";
                 } else {

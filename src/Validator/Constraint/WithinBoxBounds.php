@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace App\Validator\Constraint;
 
 use App\Validator\WithinBoxBoundsValidator;
+use Attribute;
 use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_CLASS)]
 class WithinBoxBounds extends Constraint
 {
     public string $outOfBoundsMessage = "The coordinates are out of bound in box '%box%'.";

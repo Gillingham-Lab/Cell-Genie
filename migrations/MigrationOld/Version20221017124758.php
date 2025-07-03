@@ -47,8 +47,8 @@ final class Version20221017124758 extends AbstractMigration
 
         $schema->getTable("lot_file")->removeForeignKey("FK_18B3A850A8CBA5F7");
 
-        $schema->getTable("lot_file")->addForeignKeyConstraint("file", ["file_id"], ["id"], ["onDelete" => "CASCADE"], "FK_18B3A85093CB796C");;
-        $schema->getTable("lot_file")->addForeignKeyConstraint("lot", ["lot_id"], ["id"], ["onDelete" => "CASCADE"], "FK_18B3A850A8CBA5F7");;
+        $schema->getTable("lot_file")->addForeignKeyConstraint("file", ["file_id"], ["id"], ["onDelete" => "CASCADE"], "FK_18B3A85093CB796C");
+        $schema->getTable("lot_file")->addForeignKeyConstraint("lot", ["lot_id"], ["id"], ["onDelete" => "CASCADE"], "FK_18B3A850A8CBA5F7");
 
         $schema->getTable("oligo")
             ->dropColumn("concentration")

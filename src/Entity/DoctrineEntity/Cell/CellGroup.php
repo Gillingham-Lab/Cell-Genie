@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Generator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -154,7 +155,7 @@ class CellGroup
         return $this->children;
     }
 
-    public function getAllChildren(): \Generator
+    public function getAllChildren(): Generator
     {
         foreach ($this->children as $child) {
             yield $child;

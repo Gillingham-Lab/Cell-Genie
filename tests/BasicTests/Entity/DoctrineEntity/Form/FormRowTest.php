@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Genie\Enums\FormRowTypeEnum;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use TypeError;
 
 class FormRowTest extends TestCase
 {
@@ -51,7 +52,7 @@ class FormRowTest extends TestCase
     {
         $formRow = new FormRow();
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $formRow->setType('SpamAndEggs'); // @phpstan-ignore argument.type
     }
 
@@ -59,7 +60,7 @@ class FormRowTest extends TestCase
     {
         $formRow = new FormRow();
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $formRow->setType(self::class); // @phpstan-ignore argument.type
     }
 }

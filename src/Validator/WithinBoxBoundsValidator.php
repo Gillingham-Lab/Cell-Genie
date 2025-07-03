@@ -6,6 +6,7 @@ namespace App\Validator;
 use App\Entity\BoxCoordinate;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Validator\Constraint\WithinBoxBounds;
+use InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -59,7 +60,7 @@ class WithinBoxBoundsValidator extends ConstraintValidator
 
         try {
             $boxCoordinate = new BoxCoordinate($coordinateValue);
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             return;
         }
 

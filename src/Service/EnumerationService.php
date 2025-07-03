@@ -15,6 +15,7 @@ use App\Repository\Cell\CellRepository;
 use App\Repository\Substance\AntibodyRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 
 readonly class EnumerationService
 {
@@ -96,7 +97,7 @@ readonly class EnumerationService
 
         if (!$group) {
             if (!$userSigill) {
-                throw new \LogicException("Cannot create a prefix without a group or a sigill");
+                throw new LogicException("Cannot create a prefix without a group or a sigill");
             }
 
             return $userSigill;
@@ -113,7 +114,7 @@ readonly class EnumerationService
             $useUserSigill = $groupEntitySettings->getParam("userSigill", false)->asBool();
 
             if ($useUserSigill && !$userSigill) {
-                throw new \LogicException("Group policy required sigill, but sigill is empty. You might want to set your sigill in your user settings.");
+                throw new LogicException("Group policy required sigill, but sigill is empty. You might want to set your sigill in your user settings.");
             }
 
             $userSigill = $useUserSigill ? $userSigill : "";
@@ -122,7 +123,7 @@ readonly class EnumerationService
             return "$groupSigill$entitySigill$userSigill";
         } else {
             if (!$userSigill) {
-                throw new \LogicException("Cannot create a prefix without group policies or a sigill");
+                throw new LogicException("Cannot create a prefix without group policies or a sigill");
             }
 
             return $userSigill;

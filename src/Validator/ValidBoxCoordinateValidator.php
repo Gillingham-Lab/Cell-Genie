@@ -5,6 +5,7 @@ namespace App\Validator;
 
 use App\Entity\BoxCoordinate;
 use App\Validator\Constraint\ValidBoxCoordinate;
+use InvalidArgumentException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -28,7 +29,7 @@ class ValidBoxCoordinateValidator extends ConstraintValidator
 
         try {
             $boxCoordinate = new BoxCoordinate($value);
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             $this->context->buildViolation($constraint->invalidCoordinateMessage)
                 ->addViolation()
             ;

@@ -39,7 +39,6 @@ final class Version20240201102528 extends AbstractMigration
             ->update($tableName)
             ->set($oldColumnName, "CASE WHEN {$columnPrefix}_price_value IS NULL THEN NULL ELSE {$columnPrefix}_price_value / 1000 END")
             ->executeQuery();
-        ;
     }
 
     private function removeOldPriceColumn(Table $table, string $oldColumnName): void

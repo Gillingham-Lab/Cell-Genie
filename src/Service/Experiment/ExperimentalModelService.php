@@ -18,6 +18,7 @@ use DivisionByZeroError;
 use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use stdClass;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -71,7 +72,7 @@ readonly class ExperimentalModelService
         ], $descriptorSpec, $pipes, $this->projectDir);
 
         if (!is_resource($proc)) {
-            throw new \RuntimeException("Failed read models");
+            throw new RuntimeException("Failed read models");
         }
 
         $this->logger->debug("Running the fit module with parameters ($module): " . implode(", ", $params));

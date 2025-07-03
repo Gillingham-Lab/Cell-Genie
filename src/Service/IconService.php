@@ -21,6 +21,7 @@ use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Entity\SubstanceLot;
 use App\Genie\Enums\AntibodyType;
+use ArrayAccess;
 use Doctrine\ORM\EntityManagerInterface;
 
 class IconService
@@ -40,7 +41,7 @@ class IconService
             return null;
         }
 
-        if (is_array($object) || $object instanceof \ArrayAccess) {
+        if (is_array($object) || $object instanceof ArrayAccess) {
             return $this->get($object[0]);
         }
 

@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace App\Validator\Constraint;
 
 use App\Validator\NotLoopedValidator;
+use Attribute;
 use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_CLASS)]
 class NotLooped extends Constraint
 {
     public string $message = "The current entity was found in the parental hierarchy.";

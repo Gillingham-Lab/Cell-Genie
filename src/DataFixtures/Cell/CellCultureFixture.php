@@ -7,6 +7,7 @@ use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\User\User;
 use App\Service\Cells\CellCultureService;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -36,7 +37,7 @@ class CellCultureFixture extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < 2; $i++) {
             $cellCulture = $this->cellCultureService->createCellCultureFromAliquot($user, $oldHekAliquot);
-            $cellCulture->setUnfrozenOn(new \DateTime("2020-03-11"));
+            $cellCulture->setUnfrozenOn(new DateTime("2020-03-11"));
             $manager->persist($cellCulture);
             $this->setReference(self::OldHEK293CulturePrefix . $i, $cellCulture);
         }

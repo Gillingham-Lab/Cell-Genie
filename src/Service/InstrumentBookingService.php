@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\User\User;
 use DateTime;
 use Google\Client;
 use Google\Service\Calendar;
+use InvalidArgumentException;
 
 class InstrumentBookingService
 {
@@ -22,7 +23,7 @@ class InstrumentBookingService
         $authConfig = $instrument->getAuthString();
 
         if (!$authConfig) {
-            throw new \InvalidArgumentException("The instrument must have a valid auth config string");
+            throw new InvalidArgumentException("The instrument must have a valid auth config string");
         }
 
         $authConfig = json_decode($authConfig, true);

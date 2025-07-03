@@ -6,6 +6,7 @@ namespace App\Repository\StockKeeping;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -25,7 +26,7 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
      * @param $lockMode
      * @param $lockVersion
      * @return ?ConsumableCategory
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function find($id, $lockMode = null, $lockVersion = null): ?object
     {

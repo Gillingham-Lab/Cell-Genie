@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Form\DocumentationType;
 use App\Form\VisualisationType;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -31,12 +32,12 @@ readonly class FileUploader
 
     /**
      * @param FormInterface<mixed> $form
-     * @throws \Exception If no user was retrieved from security service
+     * @throws Exception If no user was retrieved from security service
      */
     public function upload(FormInterface $form): void
     {
         if (is_null($this->user)) {
-            throw new \Exception("Uploading a file is only possible if a user is logged in.");
+            throw new Exception("Uploading a file is only possible if a user is logged in.");
         }
 
         foreach ($form as $child) {

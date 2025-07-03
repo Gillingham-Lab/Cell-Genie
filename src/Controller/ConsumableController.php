@@ -25,6 +25,7 @@ use App\Service\TreeView\ConsumableTreeViewService;
 use DateTime;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
+use Error;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -256,7 +257,7 @@ class ConsumableController extends AbstractController
                 } else {
                     return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $consumable->getId()]);
                 }
-            } catch (\Error $e) {
+            } catch (Error $e) {
                 $this->addFlash("error", "Something went wrong: {$e->getMessage()}");
             }
         }
@@ -314,7 +315,7 @@ class ConsumableController extends AbstractController
                 $this->addFlash("success", "The consumable lot was successfully saved.");
 
                 return $this->redirectToRoute("app_consumables_item_view", ["consumable" => $consumable->getId()]);
-            } catch (\Error $e) {
+            } catch (Error $e) {
                 $this->addFlash("error", "Something went wrong: {$e->getMessage()}");
             }
         }

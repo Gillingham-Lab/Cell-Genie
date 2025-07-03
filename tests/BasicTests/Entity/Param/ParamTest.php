@@ -6,6 +6,7 @@ namespace App\Tests\BasicTests\Entity\Param;
 use App\Entity\Param\Param;
 use App\Entity\Param\ParamTypeEnum;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class ParamTest extends TestCase
 {
@@ -63,7 +64,7 @@ class ParamTest extends TestCase
      */
     public function testCreatingParamWithTypesNotMatching(mixed $value, ParamTypeEnum $type, string $message): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $this->expectExceptionMessage($message);
         new Param($value, $type);
     }
@@ -78,7 +79,7 @@ class ParamTest extends TestCase
     public function testSettingValueOnExistingParamWithDifferentTypeFails(): void
     {
         $param = new Param(1);
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $param->setValue("string");
     }
 

@@ -7,6 +7,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Form\Experiment\ExperimentalRunType;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,7 +59,7 @@ class ExperimentalRunForm extends AbstractController
                 return $this->redirectToRoute("app_experiments_run_addData", ["run" => $success->getId()]);
             }
         } else {
-            throw new \Exception("There was an error with this form.");
+            throw new Exception("There was an error with this form.");
         }
     }
 
@@ -83,7 +84,7 @@ class ExperimentalRunForm extends AbstractController
             $this->addFlash("success", "Saved");
 
             return $formEntity;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash("error", "Failed to save properly due to an error: {$e->getMessage()}.");
             return null;
         }

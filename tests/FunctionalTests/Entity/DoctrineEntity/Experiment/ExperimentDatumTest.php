@@ -11,6 +11,7 @@ use App\Genie\Enums\DatumEnum;
 use App\Repository\Cell\CellRepository;
 use App\Repository\Substance\AntibodyRepository;
 use App\Service\Doctrine\Type\Ulid;
+use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
@@ -354,7 +355,7 @@ class ExperimentDatumTest extends KernelTestCase
      */
     public function testDateDatum(string $name, string $type, string $value): void
     {
-        $date = new \DateTime($value);
+        $date = new DateTime($value);
 
         $datum = new ExperimentalDatum();
         $datum->setName($name);
@@ -365,7 +366,7 @@ class ExperimentDatumTest extends KernelTestCase
         $this->entityManager->flush();
 
         $this->assertInstanceOf(Ulid::class, $datum->getId());
-        $this->assertInstanceOf(\DateTime::class, $datum->getValue());
+        $this->assertInstanceOf(DateTime::class, $datum->getValue());
         $this->assertSame($date->getTimestamp(), $datum->getValue()->getTimestamp());
 
         $id = $datum->getId();
@@ -376,7 +377,7 @@ class ExperimentDatumTest extends KernelTestCase
         $datum = $repository->find($id);
 
         $this->assertInstanceOf(Ulid::class, $datum->getId());
-        $this->assertInstanceOf(\DateTime::class, $datum->getValue());
+        $this->assertInstanceOf(DateTime::class, $datum->getValue());
         $this->assertSame($date->getTimestamp(), $datum->getValue()->getTimestamp());
     }
 }

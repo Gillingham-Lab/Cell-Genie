@@ -7,6 +7,7 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use ErrorException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -146,7 +147,7 @@ final class Version20220727081019 extends AbstractMigration
                                 $proteinUlid = Ulid::fromRfc4122($proteinIdToUlid[$condition["value"]])->toBase58();
                                 $data["conditions"][$key]["value"] = $proteinUlid;
                                 $this->_logger->debug("Updating protein {$condition['value']} to {$proteinUlid}");
-                            } catch (\ErrorException) {
+                            } catch (ErrorException) {
                                 $this->_logger->debug("Protein already updated {$condition['value']} or not found.");
                                 continue;
                             }
@@ -165,7 +166,7 @@ final class Version20220727081019 extends AbstractMigration
                                 $data["conditions"][$key]["value"] = $chemicalUlid;
                                 $this->_logger->debug("Updating chemical {$condition['value']} to {$chemicalUlid}");
                             }
-                        } catch (\ErrorException) {
+                        } catch (ErrorException) {
                             $this->_logger->debug("Chemical already updated {$condition['value']} or not found.");
                             continue;
                         }
@@ -207,7 +208,7 @@ final class Version20220727081019 extends AbstractMigration
                                     $wellData["conditions"][$key]["value"] = $proteinUlid;
                                     $this->_logger->debug("Updating protein {$condition['value']} to {$proteinUlid}");
                                 }
-                            } catch (\ErrorException) {
+                            } catch (ErrorException) {
                                 $this->_logger->debug("Protein already updated {$condition['value']} or not found.");
                                 continue;
                             }
@@ -225,7 +226,7 @@ final class Version20220727081019 extends AbstractMigration
                                     $wellData["conditions"][$key]["value"] = $chemicalUlid;
                                     $this->_logger->debug("Updating chemical {$condition['value']} to {$chemicalUlid}");
                                 }
-                            } catch (\ErrorException) {
+                            } catch (ErrorException) {
                                 $this->_logger->debug("Chemical already updated {$condition['value']} or not found.");
                                 continue;
                             }
@@ -243,7 +244,7 @@ final class Version20220727081019 extends AbstractMigration
                                     $wellData["conditions"][$key]["value"] = $proteinUlid;
                                     $this->_logger->debug("Updating protein {$condition['value']} to {$proteinUlid}");
                                 }
-                            } catch (\ErrorException) {
+                            } catch (ErrorException) {
                                 $this->_logger->debug("Protein already updated {$condition['value']} or not found.");
                                 continue;
                             }
@@ -261,7 +262,7 @@ final class Version20220727081019 extends AbstractMigration
                                     $wellData["conditions"][$key]["value"] = $chemicalUlid;
                                     $this->_logger->debug("Updating chemical {$condition['value']} to {$chemicalUlid}");
                                 }
-                            } catch (\ErrorException) {
+                            } catch (ErrorException) {
                                 $this->_logger->debug("Chemical already updated {$condition['value']} or not found.");
                                 continue;
                             }

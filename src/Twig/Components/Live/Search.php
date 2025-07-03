@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Twig\Components\Live;
 
 use App\Entity\DoctrineEntity\User\User;
+use BackedEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -122,7 +123,7 @@ class Search extends AbstractController
                     $eventData[$field] = $value->getId();
                 } elseif (method_exists($value, "getUlid")) {
                     $eventData[$field] = $value->getUlid();
-                } elseif ($value instanceof \BackedEnum) {
+                } elseif ($value instanceof BackedEnum) {
                     $eventData[$field] = $value->value;
                 } else {
                     $eventData[$field] = (string)$value;

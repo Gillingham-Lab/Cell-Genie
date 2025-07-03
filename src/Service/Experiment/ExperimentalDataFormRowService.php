@@ -16,6 +16,7 @@ use App\Form\ScientificNumberType;
 use App\Genie\Enums\DatumEnum;
 use App\Genie\Enums\FormRowTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -376,7 +377,7 @@ class ExperimentalDataFormRowService
                 $fieldConfig["choices"] = $choices;
                 $type = FancyChoiceType::class;
             } else {
-                throw new \Exception("Double-classes are not supported outside of Substances.");
+                throw new Exception("Double-classes are not supported outside of Substances.");
             }
         } else {
             $type = FancyEntityType::class;

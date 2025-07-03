@@ -7,6 +7,7 @@ use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\IdTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity]
 #[Gedmo\Loggable]
-class SequenceAnnotation implements \JsonSerializable
+class SequenceAnnotation implements JsonSerializable
 {
     use IdTrait;
     use CommentTrait;

@@ -6,6 +6,7 @@ namespace App\Twig\Components\Live\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Form\Experiment\ExperimentalDesignType;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -73,7 +74,7 @@ class ExperimentalDesignForm extends AbstractController
             $this->addFlash("success", "Saved");
 
             return $formEntity;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->errors = "Failed to save properly due to an error (".get_class($e)."): {$e->getMessage()}.";
             throw new UnprocessableEntityHttpException('Form validation failed in component');
         }

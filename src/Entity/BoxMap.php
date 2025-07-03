@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\DoctrineEntity\Storage\Box;
+use ErrorException;
+use Generator;
+use InvalidArgumentException;
+use JsonSerializable;
 
-class BoxMap implements \JsonSerializable
+class BoxMap implements JsonSerializable
 {
     /** @var array<int, array<int, object|null>> */
     private array $map;
@@ -58,7 +62,7 @@ class BoxMap implements \JsonSerializable
         ];
     }
 
-    private function generateLinearBoxMap(): \Generator
+    private function generateLinearBoxMap(): Generator
     {
         for ($i = 0; $i < $this->rows; $i++) {
             for ($j = 0; $j < $this->cols; $j++) {
@@ -83,11 +87,11 @@ class BoxMap implements \JsonSerializable
     private function assertCoordinatesWithinBounds(int $row, int $col): void
     {
         if ($row > $this->rows or $row < 0) {
-            throw new \InvalidArgumentException("Row {$row} is out of bounds for this BoxMap with {$this->rows} rows.");
+            throw new InvalidArgumentException("Row {$row} is out of bounds for this BoxMap with {$this->rows} rows.");
         }
 
         if ($col > $this->cols or $col < 0) {
-            throw new \InvalidArgumentException("Column {$col} is out of bounds for this BoxMap with {$this->cols} columns.");
+            throw new InvalidArgumentException("Column {$col} is out of bounds for this BoxMap with {$this->cols} columns.");
         }
     }
 
@@ -215,7 +219,7 @@ class BoxMap implements \JsonSerializable
                 // Try to set at coordinate. If it fails, add loose.
                 try {
                     $this->setAtCoordinate($lotCoordinate, $object, shift: $i);
-                } catch (\InvalidArgumentException | \ErrorException) {
+                } catch (InvalidArgumentException | ErrorException) {
                     $this->addLoose($object);
                 }
             }

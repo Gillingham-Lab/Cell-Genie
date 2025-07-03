@@ -6,6 +6,7 @@ namespace App\Twig\Components;
 use App\Entity\DoctrineEntity\Epitope;
 use App\Service\EntityResolver;
 use App\Service\IconService;
+use ArrayAccess;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
@@ -42,7 +43,7 @@ class EntityReference
 
         return [
             "entity" => $entity,
-            "iterable" => is_array($entity) || ($entity instanceof \ArrayAccess),
+            "iterable" => is_array($entity) || ($entity instanceof ArrayAccess),
             "icon" => $this->iconService->get($entity) ?? "unknown",
         ];
     }

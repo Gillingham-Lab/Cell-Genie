@@ -27,6 +27,7 @@ use App\Twig\Components\Trait\PaginatedRepositoryTrait;
 use App\Twig\Components\Trait\PaginatedTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -197,7 +198,7 @@ class ExperimentalRunDataTable extends AbstractController
 
     /**
      * @return ArrayTableShape
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTable(): array
     {
@@ -317,7 +318,6 @@ class ExperimentalRunDataTable extends AbstractController
                         $subQuery
                     ))
                     ->setParameter("name", $entityFormRow->getFieldName());
-                ;
 
                 $results = $queryBuilder->getQuery()->getResult();
 

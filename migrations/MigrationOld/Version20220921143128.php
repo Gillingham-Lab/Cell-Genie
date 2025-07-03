@@ -17,9 +17,9 @@ final class Version20220921143128 extends AbstractMigration
     {
         $table = $schema->createTable("substance_epitopes");
         $table->addColumn("substance_ulid", "guid")
-            ->setNotnull(true)->setComment("(DC2Type:ulid)");;
+            ->setNotnull(true)->setComment("(DC2Type:ulid)");
         $table->addColumn("epitope_id", "guid")
-            ->setNotnull(true)->setComment("(DC2Type:ulid)");;
+            ->setNotnull(true)->setComment("(DC2Type:ulid)");
 
         $table->setPrimaryKey(["substance_ulid", "epitope_id"]);
     }

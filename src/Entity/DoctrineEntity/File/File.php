@@ -186,12 +186,12 @@ class File
         return $this;
     }
 
-    public function getUploadedOn(): ?\DateTimeInterface
+    public function getUploadedOn(): ?DateTimeInterface
     {
         return $this->uploadedOn;
     }
 
-    public function setUploadedOn(?\DateTimeInterface $uploadedOn): self
+    public function setUploadedOn(?DateTimeInterface $uploadedOn): self
     {
         $this->uploadedOn = $uploadedOn;
 

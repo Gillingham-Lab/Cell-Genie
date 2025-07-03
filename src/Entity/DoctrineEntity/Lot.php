@@ -18,11 +18,12 @@ use App\Validator\Constraint\WithinBoxBounds;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 #[WithinBoxBounds("boxCoordinate", "box")]
-class Lot implements \JsonSerializable, PrivacyAwareInterface
+class Lot implements JsonSerializable, PrivacyAwareInterface
 {
     use HasBoxTrait;
     use VendorTrait;

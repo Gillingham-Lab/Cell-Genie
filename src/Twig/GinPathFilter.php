@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use TCPDF2DBarcode;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -13,7 +14,7 @@ class GinPathFilter extends AbstractExtension
         return [
             new TwigFilter("GinPathQRCode", function (string $s) {
                 mt_srand(2022);
-                $barcode = new \TCPDF2DBarcode("gin://$s", "QRCODE,L");
+                $barcode = new TCPDF2DBarcode("gin://$s", "QRCODE,L");
                 $pngData = base64_encode($barcode->getBarcodePngData(5, 5));
                 mt_srand(intval(microtime(true)));
 

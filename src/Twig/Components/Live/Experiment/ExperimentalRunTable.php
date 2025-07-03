@@ -16,6 +16,7 @@ use App\Entity\Toolbox\ViewTool;
 use App\Repository\Experiment\ExperimentalRunRepository;
 use App\Twig\Components\Date;
 use App\Twig\Components\Trait\PaginatedRepositoryTrait;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -43,7 +44,7 @@ class ExperimentalRunTable extends AbstractController
 
     /**
      * @return ArrayTableShape
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTable(): array
     {

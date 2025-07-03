@@ -13,9 +13,11 @@ use App\Repository\Storage\BoxRepository;
 use App\Repository\User\UserGroupRepository;
 use App\Repository\User\UserRepository;
 use App\Service\Doctrine\Type\Ulid;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use TypeError;
 
 /**
  * @extends ServiceEntityRepository<Lot>
@@ -78,14 +80,14 @@ class LotRepository extends ServiceEntityRepository
     {
         if ($date === null) {return null;}
 
-        $parsedDate = \DateTime::createFromFormat("Y-m-d", $date);
+        $parsedDate = DateTime::createFromFormat("Y-m-d", $date);
 
         if ($parsedDate === false) {
-            $parsedDate = \DateTime::createFromFormat("d.m.Y", $date);
+            $parsedDate = DateTime::createFromFormat("d.m.Y", $date);
         }
 
         if ($parsedDate === false) {
-            $parsedDate = \DateTime::createFromFormat("d. m. Y", $date);
+            $parsedDate = DateTime::createFromFormat("d. m. Y", $date);
         }
 
         return $parsedDate !== false ? $parsedDate : null;
@@ -99,7 +101,7 @@ class LotRepository extends ServiceEntityRepository
     public function getLotsWithSubstance(string $class, array $lotIds): array
     {
         if (!is_subclass_of($class, Substance::class)) {
-            throw new \TypeError("Only subclasses of " . Substance::class ." are accepted for getLotsWithSubstance, {$class} was given.");
+            throw new TypeError("Only subclasses of " . Substance::class ." are accepted for getLotsWithSubstance, {$class} was given.");
         }
 
         $query = $this->getEntityManager()->createQuery(

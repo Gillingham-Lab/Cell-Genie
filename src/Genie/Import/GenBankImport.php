@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Genie\Import;
 
+use function explode;
+use function preg_split;
+
 class GenBankImport
 {
     /**
@@ -44,7 +47,7 @@ class GenBankImport
         $content = str_replace("\r\n", "\n", $content);
         $content = str_replace("\r", "\n", $content);
 
-        $lines = \explode("\n", $content);
+        $lines = explode("\n", $content);
         $data = [];
 
         $buffer = [];
@@ -69,7 +72,7 @@ class GenBankImport
 
                 // Reset buffer
                 $buffer = [$line];
-                $bufferType = \preg_split("#\s{2,}#", $line)[0];
+                $bufferType = preg_split("#\s{2,}#", $line)[0];
             } else {
                 $buffer[] = $line;
             }
@@ -82,7 +85,7 @@ class GenBankImport
     private function parseLocus(array $buffer): void
     {
         $bufferLength = count($buffer);
-        $firstLineParts = \preg_split("#\s{2,}#", $buffer[0], limit: 3);
+        $firstLineParts = preg_split("#\s{2,}#", $buffer[0], limit: 3);
 
         $this->data["metadata"]["locusName"] = $firstLineParts[1];
         $this->data["metadata"]["locusNameAppendix"] = $firstLineParts[2];
@@ -120,7 +123,7 @@ class GenBankImport
      */
     private function parseAccession(array $buffer): void
     {
-        $accession = \preg_split("#\s{2,}#", $buffer[0])[1];
+        $accession = preg_split("#\s{2,}#", $buffer[0])[1];
         if (str_ends_with($accession, ".")) {
             $accession = substr($accession, 0, strlen($accession)-1);
         }
@@ -133,7 +136,7 @@ class GenBankImport
      */
     private function parseVersion(array $buffer): void
     {
-        $version = \preg_split("#\s{2,}#", $buffer[0])[1];
+        $version = preg_split("#\s{2,}#", $buffer[0])[1];
         if (str_ends_with($version, ".")) {
             $version = substr($version, 0, strlen($version)-1);
         }

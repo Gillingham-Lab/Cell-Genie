@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Service\EnumerationService;
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ class StimulusController extends AbstractController
             } else {
                 $response["next_number"] = $nextNumber;
             }
-        } catch (\LogicException $exception) {
+        } catch (LogicException $exception) {
             $response["errors"] = [
                 ["message" => $exception->getMessage()],
             ];

@@ -5,9 +5,6 @@ namespace App\Controller;
 
 use App\Entity\DoctrineEntity\Recipe;
 use App\Entity\DoctrineEntity\RecipeIngredient;
-use App\Entity\Experiment;
-use App\Entity\ExperimentalRun;
-use App\Genie\DataSet;
 use App\Genie\Pole\Calculator;
 use App\Genie\Pole\Quantity;
 use App\Genie\Pole\Unit\Amount;
@@ -16,6 +13,7 @@ use App\Genie\Pole\Unit\MolarAmount;
 use App\Genie\Pole\Unit\MolarConcentration;
 use App\Genie\Pole\Unit\MolarMass;
 use App\Genie\Pole\Unit\Volume;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +39,7 @@ class ApiController extends AbstractController
                 $volumeDesired = is_null($content["volume"]) ? 1000.0 :floatval($content["volume"]);
                 $concentrationFactor = is_null($content["concentrationFactor"]) ? $recipe->getConcentrationFactor() : floatval($content["concentrationFactor"]);
             } else {
-                throw new \Exception("Content is empty. JSON request was probably malformed or empty.");
+                throw new Exception("Content is empty. JSON request was probably malformed or empty.");
             }
         }
 

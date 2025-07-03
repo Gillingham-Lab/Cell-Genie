@@ -11,6 +11,7 @@ use App\Genie\Enums\PrivacyLevel;
 use App\Repository\User\UserGroupRepository;
 use App\Repository\User\UserRepository;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -206,7 +207,7 @@ class ExperimentalDesignFormTest extends WebTestCase
                 ->call("submit")
                 ->response()
             ;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf(UnprocessableEntityHttpException::class, $e);
             $this->assertStringContainsString("Form validation failed", $e->getMessage());
         }

@@ -32,6 +32,8 @@ use App\Twig\Components\Live\Experiment\ExperimentalRunDataForm;
 use App\Twig\Components\Live\Experiment\ExperimentalRunForm;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use ErrorException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -134,7 +136,7 @@ class ExperimentController extends AbstractController
      * @param bool $entitiesAsId
      * @param bool $hideComments
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/api/public/experiment/design/viewData/{design}', name: "app_api_experiments_view_data")]
     ##[IsGranted("view", "design")]
@@ -256,7 +258,7 @@ class ExperimentController extends AbstractController
      * @param array<string, mixed> $searchQuery
      * @param bool $entitiesAsId
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/api/public/experiment/run/viewData/{run}', name: "app_api_experiments_run_view_data")]
     ##[IsGranted("view", "run")]
@@ -392,7 +394,7 @@ class ExperimentController extends AbstractController
         ExperimentalDesign $design,
     ): Response {
         return $this->newOrEditExperimentalRun(
-            run: (new \App\Entity\DoctrineEntity\Experiment\ExperimentalRun())
+            run: (new ExperimentalRun())
                 ->setOwner($user)
                 ->setGroup($user->getGroup())
                 ->setPrivacyLevel(PrivacyLevel::Group)
@@ -516,7 +518,7 @@ class ExperimentController extends AbstractController
                 if ($datum?->getType() === DatumEnum::EntityReference) {
                     try {
                         $value = $entities[$value[1]][$value[0]->toRfc4122()];
-                    } catch (\ErrorException $e) {
+                    } catch (ErrorException $e) {
                         $value = "{$value[1]}/{$value[0]->toRfc4122()}";
                     }
                 }

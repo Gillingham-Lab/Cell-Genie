@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace App\Entity\DoctrineEntity\Substance;
 
 use App\Entity\DoctrineEntity\Lot;
+use JsonSerializable;
 
-class SubstanceLot implements \JsonSerializable
+class SubstanceLot implements JsonSerializable
 {
     public function __construct(
         private readonly Substance $substance,

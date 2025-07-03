@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JsonSerializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -26,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\DiscriminatorColumn(name: "substance_type", type: "string")]
 #[Gedmo\Loggable]
 #[UniqueEntity("shortName")]
-class Substance implements \JsonSerializable, PrivacyAwareInterface
+class Substance implements JsonSerializable, PrivacyAwareInterface
 {
     use NewIdTrait;
     use NameTrait;

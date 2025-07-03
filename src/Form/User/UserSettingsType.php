@@ -5,6 +5,7 @@ namespace App\Form\User;
 
 use App\Form\BasicType\FancyChoiceType;
 use App\Form\BasicType\FormGroupType;
+use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -174,7 +175,7 @@ class UserSettingsType extends AbstractType
      */
     public static function getDateFormats(): array
     {
-        $date = new \DateTime("now");
+        $date = new DateTime("now");
 
         $formats = [
             "Y-m-d",

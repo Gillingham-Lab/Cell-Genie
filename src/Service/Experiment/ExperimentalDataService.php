@@ -30,6 +30,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -126,7 +127,7 @@ readonly class ExperimentalDataService
         ?int $limitRows = null,
     ): array {
         if ($design === null) {
-            throw new \Exception("You must give an experimental design.");
+            throw new Exception("You must give an experimental design.");
         }
 
         // Retrieve (paginated) conditions to show in the table.
@@ -610,7 +611,7 @@ readonly class ExperimentalDataService
 
                     try {
                         $value = $expressionLanguage->evaluate($expression, $environment);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $value = NAN;
                     }
 
@@ -623,7 +624,7 @@ readonly class ExperimentalDataService
 
                     try {
                         $value = $expressionLanguage->evaluate($expression, $environment);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $value = NAN;
                     }
 

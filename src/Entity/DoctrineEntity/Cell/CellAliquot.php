@@ -18,13 +18,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellAliquotRepository::class)]
 #[ORM\Table("cell_aliquot")]
 #[Gedmo\Loggable]
 #[WithinBoxBounds("boxCoordinate", "box")]
-class CellAliquot implements \JsonSerializable, PrivacyAwareInterface
+class CellAliquot implements JsonSerializable, PrivacyAwareInterface
 {
     use IdTrait;
     use HasBoxTrait;
