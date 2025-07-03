@@ -285,7 +285,7 @@ class InstrumentController extends AbstractController
         ]);
     }
 
-    #[Route("parts/instruments/form/log/{instrument}", name: "app_instrument_form_log_partial")]
+    ##[Route("parts/instruments/form/log/{instrument}", name: "app_instrument_form_log_partial")]
     #[Route("parts/instruments/form/log/{instrument}/{log}", name: "app_instrument_form_log_partial")]
     public function partialViewLogForm(
         Request $request,

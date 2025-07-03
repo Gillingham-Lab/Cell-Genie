@@ -1,6 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
 import {Collapse} from "bootstrap";
-import { FrameElement } from "@hotwired/turbo";
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -30,7 +29,7 @@ export default class extends Controller {
         });
     }
 
-    toggle(event) {
+    toggle() {
         this.doToggle();
     }
 
@@ -51,7 +50,7 @@ export default class extends Controller {
 
             if (empty_form) {
                 let formTurboFrame = this.formTarget.getElementsByTagName("turbo-frame")[0];
-                if (!formTurboFrame.src) {
+                if (!formTurboFrame.src || formTurboFrame.src !== this.formPathValue) {
                     formTurboFrame.src = this.formPathValue;
                 }
             }

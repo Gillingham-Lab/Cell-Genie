@@ -92,12 +92,13 @@
                             <div class="border-bottom py-1 px-lg-4">
                                 <div class="btn-group btn-group-sm">
                                     {% if is_granted("ROLE_ADMIN") or is_granted("log_new", instrument) %}
-                                        <a
-                                            class="btn btn-primary collapse show"
+                                        <a class="btn btn-primary collapse show"
                                             data-toggle="tooltip" data-placement="bottom" title="Add new log entry"
-                                            {{ stimulus_action("form-toggler", "toggle") }}
+                                            {{ stimulus_action("form-toggler", "doToggle", "click") }}
                                             {{ stimulus_target("form-toggler", "button") }}
-                                        ><span class="fas fa-fw fa-plus" aria-label="Add"></span></a>
+                                        >
+                                            <span class="fas fa-fw fa-plus" aria-label="Add"></span>
+                                        </a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -147,23 +148,23 @@
                                     Quick booking:
                                     <form method="post" action="{{ url("app_instruments_book", {"instrument": instrument.id}) }}" class="row row-cols-lg-auto g-3">
                                         <div class="col-5">
-                                            <legend class="input-group">
-                                                <div class="input-group-text">
+                                            <label class="input-group">
+                                                <span class="input-group-text">
                                                     At
-                                                </div>
+                                                </span>
 
                                                 <input type="datetime-local" class="form-control gin-datetime-autofill" name="start">
-                                            </legend>
+                                            </label>
                                         </div>
 
                                         <div class="col-5">
-                                            <legend class="input-group">
-                                                <div class="input-group-text">
+                                            <label class="input-group">
+                                                <span class="input-group-text">
                                                     For (in hours)
-                                                </div>
+                                                </span>
 
                                                 <input type="text" class="form-control" name="length" value="{{ instrument.defaultReservationLength }}">
-                                            </legend>
+                                            </label>
                                         </div>
 
                                         <div class="col-2">
@@ -173,7 +174,7 @@
                                 </div>
                             {% endif %}
 
-                            <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+                            <iframe src="https://calendar.google.com/calendar/embed?src={{ instrument.calendarId }}&ctz=Europe%2FZurich&mode=WEEK&showNav=1&showPrint=0&showTabs=0" style="border: 0" width="100%" height="600"></iframe>
                         </twig:ElementCard>
                     </twig:Layout:Col>
                 {% endif %}
