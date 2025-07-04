@@ -24,10 +24,7 @@ use App\Form\Cell\CellCultureEvents\CellCultureSplittingType;
 use App\Form\Cell\CellCultureType;
 use App\Form\Cell\CellGroupType;
 use App\Form\Cell\CellType;
-use App\Form\Search\CellSearchType;
-use App\Repository\Cell\CellCultureRepository;
 use App\Repository\Cell\CellGroupRepository;
-use App\Repository\Cell\CellRepository;
 use App\Security\Voter\Cell\CellAliquotVoter;
 use App\Security\Voter\Cell\CellCultureVoter;
 use App\Security\Voter\Cell\CellGroupVoter;
@@ -35,6 +32,8 @@ use App\Security\Voter\Cell\CellVoter;
 use App\Service\Cells\CellCultureService;
 use App\Service\FileUploader;
 use App\Service\Storage\StorageBoxService;
+use App\Service\View\CellGroupTreeViewService;
+use App\Service\View\CellListViewService;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -43,14 +42,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class CellController extends AbstractController
+final class CellController extends AbstractController
 {
     public function __construct(
         readonly private EntityManagerInterface $entityManager,
@@ -63,9 +61,34 @@ class CellController extends AbstractController
         CellGroupRepository $cellGroupRepository,
         ?CellGroup $cellGroup = null,
     ): Response {
+        $cellGroupToolbox = null;
+        if ($this->isGranted(CellGroupVoter::ATTR_NEW, "CellGroup")) {
+            $cellGroupToolbox = new Toolbox([
+                new AddTool(
+                    path: $this->generateUrl("app_cells_group_add"),
+                    tooltip: "Add new cell group",
+                )
+            ]);
+        }
+
+        $cellToolBox = null;
+        if ($cellGroup and $this->isGranted(CellVoter::NEW, "CellGroup")) {
+            $cellToolBox = new Toolbox([
+                new AddTool(
+                    path: $this->generateUrl("app_cell_add"),
+                    tooltip: "Add new cell line",
+                )
+            ]);
+        }
+
+
         return $this->render('parts/cells/cells.html.twig', [
             "cellGroups" => $cellGroupRepository->getGroupsWithCellsAndAliquots(["name" => "ASC"]),
             "currentGroup" => $cellGroup,
+            "treeViewService" => CellGroupTreeViewService::class,
+            "cellGroupToolBox" => $cellGroupToolbox,
+            "cellToolBox" => $cellToolBox,
+            "listViewService" => CellListViewService::class,
         ]);
     }
 
@@ -206,7 +229,7 @@ class CellController extends AbstractController
 
         $toolBox = new Toolbox([
             new Tool(
-                path: $this->generateUrl("app_cells", ["cellGroup" => $cell->getCellGroup()->getId()]),
+                path: $this->generateUrl("app_cells_group", ["cellGroup" => $cell->getCellGroup()->getId()]),
                 icon: "cell",
                 buttonClass: "btn-secondary",
                 tooltip: "Browse cell group",

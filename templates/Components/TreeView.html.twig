@@ -7,9 +7,11 @@
         {% set nodeId = "gin-treeView-" ~ treeLevel ~ "-" ~ node.id %}
 
         <div class="list-group-item {% if currentNode is same as(node) %}active{% endif %}">
-            <div class="list-group-item-tools">
-                <twig:Toolbox asDropdown="true" :toolbox="this.nodeTools(node)" size="sm" />
-            </div>
+            {% if this.nodeTools(node) %}
+                <div class="list-group-item-tools">
+                    <twig:Toolbox asDropdown="true" :toolbox="this.nodeTools(node)" size="sm" />
+                </div>
+            {% endif %}
 
             <div class="list-group-item-label d-lg-flex justify-content-between align-items-center">
                 <div>
@@ -25,19 +27,23 @@
                     {# Tools #}
 
                     {# Node Name #}
-                    <a  class="text-decoration-none text-black text-reset" href="{{ this.nodeUrl(node) }}">
+                    <a  class="text-decoration-none text-black text-reset" href="{{ this.nodeUrl(node) ?? "#" }}">
                         {% if this.nodeIcon %}
-                            <twig:Icon :icon="this.nodeIcon" stack="box" />
+                            <twig:Icon icon="box" :stack="this.nodeIcon" />
                         {% endif %}
 
                         {{ this.nodeLabel(node) }}
                     </a>
                 </div>
 
-                {% set component = this.postNodeComponent(node) %}
-                {% if component is not null %}
-                    <div class="ms-3 mt-2 mt-lg-0 ms-lg-0" style="min-width: 10rem;">
-                        {{ component(component[0], component[1]) }}
+                {% set postNodeComponent = this.postNodeComponent(node) %}
+                {% if postNodeComponent is not null %}
+                    <div class="ms-3 mt-2 mt-lg-0 ms-lg-0">
+                        {% if postNodeComponent[0] %}
+                            {{ component(postNodeComponent[0], postNodeComponent[1]) }}
+                        {% else %}
+                            {{ postNodeComponent[1] }}
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>

@@ -9,7 +9,14 @@
 </div>
 {% endmacro %}
 
-<div{{ attributes }}>
+{% set defaults = {} %}
+{% if minWidth %}
+    {% set defaults = {
+        "style": "min-width: " ~ minWidth ~ "rem;"
+    }%}
+{% endif %}
+
+<div{{ attributes.defaults(defaults) }}>
     <div class="progress" role="progressbar">
         {{ _self.bar(current, max, this.colorClass, striped ? "progress-bar-striped" : "", showNumbers) }}
 

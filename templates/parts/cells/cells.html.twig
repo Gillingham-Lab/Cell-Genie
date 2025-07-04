@@ -1,286 +1,80 @@
 {% extends 'homepage.html.twig' %}
 {% import 'macros.html.twig' as macros %}
 {% import 'layout.html.twig' as layout %}
-{% import 'utility/icons.html.twig' as icon %}
-{% import 'parts/cells/cell_macros.html.twig' as cell_macros %}
-
-{% macro cell_tools(cell=null) %}
-    {% if cell is null %}
-    {% else %}
-        {% set tools =  [
-            {
-                "type": "view",
-                "tooltipText": "View cell",
-                "target": macros.cell_resolver(cell),
-            },
-            {
-                "type": "clipboard",
-                "tooltipText": "Copy information",
-                "clipboardText": ( cell.name ~ " (" ~ (cell.rrid ? "RRID:" ~ cell.rrid : "") ~ ")"),
-                "disabled": cell.rrid ? false : true,
-            }
-        ] %}
-
-        {% if is_granted("ROLE_USER") %}
-            {% set tools = tools|merge([
-                {
-                    "type": "edit",
-                    "tooltipText": "Edit cell",
-                    "display": "lg",
-                    "target": url("app_cell_edit", {"cell": cell.cellNumber ?: cell.id }),
-                    "disabled": is_granted("edit", cell) ? false : true,
-                },
-                {
-                    "type": "add",
-                    "target": url("app_cell_aliquot_add", {"cell": cell.cellNumber ?: cell.id }),
-                    "tooltipText": "Add aliquot",
-                    "display": "lg",
-                    "disabled": is_granted("add_aliquot", cell) ? false : true,
-                }
-            ]) %}
-        {% endif %}
-
-        {{ layout.toolbox_column(tools, "sm") }}
-    {% endif %}
-{% endmacro %}
-
-{% macro childlist(cell) %}
-    {% if cell.children %}
-        <ul>
-            {% for childcell in cell.children %}
-                <li>
-                    {{ macros.pillify([childcell]) }}
-                    {{ _self.childlist(childcell) }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endmacro %}
-
-{% macro display_groups(groups, currentGroup, nesting=true) %}
-    {% for group in groups|sort((a, b) => a.name <=> b.name) %}
-        {% set groupId = "gin-cellgroup-" ~ group.id %}
-
-        <div class="list-group-item d-flex justify-content-between align-items-center {% if currentGroup is same as(group) %}bg-primary text-white{% endif %}">
-            <span>
-                {% if group.children|length > 0 and nesting is same as(true) %}
-                    <a id="anchor-for-{{ groupId }}" href="#{{ groupId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
-                        <span class="collapse-icon far fa-plus-square fa-fw"></span>
-                    </a>
-                {% else %}
-                    <span class="collapse-icon far fa-plus-square fa-fw invisible"></span>
-                {% endif %}
-
-                {% if is_granted("edit", group) %}
-                    <span href="me-2">
-                        {{ layout.toolbox_column([
-                            {
-                                "type": "edit",
-                                "tooltipText": "Edit cell group",
-                                "display": "lg",
-                                "target": url("app_cells_group_edit", {"cellGroup": group.id }),
-                            },
-                            {
-                                "type": "trash",
-                                "tooltipText": "Trash cell group",
-                                "display": "lg",
-                                "target": url("app_cells_group_remove", {"cellGroup": group.id }),
-                                "disabled": not is_granted("remove", group),
-                            }
-                        ], "sm") }}
-                    </span>
-                {% endif %}
-
-                <a class="text-decoration-none text-black text-reset" href="{{ url("app_cells_group", {"cellGroup": group.id}) }}">
-                    <span class="fas fa-box fa-fw"></span>
-                    {{ group.name }} ({{ group.number }})
-                </a>
-
-                {# { _self.tools(rack) }} #}
-            </span>
-            <span>
-                <span class="badge bg-secondary rounded-pill" style="width: 30px;">{{ group.children|length }}</span>
-                <span class="badge bg-primary rounded-pill" style="width: 30px;">{{ group.cells|length }}</span>
-            </span>
-        </div>
-
-        <div class="list-group collapse" id="{{ groupId }}">
-            {# Display boxes #}
-            {% if group.children|length > 0 and nesting is same as(true) %}
-                {{ _self.display_groups(group.children, currentGroup)  }}
-            {% endif %}
-        </div>
-    {% else %}
-        <div class="m-3">There have not been any registered cell groups.</div>
-    {% endfor %}
-{% endmacro %}
-
-{% macro display_cells(cells) %}
-    {% for cell in cells %}
-        <div class="list-group-item d-flex justify-content-between align-items-center {{ cell.cellAliquotes|length == 0 ? "text-muted" : "" }}">
-            <span>
-                <span class="me-3">
-                    {{ _self.cell_tools(cell) }}
-                </span>
-                <a href="{{ url("app_cell_view_number", {"cellNumber": cell.cellNumber}) }}"  class="text-decoration-none text-black text-reset">
-                    {{ icon.cell() }}
-                    {{ cell.cellNumber }} | {{ cell.name }}
-                </a>
-            </span>
-            <span>
-                {{ cell.group ?? "unknown" }}
-            </span>
-        </div>
-    {% endfor %}
-{% endmacro %}
 
 {% block title %}Gin :: Cells{% endblock %}
-
-{% block search %}
-    <form class="form-inline my-2 my-lg-0" action="{{ url("app_cells_search") }}" method="post">
-        <div class="input-group">
-            <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="search" minlength="3">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit"><span class="fa fa-search"></span></button>
-            </div>
-        </div>
-    </form>
-{% endblock %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            {% if app.request.get("_route") == "app_cells_search" %}
-                {{ layout.header("Browse Cells", "Search results for: " ~ searchTerm ~ ", found " ~ cellGroups|length ~ " groups and " ~ cells|length ~ " cells", true, icon.cell(false)) }}
-            {% else %}
-                {{ layout.header("Browse Cells", false, true, icon.cell(true)) }}
-            {% endif %}
+            <twig:PageHeader title="Browse cells" icon="cell" :barcode="true" />
 
-            <div class="row row-cols-1 row-cols-lg-2">
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Cell groups", "CellGroups") }}
-
-                        {{ layout.card_body_collapse_start("CellGroups") }}
-
-                        {% if is_granted("new", "CellGroup") %}
-                            {{
-                                layout.toolbox_card([
-                                    {
-                                        "type": "add",
-                                        "tooltipText": "Add new cell group",
-                                        "target": url("app_cells_group_add"),
-                                    },
-                                ])
-                            }}
+            <twig:Layout:Row cols="1" md="2">
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Cell Groups" icon="box" iconStack="cell" :toolbox="cellGroupToolBox">
+                        {% if cellGroups|length == 0 %}
+                        {% else %}
+                            <twig:TreeView
+                                tree="{{ cellGroups|filter(e => not e.parent) }}"
+                                :currentNode="currentGroup"
+                                :service="treeViewService"
+                            >
+                            </twig:TreeView>
                         {% endif %}
+                    </twig:ElementCard>
+                </twig:Layout:Col>
 
-                        <div class="card-body px-lg-5">
-                            {% if app.request.get("_route") == "app_cells_search" %}
-                                {{ _self.display_groups(cellGroups, null, false) }}
-                            {% else %}
-                                <div class="list-group list-group-root well border-1 border">
-                                    {{ _self.display_groups(cellGroups|filter(g => not g.parent), currentGroup) }}
-                                </div>
-                            {% endif %}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
+                <twig:Layout:Col type="outer">
+                    <twig:ElementCard title="Cells" icon="cell" :toolbox="cellToolBox">
+                        {% if not currentGroup or currentGroup is same as(null) %}
+                            <p>You have not selected any cell group</p>
+                        {% else %}
+                            <h3>{{ currentGroup.name }}</h3>
 
-                <div class="col p-0 m-0 mb-3">
-                    <div class="card mx-3 h-100">
-                        {{ layout.card_header_collapse("Cells", "Cells") }}
+                            <twig:Metadata xl="3" l="2" data="{{ {
+                                "ID": currentGroup.id,
+                                "RRID": ["rrid", currentGroup.rrid],
+                                "Cellosaurus": ["cellosaurus", currentGroup.cellosaurusId],
+                                "Culture type": currentGroup.cultureType,
+                                "Organism": currentGroup.organism ? currentGroup.organism.fullName : "unknown",
+                                "Morphology": currentGroup.morphology ? currentGroup.morphology.name : "unknown",
+                                "Tissue": currentGroup.tissue ? currentGroup.tissue.name : "unknown",
+                                "Cancer": ["boolean", currentGroup.isCancer],
+                                "Age": currentGroup.age,
+                                "Sex": currentGroup.sex ?? "unknown",
+                                "Ethnicity": currentGroup.ethnicity ?? "unknown",
+                                "Disease": currentGroup.disease ?? "unknown",
+                            } }}" />
 
-                        {{ layout.card_body_collapse_start("Cells") }}
-
-                        {% if is_granted("ROLE_USER") and currentGroup %}
-                            {{
-                                layout.toolbox_card([
-                                    {
-                                        "type": "add",
-                                        "tooltipText": "Add new cell",
-                                        "target": url("app_cell_add"),
-                                        "disabled": is_granted("new", "Cell") ? false : true,
-                                    },
-                                ])
-                            }}
-                        {% endif %}
-
-                        <div class="card-body px-lg-5">
-                            {% if app.request.get("_route") == "app_cells_search" %}
-                                <h3>Cell search results</h3>
-                                {% if cells|length > 0 %}
-                                    <div class="list-group list-group-root well border-1 border">
-                                        {{ _self.display_cells(cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
-                                        {{ _self.display_cells(cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
-                                    </div>
-                                {% else %}
-                                    <p>No cells match your criteria</p>
-                                {% endif %}
-                            {% elseif not currentGroup %}
-                                No cell group has been selected.
-                            {% else %}
-                                <h3>{{ currentGroup.name }}</h3>
-
-                                <table class="table w-100 table-borderless table-sm table-hover">
-                                    <tbody>
-                                        {{ macros.definition_row("ID", currentGroup.id) }}
-                                        {{ macros.definition_row("RRID", macros.rrid_resolver(currentGroup.rrid)) }}
-                                        {{ macros.definition_row_raw("Cellosaurus", cell_macros.cellosauros_url(currentGroup)) }}
-                                        {{ macros.definition_row("Culture type", currentGroup.cultureType) }}
-
-                                        {{ macros.definition_row("Organism", currentGroup.organism ? currentGroup.organism.fullName : "undefined") }}
-                                        {{ macros.definition_row("Morphology", currentGroup.morphology ? currentGroup.morphology.name : "undefined") }}
-                                        {{ macros.definition_row("Tissue", currentGroup.tissue ? currentGroup.tissue.name : "undefined") }}
-                                        {{ macros.definition_row("Cancer", currentGroup.isCancer ? "Yes" : "No") }}
-                                        {{ macros.definition_row("Age", currentGroup.age) }}
-                                        {{ macros.definition_row("Sex", currentGroup.sex ?: "-") }}
-                                        {{ macros.definition_row("Ethnicity", currentGroup.ethnicity ?: "-") }}
-                                        {{ macros.definition_row("Disease", currentGroup.disease ?: "-") }}
-                                    </tbody>
-                                </table>
-
-
+                            {% if currentGroup.cells|length > 0 %}
                                 <h4>Cells</h4>
-                                {% if currentGroup.cells|length > 0 %}
-                                    <div class="list-group list-group-root well border-1 border">
-                                        {% if app.user and app.user.group %}
-                                            {{ _self.display_cells(currentGroup.cells|filter(e => e.group and e.group.id == app.user.group.id)) }}
-                                            {{ _self.display_cells(currentGroup.cells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
-                                        {% else %}
-                                            {{ _self.display_cells(currentGroup.cells) }}
-                                        {% endif %}
-                                    </div>
-                                {% else %}
-                                    <p>This group contains no cells.</p>
-                                {% endif %}
 
-                                {% if currentGroup.children|length > 0 %}
-                                    <h4>Cells in sub groups</h4>
-                                    <div class="list-group list-group-root well border-1 border mt-3">
-                                        {% set otherCells = [] %}
-
-                                        {% for subGroup in currentGroup.allChildren %}
-                                            {% set otherCells = otherCells|merge(subGroup.cells) %}
-                                        {% endfor %}
-
-                                        {% set otherCells = otherCells|sort((a, b) => a.cellNumber <=> b.cellNumber) %}
-
-                                        {% if app.user and app.user.group %}
-                                            {{ _self.display_cells(otherCells|filter(e => e.group and e.group.id == app.user.group.id)) }}
-                                            {{ _self.display_cells(otherCells|filter(e => not e.group or e.group.id != app.user.group.id)) }}
-                                        {% else %}
-                                            {{ _self.display_cells(otherCells) }}
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
+                                <twig:ListView
+                                    :service="listViewService"
+                                    :items="currentGroup.cells"
+                                    sort="0"
+                                ></twig:ListView>
                             {% endif %}
-                        </div>
-                        {{ layout.card_body_collapse_end() }}
-                    </div>
-                </div>
-            </div>
+
+
+                            {% if currentGroup.children|length > 0 %}
+                                {% set otherCells = [] %}
+                                {% for subGroup in currentGroup.allChildren %}
+                                    {% set otherCells = otherCells|merge(subGroup.cells) %}
+                                {% endfor %}
+
+                                <h4 class="mt-3">Cells in sub groups</h4>
+
+                                <twig:ListView
+                                    :service="listViewService"
+                                    :items="otherCells"
+                                    sort="0"
+                                ></twig:ListView>
+                            {% endif %}
+                        {% endif %}
+                    </twig:ElementCard>
+                </twig:Layout:Col>
+            </twig:Layout:Row>
         </div>
     </div>
 {% endblock %}

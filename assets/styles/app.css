@@ -1,23 +1,10 @@
-/*.gin-icon-stack {
-    display: inline-block;
-    white-space: nowrap;
+.dropdown-item {
+    color: var(--bs-body-color) !important;
 }
 
-.gin-icon-stack-fw {
-    max-width: 1.25em;
+.dropdown-item .gin-icon-stack {
+    color: var(--bs-tertiary-color);
 }
-
-.gin-icon-left {
-    position: relative;
-    font-size: 0.75em;
-}
-
-.gin-icon-right {
-    position: relative;
-    right: 1em;
-    top: -0.5em;
-    font-size: 0.75em;
-}*/
 
 label.required:after {
     content: "* ";
@@ -34,7 +21,6 @@ label.required:after {
 
 .list-group.list-group-root {
     padding: 0;
-    overflow: hidden;
 }
 
 .list-group.list-group-root .list-group {
@@ -42,7 +28,6 @@ label.required:after {
 }
 
 .list-group.list-group-root .list-group-item {
-    border-radius: 0;
     border-width: 1px 0 0 0;
 }
 

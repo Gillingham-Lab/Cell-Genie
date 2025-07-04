@@ -15,10 +15,10 @@ class Icon
     public function getIconClass(): string
     {
         if ($this->stack) {
-            return "gin-icon-stack gin-icon-stack-fw";
+            return "gin-icon gin-icon-stack gin-icon-stack-fw";
         }
 
-        return match ($this->icon) {
+        return "gin-icon " . match ($this->icon) {
             "success" => "far fa-check-circle",
             "danger" => "fas fa-exclamation-circle",
             "unknown" => "far fa-question-circle",

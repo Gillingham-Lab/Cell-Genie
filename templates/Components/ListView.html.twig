@@ -1,0 +1,40 @@
+<div {{ attributes.defaults({
+    "class": "list-group list-group-root well border-1 border gin-tree-view",
+}) }}>
+    {% if sort is true %}
+        {% set items = items|natsort %}
+    {% endif %}
+
+    {% for item in items %}
+        <div class="list-group-item {{ this.active(item) ? "active" : "" }} {{ this.isEmpty(item) ? "text-muted bg-secondary-subtle" : "" }}">
+            {% if this.itemTools(item) %}
+                <div class="list-group-item-tools">
+                    <twig:Toolbox asDropdown="true" :toolbox="this.itemTools(item)" size="sm" />
+                </div>
+            {% endif %}
+
+            <div class="list-group-item-label d-flex justify-content-between align-items-center">
+                <div>
+                    <a class="text-decoration-none text-reset" href="{{ this.itemUrl(item) ?? "#" }}">
+                        {% if this.itemIcon %}
+                            <twig:Icon :icon="this.itemIcon" />
+                        {% endif %}
+
+                        {{ this.itemLabel(item) }}
+                    </a>
+                </div>
+
+                {% set postItemComponent = this.postItemComponent(item) %}
+                {% if postItemComponent is not null %}
+                    <div class="ms-3 mt-2 mt-lg-0 ms-lg-0">
+                        {% if postItemComponent[0] %}
+                            {{ component(postItemComponent[0], postItemComponent[1]) }}
+                        {% else %}
+                            {{ postItemComponent[1] }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

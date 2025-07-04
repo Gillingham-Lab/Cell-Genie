@@ -17,6 +17,7 @@ class ProgressBar
     public bool $showNumbers = true;
     public ?string $color = null;
     public bool $striped = false;
+    public ?float $minWidth = null;
 
     /**
      * @var SubProgressBarProps[]

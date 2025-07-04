@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Service\TreeView;
+namespace App\Service\View;
 
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\Toolbox\EditTool;
@@ -79,6 +79,7 @@ class ConsumableTreeViewService implements TreeViewServiceInterface
                 "max" => $node->getIdealStock(),
                 "showNumbers" => true,
                 "color" => $barColor,
+                "minWidth" => 10,
             ]
         ];
     }

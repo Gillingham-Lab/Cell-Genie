@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Service\TreeView;
+namespace App\Service\View;
 
 use App\Entity\Toolbox\Toolbox;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -17,7 +17,6 @@ interface TreeViewServiceInterface
         UrlGeneratorInterface $urlGenerator,
         Security $security,
     );
-
 
     public function getNodeIcon(): ?string;
 
@@ -41,19 +40,19 @@ interface TreeViewServiceInterface
 
     /**
      * @param T $node
-     * @return null|array{class-string, array<string, mixed>}
+     * @return null|array{class-string, array<string, mixed>}|array{null, string}
      */
     public function getPostNodeComponent(object $node): ?array;
 
     /**
      * @param T $node
-     * @return null|array{class-string, array<string, mixed>}
+     * @return null|array{class-string, array<string, mixed>}|array{null, string}
      */
     public function getPreChildComponent(object $node): ?array;
 
     /**
      * @param T $node
-     * @return null|array{class-string, array<string, mixed>}
+     * @return null|array{class-string, array<string, mixed>}|array{null, string}
      */
     public function getPostChildComponent(object $node): ?array;
 }

@@ -1,0 +1,20 @@
+<span {{ attributes.defaults({}) }}>
+    <span
+        data-toggle="tooltip"
+        data-placement="bottom"
+        data-bs-original-title="Number of sub cell groups"
+        class="badge bg-secondary rounded-pill"
+        style="width: 30px;"
+    >
+        {{ group.children|length }}
+    </span>
+    <span
+        data-toggle="tooltip"
+        data-placement="bottom"
+        data-bs-original-title="Number of cell cells inside this group"
+        class="badge bg-primary rounded-pill"
+        style="width: 30px;"
+    >
+        {{ group.cells|length }}
+    </span>
+</span>

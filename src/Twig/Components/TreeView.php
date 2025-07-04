@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Entity\Toolbox\Toolbox as ToolboxEntity;
-use App\Service\TreeView\TreeViewServiceInterface;
+use App\Service\View\TreeViewServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,15 +19,10 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent]
 class TreeView implements TreeViewServiceInterface
 {
-    /**
-     * @var list<T>
-     */
-
+    /**  @var list<T> */
     public array $tree = [];
 
-    /**
-     * @var null|T
-     */
+    /** @var null|T */
     public ?object $currentNode = null;
 
     public int $treeLevel = 0;
@@ -68,7 +63,7 @@ class TreeView implements TreeViewServiceInterface
             $data["tree"] = $data["tree"]->toArray();
         }
 
-        if (!empty($data["service"])) {
+        if (isset($data["service"])) {
             // Create a new service class - if it is not already one anyway
             if (!is_object($data["service"])) {
                 $data["service"] = new $data["service"](
