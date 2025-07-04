@@ -6,7 +6,7 @@
     {% endif %}
 
     {% for item in items %}
-        <div class="list-group-item {{ this.active(item) ? "active" : "" }} {{ this.isEmpty(item) ? "text-muted bg-secondary-subtle" : "" }}">
+        <div class="list-group-item {{ this.active(item) ? "active" : "" }} {{ this.isEmpty(item) ? "text-muted bg-secondary" : "" }}">
             {% if this.itemTools(item) %}
                 <div class="list-group-item-tools">
                     <twig:Toolbox asDropdown="true" :toolbox="this.itemTools(item)" size="sm" />
