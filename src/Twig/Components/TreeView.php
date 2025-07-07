@@ -87,9 +87,14 @@ class TreeView implements TreeViewServiceInterface
         return $this->currentNode === $node;
     }
 
-    public function getNodeIcon(): ?string
+    public function getNodeIcon(?object $node = null): ?string
     {
-        return $this->service?->getNodeIcon();
+        return $this->service?->getNodeIcon($node);
+    }
+
+    public function isIconStacked(?object $node = null): bool
+    {
+        return $this->service?->isIconStacked($node);
     }
 
     public function getNodeLabel(object $node): string
@@ -120,5 +125,19 @@ class TreeView implements TreeViewServiceInterface
     public function getPostChildComponent(object $node): ?array
     {
         return $this->service?->getPostChildComponent($node);
+    }
+
+    public function isIterable(?object $node=null): bool
+    {
+        if ($node === null) {
+            return $this->service?->isIterable($this->tree) ?? false;
+        } else {
+            return $this->service?->isIterable($node) ?? false;
+        }
+    }
+
+    public function getTree(object $node): array
+    {
+        return $this->service?->getTree($node);
     }
 }

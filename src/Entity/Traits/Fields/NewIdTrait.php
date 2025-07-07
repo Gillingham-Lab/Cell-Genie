@@ -27,4 +27,9 @@ trait NewIdTrait
     {
         return $this->ulid;
     }
+
+    public function getId(): ?Ulid
+    {
+        return $this->ulid;
+    }
 }

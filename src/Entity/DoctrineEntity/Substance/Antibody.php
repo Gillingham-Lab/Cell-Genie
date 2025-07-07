@@ -27,9 +27,6 @@ class Antibody extends Substance
     use HasRRID;
     use VendorTrait;
 
-    #[ORM\Column(type: "integer", nullable: true)]
-    private ?int $id = null;
-
     #[ORM\Column(type: "string", enumType: AntibodyType::class, options: ["default" => AntibodyType::Primary])]
     private ?AntibodyType $type;
 
@@ -96,11 +93,6 @@ class Antibody extends Substance
     public function __toString(): string
     {
         return ($this->getNumber() ? $this->getNumber() . " | " : "") . ($this->getShortName() ?? "unknown");
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

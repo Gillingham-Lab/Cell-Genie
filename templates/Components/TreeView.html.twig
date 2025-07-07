@@ -6,7 +6,7 @@
     {% for node in tree|natsort %}
         {% set nodeId = "gin-treeView-" ~ treeLevel ~ "-" ~ node.id %}
 
-        <div class="list-group-item {% if currentNode is same as(node) %}active{% endif %}">
+        <div class="list-group-item {% if this.active(node) %}active{% endif %}">
             {% if this.nodeTools(node) %}
                 <div class="list-group-item-tools">
                     <twig:Toolbox asDropdown="true" :toolbox="this.nodeTools(node)" size="sm" />
@@ -16,7 +16,7 @@
             <div class="list-group-item-label d-lg-flex justify-content-between align-items-center">
                 <div>
                     {# Collapse icon #}
-                    {% if node.children|length > 0  %}
+                    {% if this.iterable(node)  %}
                         <a id="anchor-for-{{ nodeId }}" href="#{{ nodeId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
                             <span class="collapse-icon far fa-plus-square fa-fw"></span>
                         </a>
@@ -27,9 +27,13 @@
                     {# Tools #}
 
                     {# Node Name #}
-                    <a  class="text-decoration-none text-black text-reset" href="{{ this.nodeUrl(node) ?? "#" }}">
-                        {% if this.nodeIcon %}
-                            <twig:Icon icon="box" :stack="this.nodeIcon" />
+                    <a class="text-decoration-none text-black text-reset" href="{{ this.nodeUrl(node) ?? "#" }}">
+                        {% if this.nodeIcon(node) %}
+                            {% if this.iconStacked(node) %}
+                                <twig:Icon icon="box" stack="{{ this.nodeIcon(node) }}" />
+                            {% else %}
+                                <twig:Icon icon="{{ this.nodeIcon(node) }}" />
+                            {% endif %}
                         {% endif %}
 
                         {{ this.nodeLabel(node) }}
@@ -62,8 +66,8 @@
 
         {# Children categories #}
         <div class="list-group collapse" id="{{ nodeId }}">
-            {% if node.children|length > 0 %}
-                <twig:TreeView tree="{{ node.children }}" treeLevel="{{ treeLevel + 1 }}" currentNode="{{ currentNode }}" :service="service" :childComponentParams="childComponentParams" />
+            {% if this.iterable(node) %}
+                <twig:TreeView tree="{{ this.getTree(node) }}" treeLevel="{{ treeLevel + 1 }}" currentNode="{{ currentNode }}" :service="service" :childComponentParams="childComponentParams" />
             {% endif %}
         </div>
 

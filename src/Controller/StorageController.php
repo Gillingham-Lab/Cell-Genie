@@ -8,6 +8,8 @@ use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
+use App\Entity\Toolbox\AddTool;
+use App\Entity\Toolbox\Toolbox;
 use App\Form\Storage\BoxType;
 use App\Form\Storage\RackType;
 use App\Genie\Enums\PrivacyLevel;
@@ -18,6 +20,7 @@ use App\Repository\Storage\RackRepository;
 use App\Repository\Substance\SubstanceRepository;
 use App\Service\FileUploader;
 use App\Service\Storage\StorageBoxService;
+use App\Service\View\StorageTreeViewService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,7 +80,30 @@ class StorageController extends AbstractController
             $consumablesInRack = $consumableLotRepository->getLotsByLocation($rack);
         }
 
+        if ($box and $rack === null) {
+            $rack = $box->getRack();
+        }
+
+        $toolbox = new Toolbox([
+            new AddTool(
+                path: $this->generateUrl("app_storage_add_rack"),
+                icon: "rack",
+                tooltip: "Add new rack",
+                iconStack: "add",
+            ),
+            new AddTool(
+                path: $this->generateUrl("app_storage_add_box"),
+                icon: "box",
+                tooltip: "Add new box",
+                iconStack: "add",
+            ),
+        ]);
+
         return $this->render("parts/storage/storage.html.twig", [
+            "toolbox" => $toolbox,
+            "currentRack" => $rack,
+            "currentBox" => $box,
+            "service" => StorageTreeViewService::class,
             "racks" => $racks,
             "boxes" => $boxes,
             "box" => $box,

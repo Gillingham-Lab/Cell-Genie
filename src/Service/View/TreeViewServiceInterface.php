@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Service\View;
 
 use App\Entity\Toolbox\Toolbox;
+use Doctrine\Common\Collections\Collection;
+use Gedmo\Mapping\Annotation\Tree;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -18,7 +20,16 @@ interface TreeViewServiceInterface
         Security $security,
     );
 
-    public function getNodeIcon(): ?string;
+    /**
+     * @param T $node
+     */
+
+    public function getNodeIcon(?object $node = null): ?string;
+
+    /**
+     * @param T $node
+     */
+    public function isIconStacked(?object $node = null): bool;
 
     /**
      * @param T $node
@@ -55,4 +66,15 @@ interface TreeViewServiceInterface
      * @return null|array{class-string, array<string, mixed>}|array{null, string}
      */
     public function getPostChildComponent(object $node): ?array;
+
+    /**
+     * @param T $node
+     */
+    public function isIterable(object $node): bool;
+
+    /**
+     * @param T $node
+     * @return list<T>
+     */
+    public function getTree(object $node): array;
 }

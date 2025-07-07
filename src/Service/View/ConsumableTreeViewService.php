@@ -16,13 +16,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ConsumableTreeViewService implements TreeViewServiceInterface
 {
+    use DefaultTreeViewTrait;
+
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
     ) {
     }
 
-    public function getNodeIcon(): string
+    public function getNodeIcon(?object $node = null): string
     {
         return "consumable";
     }
