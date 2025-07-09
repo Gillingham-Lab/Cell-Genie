@@ -83,15 +83,11 @@ class OligoRepository extends SubstanceRepository implements PaginatedRepository
         $qb = $this->createQueryBuilder("c")
             ->addSelect("COUNT(l) AS lotCount")
             ->addSelect($this::LotAvailableQuery . " AS hasAvailableLot")
-            #->addSelect("cs")
-            #->addSelect("ce")
             ->leftJoin("c.lots", "l")
-            #->leftJoin("c.startConjugate", "cs")
-            #->leftJoin("c.endConjugate", "ce")
+            ->leftJoin("c.startConjugate", "cs")
+            ->leftJoin("c.endConjugate", "ce")
             ->groupBy("c")
             ->addGroupBy("l")
-            #->addGroupBy("cs")
-            #->addGroupBy("ce")
             ->orderBy("c.shortName");
 
         return $qb;
