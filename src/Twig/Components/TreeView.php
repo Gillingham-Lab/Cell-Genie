@@ -140,4 +140,9 @@ class TreeView implements TreeViewServiceInterface
     {
         return $this->service?->getTree($node);
     }
+
+    public function isCurrentPath(object $node, ?object $object = null): bool
+    {
+        return $this->service?->isCurrentPath($node, $this->currentNode);
+    }
 }

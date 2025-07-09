@@ -14,7 +14,7 @@ class ElementCard
     public string $title;
     public ?string $icon = null;
     public ?string $iconStack = null;
-    public bool $collapsed = true;
+    public bool $collapsed = false;
     public bool $noPadding = false;
     public ?ToolboxEntity $toolbox = null;
 

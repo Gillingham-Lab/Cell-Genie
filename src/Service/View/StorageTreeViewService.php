@@ -116,4 +116,21 @@ class StorageTreeViewService implements TreeViewServiceInterface
             return [... $racks, ... $boxes];
         }
     }
+
+    public function isCurrentPath(object $node, ?object $object = null): bool
+    {
+        if ($object === null) {
+            $object = $this->currentNode;
+        }
+
+        if ($node === $object) {
+            return true;
+        } elseif ($object instanceof Rack and $object->getParent()) {
+            return $this->isCurrentPath($node, $object->getParent());
+        } elseif ($object instanceof Box and $object->getRack()) {
+            return $this->isCurrentPath($node, $object->getRack());
+        } else {
+            return false;
+        }
+    }
 }

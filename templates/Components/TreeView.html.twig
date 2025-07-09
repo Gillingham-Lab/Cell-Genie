@@ -5,81 +5,104 @@
 <div {{ attributes.defaults(treeLevel == 0 ? outerTreeViewAttributes : {}) }}>
     {% for node in tree|natsort %}
         {% set nodeId = "gin-treeView-" ~ treeLevel ~ "-" ~ node.id %}
-
-        <div class="list-group-item {% if this.active(node) %}active{% endif %}">
-            {% if this.nodeTools(node) %}
-                <div class="list-group-item-tools">
-                    <twig:Toolbox asDropdown="true" :toolbox="this.nodeTools(node)" size="sm" />
-                </div>
+        <div
+            {% if this.iterable(node) %}
+                {{ stimulus_controller("Tools/TreeCollapse", {
+                    "id": nodeId,
+                    "activePath": this.isCurrentPath(node),
+                }) }}
             {% endif %}
-
-            <div class="list-group-item-label d-lg-flex justify-content-between align-items-center">
-                <div>
-                    {# Collapse icon #}
-                    {% if this.iterable(node)  %}
-                        <a id="anchor-for-{{ nodeId }}" href="#{{ nodeId }}" class="text-decoration-none text-black text-reset" data-bs-toggle="collapse">
-                            <span class="collapse-icon far fa-plus-square fa-fw"></span>
-                        </a>
-                    {% else %}
-                        <span class="collapse-icon far fa-plus-square fa-fw invisible"></span>
-                    {% endif %}
-
-                    {# Tools #}
-
-                    {# Node Name #}
-                    <a class="text-decoration-none text-black text-reset" href="{{ this.nodeUrl(node) ?? "#" }}">
-                        {% if this.nodeIcon(node) %}
-                            {% if this.iconStacked(node) %}
-                                <twig:Icon icon="box" stack="{{ this.nodeIcon(node) }}" />
-                            {% else %}
-                                <twig:Icon icon="{{ this.nodeIcon(node) }}" />
-                            {% endif %}
-                        {% endif %}
-
-                        {{ this.nodeLabel(node) }}
-                    </a>
-                </div>
-
-                {% set postNodeComponent = this.postNodeComponent(node) %}
-                {% if postNodeComponent is not null %}
-                    <div class="ms-3 mt-2 mt-lg-0 ms-lg-0">
-                        {% if postNodeComponent[0] %}
-                            {{ component(postNodeComponent[0], postNodeComponent[1]) }}
-                        {% else %}
-                            {{ postNodeComponent[1] }}
-                        {% endif %}
+        >
+            <div
+                class="list-group-item {% if this.active(node) %}active{% elseif this.isCurrentPath(node) %}bg-primary-subtle{% endif %}"
+            >
+                {% if this.nodeTools(node) %}
+                    <div class="list-group-item-tools">
+                        <twig:Toolbox asDropdown="true" :toolbox="this.nodeTools(node)" size="sm" />
                     </div>
                 {% endif %}
+
+                <div class="list-group-item-label d-lg-flex justify-content-between align-items-center">
+                    <div>
+                        {# Collapse icon #}
+                        {% if this.iterable(node)  %}
+                            <a
+                                id="anchor-for-{{ nodeId }}"
+                                href="#{{ nodeId }}"
+                                class="text-decoration-none text-black text-reset"
+                                {{ stimulus_action("Tools/TreeCollapse", "toggle") }}
+                            >
+                                <span
+                                    {{ stimulus_target("Tools/TreeCollapse", "icon") }}
+                                    class="collapse-icon far {% if this.isCurrentPath(node) %}fa-minus-square{% else %}fa-plus-square{% endif%} fa-fw"
+                                ></span>
+                            </a>
+                        {% else %}
+                            <span class="collapse-icon far fa-plus-square fa-fw invisible"></span>
+                        {% endif %}
+
+                        {# Tools #}
+
+                        {# Node Name #}
+                        <a class="text-decoration-none text-black text-reset" href="{{ this.nodeUrl(node) ?? "#" }}">
+                            {% if this.nodeIcon(node) %}
+                                {% if this.iconStacked(node) %}
+                                    <twig:Icon icon="box" stack="{{ this.nodeIcon(node) }}" />
+                                {% else %}
+                                    <twig:Icon icon="{{ this.nodeIcon(node) }}" />
+                                {% endif %}
+                            {% endif %}
+
+                            {{ this.nodeLabel(node) }}
+                        </a>
+                    </div>
+
+                    {% set postNodeComponent = this.postNodeComponent(node) %}
+                    {% if postNodeComponent is not null %}
+                        <div class="ms-3 mt-2 mt-lg-0 ms-lg-0">
+                            {% if postNodeComponent[0] %}
+                                {{ component(postNodeComponent[0], postNodeComponent[1]) }}
+                            {% else %}
+                                {{ postNodeComponent[1] }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        {% if this.active(node) %}
-            {% set component = this.preChildComponent(node) %}
-            {% if component is not null %}
-                <div class="ms-5 list-group-item">
-                    <div class="list-group-item-label p-0">
-                        {{ component(component[0], component[1]|merge(childComponentParams)) }}
+            {% if this.active(node) %}
+                {% set component = this.preChildComponent(node) %}
+                {% if component is not null %}
+                    <div class="ms-5 list-group-item">
+                        <div class="list-group-item-label p-0">
+                            {{ component(component[0], component[1]|merge(childComponentParams)) }}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             {% endif %}
-        {% endif %}
 
-        {# Children categories #}
-        <div class="list-group collapse" id="{{ nodeId }}">
-            {% if this.iterable(node) %}
-                <twig:TreeView tree="{{ this.getTree(node) }}" treeLevel="{{ treeLevel + 1 }}" currentNode="{{ currentNode }}" :service="service" :childComponentParams="childComponentParams" />
+            {# Children categories #}
+            <div
+                class="list-group collapse {% if this.isCurrentPath(node) %}show{% endif %}" id="{{ nodeId }}"
+                {% if this.iterable(node) %}
+                    {{ stimulus_target("Tools/TreeCollapse", "body") }}
+                {% endif %}
+            >
+                {% if this.iterable(node) %}
+                    <twig:TreeView tree="{{ this.getTree(node) }}" treeLevel="{{ treeLevel + 1 }}" currentNode="{{ currentNode }}" :service="service" :childComponentParams="childComponentParams" />
+                {% endif %}
+            </div>
+
+            {% if this.active(node) %}
+                {% set component = this.postChildComponent(node) %}
+                {% if component is not null %}
+                    <div class="ms-5 list-group-item">
+                        <div class="list-group-item-label p-0">
+                            {{ component(component[0], component[1]|merge(childComponentParams)) }}
+                        </div>
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
-
-        {% if this.active(node) %}
-            {% set component = this.postChildComponent(node) %}
-            {% if component is not null %}
-                <div class="ms-5 list-group-item">
-                    <div class="list-group-item-label p-0">
-                        {{ component(component[0], component[1]|merge(childComponentParams)) }}
-                    </div>
-                </div>
-            {% endif %}
-        {% endif %}
     {% endfor %}
 </div>

@@ -1,12 +1,20 @@
 {% extends 'homepage.html.twig' %}
 {% import 'layout.html.twig' as layout %}
 
-{% block title %}Gin :: Storage{% endblock %}
+{% set title = "Storage" %}
+
+{% if currentBox %}
+    {% set title = title ~ " :: " ~ currentBox.pathName %}
+{% elseif currentRack %}
+    {% set title = title ~ " :: " ~ currentRack.pathName %}
+{% endif %}
+
+{% block title %}Gin :: {{ title }}{% endblock %}
 
 {% block body_main %}
     <div class="row">
         <div class="container container-fluid w-100 p-0 m-0">
-            <twig:PageHeader title="Storage" icon="rack" :barcode="true"  />
+            <twig:PageHeader :title="title" icon="rack" :barcode="true"  />
 
             <twig:Layout:Row>
                 <twig:Layout:Col type="inner">

@@ -27,4 +27,3 @@ import "./gin/formHelpers";
 import "./gin/addClipboard";
 //import "./gin/addSequenceViewer";
 import "./gin/addQRReader";
-import "./gin/toggleHelper"

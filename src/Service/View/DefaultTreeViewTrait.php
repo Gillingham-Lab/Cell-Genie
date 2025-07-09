@@ -21,4 +21,19 @@ trait DefaultTreeViewTrait
     {
         return $node->getChildren()->toArray();
     }
+
+    public function isCurrentPath(object $node, ?object $object = null): bool
+    {
+        if ($object === null) {
+            $object = $this->currentNode;
+        }
+
+        if ($node === $object) {
+            return true;
+        } elseif ($object->getParent()) {
+            return $this->isCurrentPath($node, $object->getParent());
+        } else {
+            return false;
+        }
+    }
 }

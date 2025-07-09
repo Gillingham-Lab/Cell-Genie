@@ -77,4 +77,10 @@ interface TreeViewServiceInterface
      * @return list<T>
      */
     public function getTree(object $node): array;
+
+    /**
+     * @param T $node
+     * @param T|null $object
+     */
+    public function isCurrentPath(object $node, ?object $object = null): bool;
 }

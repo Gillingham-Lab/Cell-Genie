@@ -1,10 +1,16 @@
 <div
     {{ attributes.defaults({class: "card mx-1 mx-md-3"}) }}
+    {{  stimulus_controller("Tools/ElementCollapse", {
+        "id": computed.id,
+    }) }}
 >
     <div class="card-header" id="collapse-{{ computed.id }}-header">
         <h2 class="mb-0">
-            <a class="btn btn-lg w-100 text-start"
-                    data-bs-toggle="collapse" data-bs-target="#collapse-{{ computed.id }}-content" aria-expanded="false" aria-controls="collapse-{{ computed.id }}-content"
+            <a
+                class="btn btn-lg w-100 text-start"
+                aria-expanded="{% if collapsed %}false{% else %}true{% endif %}"
+                aria-controls="collapse-{{ computed.id }}-content"
+                {{ stimulus_action("Tools/ElementCollapse", "toggle") }}
             >
                 {% if icon %}<twig:Icon :icon="icon" :stack="iconStack" />{% endif %}
                 {{ title }}
@@ -12,7 +18,12 @@
         </h2>
     </div>
 
-    <div id="collapse-{{ computed.id }}-content" class="collapse {{ collapsed ? "": "show" }}" aria-labelledby="collapse-{{ computed.id }}-header">
+    <div
+        id="collapse-{{ computed.id }}-content"
+        class="collapse {{ collapsed ? "": "show" }}"
+        aria-labelledby="collapse-{{ computed.id }}-header"
+        {{ stimulus_target("Tools/ElementCollapse", "body") }}
+    >
         {% if toolbox is not same as(null) %}
             <div class="card-body border-bottom py-1 px-lg-5 flex-grow-0">
                 <twig:Toolbox toolbox="{{ toolbox }}" />
