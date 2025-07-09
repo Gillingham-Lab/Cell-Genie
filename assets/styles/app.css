@@ -18,74 +18,65 @@ label.required:after {
     color: #777777;
 }
 
+.list-group-root {
+    border-color: var(--bs-list-group-border-color);
+    border-style: solid;
+    border-width: 0 var(--bs-list-group-border-width) var(--bs-list-group-border-width);
+    border-radius: 0 !important;
+}
 
-.list-group.list-group-root {
+.list-group-root .list-group-item {
+    border-width: 0;
     padding: 0;
+    margin: 0;
+    border-top-width: var(--bs-list-group-border-width);
+    border-radius: 0;
 }
 
-.list-group.list-group-root .list-group {
-    margin-bottom: 0;
+.list-group-root > .list-group-item-controller > .list-group-item:first-child {
+    border-top-width: 0;
 }
 
-.list-group.list-group-root .list-group-item {
-    border-width: 1px 0 0 0;
+.list-group-root .list-group-item:last-child {
 }
 
-.gin-tree-view .list-group-item {
-    padding: 0;
+.list-group-root .list-group-item-label,
+.list-group-root .list-group-item-tools {
+    padding: var(--bs-list-group-item-padding-y) 0;
 }
 
-.list-group-item > div.list-group-item-label {
-    padding:  var(--bs-list-group-item-padding-y) var(--bs-list-group-item-padding-x);
+.list-group-root {
+    position: relative;
 }
 
-.list-group-item > div.list-group-item-tools {
-    padding:  var(--bs-list-group-item-padding-y) 0.2rem var(--bs-list-group-item-padding-y) 0.4rem;
-
+.list-group .list-group-item-tools {
     float: left;
 }
 
-.list-group-item.active > div.list-group-item-tools {
-    color: var(--bs-list-group-active-color);
-    background-color: var(--bs-list-group-active-bg);
-    border-color: var(--bs-list-group-active-border-color);
+.list-group-root .list-group-item-label {
+    --nested-list-position: 1rem;
+    position: relative;
+    padding-left: var(--nested-list-position);
 }
 
-
-
-.list-group.list-group-root > .list-group > .list-group-item,
-.list-group.list-group-root > .list-group > div > .list-group-item > .list-group-item-label,
-.list-group.list-group-root > div > .list-group > div > div > .list-group-item > .list-group-item-label
-{
-    padding-left: 40px;
+.list-group-root .list-group .list-group-item-label {
+    --nested-list-position: 2rem;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group-item,
-.list-group.list-group-root > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label,
-.list-group.list-group-root > div > .list-group > div > div > .list-group > div > div > .list-group-item > .list-group-item-label
-{
-    padding-left: 80px;
+.list-group-root .list-group .list-group .list-group-item-label {
+    --nested-list-position: 3rem;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group-item,
-.list-group.list-group-root > .list-group > div > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label,
-.list-group.list-group-root > div > .list-group > div > div > .list-group > div > div > .list-group > div > div > .list-group-item > .list-group-item-label
-{
-    padding-left: 120px;
+.list-group-root .list-group .list-group .list-group .list-group-item-label {
+    --nested-list-position: 4rem;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group .list-group-item,
-.list-group.list-group-root > .list-group > div > .list-group > div > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label,
-.list-group.list-group-root > div >.list-group > div > div > .list-group > div > div > .list-group > div > div > .list-group > div > div > .list-group-item > .list-group-item-label
-{
-    padding-left: 160px;
+.list-group-root .list-group .list-group .list-group .list-group .list-group-item-label {
+    --nested-list-position: 5rem;
 }
 
-.list-group.list-group-root > .list-group > .list-group > .list-group > .list-group > .list-group .list-group-item,
-.list-group.list-group-root > .list-group > div > .list-group > div > .list-group > div > .list-group > div > .list-group > div > .list-group-item > .list-group-item-label,
-.list-group.list-group-root > div > .list-group > div > div > .list-group > div > div > .list-group > div > div > .list-group > div > div > .list-group > div > div > .list-group-item > .list-group-item-label
-{
-    padding-left: 200px;
+.list-group-root .list-group .list-group .list-group .list-group .list-group .list-group-item-label {
+    --nested-list-position: 6rem;
 }
 
 img.greyscale {
