@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ConsumableTreeViewService implements TreeViewServiceInterface
 {
+    /** @use DefaultTreeViewTrait<ConsumableCategory> */
     use DefaultTreeViewTrait;
 
     public function __construct(

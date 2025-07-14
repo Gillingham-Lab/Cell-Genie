@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
+use App\Entity\Interface\ChildParentInterface;
 use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use App\Service\View\TreeViewServiceInterface;
 use Doctrine\Common\Collections\Collection;
@@ -15,6 +16,20 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
  * @template T of object
  * @template-covariant T
  * @implements TreeViewServiceInterface<T>
+ * @phpstan-type TreeViewMountInputData array{
+ *      tree: iterable<T>,
+ *      currentNode: null|T,
+ *      service: class-string<TreeViewServiceInterface<T>>|TreeViewServiceInterface<T>,
+ *      treeLevel: int,
+ *      childComponentParams: array<string, mixed>,
+ * }
+ * @phpstan-type TreeViewMountReturnData array{
+ *      tree: list<T>,
+ *      currentNode: null|T,
+ *      service: TreeViewServiceInterface<T>,
+ *      treeLevel: int,
+ *      childComponentParams: array<string, mixed>,
+ * }
  */
 #[AsTwigComponent]
 class TreeView implements TreeViewServiceInterface
@@ -30,30 +45,18 @@ class TreeView implements TreeViewServiceInterface
     /** @var TreeViewServiceInterface<T>  */
     public ?TreeViewServiceInterface $service = null;
 
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     public array $childComponentParams = [];
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private Security $security,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security,
     ) {
     }
 
     /**
-     * @param array{
-     *     tree: iterable<T>,
-     *     currentNode: null|T,
-     *     service: class-string<T>,
-     *     treeLevel: int,
-     * } $data
-     * @return array{
-     *     tree: list<T>,
-     *     currentNode: null|T,
-     *     service: TreeViewServiceInterface<T>,
-     *     treeLevel: int,
-     * }
+     * @param TreeViewMountInputData $data
+     * @return TreeViewMountReturnData
      */
     #[PreMount]
     public function preMount(
@@ -127,13 +130,9 @@ class TreeView implements TreeViewServiceInterface
         return $this->service?->getPostChildComponent($node);
     }
 
-    public function isIterable(?object $node=null): bool
+    public function isIterable(object $node): bool
     {
-        if ($node === null) {
-            return $this->service?->isIterable($this->tree) ?? false;
-        } else {
-            return $this->service?->isIterable($node) ?? false;
-        }
+        return $this->service?->isIterable($node) ?? false;
     }
 
     public function getTree(object $node): array

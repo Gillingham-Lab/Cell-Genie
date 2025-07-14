@@ -17,7 +17,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class CellGroupTreeViewService implements TreeViewServiceInterface
 {
+    /** @use DefaultTreeViewTrait<CellGroup> */
     use DefaultTreeViewTrait;
+
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,

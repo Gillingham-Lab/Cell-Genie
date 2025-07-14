@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entity\DoctrineEntity\StockManagement;
 
+use App\Entity\Interface\ChildParentInterface;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\IdTrait;
@@ -17,10 +18,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Loggable;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @implements ChildParentInterface<self>
+ */
 #[ORM\Entity(repositoryClass: ConsumableCategoryRepository::class)]
 #[Loggable]
 #[NotLooped("parent", "children")]
-class ConsumableCategory implements PrivacyAwareInterface
+class ConsumableCategory implements PrivacyAwareInterface, ChildParentInterface
 {
     use IdTrait;
     use LongNameTrait;

@@ -6,6 +6,7 @@ namespace App\Entity\DoctrineEntity\Cell;
 use App\Entity\DoctrineEntity\Vocabulary\Morphology;
 use App\Entity\DoctrineEntity\Vocabulary\Organism;
 use App\Entity\DoctrineEntity\Vocabulary\Tissue;
+use App\Entity\Interface\ChildParentInterface;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\HasRRID;
 use App\Repository\Cell\CellGroupRepository;
@@ -18,12 +19,15 @@ use Generator;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @implements ChildParentInterface<self>
+ */
 #[ORM\Entity(repositoryClass: CellGroupRepository::class)]
 #[UniqueEntity(fields: "number", message: "This cell line number is already in use.")]
 #[UniqueEntity(fields: "name", message: "This cell line group has already been made")]
 #[Gedmo\Loggable]
 #[NotLooped("parent", "children")]
-class CellGroup
+class CellGroup implements ChildParentInterface
 {
     use IdTrait;
     use HasRRID;

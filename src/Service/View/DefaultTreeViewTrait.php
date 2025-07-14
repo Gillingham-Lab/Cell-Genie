@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace App\Service\View;
 
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Interface\ChildParentInterface;
 
+/**
+ * @template T of ChildParentInterface
+ */
 trait DefaultTreeViewTrait
 {
     public function isIconStacked(?object $node = null): bool
@@ -22,7 +25,7 @@ trait DefaultTreeViewTrait
         return $node->getChildren()->toArray();
     }
 
-    public function isCurrentPath(object $node, object $object = null): bool
+    public function isCurrentPath(object $node, ?object $object = null): bool
     {
         if ($node === $object) {
             return true;

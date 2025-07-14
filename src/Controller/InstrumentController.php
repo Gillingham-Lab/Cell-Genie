@@ -80,7 +80,7 @@ class InstrumentController extends AbstractController
                 tooltip: "View all instruments",
             ),
             new Tool(
-                path: $instrument->getParent() ? $this->generateUrl("app_instruments_view", ["instrument" => $instrument->getParent()?->getId()]) : "",
+                path: $instrument->getParent() ? $this->generateUrl("app_instruments_view", ["instrument" => $instrument->getParent()->getId()]) : "",
                 icon: "instrument",
                 enabled: (bool)$instrument->getParent(),
                 iconStack: "left",

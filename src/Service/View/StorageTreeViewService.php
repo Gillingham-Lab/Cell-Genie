@@ -17,8 +17,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class StorageTreeViewService implements TreeViewServiceInterface
 {
-    use DefaultTreeViewTrait;
-
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
@@ -117,7 +115,7 @@ class StorageTreeViewService implements TreeViewServiceInterface
         }
     }
 
-    public function isCurrentPath(object $node, object $object = null): bool
+    public function isCurrentPath(object $node, ?object $object = null): bool
     {
         if ($node === $object) {
             return true;

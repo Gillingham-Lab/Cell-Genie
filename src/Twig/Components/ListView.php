@@ -15,7 +15,19 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 /**
  * @template T of object
  * @template-covariant T
- * @implements TreeViewServiceInterface<T>
+ * @implements ListViewServiceInterface<T>
+ * @phpstan-type ListViewMountInputData array{
+ *     items: list<T>|Collection<int|string, T>,
+ *     service: class-string<ListViewServiceInterface<T>>|ListViewServiceInterface<T>,
+ *     currentItem: T|null,
+ *     sort: bool,
+ * }
+ * @phpstan-type ListViewMountReturnData array{
+ *     items: list<T>,
+ *     service: ListViewServiceInterface<T>,
+ *     currentItem: T|null,
+ *     sort: bool,
+ * }
  */
 #[AsTwigComponent]
 class ListView implements ListViewServiceInterface
@@ -23,7 +35,7 @@ class ListView implements ListViewServiceInterface
     /** @var list<T> */
     public iterable $items;
 
-    /** @var TreeViewServiceInterface<T>  */
+    /** @var ListViewServiceInterface<T>  */
     public ListViewServiceInterface $service;
 
     /** @var T|null */
@@ -31,11 +43,15 @@ class ListView implements ListViewServiceInterface
     public bool $sort = true;
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private Security $security
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security,
     ) {
     }
 
+    /**
+     * @param array<string, mixed>|ListViewMountInputData $data
+     * @return ListViewMountReturnData
+     */
     #[PreMount]
     public function preMount(array $data): array
     {
