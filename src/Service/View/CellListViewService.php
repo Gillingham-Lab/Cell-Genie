@@ -95,7 +95,7 @@ class CellListViewService implements ListViewServiceInterface
 
     public function getPostItemComponent(object $item): ?array
     {
-        return [null, $item->getGroup()->getShortName()];
+        return [null, $item->getGroup()?->getShortName() ?? "None"];
     }
 
     public function isEmpty(object $item): bool

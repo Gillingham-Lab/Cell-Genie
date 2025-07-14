@@ -6,6 +6,7 @@ namespace App\DataFixtures\Cell;
 use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\User\User;
+use App\Genie\Enums\PrivacyLevel;
 use App\Service\Cells\CellCultureService;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;

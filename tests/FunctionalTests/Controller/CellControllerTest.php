@@ -29,11 +29,11 @@ class CellControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains("h1", "Browse Cells");
-        $this->assertSelectorTextContains("#collapseCellGroupsHeader h2", "Cell groups");
-        $this->assertSelectorTextContains("#collapseCellsHeader h2", "Cells");
+        $this->assertSelectorTextContains("#collapse-CellGroups-header h2", "Cell Groups");
+        $this->assertSelectorTextContains("#collapse-Cells-header h2", "Cells");
 
-        $this->assertSelectorCount(5, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
-        $this->assertSelectorTextContains("#collapseCellsContent .card-body", "No cell group has been selected");
+        $this->assertSelectorCount(5, "#collapse-CellGroups-content .card-body > .list-group > div > .list-group-item");
+        $this->assertSelectorTextContains("#collapse-Cells-content .card-body", "You have not selected any cell group");
 
         $content = $crawler->html();
         $this->assertStringContainsString("HEK293", $content);
@@ -70,12 +70,12 @@ class CellControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains("h1", "Browse Cells");
-        $this->assertSelectorTextContains("#collapseCellGroupsHeader h2", "Cell groups");
-        $this->assertSelectorTextContains("#collapseCellsHeader h2", "Cells");
+        $this->assertSelectorTextContains("#collapse-CellGroups-header h2", "Cell Groups");
+        $this->assertSelectorTextContains("#collapse-Cells-header h2", "Cells");
 
-        $this->assertSelectorCount(5, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
+        $this->assertSelectorCount(5, "#collapse-CellGroups-content .card-body > .list-group > div > .list-group-item");
 
-        $this->assertSelectorTextContains("#collapseCellsContent .card-body h3", $cellGroupName);
+        $this->assertSelectorTextContains("#collapse-Cells-content .card-body h3", $cellGroupName);
     }
 
     public function testCellSearchRouteWorks(): void
@@ -149,13 +149,16 @@ class CellControllerTest extends WebTestCase
         // Run assertions for cell group (see above)
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains("h1", "Browse Cells");
-        $this->assertSelectorTextContains("#collapseCellGroupsHeader h2", "Cell groups");
-        $this->assertSelectorTextContains("#collapseCellsHeader h2", "Cells");
+        $this->assertSelectorTextContains("#collapse-CellGroups-header h2", "Cell Groups");
+        $this->assertSelectorTextContains("#collapse-Cells-header h2", "Cells");
+
+        $allVisibleMainCellGroups = self::getContainer()->get(CellGroupRepository::class)->findBy(["parent" => null]);
+        $this->assertCount(6, $allVisibleMainCellGroups);
 
         // We should fine now 1 more
-        $this->assertSelectorCount(6, "#collapseCellGroupsContent .card-body > .list-group > .list-group-item");
+        $this->assertSelectorCount(6, "#collapse-CellGroups-content .card-body > .list-group > div > .list-group-item");
 
-        $this->assertSelectorTextContains("#collapseCellsContent .card-body h3", "New Cell Line");
+        $this->assertSelectorTextContains("#collapse-Cells-content .card-body h3", "New Cell Line");
     }
 
     public function testAccessOfRouteForAddingCellGroupsAndParentCellGroupInformationGetsProperlyAdded(): void
@@ -456,13 +459,17 @@ class CellControllerTest extends WebTestCase
     public function testCellCultures(): void
     {
         $client = self::createClient();
-        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist1@example.com");
+        $user = self::getContainer()->get(UserRepository::class)->findOneByEmail("scientist2@example.com");
         $client->loginUser($user);
 
         $crawler = $client->request("GET", "/cells/cultures");
         $this->assertResponseStatusCodeSame(200);
 
-        // There is no culture at the current time. Controller should only be mounted if a culture is to be displayed.
+        // Double check if there really is no culture visible to scientist 2
+        $all = self::getContainer()->get(CellCultureRepository::class)->findAll();
+        $this->assertCount(0, $all);
+
+        // There is no culture at the current time for this research group. Controller should only be mounted if a culture is to be displayed.
         $controller = $crawler->filter("div[data-controller^='CellCultureDiagram']");
         $this->assertSame(0, $controller->count());
     }

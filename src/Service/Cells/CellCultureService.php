@@ -6,6 +6,7 @@ namespace App\Service\Cells;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\User\User;
+use App\Genie\Enums\PrivacyLevel;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
@@ -52,6 +53,8 @@ readonly class CellCultureService
 
         // Set user from security (= current user)
         $cellCulture->setOwner($user);
+        $cellCulture->setGroup($user->getGroup());
+        $cellCulture->setPrivacyLevel(PrivacyLevel::Group);
 
         // Set data for cell aliquot
         $cellCulture->setAliquot($aliquot);
