@@ -686,7 +686,7 @@ readonly class ExperimentalDataService
                     $values[3][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN);
                 }
 
-                $values = array_map(fn ($v) => array_sum($v) / count($v), $values);
+                $values = array_map(fn ($v) => count($v) > 0 ? array_sum($v) / count($v) : NAN, $values);
 
                 $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($values));
             }
