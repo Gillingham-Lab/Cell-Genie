@@ -196,15 +196,17 @@ readonly class ExperimentalDataService
      *
      * @param Collection<int, ExperimentalRunCondition> $conditions
      * @param ExperimentalDesign $design
+     * @param bool $includeUnexposed Turn true to also fetch unexposed fields.
      * @return array<class-string<object>, array{str: true|string|object}>
      */
-    public function getListOfEntitiesToFetch(iterable $conditions, ExperimentalDesign $design): array
+    public function getListOfEntitiesToFetch(iterable $conditions, ExperimentalDesign $design, bool $includeUnexposed = false): array
     {
         $entitiesToFetch = [];
         $datumConfiguration = [];
 
-        $pushEntity = function(Collection $data, &$entitiesToFetch) use ($design) {
-            foreach ($data as $datum) {
+        $pushEntity = function(Collection|array $data, &$entitiesToFetch) use ($design, $includeUnexposed) {
+            foreach ($data as $fieldName => $datum) {
+
                 if ($datum->getType() === DatumEnum::EntityReference) {
                     /**
                      * @var Uuid $id
@@ -218,12 +220,11 @@ readonly class ExperimentalDataService
                     }
 
                     // Check if the datum configuration has two classes
-                    /** @var ExperimentalDesignField $field */
                     $field = $design->getFields()->filter(fn (ExperimentalDesignField $x) => $x->getFormRow()->getFieldName() === $datum->getName())->first();
 
                     // Nothing to retrieve if the field is not exposed
-                    if (!($field instanceof ExperimentalDesignField) or !$field->isExposed()) {
-                        return;
+                    if (!($field instanceof ExperimentalDesignField) or !($field->isExposed() or $includeUnexposed)) {
+                        continue;
                     }
 
                     $configuredEntityTypes = explode("|", $field->getFormRow()->getConfiguration()["entityType"] ?? "");
@@ -238,19 +239,34 @@ readonly class ExperimentalDataService
             }
         };
 
+        $outerStopWatch = $this->stopwatch->start(__CLASS__.".".__METHOD__);
+
+        $topRunDataRunInto = [];
+
         /** @var ExperimentalRunCondition $condition */
         foreach ($conditions as $condition) {
+            $innerStopWatch = $this->stopwatch->start(__CLASS__ . "." . __METHOD__ . "({$condition->getId()->toRfc4122()})");
+            $runId = $condition->getExperimentalRun()->getId()->toRfc4122();
+
             // Top values
-            $pushEntity($condition->getExperimentalRun()->getData(), $entitiesToFetch);
+            if (empty($topRunDataRunInto[$runId])) {
+                $pushEntity($condition->getExperimentalRun()->getData(), $entitiesToFetch);
+                $topRunDataRunInto[$runId] = true;
+            }
 
             // Condition values
-            $pushEntity($condition->getData(), $entitiesToFetch);
+            $pushEntity($condition->getData()->toArray(), $entitiesToFetch);
 
             // Datasets
-            foreach ($condition->getExperimentalRun()->getDataSets()->filter(fn (ExperimentalRunDataSet $set) => $set->getCondition() === $condition) as $dataSet) {
+            foreach ($condition->getExperimentalRun()->getDataSets()->filter(fn(ExperimentalRunDataSet $set) => $set->getCondition() === $condition) as $dataSet) {
                 $pushEntity($dataSet->getData(), $entitiesToFetch);
             }
+
+            $innerStopWatch->stop();
         }
+
+
+        $outerStopWatch->stop();
 
         return $entitiesToFetch;
     }
@@ -639,51 +655,32 @@ readonly class ExperimentalDataService
         $design = $run->getDesign();
         $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
 
-        $numberTransformer = new ScientificNumberTransformer(["NAN"], ["Inf"], ["-Inf"], "NAN", "Inf", "-Inf");
-
         foreach ($modelFields as $field) {
-            $fieldConfig = $field->getFormRow()->getConfiguration();
             $fieldName = $field->getFormRow()->getFieldName();
-            $model = $fieldConfig["model"];
-            $param = $fieldConfig["param"];
-
-            if (!$model or !$param) {
-                $value = NAN;
-            }
 
             if ($field->getRole() === ExperimentalFieldRole::Condition) {
                 foreach ($run->getConditions() as $condition) {
-                    $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+                    $value = $this->modelService->getValueFromModel($field, $condition);
 
-                    if (!$conditionModel) {
+                    if ($value === null) {
                         continue;
                     }
-
-                    $modelResult = $conditionModel->getResult() ?? [];
-
-                    $value = [
-                        $modelResult["params"][$param]["value"] ?? NAN,
-                        $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN),
-                        $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN),
-                        $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN),
-                    ];
 
                     $condition->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($value));
                 }
             } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
                 $values = [[], [], [], []];
                 foreach ($run->getConditions() as $condition) {
-                    $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+                    $value = $this->modelService->getValueFromModel($field, $condition);
 
-                    if (!$conditionModel) {
+                    if ($value === null) {
                         continue;
                     }
 
-                    $modelResult = $conditionModel->getResult() ?? [];
-                    $values[0][] = $modelResult["params"][$param]["value"] ?? NAN;
-                    $values[1][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN);
-                    $values[2][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN);
-                    $values[3][] = $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN);
+                    $values[0][] = $value[0];
+                    $values[1][] = $value[1];
+                    $values[2][] = $value[2];
+                    $values[3][] = $value[3];
                 }
 
                 $values = array_map(fn ($v) => count($v) > 0 ? array_sum($v) / count($v) : NAN, $values);

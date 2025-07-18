@@ -507,7 +507,7 @@ class ExperimentController extends AbstractController
         ExperimentalDataService $dataService,
         ExperimentalRun $run,
     ): Response {
-        $entitiesToFetch = $dataService->getListOfEntitiesToFetch($run->getConditions(), $run->getDesign());
+        $entitiesToFetch = $dataService->getListOfEntitiesToFetch($run->getConditions(), $run->getDesign(), true);
         $entities = $dataService->fetchEntitiesFromList($entitiesToFetch);
 
         $getComponentColumn = function(ExperimentalDesignField $field, array $entities) {

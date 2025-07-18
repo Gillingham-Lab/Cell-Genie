@@ -191,7 +191,7 @@ class ExperimentalRunDataTable extends AbstractController
             }, widthRecommendation: 10);
         }
 
-        $columns[] = new Column("Path", fn ($x) => mb_str_shorten("{$x['run']->getName()}/{$x['set']->getName()}", 30));
+        $columns[] = new Column("Path", fn ($x) => mb_str_shorten("{$x['run']->getName()}/{$x['set']->getName()}", 30), widthRecommendation: 10);
 
         return $columns;
     }

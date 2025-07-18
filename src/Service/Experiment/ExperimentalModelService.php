@@ -9,6 +9,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
+use App\Form\ScientificNumberTransformer;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\FormRowTypeEnum;
 use App\Genie\Exceptions\FitException;
@@ -209,6 +210,8 @@ readonly class ExperimentalModelService
      */
     public function fitModel(ExperimentalModel $model, ExperimentalRunCondition $condition): array
     {
+        $this->stopWatch->start(__CLASS__ . "::" . __METHOD__);
+
         $run = $condition->getExperimentalRun();
         $design = $run->getDesign();
         $modelConfig = $model->getConfiguration();
@@ -224,6 +227,7 @@ readonly class ExperimentalModelService
 
         $params = [];
         $environment = $this->getValueEnvironmentForCondition($condition);
+        $this->logger->debug("Fitting the model", context: [$environment, $modelConfig["params"]]);
         foreach ($modelConfig["params"] as $param => $paramConfig) {
             $params[$param] = [
                 "initial" => $this->getValuesForFieldName($environment, $paramConfig["initial"]),
@@ -240,6 +244,7 @@ readonly class ExperimentalModelService
 
         $reply = $this->runFit($model->getModel(), $xValues, $yValues, $params, $evaluation);
 
+        $this->stopWatch->stop(__CLASS__ . "::" . __METHOD__);
         return $reply;
     }
 
@@ -347,6 +352,14 @@ readonly class ExperimentalModelService
             if ($field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType) {
                 if (is_array($environment[$fieldName])) {
                     $environment[$fieldName] = $environment[$fieldName][1];
+                } elseif ($environment[$fieldName] === null) {
+                    $this->logger->debug($fieldName . " is null");
+                    $value = $this->getValueFromModel($field, $condition);
+
+                    if ($value !== null) {
+                        // Here, the value is 0-index
+                        $environment[$fieldName] = $value[0];
+                    }
                 }
             }
         }
@@ -363,7 +376,10 @@ readonly class ExperimentalModelService
      */
     public function getReferenceValueEnvironmentForCondition(ExperimentalRunCondition $condition): object
     {
+        $this->stopWatch->start(__METHOD__);
+
         $references = $this->conditionRepository->getReferenceConditions($condition);
+
         $values = [];
         foreach ($references as $reference) {
             $referenceValues = $this->getValueEnvironmentForCondition($reference, false);
@@ -383,6 +399,10 @@ readonly class ExperimentalModelService
                 $values[$key][] = $referenceValue;
             }
         }
+
+        $this->logger->debug("Found " . count($references) . " reference conditions", context: $values);
+
+        $this->stopWatch->stop(__METHOD__);
 
         $values = array_map(function (array $value) {
             if (count($value) > 0 and is_array($value[0])) {
@@ -538,5 +558,43 @@ readonly class ExperimentalModelService
             "y" => $average["y"],
             "fit" => $reply,
         ];
+    }
+
+    /**
+     * Extracts the value from a model for a Field of the ModelParameterType formRow type
+     * @return null|array{float, float, float, float}
+     */
+    public function getValueFromModel(
+        ExperimentalDesignField $field,
+        ExperimentalRunCondition $condition,
+    ): null|array {
+        assert($field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
+        
+        $numberTransformer = new ScientificNumberTransformer(["NAN"], ["Inf"], ["-Inf"], "NAN", "Inf", "-Inf");
+
+        $fieldConfig = $field->getFormRow()->getConfiguration();
+        $model = $fieldConfig["model"] ?? null;
+        $param = $fieldConfig["param"] ?? null;
+
+        if (!$model or !$param) {
+            return null;
+        }
+
+        $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+
+        if (!$conditionModel) {
+            return null;
+        }
+
+        $modelResult = $conditionModel->getResult() ?? [];
+
+        $value = [
+            $modelResult["params"][$param]["value"] ?? NAN,
+            $numberTransformer->reverseTransform($modelResult["params"][$param]["stderr"] ?? NAN),
+            $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][0] ?? NAN),
+            $numberTransformer->reverseTransform($modelResult["params"][$param]["ci"][1] ?? NAN),
+        ];
+
+        return $value;
     }
 }
