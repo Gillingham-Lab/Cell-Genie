@@ -68,10 +68,18 @@ class ExperimentalRunCondition
             $this->id = null;
 
             $oldData = $this->data;
+            $oldModels = $this->models;
+
             $this->data = new ArrayCollection();
             foreach ($oldData as $datum) {
                 $datum = clone $datum;
                 $this->data->add($datum);
+            }
+
+            $this->models = new ArrayCollection();
+            foreach ($oldModels as $model) {
+                $model = clone $model;
+                $this->models->add($model);
             }
         }
     }

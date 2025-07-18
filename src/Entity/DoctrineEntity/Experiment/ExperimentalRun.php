@@ -121,6 +121,8 @@ class ExperimentalRun implements PrivacyAwareInterface
                 $this->data->add($datum);
             }
 
+
+
             $this->createdAt = null;
         }
     }

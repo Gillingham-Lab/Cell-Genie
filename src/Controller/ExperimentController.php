@@ -420,7 +420,9 @@ class ExperimentController extends AbstractController
         EntityManagerInterface $entityManager,
         ExperimentalRun $run,
     ): Response {
+        # Clone the run
         $newRun = clone $run;
+
         $entityManager->persist($newRun);
         $entityManager->flush();
         return $this->redirectToRoute("app_experiments_run_edit", ["run" => $newRun->getId()->toRfc4122()]);
