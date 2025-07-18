@@ -11,8 +11,7 @@ class SubstanceLot implements JsonSerializable
     public function __construct(
         private readonly Substance $substance,
         private readonly Lot $lot,
-    ) {
-    }
+    ) {}
 
     public function jsonSerialize(): mixed
     {

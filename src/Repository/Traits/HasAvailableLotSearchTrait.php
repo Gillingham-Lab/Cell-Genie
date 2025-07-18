@@ -14,7 +14,7 @@ trait HasAvailableLotSearchTrait
      */
     private function addHasAvailableLotSearch(QueryBuilder $queryBuilder, array $searchFields): QueryBuilder
     {
-        $havingExpressions = $this->searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $havingExpressions = $this->searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "hasAvailableLot" => $searchValue === true ? $queryBuilder->expr()->gt($this::LotAvailableQuery, 0) : $queryBuilder->expr()->eq($this::LotAvailableQuery, 0),
             default => null,
         });

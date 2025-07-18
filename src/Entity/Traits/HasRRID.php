@@ -21,7 +21,7 @@ trait HasRRID
     {
         return [
             TextField::new("rrid", label: "#RRID")
-                ->setHelp("RRID is a research resource identification and is similar to a doi, except that everything can have a rrid, including antibodies.")
+                ->setHelp("RRID is a research resource identification and is similar to a doi, except that everything can have a rrid, including antibodies."),
         ];
     }
 

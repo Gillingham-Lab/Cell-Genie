@@ -20,8 +20,7 @@ class FitException extends GinException
         private readonly array $warnings = [],
         private readonly array $errors = [],
         private readonly ?string $content = null,
-
-    ){
+    ) {
         parent::__construct("An error occured during a fit.", 0);
     }
 

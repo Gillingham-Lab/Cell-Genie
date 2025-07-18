@@ -37,10 +37,8 @@ class ProteinType extends AbstractType
     }
 
     public function __construct(
-        private VocabularyRepository $vocabularyRepository
-    ) {
-
-    }
+        private VocabularyRepository $vocabularyRepository,
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -48,7 +46,7 @@ class ProteinType extends AbstractType
             ->add(
                 $builder->create("general", FormType::class, [
                     "inherit_data" => true,
-                    "label" => "General information"
+                    "label" => "General information",
                 ])
                 ->add("shortName", EnumeratedType::class, [
                     "label" => "Short name",
@@ -73,7 +71,7 @@ class ProteinType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.name", "ASC")
-                            ;
+                        ;
                     },
                     "empty_data" => null,
                     "placeholder" => "Select an organism",
@@ -83,7 +81,7 @@ class ProteinType extends AbstractType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("structure", FormType::class, [
@@ -97,7 +95,7 @@ class ProteinType extends AbstractType
                 ->add("proteinType", ... $this->getTextOrChoiceOptions("proteinType", options: [
                     "label" => "Protein type",
                     "help" => "Specify the type of the protein (wildtype, point mutant, isoform ...). Additional context is given by the parent.",
-                    "placeholder" => "Choose ..."
+                    "placeholder" => "Choose ...",
                 ]))
                 ->add("mutation", TextType::class, [
                     "label" => "Mutation",
@@ -110,7 +108,7 @@ class ProteinType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.shortName", "ASC")
-                            ;
+                        ;
                     },
                     'empty_data' => [],
                     'by_reference' => false,
@@ -118,7 +116,7 @@ class ProteinType extends AbstractType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("relations", FormType::class, [
@@ -156,7 +154,7 @@ class ProteinType extends AbstractType
                     "placeholder" => "Empty",
                     "required" => false,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -165,7 +163,7 @@ class ProteinType extends AbstractType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
         parent::buildForm($builder, $options);

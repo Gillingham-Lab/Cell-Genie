@@ -11,7 +11,6 @@ use App\Form\LongNameType;
 use App\Form\SaveableType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -49,15 +48,15 @@ class ConsumableCategoryType extends SaveableType
                 ])
                 ->add("idealStock", NumberType::class, [
                     "label" => "Ideal stock",
-                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
+                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces.",
                 ])
                 ->add("orderLimit", NumberType::class, [
                     "label" => "Minimum number before ordering is recommended",
-                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
+                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces.",
                 ])
                 ->add("criticalLimit", NumberType::class, [
                     "label" => "Absolute minimum before ordering is required",
-                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
+                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces.",
                 ])
                 ->add("consumables", FancyEntityType::class, [
                     "label" => "Consumables",
@@ -131,7 +130,7 @@ class ConsumableCategoryType extends SaveableType
                 ->add("_ownership", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
         ;
 

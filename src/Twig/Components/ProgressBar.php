@@ -26,7 +26,7 @@ class ProgressBar
 
     public function getColorClass(?string $color = null): string
     {
-        return match($color ?? $this->color) {
+        return match ($color ?? $this->color) {
             "success" => "text-bg-success",
             "warning" => "text-bg-warning",
             "danger" => "text-bg-danger",

@@ -5,7 +5,6 @@ namespace App\Twig\Components\Live;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
-use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Table\Column;
 use App\Entity\Table\Table;
 use App\Entity\Table\ToggleColumn;
@@ -21,24 +20,14 @@ use App\Repository\Cell\CellRepository;
 use App\Security\Voter\Cell\CellVoter;
 use App\Service\Doctrine\Type\Ulid;
 use App\Twig\Components\Trait\PaginatedTrait;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\TwigComponent\Attribute\PreMount;
-use Twig\Error\RuntimeError;
 use UnhandledMatchError;
 
 /**
@@ -64,8 +53,7 @@ class CellTable extends AbstractController
 
     public function __construct(
         private readonly CellRepository $cellRepository,
-    ) {
-    }
+    ) {}
 
     public function getNumberOfRows(): ?int
     {
@@ -79,15 +67,24 @@ class CellTable extends AbstractController
 
     #[LiveListener("search")]
     public function onSearch(
-        #[LiveArg] ?string $cellNumber = null,
-        #[LiveArg] ?string $cellIdentifier = null,
-        #[LiveArg] ?string $cellName = null,
-        #[LiveArg] ?string $cellGroupName = null,
-        #[LiveArg] ?string $groupOwner = null,
-        #[LiveArg] ?string $isCancer = null,
-        #[LiveArg] ?string $isEngineered = null,
-        #[LiveArg] ?int $organism = null,
-        #[LiveArg] ?int $tissue = null,
+        #[LiveArg]
+        ?string $cellNumber = null,
+        #[LiveArg]
+        ?string $cellIdentifier = null,
+        #[LiveArg]
+        ?string $cellName = null,
+        #[LiveArg]
+        ?string $cellGroupName = null,
+        #[LiveArg]
+        ?string $groupOwner = null,
+        #[LiveArg]
+        ?string $isCancer = null,
+        #[LiveArg]
+        ?string $isEngineered = null,
+        #[LiveArg]
+        ?int $organism = null,
+        #[LiveArg]
+        ?int $tissue = null,
     ): void {
         $this->searchResults = [
             "cellNumber" => $cellNumber,
@@ -156,18 +153,18 @@ class CellTable extends AbstractController
                         path: $this->generateUrl("app_cell_aliquot_add", ["cell" => $cell->getCellNumber()]),
                         enabled: $this->isGranted(CellVoter::ATTR_ADD_ALIQUOT, $cell),
                         tooltip: "Add aliquot",
-                    )
+                    ),
                 ])),
                 new Column("Nr", fn(Cell $cell) => $cell->getCellNumber()),
                 new Column("Name", fn(Cell $cell) => $cell->getName()),
                 new Column("Cell group", fn(Cell $cell) => $cell->getCellGroup()->getName()),
-                new UrlColumn("RRID", function(Cell $cell) {
+                new UrlColumn("RRID", function (Cell $cell) {
                     return $cell->getRrid() ? [
                         "href" => "",
                         "label" => $cell->getRrid(),
                     ] : null;
                 }),
-                new Column("Aliquots", function(Cell $cell) {
+                new Column("Aliquots", function (Cell $cell) {
                     $unique = $cell->getCellAliquots()->count();
 
                     if ($unique === 0) {

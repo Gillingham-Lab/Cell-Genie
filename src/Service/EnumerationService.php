@@ -6,13 +6,10 @@ namespace App\Service;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Antibody;
-use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Param\ParamBag;
-use App\Repository\Cell\CellRepository;
-use App\Repository\Substance\AntibodyRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
@@ -21,13 +18,11 @@ readonly class EnumerationService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-    ) {
-
-    }
+    ) {}
 
     public function getNextNumber(User $user, string $enumerationType): ?string
     {
-        return match($enumerationType) {
+        return match ($enumerationType) {
             "antibody" => $this->getNextNumberedSubstanceNumber($user, Antibody::class, "numberingAntibody"),
             "cell" => $this->getNextCellNumber($user),
             "cell_culture" => $this->getNextNumberedSubstanceNumber($user, CellCulture::class, "numberingCellCulture"),

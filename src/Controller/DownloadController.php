@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\DoctrineEntity\File\File;
-use App\Repository\File\FileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +24,7 @@ class DownloadController extends AbstractController
             headers: [
                 "Content-Type" => $file->getContentType(),
                 "Content-Length" => $file->getContentSize(),
-                "Content-Disposition" => 'attachment; filename="'. $file->getOriginalFileName() .'"',
+                "Content-Disposition" => 'attachment; filename="' . $file->getOriginalFileName() . '"',
             ],
         );
     }
@@ -39,7 +37,7 @@ class DownloadController extends AbstractController
         public: true,
     )]
     public function picture(
-        File $file
+        File $file,
     ): Response {
         $fileBlob = $file->getFileBlob();
 

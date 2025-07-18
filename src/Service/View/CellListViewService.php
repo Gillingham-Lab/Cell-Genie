@@ -9,9 +9,7 @@ use App\Entity\Toolbox\AddTool;
 use App\Entity\Toolbox\ClipwareTool;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
-use App\Entity\Toolbox\TrashTool;
 use App\Entity\Toolbox\ViewTool;
-use App\Form\UserEntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -23,8 +21,7 @@ class CellListViewService implements ListViewServiceInterface
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
-    ) {
-    }
+    ) {}
 
     public function sortItems(array $items): array
     {
@@ -55,7 +52,7 @@ class CellListViewService implements ListViewServiceInterface
 
     public function getItemLabel(object $item): string
     {
-        return (string)$item;
+        return (string) $item;
     }
 
     public function getItemUrl(object $item): string
@@ -89,7 +86,7 @@ class CellListViewService implements ListViewServiceInterface
                 icon: "cell",
                 tooltip: "Add aliquot",
                 iconStack: "add",
-            )
+            ),
         ]);
     }
 

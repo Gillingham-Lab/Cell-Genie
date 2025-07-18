@@ -5,9 +5,6 @@ namespace App\Controller;
 
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\User\UserGroupSettingsType;
-use App\Form\User\UserSettingsType;
-use App\Service\IconService;
-use App\Twig\Components\Icon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

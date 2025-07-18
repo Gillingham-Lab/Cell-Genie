@@ -41,8 +41,8 @@ final class Version20220907124151 extends AbstractMigration
                 ->insert("substance_lots")
                 ->setValue("substance_ulid", ":substance")
                 ->setValue("lot_id", ":lot")
-                ->setParameter("substance",  $row["antibody_ulid"], "ulid")
-                ->setParameter("lot",  $row["lot_id"], "ulid");
+                ->setParameter("substance", $row["antibody_ulid"], "ulid")
+                ->setParameter("lot", $row["lot_id"], "ulid");
 
             $this->_logger->debug($insertQuery->getSQL());
 
@@ -61,8 +61,8 @@ final class Version20220907124151 extends AbstractMigration
                 ->delete("substance_lots")
                 ->where("substance_ulid = :substance")
                 ->andWhere("lot_id = :lot")
-                ->setParameter("substance",  $row["antibody_ulid"], "ulid")
-                ->setParameter("lot",  $row["lot_id"], "ulid");
+                ->setParameter("substance", $row["antibody_ulid"], "ulid")
+                ->setParameter("lot", $row["lot_id"], "ulid");
 
             $this->_logger->debug($insertQuery->getSQL());
 

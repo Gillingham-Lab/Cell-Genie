@@ -15,10 +15,10 @@ class Toolbox
 
     public function getGroupSize(): string
     {
-        return match($this->size) {
+        return match ($this->size) {
             "sm" => "btn-group-sm",
             "lg" => "btn-group-lg",
-            default => ""
+            default => "",
         };
     }
 }

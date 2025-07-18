@@ -44,10 +44,10 @@ class EpitopeType extends SaveableType
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("e")
                         ->addOrderBy("e.shortName", "ASC")
-                        ;
+                    ;
                 },
-                "group_by" => function($choice, $key, $value) {
-                    return match($choice::class) {
+                "group_by" => function ($choice, $key, $value) {
+                    return match ($choice::class) {
                         Antibody::class => "Antibodies",
                         Chemical::class => "Chemicals",
                         Oligo::class => "Oligos",
@@ -68,7 +68,7 @@ class EpitopeType extends SaveableType
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("e")
                         ->addOrderBy("e.number", "ASC")
-                        ;
+                    ;
                 },
                 'empty_data' => [],
                 'by_reference' => false,

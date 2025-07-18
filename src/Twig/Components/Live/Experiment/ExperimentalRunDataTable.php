@@ -35,6 +35,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+
 use function App\mb_str_shorten;
 
 /**
@@ -65,9 +66,7 @@ class ExperimentalRunDataTable extends AbstractController
         private readonly ExperimentalDataService $dataService,
         private readonly EntityManagerInterface $entityManager,
         private readonly Stopwatch $stopwatch,
-    ) {
-
-    }
+    ) {}
 
     public function getNumberOfRows(): ?int
     {
@@ -95,7 +94,7 @@ class ExperimentalRunDataTable extends AbstractController
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_experiments_run_edit", ["run" => $x["run"]->getId()]),
-                        tooltip: "Edit run"
+                        tooltip: "Edit run",
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_experiments_run_addData", ["run" => $x["run"]->getId()]),
@@ -104,7 +103,7 @@ class ExperimentalRunDataTable extends AbstractController
                         iconStack: "edit",
                     ),
                 ]);
-            })
+            }),
         ];
 
         $dataService = $this->dataService;
@@ -120,7 +119,7 @@ class ExperimentalRunDataTable extends AbstractController
                                 "formRow" => $formRow,
                                 "datum" => null,
                                 "small" => $small,
-                            ]
+                            ],
                         ];
                     }
 
@@ -142,7 +141,7 @@ class ExperimentalRunDataTable extends AbstractController
                             "formRow" => $formRow,
                             "datum" => $value,
                             "small" => $small,
-                        ]
+                        ],
                     ];
                 });
             }
@@ -150,8 +149,8 @@ class ExperimentalRunDataTable extends AbstractController
             return $columns;
         };
 
-        $fieldColumns = $getColumnsFromFields(array_filter($fields, fn (ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition])));
-        $dataFields = array_filter($fields, fn (ExperimentalDesignField $field) => !in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition]));
+        $fieldColumns = $getColumnsFromFields(array_filter($fields, fn(ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition])));
+        $dataFields = array_filter($fields, fn(ExperimentalDesignField $field) => !in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition]));
 
         $columns = [
             ... $columns,
@@ -175,7 +174,7 @@ class ExperimentalRunDataTable extends AbstractController
             $columns[] = new ComponentColumn($model->getName(), function (array $x) use ($model) {
                 /** @var ExperimentalRunCondition $condition */
                 $condition = $x["set"];
-                $conditionModel = $condition->getModels()->findFirst(fn (int $i, ExperimentalModel $conditionModel) => $conditionModel->getParent() === $model);
+                $conditionModel = $condition->getModels()->findFirst(fn(int $i, ExperimentalModel $conditionModel) => $conditionModel->getParent() === $model);
                 return [
                     ModelView::class, [
                         "run" => $x["run"],
@@ -186,12 +185,12 @@ class ExperimentalRunDataTable extends AbstractController
                         "showErrors" => false,
                         "width" => 400,
                         "oneTraceOnly" => true,
-                    ]
+                    ],
                 ];
             }, widthRecommendation: 10);
         }
 
-        $columns[] = new Column("Path", fn ($x) => mb_str_shorten("{$x['run']->getName()}/{$x['set']->getName()}", 30), widthRecommendation: 10);
+        $columns[] = new Column("Path", fn($x) => mb_str_shorten("{$x['run']->getName()}/{$x['set']->getName()}", 30), widthRecommendation: 10);
 
         return $columns;
     }
@@ -220,7 +219,7 @@ class ExperimentalRunDataTable extends AbstractController
         $table = new Table(
             data: $dataRows,
             columns: $columns,
-            maxRows: $this->dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $this->design)
+            maxRows: $this->dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $this->design),
         );
 
         $data = $table->toArray();
@@ -240,7 +239,7 @@ class ExperimentalRunDataTable extends AbstractController
     ): void {
         $this->searchQuery = [];
 
-        foreach($search as $searchName => $searchValue) {
+        foreach ($search as $searchName => $searchValue) {
             if ($searchValue) {
                 $this->searchQuery[$searchName] = $searchValue;
             }
@@ -255,11 +254,11 @@ class ExperimentalRunDataTable extends AbstractController
     public function getSearchFormOptions(): array
     {
         $fields = $this->dataService->getFields($this->design);
-        $formRows = $fields->map(fn (ExperimentalDesignField $field) => $field->getFormRow());
+        $formRows = $fields->map(fn(ExperimentalDesignField $field) => $field->getFormRow());
 
         $choices = [];
 
-        $entityFields = $fields->filter(fn (ExperimentalDesignField $row) => $row->getFormRow()->getType() === FormRowTypeEnum::EntityType);
+        $entityFields = $fields->filter(fn(ExperimentalDesignField $row) => $row->getFormRow()->getType() === FormRowTypeEnum::EntityType);
 
         /** @var ExperimentalDesignField $entityField */
         foreach ($entityFields as $entityField) {
@@ -299,10 +298,10 @@ class ExperimentalRunDataTable extends AbstractController
                 foreach ($results as $result) {
                     foreach ($result->getLots() as $lot) {
                         $substanceLot = new SubstanceLot($result, $lot);
-                        $lotEntityChoices[(string)$substanceLot] = $substanceLot->getLot()->getId()->toRfc4122();
+                        $lotEntityChoices[(string) $substanceLot] = $substanceLot->getLot()->getId()->toRfc4122();
                     }
 
-                    $substanceEntityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
+                    $substanceEntityChoices[(string) $result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
                 }
 
                 $choices[$entityFormRow->getFieldName() . "_lot"] = $lotEntityChoices;
@@ -315,14 +314,14 @@ class ExperimentalRunDataTable extends AbstractController
                     ->select("e")
                     ->where($expression->in(
                         method_exists($entityType, "getUlid") ? "e.ulid" : "e.id",
-                        $subQuery
+                        $subQuery,
                     ))
                     ->setParameter("name", $entityFormRow->getFieldName());
 
                 $results = $queryBuilder->getQuery()->getResult();
 
                 foreach ($results as $result) {
-                    $lotEntityChoices[(string)$result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
+                    $lotEntityChoices[(string) $result] = method_exists($entityType, "getUlid") ? $result->getUlid()->toRfc4122() : $result->getId()->toRfc4122();
                 }
 
                 $choices[$entityFormRow->getFieldName()] = $lotEntityChoices;
@@ -342,7 +341,7 @@ class ExperimentalRunDataTable extends AbstractController
             ->leftJoin("ed.runs", "edr")
         ;
 
-        $queryBuilder = match($role) {
+        $queryBuilder = match ($role) {
             ExperimentalFieldRole::Top => $queryBuilder
                 ->leftJoin("edr.data", "edrd")
                 ->select("edrd.referenceUuid")

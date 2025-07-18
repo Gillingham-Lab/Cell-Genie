@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Experiment;
 
-use App\DataFixtures\Substance\CompoundFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
@@ -19,7 +18,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInterface
 {
-    const EXPERIMENTAL_DESIGN = "experimentalDesign.one";
+    public const EXPERIMENTAL_DESIGN = "experimentalDesign.one";
 
     public function load(ObjectManager $manager): void
     {
@@ -42,9 +41,9 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
                             ->setLabel("compound")
                             ->setType(FormRowTypeEnum::EntityType)
                             ->setConfiguration([
-                                "entityType" => "App\\Entity\\DoctrineEntity\\Substance\\Chemical"
-                            ])
-                    )
+                                "entityType" => "App\\Entity\\DoctrineEntity\\Substance\\Chemical",
+                            ]),
+                    ),
             )
             ->addField(
                 (new ExperimentalDesignField())
@@ -60,8 +59,8 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
                             ->setConfiguration([
                                 "datetype_int" => 2,
                                 "unsigned" => true,
-                            ])
-                    )
+                            ]),
+                    ),
             )
             ->addField(
                 (new ExperimentalDesignField())
@@ -78,8 +77,8 @@ class ExperimentalDesignFixtures extends Fixture implements DependentFixtureInte
                                 "datatype_float" => 1,
                                 "floattype_inactive" => "Inf",
                                 "floattype_inactive_label" => null,
-                            ])
-                    )
+                            ]),
+                    ),
             )
         ;
 

@@ -30,7 +30,7 @@ trait NestedFormAssertions
         $currentValues = $form->getValues();
 
         foreach ($expectedValues as $key => $value) {
-            $this->assertArrayHasKey($key, $currentValues, message: "Key {$key} does not exists in the given form. Only keys available are:\n" . implode("\n\t- ", array_keys($currentValues))."\n\nIf the value is null, it might not be retrieved as an value.");
+            $this->assertArrayHasKey($key, $currentValues, message: "Key {$key} does not exists in the given form. Only keys available are:\n" . implode("\n\t- ", array_keys($currentValues)) . "\n\nIf the value is null, it might not be retrieved as an value.");
             $this->assertSame($value, $currentValues[$key]);
         }
     }

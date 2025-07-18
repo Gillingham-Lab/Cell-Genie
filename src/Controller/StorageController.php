@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class StorageController extends AbstractController
@@ -189,7 +188,7 @@ class StorageController extends AbstractController
             $formType = BoxType::class;
 
 
-            $returnTo = function(Box $box) {
+            $returnTo = function (Box $box) {
                 if ($box->getUlid()) {
                     return $this->generateUrl("app_storage_view_box", ["box" => $box->getUlid()]);
                 } else {
@@ -205,7 +204,7 @@ class StorageController extends AbstractController
 
             $entity = $rack;
             $formType = RackType::class;
-            $returnTo = function(Rack $rack) {return $this->generateUrl("app_storage");};
+            $returnTo = function (Rack $rack) {return $this->generateUrl("app_storage");};
         } else {
             throw new Exception("Route name is not handled by this controller.");
         }

@@ -13,9 +13,7 @@ class BoxMapPosition implements JsonSerializable
         private readonly ?object $object,
         private readonly bool   $isDoublyOccupied = false,
         private readonly bool   $isLoose = false,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @return array{

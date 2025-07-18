@@ -9,8 +9,4 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
  * @template TEntity of AbstractCrudController
  * @extends AbstractCrudController<TEntity>
  */
-abstract class ExtendedAbstractCrudController extends AbstractCrudController
-{
-
-
-}
+abstract class ExtendedAbstractCrudController extends AbstractCrudController {}

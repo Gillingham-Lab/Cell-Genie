@@ -62,7 +62,7 @@ class LotCrudController extends AbstractCrudController
                 ->setLabel("Vendor")
                 ->setHelp("Keep empty if the substance has the vendor information (like in the case of antibodies)"),
             TextField::new("vendorPN")
-                ->setLabel("Product number")
+                ->setLabel("Product number"),
         ];
     }
 }

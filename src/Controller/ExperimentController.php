@@ -1,8 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
@@ -95,7 +94,7 @@ class ExperimentController extends AbstractController
     #[Route("/experiment/design/viewData/{design}", name: "app_experiments_view_data")]
     #[IsGranted("view", "design")]
     public function viewDesignData(
-        ExperimentalDesign $design
+        ExperimentalDesign $design,
     ): Response {
         return $this->render("parts/experiments/design_view.html.twig", [
             "toolbox" => new Toolbox([
@@ -143,12 +142,18 @@ class ExperimentController extends AbstractController
     public function downloadDesignData(
         ExperimentalDataService $dataService,
         ExperimentalDesign $design,
-        #[MapQueryParameter] int $limit = 100,
-        #[MapQueryParameter] int $page = 0,
-        #[MapQueryParameter] bool $onlyExposed = true,
-        #[MapQueryParameter] array $searchQuery = [],
-        #[MapQueryParameter] bool $entitiesAsId = false,
-        #[MapQueryParameter] bool $hideComments = false,
+        #[MapQueryParameter]
+        int $limit = 100,
+        #[MapQueryParameter]
+        int $page = 0,
+        #[MapQueryParameter]
+        bool $onlyExposed = true,
+        #[MapQueryParameter]
+        array $searchQuery = [],
+        #[MapQueryParameter]
+        bool $entitiesAsId = false,
+        #[MapQueryParameter]
+        bool $hideComments = false,
     ): Response {
         $response = new Response(null, Response::HTTP_OK);
         $response->headers->set("Content-Type", "text/plain");
@@ -156,17 +161,17 @@ class ExperimentController extends AbstractController
         /** @var ExperimentalDesignField[] $conditionFields */
         $conditionFields = $dataService
             ->getFields($design, $onlyExposed)
-            ->filter(fn (ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition]))
+            ->filter(fn(ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Top, ExperimentalFieldRole::Condition]))
         ;
 
         $dataRows = $dataService->getPaginatedResults(searchFields: $searchQuery, design: $design, page: $page, limit: $limit);
 
         $columns = [
-            new Column("Run", fn ($x) => $x["run"]->getId()),
-            new Column("Condition", fn ($x) => $x["set"]->getId()),
-            new Column("Scientist", fn ($x) => $entitiesAsId ? $x["run"]?->getScientist()?->getId() : $x["run"]?->getScientist()?->getFullName()),
-            new Column("Created", fn ($x) => $x["run"]->getCreatedAt()?->format("Y-m-d H:i:s")),
-            new Column("Modified", fn ($x) => $x["run"]->getModifiedAt()?->format("Y-m-d H:i:s")),
+            new Column("Run", fn($x) => $x["run"]->getId()),
+            new Column("Condition", fn($x) => $x["set"]->getId()),
+            new Column("Scientist", fn($x) => $entitiesAsId ? $x["run"]?->getScientist()?->getId() : $x["run"]?->getScientist()?->getFullName()),
+            new Column("Created", fn($x) => $x["run"]->getCreatedAt()?->format("Y-m-d H:i:s")),
+            new Column("Modified", fn($x) => $x["run"]->getModifiedAt()?->format("Y-m-d H:i:s")),
         ];
 
         foreach ($conditionFields as $field) {
@@ -225,7 +230,7 @@ class ExperimentController extends AbstractController
         $table = new Table(
             data: $dataRows,
             columns: $columns,
-            maxRows: $dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $design)
+            maxRows: $dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $design),
         );
 
         $array = $table->toArray();
@@ -237,12 +242,12 @@ class ExperimentController extends AbstractController
         }
 
         $content .= implode("\t", array_map(
-            callback: fn ($column) => $column["label"],
-            array: $array["columns"]
-        )). "\n";
+            callback: fn($column) => $column["label"],
+            array: $array["columns"],
+        )) . "\n";
 
         foreach ($array["rows"] as $row) {
-            $content .= implode("\t", array_map(fn ($cell) => $cell["value"], $row)) . "\n";
+            $content .= implode("\t", array_map(fn($cell) => $cell["value"], $row)) . "\n";
         }
 
         $response->setContent($content);
@@ -265,10 +270,14 @@ class ExperimentController extends AbstractController
     public function downloadConditionData(
         ExperimentalDataService $dataService,
         ExperimentalRun $run,
-        #[MapQueryParameter] int $limit = 100,
-        #[MapQueryParameter] int $page = 0,
-        #[MapQueryParameter] array $searchQuery = [],
-        #[MapQueryParameter] bool $entitiesAsId = false,
+        #[MapQueryParameter]
+        int $limit = 100,
+        #[MapQueryParameter]
+        int $page = 0,
+        #[MapQueryParameter]
+        array $searchQuery = [],
+        #[MapQueryParameter]
+        bool $entitiesAsId = false,
     ): Response {
         $response = new Response(null, Response::HTTP_OK);
         $response->headers->set("Content-Type", "text/plain");
@@ -278,7 +287,7 @@ class ExperimentController extends AbstractController
         /** @var ExperimentalDesignField[] $conditionFields */
         $conditionFields = $dataService
             ->getFields($design, false)
-            ->filter(fn (ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Datum]))
+            ->filter(fn(ExperimentalDesignField $field) => in_array($field->getRole(), [ExperimentalFieldRole::Datum]))
         ;
 
         $searchQuery = array_merge(
@@ -298,8 +307,8 @@ class ExperimentController extends AbstractController
         }
 
         $columns = [
-            new Column("Run", fn ($x) => $x["run"]->getId()),
-            new Column("Condition", fn ($x) => $x["set"]->getId()),
+            new Column("Run", fn($x) => $x["run"]->getId()),
+            new Column("Condition", fn($x) => $x["set"]->getId()),
         ];
 
         foreach ($conditionFields as $field) {
@@ -338,15 +347,15 @@ class ExperimentController extends AbstractController
         $table = new Table(
             data: $newDataRows,
             columns: $columns,
-            maxRows: $dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $design)
+            maxRows: $dataService->getPaginatedResultCount(searchFields: $searchQuery, design: $design),
         );
 
         $array = $table->toArray();
 
-        $content = implode("\t", array_map(fn ($column) => $column["label"], $array["columns"])). "\n";
+        $content = implode("\t", array_map(fn($column) => $column["label"], $array["columns"])) . "\n";
 
         foreach ($array["rows"] as $row) {
-            $content .= implode("\t", array_map(fn ($cell) => $cell["value"], $row)) . "\n";
+            $content .= implode("\t", array_map(fn($cell) => $cell["value"], $row)) . "\n";
         }
 
         $response->setContent($content);
@@ -409,7 +418,7 @@ class ExperimentController extends AbstractController
     #[IsGranted("ROLE_USER")]
     public function cloneExperimentalRun(
         EntityManagerInterface $entityManager,
-        ExperimentalRun $run
+        ExperimentalRun $run,
     ): Response {
         $newRun = clone $run;
         $entityManager->persist($newRun);
@@ -420,13 +429,13 @@ class ExperimentController extends AbstractController
     #[Route("/experiment/design/editRun/{run}", name: "app_experiments_run_edit")]
     #[IsGranted("edit", "run")]
     public function editExperimentalRun(
-        ExperimentalRun $run
+        ExperimentalRun $run,
     ): Response {
         return $this->newOrEditExperimentalRun(
             run: $run,
             design: $run->getDesign(),
             title: "Edit experimental run",
-            onSubmitRedirectTo: $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()])
+            onSubmitRedirectTo: $this->generateUrl("app_experiments_view", ["design" => $run->getDesign()->getId()]),
         );
     }
 
@@ -442,7 +451,7 @@ class ExperimentController extends AbstractController
                 icon: "up",
                 buttonClass: "btn-secondary",
                 tooltip: "Return to the run overview",
-            )
+            ),
         ];
 
         if ($run->getId()) {
@@ -510,7 +519,7 @@ class ExperimentController extends AbstractController
         $entitiesToFetch = $dataService->getListOfEntitiesToFetch($run->getConditions(), $run->getDesign(), true);
         $entities = $dataService->fetchEntitiesFromList($entitiesToFetch);
 
-        $getComponentColumn = function(ExperimentalDesignField $field, array $entities) {
+        $getComponentColumn = function (ExperimentalDesignField $field, array $entities) {
             return new ComponentColumn($field->getLabel(), function (ExperimentalRunCondition|ExperimentalRunDataSet $condition) use ($field, $entities) {
                 $datum = $condition->getData()[$field->getFormRow()->getFieldName()];
                 $value = $datum?->getValue();
@@ -529,7 +538,7 @@ class ExperimentController extends AbstractController
                         "field" => $field,
                         "formRow" => $field->getFormRow(),
                         "datum" => $value,
-                    ]
+                    ],
                 ];
             });
         };
@@ -563,7 +572,7 @@ class ExperimentController extends AbstractController
                     $this->generateUrl("app_api_experiments_run_view_data", ["run" => $run->getId()]),
                     icon: "download",
                     buttonClass: "btn-secondary",
-                    tooltip: "Download data as tsv"
+                    tooltip: "Download data as tsv",
                 ),
                 new EditTool(
                     path: $this->generateUrl("app_experiments_run_edit", ["run" => $run->getId()]),
@@ -574,38 +583,38 @@ class ExperimentController extends AbstractController
                     icon: "data",
                     tooltip: "Edit run data",
                     iconStack: "edit",
-                )
+                ),
             ]),
             "conditionTable" => new Table(
                 data: $run->getConditions(),
                 columns: [
-                    new Column("Name", fn (ExperimentalRunCondition $condition) => $condition->getName()),
-                    new ComponentColumn("Reference", function (ExperimentalRunCondition $condition) use ($conditionRepository){
+                    new Column("Name", fn(ExperimentalRunCondition $condition) => $condition->getName()),
+                    new ComponentColumn("Reference", function (ExperimentalRunCondition $condition) use ($conditionRepository) {
                         $referenceConditions = new ArrayCollection($conditionRepository->getReferenceConditions($condition));
 
                         return [
                             EntityReference::class, [
                                 "entity" => $referenceConditions,
                                 "displayMax" => 3,
-                            ]
+                            ],
                         ];
                     }, widthRecommendation: 10),
-                    new ToggleColumn("Control", fn (ExperimentalRunCondition $condition) => $condition->isControl()),
+                    new ToggleColumn("Control", fn(ExperimentalRunCondition $condition) => $condition->isControl()),
                     ... $conditionColumns,
                 ],
             ),
             "datasetTable" => new Table(
-                data: $run->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition() === null),
+                data: $run->getDataSets()->filter(fn(ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition() === null),
                 columns: [
-                    new Column("Condition", fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition()->getName()),
+                    new Column("Condition", fn(ExperimentalRunDataSet $dataSet) => $dataSet->getCondition()->getName()),
                     ... $dataSetColumns,
                 ],
             ),
             "comparisonTable" => new Table(
-                data: $run->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition() !== null),
+                data: $run->getDataSets()->filter(fn(ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition() !== null),
                 columns: [
-                    new Column("Condition", fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition()->getName()),
-                    new Column("Control", fn (ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition()?->getName()),
+                    new Column("Condition", fn(ExperimentalRunDataSet $dataSet) => $dataSet->getCondition()->getName()),
+                    new Column("Control", fn(ExperimentalRunDataSet $dataSet) => $dataSet->getControlCondition()?->getName()),
                     ... $comparisonColumns,
                 ],
             ),

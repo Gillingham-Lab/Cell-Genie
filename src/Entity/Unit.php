@@ -5,7 +5,4 @@ namespace App\Entity;
 
 define("UNITS", []);
 
-class Unit
-{
-
-}
+class Unit {}

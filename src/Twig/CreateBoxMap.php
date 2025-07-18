@@ -13,7 +13,7 @@ class CreateBoxMap extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction("initBoxMap", fn (Box $box) => BoxMap::fromBox($box))
+            new TwigFunction("initBoxMap", fn(Box $box) => BoxMap::fromBox($box)),
         ];
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Param\ParamBag;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Tool;
 use App\Entity\Toolbox\Toolbox;
@@ -44,7 +43,7 @@ class UserController extends AbstractController
                     icon: "user",
                     enabled: $this->isGranted("edit", $user ?? $currentUser),
                     iconStack: "settings",
-                )
+                ),
             ]),
         ]);
     }
@@ -57,7 +56,7 @@ class UserController extends AbstractController
         subject: [
             "request" => new Expression("request"),
             "user",
-        ]
+        ],
     )]
     public function edit(
         Request $request,

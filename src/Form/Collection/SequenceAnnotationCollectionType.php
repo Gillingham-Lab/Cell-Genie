@@ -26,9 +26,9 @@ class SequenceAnnotationCollectionType extends AbstractType
             "by_reference" => false,
             "allow_add" => true,
             "allow_delete" => true,
-            "attr" => array(
+            "attr" => [
                 "class" => "collection",
-            ),
+            ],
         ]);
     }
 }

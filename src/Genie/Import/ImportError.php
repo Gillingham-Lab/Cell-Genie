@@ -5,7 +5,4 @@ namespace App\Genie\Import;
 
 use Exception;
 
-class ImportError extends Exception
-{
-
-}
+class ImportError extends Exception {}

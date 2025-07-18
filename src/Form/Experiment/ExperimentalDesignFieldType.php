@@ -28,7 +28,7 @@ class ExperimentalDesignFieldType extends AbstractType
         ]);
 
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->allowedTypes(ExperimentalDesign::class, "null")
             ->default(null)
         ;
     }
@@ -51,25 +51,25 @@ class ExperimentalDesignFieldType extends AbstractType
             ->add("exposed", CheckboxType::class, [
                 "required" => false,
                 "help" => "If turned on, this field will appear in the data list. For fields with the Roles 'Comparison' or 'Datum', "
-                    ." multiple entries will be summarized in the same table cell, for fields the Role 'Top', the value will be "
-                    ."repeated for each condition.",
+                    . " multiple entries will be summarized in the same table cell, for fields the Role 'Top', the value will be "
+                    . "repeated for each condition.",
             ])
             ->add("referenced", CheckboxType::class, [
                 "required" => false,
                 "help" => "If turned on, this field will be used to retrieve reference data to draw comparisons. "
-                    ."Will only be used on Top or Condition fields.",
+                    . "Will only be used on Top or Condition fields.",
             ])
             ->add("referenceValue", TextType::class, [
                 "required" => false,
                 "help" => "Reference value for comparison. Will only be used on Top or Condition fields and if 'Referenced' is turned on."
-                    ." This can be used to limit the search for example to conditions where the concentration of something is 0 or to overwrite exact comparisons.",
+                    . " This can be used to limit the search for example to conditions where the concentration of something is 0 or to overwrite exact comparisons.",
             ])
             ->add("formRow", FormRowType::class, [
                 "label" => " ",
                 "design" => $options["design"],
                 "row_attr" => [
                     "class" => "no-fieldset",
-                ]
+                ],
             ])
         ;
     }

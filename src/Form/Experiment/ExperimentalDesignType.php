@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Form\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
-use App\Form\BasicType\FancyEntityType;
 use App\Form\CompositeType\PrivacyAwareType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -54,7 +52,7 @@ class ExperimentalDesignType extends AbstractType
                     "label" => "Ownership",
                     "required"  => true,
                     "inherit_data" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_fields", FormType::class, [
@@ -77,19 +75,19 @@ class ExperimentalDesignType extends AbstractType
                             "class" => "btn btn-outline-primary",
                         ],
                     ],
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_models", FormType::class, [
                     "inherit_data" => true,
                     "label" => "Models",
                 ])
-                ->add(... $this->getModelsCollectionTypeParameters($design))
+                ->add(... $this->getModelsCollectionTypeParameters($design)),
             )
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->onPreSetData($event, $design));
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->onPreSubmitData($event, $design));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn(FormEvent $event) => $this->onPreSetData($event, $design));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn(FormEvent $event) => $this->onPreSubmitData($event, $design));
     }
 
     public function onPreSetData(FormEvent $event, ?ExperimentalDesign $design): void
@@ -158,7 +156,7 @@ class ExperimentalDesignType extends AbstractType
                         "class" => "btn btn-outline-primary",
                     ],
                 ],
-            ]
+            ],
         ];
     }
 }

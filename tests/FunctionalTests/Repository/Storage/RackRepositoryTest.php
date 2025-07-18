@@ -5,7 +5,6 @@ namespace App\Tests\FunctionalTests\Repository\Storage;
 
 use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Repository\Storage\RackRepository;
-use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
@@ -44,15 +43,15 @@ class RackRepositoryTest extends KernelTestCase
         $this->assertCount(1, $tree[0][0]->getUlidTree());
         $this->assertCount(1, $tree[0][0]->getNameTree());
         $this->assertContains($tree[0][0]->getName(), $tree[0][0]->getNameTree());
-        $this->assertContains((string)$tree[0][0]->getUlid(), $tree[0][0]->getUlidTree());
+        $this->assertContains((string) $tree[0][0]->getUlid(), $tree[0][0]->getUlidTree());
 
         $this->assertSame(2, $tree[1][0]->getDepth());
         $this->assertCount(2, $tree[1][0]->getUlidTree());
         $this->assertCount(2, $tree[1][0]->getNameTree());
         $this->assertContains($tree[0][0]->getName(), $tree[1][0]->getNameTree());
         $this->assertContains($tree[1][0]->getName(), $tree[1][0]->getNameTree());
-        $this->assertContains((string)$tree[0][0]->getUlid(), $tree[1][0]->getUlidTree());
-        $this->assertContains((string)$tree[1][0]->getUlid(), $tree[1][0]->getUlidTree());
+        $this->assertContains((string) $tree[0][0]->getUlid(), $tree[1][0]->getUlidTree());
+        $this->assertContains((string) $tree[1][0]->getUlid(), $tree[1][0]->getUlidTree());
 
         $this->assertSame(3, $tree[2][0]->getDepth());
         $this->assertCount(3, $tree[2][0]->getUlidTree());
@@ -60,9 +59,9 @@ class RackRepositoryTest extends KernelTestCase
         $this->assertContains($tree[0][0]->getName(), $tree[2][0]->getNameTree());
         $this->assertContains($tree[1][0]->getName(), $tree[2][0]->getNameTree());
         $this->assertContains($tree[2][0]->getName(), $tree[2][0]->getNameTree());
-        $this->assertContains((string)$tree[0][0]->getUlid(), $tree[2][0]->getUlidTree());
-        $this->assertContains((string)$tree[1][0]->getUlid(), $tree[2][0]->getUlidTree());
-        $this->assertContains((string)$tree[2][0]->getUlid(), $tree[2][0]->getUlidTree());
+        $this->assertContains((string) $tree[0][0]->getUlid(), $tree[2][0]->getUlidTree());
+        $this->assertContains((string) $tree[1][0]->getUlid(), $tree[2][0]->getUlidTree());
+        $this->assertContains((string) $tree[2][0]->getUlid(), $tree[2][0]->getUlidTree());
     }
 
     public function testRackTreeWithExclusion(): void

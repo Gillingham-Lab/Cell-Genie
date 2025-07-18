@@ -5,6 +5,7 @@ namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+
 use function App\mb_str_shorten;
 
 class TextFilter extends AbstractExtension

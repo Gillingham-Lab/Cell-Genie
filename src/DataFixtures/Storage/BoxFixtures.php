@@ -11,14 +11,14 @@ use Doctrine\Persistence\ObjectManager;
 
 class BoxFixtures extends Fixture implements DependentFixtureInterface
 {
-    const HEK293 = "box.hek293";
-    const HCT116 = "box.hct116";
-    const ECOLI = "box.ecoli";
+    public const HEK293 = "box.hek293";
+    public const HCT116 = "box.hct116";
+    public const ECOLI = "box.ecoli";
 
     public function getDependencies(): array
     {
         return [
-            RackFixtures::class
+            RackFixtures::class,
         ];
     }
 
@@ -37,8 +37,8 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
                 ->setName("Box 5"),
         ];
 
-        array_map(fn (Box $box) => $box->setRack($this->getReference(RackFixtures::RACK_1, Rack::class)),$boxes);
-        array_map(fn (Box $box) => $manager->persist($box), $boxes);
+        array_map(fn(Box $box) => $box->setRack($this->getReference(RackFixtures::RACK_1, Rack::class)), $boxes);
+        array_map(fn(Box $box) => $manager->persist($box), $boxes);
 
         $otherBoxes = [
             (new Box())
@@ -62,7 +62,7 @@ class BoxFixtures extends Fixture implements DependentFixtureInterface
         $this->setReference(self::HCT116, $otherBoxes[1]);
         $this->setReference(self::ECOLI, $otherBoxes[2]);
 
-        array_map(fn (Box $box) => $manager->persist($box), $otherBoxes);
+        array_map(fn(Box $box) => $manager->persist($box), $otherBoxes);
 
         $manager->flush();
     }

@@ -7,25 +7,16 @@ use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableLot;
 use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Embeddable\Price;
-use App\Entity\Toolbox\EditTool;
-use App\Entity\Toolbox\Tool;
-use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use App\Form\StockKeeping\QuickOrderType;
 use App\Genie\Enums\Availability;
 use DateTime;
-use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -139,7 +130,7 @@ class ConsumableLotView extends AbstractController
             $lot->setPricePerPackage(
                 (new Price())
                     ->setPriceValue($data["priceValue"])
-                    ->setPriceCurrency($data["priceCurrency"])
+                    ->setPriceCurrency($data["priceCurrency"]),
             );
             $lot->setBoughtBy($user);
             $lot->setAvailability($data["status"]);

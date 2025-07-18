@@ -31,7 +31,7 @@ enum GeneRegulation: string implements TranslatableInterface
             self::DoubleKnockIn => "knocked in on both alleles",
             self::DoubleKnockOut => "knocked out from both allele",
             self::OnOneAllel => "present on one allele",
-            self::OnTwoAllels => "present on both alleles"
+            self::OnTwoAllels => "present on both alleles",
         };
     }
 }

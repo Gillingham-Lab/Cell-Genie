@@ -6,14 +6,12 @@ namespace App\Service\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunDataSet;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Substance\Substance;
-use App\Form\ScientificNumberTransformer;
 use App\Form\Search\NumberSearchTransformer;
 use App\Genie\Codec\ExperimentValueCodec;
 use App\Genie\Enums\DatumEnum;
@@ -44,9 +42,7 @@ readonly class ExperimentalDataService
         private ExperimentalModelService $modelService,
         private Stopwatch $stopwatch,
         private LoggerInterface $logger,
-    ) {
-
-    }
+    ) {}
 
     private function getBaseQuery(ExperimentalDesign $design): QueryBuilder
     {
@@ -70,7 +66,7 @@ readonly class ExperimentalDataService
             ->where("exr.design = :design")
 
             ->setParameter("design", $design->getId()->toRfc4122())
-            ;
+        ;
     }
 
     /**
@@ -82,7 +78,7 @@ readonly class ExperimentalDataService
             if (method_exists($design->getFields(), "isInitialized") && $design->getFields()->isInitialized() === false) {
                 $fields = $design->getFields()->matching((new Criteria())->where(new Comparison("exposed", "=", "true")));
             } else {
-                $fields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->isExposed());
+                $fields = $design->getFields()->filter(fn(ExperimentalDesignField $field) => $field->isExposed());
             }
         } else {
             $fields = $design->getFields();
@@ -98,7 +94,7 @@ readonly class ExperimentalDataService
     private function getResults(
         ?array $orderBy = null,
         array $searchFields = [],
-        ?ExperimentalDesign $design = null
+        ?ExperimentalDesign $design = null,
     ): QueryBuilder {
         $queryBuilder = $this->getBaseQuery($design);
 
@@ -143,7 +139,7 @@ readonly class ExperimentalDataService
         /** @var Paginator<ExperimentalRunCondition> $paginatedConditions */
         $paginatedConditions = new Paginator($queryBuilder->getQuery(), fetchJoinCollection: true);
 
-        $conditionIds = array_unique(array_map(fn (ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(), $paginatedConditions->getIterator()->getArrayCopy()));
+        $conditionIds = array_unique(array_map(fn(ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(), $paginatedConditions->getIterator()->getArrayCopy()));
 
         $this->logger->debug("ExperimentalDataService.getPaginatedResults: Retrieving collected conditions");
         $this->stopwatch->start("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
@@ -168,7 +164,7 @@ readonly class ExperimentalDataService
         $this->stopwatch->stop("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
 
         // Prefetch run datasets
-        $runIds = array_map(fn (ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum);
+        $runIds = array_map(fn(ExperimentalRunCondition $condition) => $condition->getExperimentalRun()->getId()->toRfc4122(), $hydratedConditionDatum);
         $runIds = array_unique($runIds);
 
         $hydratedDataSets = $this->entityManager->createQueryBuilder()
@@ -204,7 +200,7 @@ readonly class ExperimentalDataService
         $entitiesToFetch = [];
         $datumConfiguration = [];
 
-        $pushEntity = function(Collection|array $data, &$entitiesToFetch) use ($design, $includeUnexposed) {
+        $pushEntity = function (Collection|array $data, &$entitiesToFetch) use ($design, $includeUnexposed) {
             foreach ($data as $fieldName => $datum) {
 
                 if ($datum->getType() === DatumEnum::EntityReference) {
@@ -220,7 +216,7 @@ readonly class ExperimentalDataService
                     }
 
                     // Check if the datum configuration has two classes
-                    $field = $design->getFields()->filter(fn (ExperimentalDesignField $x) => $x->getFormRow()->getFieldName() === $datum->getName())->first();
+                    $field = $design->getFields()->filter(fn(ExperimentalDesignField $x) => $x->getFormRow()->getFieldName() === $datum->getName())->first();
 
                     // Nothing to retrieve if the field is not exposed
                     if (!($field instanceof ExperimentalDesignField) or !($field->isExposed() or $includeUnexposed)) {
@@ -239,7 +235,7 @@ readonly class ExperimentalDataService
             }
         };
 
-        $outerStopWatch = $this->stopwatch->start(__CLASS__.".".__METHOD__);
+        $outerStopWatch = $this->stopwatch->start(__CLASS__ . "." . __METHOD__);
 
         $topRunDataRunInto = [];
 
@@ -335,14 +331,14 @@ readonly class ExperimentalDataService
      * @param array{str: array{str: object}} $entitiesToFetch
      * @return array<int, mixed>
      */
-    public function createDataArray(Paginator $conditions, array $entitiesToFetch, ExperimentalDesign $design, ?int $maxRows=null): array
+    public function createDataArray(Paginator $conditions, array $entitiesToFetch, ExperimentalDesign $design, ?int $maxRows = null): array
     {
         $data = [];
 
         $pushColumn = function (Collection $data, &$row) use ($entitiesToFetch, $design) {
             /** @var ExperimentalDatum<DatumEnum> $datum */
             foreach ($data as $datum) {
-                $field = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $datum->getName())->first();
+                $field = $design->getFields()->filter(fn(ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $datum->getName())->first();
 
                 if ($field === false) {
                     continue;
@@ -412,7 +408,7 @@ readonly class ExperimentalDataService
     public function getPaginatedResultCount(
         ?array $orderBy = [],
         array $searchFields = [],
-        ?ExperimentalDesign $design = null
+        ?ExperimentalDesign $design = null,
     ): int {
         return (new Paginator($this->getResults($orderBy, $searchFields, $design)))->count();
     }
@@ -426,14 +422,14 @@ readonly class ExperimentalDataService
     private function addSearchFields(
         QueryBuilder $queryBuilder,
         array $searchFields = [],
-        ?ExperimentalDesign $design = null
+        ?ExperimentalDesign $design = null,
     ): QueryBuilder {
         $searchService = $this->searchService;
 
-        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "design" => $searchService->searchWithUlid($queryBuilder, "exr.design", $searchValue->getId()->toRfc4122()),
             "run" => $searchService->searchWithUlid($queryBuilder, "exr", $searchValue->getid()->toRfc4122()),
-            default => $this->addVariableSearchField($queryBuilder, $searchField, $searchValue, $design)
+            default => $this->addVariableSearchField($queryBuilder, $searchField, $searchValue, $design),
         });
 
         return $searchService->addExpressionsToSearchQuery($queryBuilder, $expressions);
@@ -453,10 +449,10 @@ readonly class ExperimentalDataService
         }
 
         /** @var ExperimentalDesignField $fieldRow */
-        $fieldRow = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $searchField)->first();
+        $fieldRow = $design->getFields()->filter(fn(ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $searchField)->first();
 
-        $nameParamName = "name_".$fieldRow->getFormRow()->getFieldName();
-        $referencesParamName = "references_".$fieldRow->getFormRow()->getFieldName();
+        $nameParamName = "name_" . $fieldRow->getFormRow()->getFieldName();
+        $referencesParamName = "references_" . $fieldRow->getFormRow()->getFieldName();
         $abbreviation_suffix = $fieldRow->getFormRow()->getFieldName();
 
         if ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::EntityType) {
@@ -502,14 +498,14 @@ readonly class ExperimentalDataService
         } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::FloatType or $fieldRow->getFormRow()->getType() === FormRowTypeEnum::IntegerType) {
             if ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::FloatType) {
                 // Get datum type for correct encoding
-                $datumType = match(FloatTypeEnum::from($fieldRow->getFormRow()->getConfiguration()["datatype_float"])) {
+                $datumType = match (FloatTypeEnum::from($fieldRow->getFormRow()->getConfiguration()["datatype_float"])) {
                     FloatTypeEnum::Float32 => DatumEnum::Float32,
                     FloatTypeEnum::Float64 => DatumEnum::Float64,
                 };
             } else {
                 $configuration = $fieldRow->getFormRow()->getConfiguration();
                 $isUnsigned = $configuration["unsigned"];
-                $datumType = match(IntegerTypeEnum::from($configuration["datatype_int"])) {
+                $datumType = match (IntegerTypeEnum::from($configuration["datatype_int"])) {
                     IntegerTypeEnum::Int8 => $isUnsigned ? DatumEnum::UInt8 : DatumEnum::Int8,
                     IntegerTypeEnum::Int16 => $isUnsigned ? DatumEnum::UInt16 : DatumEnum::Int16,
                     IntegerTypeEnum::Int32 => $isUnsigned ? DatumEnum::UInt32 : DatumEnum::Int32,
@@ -552,7 +548,7 @@ readonly class ExperimentalDataService
             ->from(ExperimentalRunCondition::class, "nerc2$suffix")
             ->select("nerc2$suffix.id");
 
-        $queryBuilder = match($role) {
+        $queryBuilder = match ($role) {
             ExperimentalFieldRole::Top => $queryBuilder
                 ->leftJoin("nerc2$suffix.experimentalRun", "nerc2r$suffix")
                 ->leftJoin("nerc2r$suffix.data", "data$suffix"),
@@ -598,7 +594,7 @@ readonly class ExperimentalDataService
             }
         }
 
-        return (string)$value;
+        return (string) $value;
     }
 
     /**
@@ -614,7 +610,7 @@ readonly class ExperimentalDataService
     public function updateExpressionFields(ExperimentalRun $run): void
     {
         $design = $run->getDesign();
-        $expressionFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
+        $expressionFields = $design->getFields()->filter(fn(ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ExpressionType);
 
         foreach ($expressionFields as $expressionField) {
             $expression = $expressionField->getFormRow()->getConfiguration()["expression"] ?? null;
@@ -653,7 +649,7 @@ readonly class ExperimentalDataService
     public function updateModelFields(ExperimentalRun $run): void
     {
         $design = $run->getDesign();
-        $modelFields = $design->getFields()->filter(fn (ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
+        $modelFields = $design->getFields()->filter(fn(ExperimentalDesignField $field) => $field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
 
         foreach ($modelFields as $field) {
             $fieldName = $field->getFormRow()->getFieldName();
@@ -683,7 +679,7 @@ readonly class ExperimentalDataService
                     $values[3][] = $value[3];
                 }
 
-                $values = array_map(fn ($v) => count($v) > 0 ? array_sum($v) / count($v) : NAN, $values);
+                $values = array_map(fn($v) => count($v) > 0 ? array_sum($v) / count($v) : NAN, $values);
 
                 $run->addData((new ExperimentalDatum())->setName($fieldName)->setType(DatumEnum::ErrorFloat)->setValue($values));
             }

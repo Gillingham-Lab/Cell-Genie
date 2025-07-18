@@ -5,7 +5,7 @@ namespace App\Entity\Table;
 
 class ComponentColumn extends Column
 {
-    const component = true;
+    public const component = true;
 
     public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {

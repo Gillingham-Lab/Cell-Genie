@@ -8,7 +8,6 @@ use App\Entity\Traits\Fields\IdTrait;
 use App\Entity\Traits\Fields\NameTrait;
 use App\Entity\Traits\Fields\NumberTrait;
 use App\Entity\Traits\Privacy\PrivacyAwareTrait;
-use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalDesignRepository;
 use App\Validator\Constraint\UniqueCollectionField;
 use Doctrine\Common\Collections\ArrayCollection;

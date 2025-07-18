@@ -5,7 +5,7 @@ namespace App\Entity\Table;
 
 class ToggleColumn extends Column
 {
-    const raw = true;
+    public const raw = true;
 
     public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {

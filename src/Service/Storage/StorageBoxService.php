@@ -10,7 +10,6 @@ use App\Entity\DoctrineEntity\Lot;
 use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Repository\Cell\CellAliquotRepository;
-use App\Repository\Cell\CellRepository;
 use App\Repository\LotRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityNotFoundException;
@@ -24,9 +23,7 @@ readonly class StorageBoxService
         private Security $security,
         private CellAliquotRepository $cellAliquotRepository,
         private LotRepository $lotRepository,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @param Cell|Substance $entity

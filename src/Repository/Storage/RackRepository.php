@@ -36,7 +36,7 @@ class RackRepository extends ServiceEntityRepository
             ->addGroupBy("rc")
             ->getQuery()
             ->getResult()
-            ;
+        ;
     }
 
     /**
@@ -73,7 +73,9 @@ class RackRepository extends ServiceEntityRepository
     FROM rack r2, search_graph sg
     WHERE r2.parent_id = sg.ulid AND NOT cycle
 ) SELECT DISTINCT * FROM search_graph sg2 WHERE NOT(:param = ANY(path)) ORDER BY sort_path, name;
-SQL, $rsm);
+SQL,
+                $rsm,
+            );
             $query->setParameter("param", $exludeRack->getUlid(), "ulid");
         } else {
             $query = $this->getEntityManager()->createNativeQuery(
@@ -86,7 +88,9 @@ SQL, $rsm);
     FROM rack r2, search_graph sg
     WHERE r2.parent_id = sg.ulid AND NOT cycle
 ) SELECT DISTINCT * FROM search_graph sg2 ORDER BY sort_path, name;
-SQL, $rsm);
+SQL,
+                $rsm,
+            );
         }
 
         $result = $query->getResult();
@@ -96,8 +100,8 @@ SQL, $rsm);
             $entity = $res[0];
 
             $entity->setDepth($res["depth"]);
-            $entity->setUlidTree(explode(',', substr($res["path"], 1, strlen($res["path"])-2)));
-            $entity->setNameTree(explode('","', substr($res["sort_path"], 2, strlen($res["sort_path"])-4)));
+            $entity->setUlidTree(explode(',', substr($res["path"], 1, strlen($res["path"]) - 2)));
+            $entity->setNameTree(explode('","', substr($res["sort_path"], 2, strlen($res["sort_path"]) - 4)));
         }
 
         return $result;

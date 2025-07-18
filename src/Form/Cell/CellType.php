@@ -40,8 +40,7 @@ class CellType extends SaveableType
 
     public function __construct(
         private readonly VocabularyRepository $vocabularyRepository,
-    ) {
-    }
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -76,7 +75,7 @@ class CellType extends SaveableType
                         "required" => false,
                         "empty_data" => null,
                         "config" => ["toolbar" => "basic"],
-                    ])
+                    ]),
             )
             ->add(
                 $builder->create("expression", FormType::class, [
@@ -92,10 +91,10 @@ class CellType extends SaveableType
                         "allow_delete" => true,
                         "allow_move_up" => true,
                         "allow_move_down" => true,
-                        "attr" => array(
+                        "attr" => [
                             "class" => "collection",
-                        ),
-                    ])
+                        ],
+                    ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -104,7 +103,7 @@ class CellType extends SaveableType
                 ])
                     ->add("attachments", AttachmentCollectionType::class, [
                         "label" => "Attachments",
-                    ])
+                    ]),
             )
         ;
 
@@ -144,7 +143,7 @@ class CellType extends SaveableType
             ->add("name", TextType::class, [
                 "label" => "Cell name",
                 "required" => true,
-                "help" => "(Official) name of the cell line if commercially available (like 'HCT 116') or a descriptive name if the cell has been engineered ('HEK293T, MGMT-GFP, mCherry')"
+                "help" => "(Official) name of the cell line if commercially available (like 'HCT 116') or a descriptive name if the cell has been engineered ('HEK293T, MGMT-GFP, mCherry')",
             ])
             ->add("cellGroup", FancyEntityType::class, [
                 "label" => "Cell group",
@@ -189,7 +188,7 @@ class CellType extends SaveableType
                 "required" => false,
             ])
             ->add("price", PriceType::class, [
-                "label" => "Cell line price"
+                "label" => "Cell line price",
             ])
             ->add("acquiredOn", DateType::class, [
                 "label" => "Acquired on",
@@ -232,9 +231,9 @@ class CellType extends SaveableType
     {
         return $builder
             ->create("engineering", FormType::class, [
-            "inherit_data" => true,
-            "label" => "Engineering",
-        ])
+                "inherit_data" => true,
+                "label" => "Engineering",
+            ])
             ->add("isEngineered", CheckboxType::class, [
                 "label" => "Is Engineered?",
                 "help" => "Check if the cell has been engineered.",

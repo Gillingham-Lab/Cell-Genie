@@ -10,7 +10,6 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Form\Collection\TableLiveCollectionType;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Service\Experiment\ExperimentalDataFormRowService;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
@@ -26,9 +25,7 @@ class ExperimentalRunDataType extends AbstractType
 {
     public function __construct(
         private readonly ExperimentalDataFormRowService $formRowService,
-    ) {
-
-    }
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -67,7 +64,7 @@ class ExperimentalRunDataType extends AbstractType
             return;
         }
 
-        $innerBuilder =$builder->create("_metadata", FormType::class, [
+        $innerBuilder = $builder->create("_metadata", FormType::class, [
             "label" => "Metadata",
             "inherit_data" => true,
         ]);
@@ -110,7 +107,7 @@ class ExperimentalRunDataType extends AbstractType
                 "allow_add" => true,
                 "allow_delete" => true,
                 "button_add_options" => [
-                    "label" => "+"
+                    "label" => "+",
                 ],
                 "button_delete_options" => [
                     "label" => "−",
@@ -120,7 +117,7 @@ class ExperimentalRunDataType extends AbstractType
                     "fields" => $fields,
                     "models" => $modelChoices,
                 ],
-            ])
+            ]),
         );
     }
 
@@ -163,7 +160,7 @@ class ExperimentalRunDataType extends AbstractType
                 foreach ($form->get("_dataSets")->get("dataSets") as $dataset) {
                     $dataset->get("condition_name")->setData($dataset->getData()->getCondition()?->getName() ?? "");
                 }
-            }
+            },
         );
 
         // Update the choice list for all existing conditions
@@ -186,7 +183,7 @@ class ExperimentalRunDataType extends AbstractType
                 $conditionChoices = $conditions;
 
                 $this->addDataSetCollection($dataSetFormEntry, $fields, $conditionChoices);
-            }
+            },
         );
 
         // Upon submit, we need to update the model with the real conditions.
@@ -201,14 +198,14 @@ class ExperimentalRunDataType extends AbstractType
                 $dataSets = $event->getForm()->get("_dataSets")->get("dataSets");
                 foreach ($dataSets as $dataSet) {
                     $selectedConditionName = $dataSet->get("condition_name")->getViewData();
-                    $condition = $conditions->filter(fn (ExperimentalRunCondition $condition) => $condition->getName() === $selectedConditionName)->first();
+                    $condition = $conditions->filter(fn(ExperimentalRunCondition $condition) => $condition->getName() === $selectedConditionName)->first();
 
                     if ($condition !== false) {
                         $dataSet = $dataSet->getNormData();
                         $dataSet->setCondition($condition);
                     }
                 }
-            }
+            },
         );
     }
     /**
@@ -223,7 +220,7 @@ class ExperimentalRunDataType extends AbstractType
             "allow_add" => true,
             "allow_delete" => true,
             "button_add_options" => [
-                "label" => "+"
+                "label" => "+",
             ],
             "button_delete_options" => [
                 "label" => "−",

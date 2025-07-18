@@ -30,8 +30,7 @@ class CellGroupType extends SaveableType
 
     public function __construct(
         private readonly VocabularyRepository $vocabularyRepository,
-    ) {
-    }
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -51,7 +50,7 @@ class CellGroupType extends SaveableType
                 ->add("name", TextType::class, [
                     "label" => "Cell group name",
                     "required" => true,
-                    "help" => "For conceptual groups, it can be abstract (such as 'Human' or 'Engineered') for supersets, but should turn into official cell names further down if cells are added to it (not a cellosaurus number). Use the preferred name on cellosaurus!"
+                    "help" => "For conceptual groups, it can be abstract (such as 'Human' or 'Engineered') for supersets, but should turn into official cell names further down if cells are added to it (not a cellosaurus number). Use the preferred name on cellosaurus!",
                 ])
                 ->add("cellosaurusId", TextType::class, [
                     "label" => "Cellosaurus ID",
@@ -61,7 +60,7 @@ class CellGroupType extends SaveableType
                 ->add("rrid", TextType::class, [
                     "label" => "RRID",
                     "required" => false,
-                    "help" => "Can usually be found on Cellosaurus as well and is often equivalent to Cellosaurus Acession number. Alternatively, check here: https://scicrunch.org/resources/data/source/SCR_013869-1/search"
+                    "help" => "Can usually be found on Cellosaurus as well and is often equivalent to Cellosaurus Acession number. Alternatively, check here: https://scicrunch.org/resources/data/source/SCR_013869-1/search",
                 ])
                 ->add("cultureType", ... $this->getTextOrChoiceOptions("cultureType", [
                     "label" => "Culture type",
@@ -115,7 +114,7 @@ class CellGroupType extends SaveableType
                     "placeholder" => "Select cell groups",
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("__groupOrigin", FormType::class, [
@@ -129,7 +128,7 @@ class CellGroupType extends SaveableType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.name", "ASC")
-                            ;
+                        ;
                     },
                     "empty_data" => null,
                     "placeholder" => "Select an organism",
@@ -143,7 +142,7 @@ class CellGroupType extends SaveableType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.name", "ASC")
-                            ;
+                        ;
                     },
                     "empty_data" => null,
                     "placeholder" => "Select a morphology",
@@ -157,7 +156,7 @@ class CellGroupType extends SaveableType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.name", "ASC")
-                            ;
+                        ;
                     },
                     "empty_data" => null,
                     "placeholder" => "Select a tissue type",
@@ -189,7 +188,7 @@ class CellGroupType extends SaveableType
                     "label" => "Disease",
                     "required" => false,
                     "help" => "Disease the cell originates from, if any.",
-                ])
+                ]),
             )
         ;
 

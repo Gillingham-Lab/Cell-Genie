@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Repository\Experiment;
 
@@ -8,7 +8,6 @@ use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use ValueError;
 
@@ -33,14 +32,14 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         foreach ($orderBy as $fieldName => $order) {
-            $field = match($fieldName) {
+            $field = match ($fieldName) {
                 "name" => "exr.name",
                 "createdAt" => "exr.createdAt",
                 "modifiedAt" => "expr.modifiedAt",
                 default => throw new ValueError("{$fieldName} is not supported."),
             };
 
-            $order = match($order) {
+            $order = match ($order) {
                 "DESC", "descending" => "DESC",
                 default => "ASC",
             };
@@ -78,7 +77,7 @@ class ExperimentalRunRepository extends ServiceEntityRepository implements Pagin
     {
         $searchService = $this->searchService;
 
-        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "design" => $searchService->searchWithUlid($queryBuilder, "exr.design", $searchValue),
             default => throw new ValueError("{$searchField} is not supported."),
         });

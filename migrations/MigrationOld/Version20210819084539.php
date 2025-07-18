@@ -25,9 +25,9 @@ final class Version20210819084539 extends AbstractMigration
         // $this->addSql('COMMENT ON COLUMN antibody_lots.lot_id IS \'(DC2Type:ulid)\'');
         $table = $schema->createTable("antibody_lots");
         $table->addColumn("antibody_id", "integer")
-            ->setNotnull(True);
+            ->setNotnull(true);
         $table->addColumn("lot_id", "guid")
-            ->setNotnull(True)
+            ->setNotnull(true)
             ->setComment("(DC2Type:ulid)")
         ;
         $table->setPrimaryKey(["antibody_id", "lot_id"]);
@@ -57,58 +57,58 @@ final class Version20210819084539 extends AbstractMigration
 
         $table = $schema->createTable("lot");
         $table->addColumn("id", "guid")
-            ->setNotnull(True)
+            ->setNotnull(true)
             ->setComment("(DC2Type:ulid)")
         ;
         $table->setPrimaryKey(["id"]);
         $table->addColumn("bought_by_id", "guid")
-            ->setNotnull(True)
+            ->setNotnull(true)
             ->setComment("(DC2Type:ulid)")
         ;
         $table->addColumn("number", "string")
             ->setLength(20)
-            ->setNotnull(True)
+            ->setNotnull(true)
         ;
         $table->addColumn("lot_number", "string")
             ->setLength(50)
-            ->setNotnull(True)
+            ->setNotnull(true)
         ;
         $table->addColumn("bought_on", "datetime")
-            ->setNotnull(True)
+            ->setNotnull(true)
         ;
         $table->addColumn("opened_on", "datetime")
-            ->setNotnull(True)
+            ->setNotnull(true)
         ;
         $table->addColumn("amount", "string")
             ->setLength(10)
-            ->setNotnull(True)
+            ->setNotnull(true)
         ;
         $table->addColumn("purity", "string")
             ->setLength(15)
-            ->setNotnull(True)
+            ->setNotnull(true)
         ;
         $table->addColumn("aliquote_size", "string")
             ->setLength(15)
-            ->setNotnull(False)
+            ->setNotnull(false)
             ->setDefault(null)
         ;
         $table->addColumn("number_of_aliquotes", "smallint")
-            ->setNotnull(False)
+            ->setNotnull(false)
             ->setDefault(null)
         ;
         $table->addColumn("comment", "text")
-            ->setNotnull(False)
+            ->setNotnull(false)
             ->setDefault(null)
         ;
 
         $table->addIndex(["bought_by_id"], "IDX_B81291BDEC6D6BA");
 
         $table = $schema->getTable("antibody_lots");
-        $table->addForeignKeyConstraint("antibody", ["antibody_id"],  ["id"], name: "FK_5C96DB8651162764");
-        $table->addForeignKeyConstraint("lot", ["lot_id"],  ["id"], name: "FK_5C96DB86A8CBA5F7");
+        $table->addForeignKeyConstraint("antibody", ["antibody_id"], ["id"], name: "FK_5C96DB8651162764");
+        $table->addForeignKeyConstraint("lot", ["lot_id"], ["id"], name: "FK_5C96DB86A8CBA5F7");
 
         $table = $schema->getTable("lot");
-        $table->addForeignKeyConstraint("user_accounts", ["bought_by_id"],  ["id"], name: "FK_B81291BDEC6D6BA");
+        $table->addForeignKeyConstraint("user_accounts", ["bought_by_id"], ["id"], name: "FK_B81291BDEC6D6BA");
     }
 
     public function down(Schema $schema): void

@@ -35,8 +35,7 @@ class BarcodeType extends AbstractType
      */
     public function __construct(
         private SubstanceRepository $substanceRepository,
-    ) {
-    }
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -47,7 +46,7 @@ class BarcodeType extends AbstractType
             ->add("cellCulture", FancyEntityType::class, [
                 "class" => CellCulture::class,
                 'empty_data' => null,
-                "query_builder" => function(EntityRepository $er) {
+                "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("cc")
                         ->addSelect("co")
                         ->addSelect("ce")
@@ -69,12 +68,12 @@ class BarcodeType extends AbstractType
                         ->where("cc.trashedOn > :timepoint")
                         ->orWhere("cc.trashedOn IS NULL")
                         ->setParameter("timepoint", new DateTime("now - 1 week"))
-                        ;
+                    ;
                 },
                 "placeholder" => "Empty",
                 "required" => false,
                 "allow_empty" => true,
-                "group_by" => function($choice, $key, $value) {
+                "group_by" => function ($choice, $key, $value) {
                     return $choice->getOwner();
                 },
             ])
@@ -101,8 +100,8 @@ class BarcodeType extends AbstractType
                 "placeholder" => "Empty",
                 "required" => false,
                 "allow_empty" => true,
-                "group_by" => function($choice, $key, $value) {
-                    return match($choice::class) {
+                "group_by" => function ($choice, $key, $value) {
+                    return match ($choice::class) {
                         Antibody::class => "Antibodies",
                         Chemical::class => "Chemicals",
                         Oligo::class => "Oligos",
@@ -116,9 +115,9 @@ class BarcodeType extends AbstractType
                 "choices" => $this->getLotChoices(),
                 "choice_label" => function ($choice) {
                     if ($choice?->getSubstance() instanceof Antibody) {
-                        return $choice->getSubstance()->getNumber() . "." . $choice->getLot()?->getNumber() . " (" . $choice->getLot()?->getLotNumber() .")";
+                        return $choice->getSubstance()->getNumber() . "." . $choice->getLot()?->getNumber() . " (" . $choice->getLot()?->getLotNumber() . ")";
                     } else {
-                        return $choice?->getSubstance()?->getShortName() . "." . $choice?->getLot()?->getNumber() . " (" . $choice?->getLot()?->getLotNumber() .")";
+                        return $choice?->getSubstance()?->getShortName() . "." . $choice?->getLot()?->getNumber() . " (" . $choice?->getLot()?->getLotNumber() . ")";
                     }
                 },
                 "choice_value" => function ($choice) {
@@ -128,8 +127,8 @@ class BarcodeType extends AbstractType
                 "placeholder" => "Empty",
                 "required" => false,
                 "allow_empty" => true,
-                "group_by" => function($choice, $key, $value) {
-                    return is_null($choice) ? "Other" : match(($choice->getSubstance())::class) {
+                "group_by" => function ($choice, $key, $value) {
+                    return is_null($choice) ? "Other" : match (($choice->getSubstance())::class) {
                         Antibody::class => "Antibodies",
                         Chemical::class => "Chemicals",
                         Oligo::class => "Oligos",

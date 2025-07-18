@@ -27,9 +27,9 @@ class InstrumentUserCollectionType extends AbstractType
             "allow_delete" => true,
             "allow_move_up" => true,
             "allow_move_down" => true,
-            "attr" => array(
+            "attr" => [
                 "class" => "collection",
-            ),
+            ],
         ]);
     }
 }

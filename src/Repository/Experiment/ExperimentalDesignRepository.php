@@ -4,12 +4,10 @@ declare(strict_types=1);
 namespace App\Repository\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use ValueError;
 
@@ -33,12 +31,12 @@ class ExperimentalDesignRepository extends ServiceEntityRepository implements Pa
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         foreach ($orderBy as $fieldName => $order) {
-            $field = match($fieldName) {
+            $field = match ($fieldName) {
                 "number" => "ed.number",
                 default => throw new ValueError("{$fieldName} is not supported."),
             };
 
-            $order = match($order) {
+            $order = match ($order) {
                 "DESC", "descending" => "DESC",
                 default => "ASC",
             };

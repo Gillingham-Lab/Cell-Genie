@@ -18,9 +18,7 @@ class WithinBoxBoundsValidator extends ConstraintValidator
 {
     public function __construct(
         private PropertyAccessorInterface $accessor,
-    ) {
-
-    }
+    ) {}
 
     public function validate(mixed $entity, Constraint $constraint): void
     {
@@ -68,7 +66,7 @@ class WithinBoxBoundsValidator extends ConstraintValidator
 
         if ($rowNumber <= 0 or $colNumber <= 0 or $rowNumber > $maxNumberOfRows or $colNumber > $maxNUmberOfCols) {
             $this->context->buildViolation($constraint->outOfBoundsMessage)
-                ->setParameters(["%box%" => (string)$boxValue])
+                ->setParameters(["%box%" => (string) $boxValue])
                 ->atPath($constraint->coordinateField)
                 ->addViolation()
             ;

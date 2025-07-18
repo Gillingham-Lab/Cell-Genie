@@ -7,7 +7,6 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\CompositeType\PrivacyAwareType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -55,7 +54,7 @@ class ExperimentalRunType extends AbstractType
                     "label" => "Ownership",
                     "required"  => true,
                     "inherit_data" => true,
-                ])
+                ]),
             )
         ;
     }

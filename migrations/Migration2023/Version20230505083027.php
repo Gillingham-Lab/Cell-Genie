@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations2023;
 
-use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
@@ -151,7 +150,7 @@ final class Version20230505083027 extends AbstractMigration
         [
             "newCellGroups" => $newCellGroups,
             "cellsToCellGroup" => $cellsToCellGroup,
-            "cells" => $cells
+            "cells" => $cells,
         ] = $this->upCellData;
 
         /**
@@ -159,8 +158,7 @@ final class Version20230505083027 extends AbstractMigration
          * @var Ulid $ulid
          * @var array $cellGroupData
          */
-        foreach ($newCellGroups as $cellGroupNumber => [$ulid, $cellGroupData])
-        {
+        foreach ($newCellGroups as $cellGroupNumber => [$ulid, $cellGroupData]) {
             // Create new cell groups
             $insertQuery = $this->connection->createQueryBuilder();
             $insertQuery = $insertQuery
@@ -190,7 +188,7 @@ final class Version20230505083027 extends AbstractMigration
                     "ethnicity" => $cellGroupData["ethnicity"],
                     "disease" => $cellGroupData["disease"],
                     "rrid" => $cellGroupData["rrid"],
-                    "is_cancer" =>$cellGroupData["is_cancer"] ? "1" : "0",
+                    "is_cancer" => $cellGroupData["is_cancer"] ? "1" : "0",
                     "culture_type" => $cellGroupData["culture_type"],
                     "name" => $cellGroupData["name"],
                     "number" => $cellGroupNumber,
@@ -317,7 +315,7 @@ final class Version20230505083027 extends AbstractMigration
                     "ethnicity" => $cellGroupData["ethnicity"],
                     "disease" => $cellGroupData["disease"],
                     "rrid" => $cellGroupData["rrid"],
-                    "is_cancer" =>$cellGroupData["is_cancer"] ? "1" : "0",
+                    "is_cancer" => $cellGroupData["is_cancer"] ? "1" : "0",
                     "culture_type" => $cellGroupData["culture_type"],
                 ]);
 

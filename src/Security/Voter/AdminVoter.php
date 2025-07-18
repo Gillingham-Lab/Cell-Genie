@@ -15,9 +15,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class AdminVoter extends Voter
 {
     public function __construct(
-        readonly private Security $security,
-    ) {
-    }
+        private readonly Security $security,
+    ) {}
 
     public function supports(string $attribute, mixed $subject): bool
     {

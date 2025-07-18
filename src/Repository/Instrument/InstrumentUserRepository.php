@@ -6,7 +6,6 @@ namespace App\Repository\Instrument;
 use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\InstrumentUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**

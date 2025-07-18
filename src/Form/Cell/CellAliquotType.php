@@ -5,15 +5,12 @@ namespace App\Form\Cell;
 
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellAliquot;
-use App\Entity\DoctrineEntity\Storage\Box;
-use App\Form\BasicType\FancyEntityType;
 use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
 use App\Form\Storage\BoxPositionType;
 use App\Form\Traits\VocabularyTrait;
 use App\Form\UserEntityType;
 use App\Repository\Vocabulary\VocabularyRepository;
-use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -36,8 +33,7 @@ class CellAliquotType extends SaveableType
 
     public function __construct(
         private readonly VocabularyRepository $vocabularyRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @param FormBuilderInterface<CellAliquot|null> $builder
@@ -103,7 +99,7 @@ class CellAliquotType extends SaveableType
     {
         $builder
             ->add(
-                $this->getGeneralForm($builder, false)
+                $this->getGeneralForm($builder, false),
             )
             ->add(
                 $builder->create("_storage", FormType::class, [
@@ -129,7 +125,7 @@ class CellAliquotType extends SaveableType
                 ->add("maxVials", IntegerType::class, [
                     "label" => "Number of vials created",
                     "required" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_mycoplasma", FormType::class, [
@@ -169,7 +165,7 @@ class CellAliquotType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                     "config" => ["toolbar" => "basic"],
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_other", FormType::class, [
@@ -191,7 +187,7 @@ class CellAliquotType extends SaveableType
                     "required" => false,
                     "empty_data" => null,
                     "config" => ["toolbar" => "basic"],
-                ])
+                ]),
             )
         ;
 

@@ -7,7 +7,6 @@ use App\Form\BasicType\ExpressionType;
 use App\Validator\Constraint\ValidExpression;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,7 +31,7 @@ class ExperimentalModelParamType extends AbstractType
                 "required" => false,
                 "empty_data" => null,
                 "constraints" => [
-                    new ValidExpression($options["environment"])
+                    new ValidExpression($options["environment"]),
                 ],
                 "environment" => $options["environment"],
             ])

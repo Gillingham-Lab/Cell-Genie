@@ -42,7 +42,7 @@ class OligoCrudController extends AbstractCrudController
             CollectionField::new("lots", "Lot entries")
                 ->useEntryCrudForm(LotCrudController::class)
                 ->hideOnIndex()
-                ->allowDelete(True),
+                ->allowDelete(true),
         ];
     }
 }

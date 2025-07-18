@@ -12,11 +12,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class CellFixture extends Fixture implements DependentFixtureInterface
 {
-    const HCT116 = "Cell.HCT116";
-    const HEK293 = "Cell.HEK293";
-    const HEK293T = "Cell.HEK293T";
-    const HeLa = "Cell.HeLa";
-    const EColi = "Cell.EColi";
+    public const HCT116 = "Cell.HCT116";
+    public const HEK293 = "Cell.HEK293";
+    public const HEK293T = "Cell.HEK293T";
+    public const HeLa = "Cell.HeLa";
+    public const EColi = "Cell.EColi";
 
     public function getDependencies(): array
     {
@@ -36,7 +36,7 @@ class CellFixture extends Fixture implements DependentFixtureInterface
             $this->getEColi(),
         ];
 
-        array_map(fn ($e) => $manager->persist($e), $cells);
+        array_map(fn($e) => $manager->persist($e), $cells);
         $manager->flush();
     }
 

@@ -9,7 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class MorphologyFixture extends Fixture
 {
-    const Epithelial = "morphology.epithelial";
+    public const Epithelial = "morphology.epithelial";
 
     public function load(ObjectManager $manager): void
     {

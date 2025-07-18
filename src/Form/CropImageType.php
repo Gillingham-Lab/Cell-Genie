@@ -39,7 +39,7 @@ class CropImageType extends AbstractType
             },
             function ($normalizedData) {
                 return $normalizedData["data"] ?? "";
-            }
+            },
         ));
     }
 

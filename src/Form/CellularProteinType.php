@@ -23,7 +23,7 @@ class CellularProteinType extends AbstractType
                 "help" => "Add the corresponding protein",
             ])
             ->add("description", options: [
-                "help" => "Context or details about the protein."
+                "help" => "Context or details about the protein.",
             ])
             ->add("detection", type: CollectionType::class, options: [
                 "allow_add" => true,
@@ -31,7 +31,7 @@ class CellularProteinType extends AbstractType
                 "by_reference" => false,
                 "entry_type" => DetectionEntryType::class,
                 "label" => "Detectable",
-                "help" => "Add experiments which have been confirmed that the protein is present."
+                "help" => "Add experiments which have been confirmed that the protein is present.",
             ])
         ;
     }

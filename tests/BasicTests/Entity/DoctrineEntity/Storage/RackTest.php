@@ -15,12 +15,12 @@ class RackTest extends TestCase
         $rack = new Rack();
 
         // Test that "no name" does not lead to an error
-        $this->assertSame("unknown", (string)$rack);
+        $this->assertSame("unknown", (string) $rack);
 
         // Set name and test result
         $name = "Rack 3";
         $rack->setName($name);
-        $this->assertSame($name, (string)$rack);
+        $this->assertSame($name, (string) $rack);
     }
 
     public function testName(): void
@@ -104,10 +104,10 @@ class RackTest extends TestCase
             ->method("setParent")
             ->with($rack);
 
-        array_map(fn (Rack $child) => $rack->addChild($child), $children);
+        array_map(fn(Rack $child) => $rack->addChild($child), $children);
 
         $this->assertCount(2, $rack->getChildren());
-        array_map(fn (Rack $child) => $this->assertContains($child, $rack->getChildren()), $children);
+        array_map(fn(Rack $child) => $this->assertContains($child, $rack->getChildren()), $children);
 
         $children[0]
             ->expects($this->once())
@@ -143,10 +143,10 @@ class RackTest extends TestCase
             ->method("setRack")
             ->with($rack);
 
-        array_map(fn (Box $box) => $rack->addBox($box), $boxes);
+        array_map(fn(Box $box) => $rack->addBox($box), $boxes);
 
         $this->assertCount(2, $rack->getBoxes());
-        array_map(fn (Box $box) => $this->assertContains($box, $rack->getBoxes()), $boxes);
+        array_map(fn(Box $box) => $this->assertContains($box, $rack->getBoxes()), $boxes);
 
         $boxes[0]
             ->expects($this->once())

@@ -19,14 +19,14 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class InstrumentVoter extends Voter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string NEW = "new";
-    const string ATTR_BOOK = "book";
-    const string ATTR_TRAIN = "train";
-    const string ATTR_LOG_NEW = "log_new";
-    const string ATTR_LOG_EDIT = "log_edit";
-    const string ATTR_LOG_REMOVE = "log_remove";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string NEW = "new";
+    public const string ATTR_BOOK = "book";
+    public const string ATTR_TRAIN = "train";
+    public const string ATTR_LOG_NEW = "log_new";
+    public const string ATTR_LOG_EDIT = "log_edit";
+    public const string ATTR_LOG_REMOVE = "log_remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -100,7 +100,7 @@ class InstrumentVoter extends Voter
 
         // Machines should never be private or group, but they can
         // No one except group-members will have access to non-public instruments.
-        return match($instrument->getPrivacyLevel()) {
+        return match ($instrument->getPrivacyLevel()) {
             PrivacyLevel::Public => true,
             PrivacyLevel::Group => $user and ($instrument->getGroup() === null or $instrument->getGroup() === $user->getGroup()),
             PrivacyLevel::Private => false,
@@ -115,9 +115,9 @@ class InstrumentVoter extends Voter
 
         // Only group members responsible for the machine can change it
         // Filter for specific rows
-        $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() === InstrumentRole::Admin or $e->getRole() === InstrumentRole::Responsible);
+        $instrumentUsers = $instrument->getUsers()->filter(fn(InstrumentUser $e) => $e->getUser() === $user and $e->getRole() === InstrumentRole::Admin or $e->getRole() === InstrumentRole::Responsible);
 
-        return match($instrument->getPrivacyLevel()) {
+        return match ($instrument->getPrivacyLevel()) {
             PrivacyLevel::Public, PrivacyLevel::Group => ($instrument->getGroup() === null or $instrument->getGroup() === $user->getGroup()) and count($instrumentUsers) > 0,
             PrivacyLevel::Private => false,
         };
@@ -153,13 +153,13 @@ class InstrumentVoter extends Voter
                 return true;
             } else {
                 // Unless you have role unlike "untrained"
-                $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
+                $instrumentUsers = $instrument->getUsers()->filter(fn(InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
                 return $instrumentUsers->count() > 0;
             }
         } else {
             // For booking an instrument that requires training, you must have been trained
             // Unless you have role unlike "untrained"
-            $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
+            $instrumentUsers = $instrument->getUsers()->filter(fn(InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Untrained);
             return $instrumentUsers->count() > 0;
         }
     }
@@ -179,7 +179,7 @@ class InstrumentVoter extends Voter
         }
 
         // If not owner of the log, user must be admin or responsible for the instrument
-        $instrumentUsers = $instrument->getUsers()->filter(fn (InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Admin and $e->getRole() !== InstrumentRole::Responsible);
+        $instrumentUsers = $instrument->getUsers()->filter(fn(InstrumentUser $e) => $e->getUser() === $user and $e->getRole() !== InstrumentRole::Admin and $e->getRole() !== InstrumentRole::Responsible);
         if ($instrumentUsers->count() > 0) {
             return true;
         }

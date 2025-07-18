@@ -22,7 +22,7 @@ abstract class AbstractPrivacyAwareVoter extends Voter
             return true;
         }
 
-        return match($entity->getPrivacyLevel()) {
+        return match ($entity->getPrivacyLevel()) {
             PrivacyLevel::Public, PrivacyLevel::Group => $entity->getOwner() === $user || $entity->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
         };
@@ -34,7 +34,7 @@ abstract class AbstractPrivacyAwareVoter extends Voter
             return true;
         }
 
-        return match($entity->getPrivacyLevel()) {
+        return match ($entity->getPrivacyLevel()) {
             PrivacyLevel::Public => true,
             PrivacyLevel::Group => $entity->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
@@ -47,7 +47,7 @@ abstract class AbstractPrivacyAwareVoter extends Voter
             return true;
         }
 
-        return match($entity->getPrivacyLevel()) {
+        return match ($entity->getPrivacyLevel()) {
             PrivacyLevel::Public, PrivacyLevel::Group => $entity->getOwner() === $user || ($entity->getGroup() === $user->getGroup() && in_array(UserRole::GroupAdmin->value, $user->getRoles())),
             PrivacyLevel::Private => false,
         };

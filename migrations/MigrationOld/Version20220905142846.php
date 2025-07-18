@@ -24,7 +24,7 @@ final class Version20220905142846 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $fetchResults = function(string $table): array {
+        $fetchResults = function (string $table): array {
             $selectQuery = $this->connection->createQueryBuilder()
                 ->select("a.ulid, a.short_name, a.long_name")
                 ->from($table, "a");
@@ -36,7 +36,7 @@ final class Version20220905142846 extends AbstractMigration
             return $result;
         };
 
-        $migrateResult = function(array $rows, string $type): void {
+        $migrateResult = function (array $rows, string $type): void {
             foreach ($rows as $row) {
                 // Check if it already exists
                 $selectQuery = $this->connection->createQueryBuilder()
@@ -55,7 +55,7 @@ final class Version20220905142846 extends AbstractMigration
 
                 $updateQuery = $this->connection->createQueryBuilder()
                     ->insert("substance")
-                    ->setValue("ulid",  ":param")
+                    ->setValue("ulid", ":param")
                     ->setValue("substance_type", ":type")
                     ->setValue("short_name", ":shortName")
                     ->setValue("long_name", ":longName")

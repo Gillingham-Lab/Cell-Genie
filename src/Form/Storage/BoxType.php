@@ -10,7 +10,6 @@ use App\Form\CompositeType\PrivacyAwareType;
 use App\Form\SaveableType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -53,9 +52,9 @@ class BoxType extends SaveableType
                 ->add("rack", FancyEntityType::class, [
                     "label" => "Location.",
                     "class" => Rack::class,
-                    "group_by" => function(Rack $rack) { return ($rack->getMaxBoxes() > 0 && $rack->getBoxes()->count() >= $rack->getMaxBoxes()) ? "Full" : "Space available"; },
-                    "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
-                    "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
+                    "group_by" => function (Rack $rack) { return ($rack->getMaxBoxes() > 0 && $rack->getBoxes()->count() >= $rack->getMaxBoxes()) ? "Full" : "Space available"; },
+                    "choice_label" => function (Rack $rack) { return $rack->getPathName(); },
+                    "choice_value" => function (?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("r")
                             ->select("r")
@@ -63,7 +62,7 @@ class BoxType extends SaveableType
                             ->leftJoin("r.boxes", "b")
                             ->groupBy("r.ulid")
                             ->addGroupBy("b.ulid")
-                            ;
+                        ;
                     },
                     "placeholder" => "Empty",
                     "required" => false,
@@ -71,8 +70,8 @@ class BoxType extends SaveableType
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
-                    "label" => "Ownership"
-                ])
+                    "label" => "Ownership",
+                ]),
             )
         ;
 

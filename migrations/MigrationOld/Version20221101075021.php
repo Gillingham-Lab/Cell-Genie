@@ -19,8 +19,5 @@ final class Version20221101075021 extends AbstractMigration
         $schema->getTable("box")->setPrimaryKey(["ulid"]);
     }
 
-    public function down(Schema $schema): void
-    {
-
-    }
+    public function down(Schema $schema): void {}
 }

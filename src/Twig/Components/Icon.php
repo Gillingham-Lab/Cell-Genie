@@ -103,7 +103,7 @@ class Icon
 
     public function getIconContent(): string
     {
-        return match($this->icon) {
+        return match ($this->icon) {
             "antibody.primary", "antibody.secondary", "epitope" => '<span class="path1"></span><span class="path2"></span>',
             default => "",
         };

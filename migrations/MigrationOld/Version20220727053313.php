@@ -10,7 +10,6 @@ use Doctrine\Migrations\AbstractMigration;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Ulid;
 
-
 final class Version20220727053313 extends AbstractMigration
 {
     public function __construct(Connection $connection, LoggerInterface $logger)
@@ -39,7 +38,7 @@ final class Version20220727053313 extends AbstractMigration
 
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("chemical")
-                ->set("ulid",  ":param")
+                ->set("ulid", ":param")
                 ->where("id = :id")
                 ->setParameter("param", $ulid, "ulid")
                 ->setParameter("id", $row["id"], "integer");

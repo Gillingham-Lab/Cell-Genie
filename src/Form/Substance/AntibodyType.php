@@ -41,10 +41,8 @@ class AntibodyType extends AbstractType
     }
 
     public function __construct(
-        private VocabularyRepository $vocabularyRepository
-    ) {
-
-    }
+        private VocabularyRepository $vocabularyRepository,
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -52,7 +50,7 @@ class AntibodyType extends AbstractType
             ->add(
                 $builder->create("general", NameType::class, [
                     "inherit_data" => true,
-                    "label" => "General information"
+                    "label" => "General information",
                 ])
                 ->add("number", EnumeratedType::class, [
                     "label" => "Number",
@@ -77,7 +75,7 @@ class AntibodyType extends AbstractType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("structure", FormType::class, [
@@ -102,7 +100,7 @@ class AntibodyType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.shortName", "ASC")
-                            ;
+                        ;
                     },
                     'empty_data' => [],
                     'by_reference' => false,
@@ -117,7 +115,7 @@ class AntibodyType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.shortName", "ASC")
-                            ;
+                        ;
                     },
                     'empty_data' => [],
                     'by_reference' => false,
@@ -125,7 +123,7 @@ class AntibodyType extends AbstractType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("usage", FormType::class, [
@@ -163,13 +161,13 @@ class AntibodyType extends AbstractType
                 ->add("storageTemperature", IntegerType::class, [
                     "label" => "Storage at [°C]",
                     "help" => "Note down a storage temperature between -200 and 25 °C. Commonly, -20 °C is used.",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("vendor", VendorFieldType::class, [
                     "inherit_data" => true,
                     "label" => "Vendor",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -178,7 +176,7 @@ class AntibodyType extends AbstractType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
 

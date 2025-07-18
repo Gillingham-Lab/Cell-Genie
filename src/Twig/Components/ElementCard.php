@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Twig\Components;
 
 use App\Entity\Toolbox\Toolbox as ToolboxEntity;
-use App\Twig\Components\Trait\GeneratedIdTrait;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 

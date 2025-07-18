@@ -8,7 +8,7 @@ use Closure;
 
 class ProgressColumn extends Column
 {
-    const component = true;
+    public const component = true;
 
     public function __construct(
         string $title,
@@ -28,7 +28,7 @@ class ProgressColumn extends Column
                 "current" => $current,
                 "max" => $max,
                 "showNumbers" => $this->showNumbers,
-            ]
+            ],
         ];
     }
 

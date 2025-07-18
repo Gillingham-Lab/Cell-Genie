@@ -15,12 +15,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class LotVoter extends Voter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string ATTR_REMOVE = "remove";
-    const string ATTR_OWNS = "owns";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string ATTR_REMOVE = "remove";
+    public const string ATTR_OWNS = "owns";
 
-    const ATTRIBUTES = [
+    public const ATTRIBUTES = [
         self::ATTR_VIEW,
         self::ATTR_EDIT,
         self::ATTR_REMOVE,
@@ -29,7 +29,7 @@ class LotVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if(!in_array($attribute, self::ATTRIBUTES)) {
+        if (!in_array($attribute, self::ATTRIBUTES)) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class LotVoter extends Voter
                 self::ATTR_REMOVE => $user->getIsAdmin(),
                 default => false,
             };
-        }  else {
+        } else {
             return false;
         }
     }
@@ -78,7 +78,7 @@ class LotVoter extends Voter
             return true;
         }
 
-        return match($lot->getPrivacyLevel()) {
+        return match ($lot->getPrivacyLevel()) {
             PrivacyLevel::Public, PrivacyLevel::Group => $lot->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
         };

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Layout;
 
-use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
@@ -14,10 +13,10 @@ class SimpleToolbox
 
     public function getGroupSize(): string
     {
-        return match($this->size) {
+        return match ($this->size) {
             "sm" => "btn-group-sm",
             "lg" => "btn-group-lg",
-            default => ""
+            default => "",
         };
     }
 }

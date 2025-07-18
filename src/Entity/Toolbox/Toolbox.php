@@ -16,9 +16,7 @@ class Toolbox implements IteratorAggregate
      */
     public function __construct(
         private array $tools = [],
-    ) {
-
-    }
+    ) {}
 
     /**
      * @return Tool[]

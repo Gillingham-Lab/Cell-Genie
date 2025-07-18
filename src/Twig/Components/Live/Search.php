@@ -50,9 +50,7 @@ class Search extends AbstractController
         //#[CurrentUser]
         //private ?User $user,
         private readonly SerializerInterface $serializer,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @param array<string, mixed> $data
@@ -126,7 +124,7 @@ class Search extends AbstractController
                 } elseif ($value instanceof BackedEnum) {
                     $eventData[$field] = $value->value;
                 } else {
-                    $eventData[$field] = (string)$value;
+                    $eventData[$field] = (string) $value;
                 }
             } else {
                 $eventData[$field] = $value;
@@ -146,10 +144,7 @@ class Search extends AbstractController
      * @return void
      */
     #[LiveAction]
-    public function remember(): void
-    {
-
-    }
+    public function remember(): void {}
 
     #[LiveAction]
     public function reset(): void

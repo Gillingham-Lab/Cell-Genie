@@ -36,7 +36,7 @@ class ExperimentalRunTable extends AbstractController
     public ?ExperimentalDesign $design = null;
 
     public function __construct(
-        ExperimentalRunRepository $repository
+        ExperimentalRunRepository $repository,
     ) {
         $this->setRepository($repository);
         $this->setPaginatedOrderBy(["createdAt" => "DESC"]);
@@ -63,7 +63,7 @@ class ExperimentalRunTable extends AbstractController
                         $this->generateUrl("app_api_experiments_run_view_data", ["run" => $run->getId()]),
                         icon: "download",
                         buttonClass: "btn-secondary",
-                        tooltip: "Download data as tsv"
+                        tooltip: "Download data as tsv",
                     ),
                     new Tool(
                         $this->generateUrl("app_experiments_run_clone", ["run" => $run->getId()]),
@@ -80,7 +80,7 @@ class ExperimentalRunTable extends AbstractController
                         icon: "data",
                         tooltip: "Edit run data",
                         iconStack: "edit",
-                    )
+                    ),
                 ])),
                 new Column("Name", fn(ExperimentalRun $run) => $run->getName()),
                 new Column("Scientist", fn(ExperimentalRun $run) => $run->getScientist()),
@@ -88,14 +88,14 @@ class ExperimentalRunTable extends AbstractController
                     Date::class,
                     [
                         "dateTime" => $run->getCreatedAt(),
-                    ]
+                    ],
                 ]),
                 new ComponentColumn("Modified", fn(ExperimentalRun $run) => [
                     Date::class,
                     [
                         "dateTime" => $run->getModifiedAt(),
-                    ]
-                ])
+                    ],
+                ]),
             ],
             maxRows: $this->getNumberOfRows(searchFields: ["design" => $this->design->getId()->toRfc4122()]),
         );

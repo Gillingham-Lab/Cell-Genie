@@ -17,7 +17,7 @@ class OrcIdValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ValidBoxCoordinate::class);
         }
 
-        if ($value === null ||$value === "") {
+        if ($value === null || $value === "") {
             return;
         }
 

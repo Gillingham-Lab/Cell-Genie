@@ -28,9 +28,7 @@ readonly class LoggerListener implements EventSubscriberInterface
         private LoggableListener $loggableListener,
         private TokenStorageInterface $tokenStorage,
         private AuthorizationCheckerInterface $authorizationChecker,
-    ) {
-
-    }
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -39,7 +37,8 @@ readonly class LoggerListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event): void {
+    public function onKernelRequest(RequestEvent $event): void
+    {
         if ($event->getRequestType() !== HttpKernelInterface::MAIN_REQUEST) {
             return;
         }

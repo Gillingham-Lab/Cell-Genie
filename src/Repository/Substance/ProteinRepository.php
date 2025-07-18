@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Repository\Substance;
 
-use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Epitope;
 use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Repository\Interface\PaginatedRepositoryInterface;
@@ -105,7 +104,7 @@ class ProteinRepository extends SubstanceRepository implements PaginatedReposito
         return $qb
             ->getQuery()
             ->getResult()
-            ;
+        ;
     }
 
     private function getBaseQuery(): QueryBuilder
@@ -158,7 +157,7 @@ class ProteinRepository extends SubstanceRepository implements PaginatedReposito
     {
         $searchService = $this->searchService;
 
-        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "p.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
                 $searchService->searchWithStringLike($queryBuilder, "p.shortName", $searchValue),
@@ -169,7 +168,7 @@ class ProteinRepository extends SubstanceRepository implements PaginatedReposito
             default => null,
         });
 
-        $havingExpressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $havingExpressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "hasAntibodies" => $searchValue === true ? $queryBuilder->expr()->gt("COUNT(ab)", 0) : $queryBuilder->expr()->eq("COUNT(ab)", 0),
             default => null,
         });

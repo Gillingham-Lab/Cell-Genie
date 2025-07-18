@@ -19,7 +19,7 @@ class UniqueCollectionField extends Constraint
         ?string $message = null,
         ?string $localMessage = null,
         ?array $groups = null,
-        mixed $payload = null
+        mixed $payload = null,
     ) {
         parent::__construct([], $groups, $payload);
 

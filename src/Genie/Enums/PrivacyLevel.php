@@ -11,7 +11,7 @@ enum PrivacyLevel: int
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Public => "Public readable, group writeable",
             self::Group => "Group readable and writable",
             self::Private => "Owner readable and writeable",

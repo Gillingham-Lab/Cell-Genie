@@ -7,7 +7,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
 
-
 final class Version20240416061033 extends AbstractMigration
 {
     public function getDescription(): string

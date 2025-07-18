@@ -7,8 +7,6 @@ use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\Storage\Rack;
 use App\Entity\Toolbox\EditTool;
 use App\Entity\Toolbox\Toolbox;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Persistence\Proxy;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,8 +18,7 @@ class StorageTreeViewService implements TreeViewServiceInterface
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
-    ) {
-    }
+    ) {}
 
     public function getNodeIcon(?object $node = null): ?string
     {
@@ -64,7 +61,7 @@ class StorageTreeViewService implements TreeViewServiceInterface
                     icon: "box",
                     enabled: $this->security->isGranted("edit", $node),
                     tooltip: "Edit Box",
-                    iconStack: "edit"
+                    iconStack: "edit",
                 ),
             ]);
         } else {
@@ -74,7 +71,7 @@ class StorageTreeViewService implements TreeViewServiceInterface
                     icon: "rack",
                     enabled: $this->security->isGranted("edit", $node),
                     tooltip: "Edit Rack",
-                    iconStack: "edit"
+                    iconStack: "edit",
                 ),
             ]);
         }

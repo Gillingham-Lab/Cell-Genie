@@ -6,7 +6,6 @@ namespace App\Twig\Components\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Entity\DoctrineEntity\Substance\Chemical;
-use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Entity\SubstanceLot;
 use App\Genie\Enums\FormRowTypeEnum;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -36,7 +35,7 @@ class Datum
 
     public function isComponent(): bool
     {
-        return match($this->formRow?->getType()) {
+        return match ($this->formRow?->getType()) {
             FormRowTypeEnum::EntityType => true,
             default => false,
         };

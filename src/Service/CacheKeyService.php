@@ -18,10 +18,10 @@ class CacheKeyService
                 } elseif (method_exists($item, "getUlid")) {
                     $key .= $item->getUlid();
                 } else {
-                    $key .= (string)$item;
+                    $key .= (string) $item;
                 }
             } else {
-                $key .= (string)$item;
+                $key .= (string) $item;
             }
         }
 

@@ -35,7 +35,7 @@ final class Version20211005092007 extends AbstractMigration
             localColumnNames: ["wellplate_id"],
             foreignColumnNames: ["id"],
             options: ["onDelete" => "SET NULL"],
-            name: "FK_136F58B2C14C34C2"
+            name: "FK_136F58B2C14C34C2",
         );
         //$this->addSql('ALTER TABLE experiment ADD CONSTRAINT FK_136F58B2EB0F4B39 FOREIGN KEY (experiment_type_id) REFERENCES experiment_type (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $experiment->addForeignKeyConstraint(
@@ -43,7 +43,7 @@ final class Version20211005092007 extends AbstractMigration
             localColumnNames: ["experiment_type_id"],
             foreignColumnNames: ["id"],
             options: ["onDelete" => "CASCADE"],
-            name: "FK_136F58B2EB0F4B39"
+            name: "FK_136F58B2EB0F4B39",
         );
 
         //$this->addSql('ALTER TABLE experiment_type ALTER parent_id DROP NOT NULL');

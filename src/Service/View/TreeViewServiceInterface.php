@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Service\View;
 
 use App\Entity\Toolbox\Toolbox;
-use Doctrine\Common\Collections\Collection;
-use Gedmo\Mapping\Annotation\Tree;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

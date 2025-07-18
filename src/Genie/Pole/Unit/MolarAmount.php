@@ -7,18 +7,18 @@ use App\Genie\Pole\BaseUnit;
 
 class MolarAmount extends BaseUnit
 {
-    const MOL = "mol";
-    const MILLIMOL = "mmol";
-    const MICROMOL = "μmol";
-    const NANOMOL = "nmol";
-    const PICOMOL = "pmol";
-    const FEMTOMOL = "fmol";
-    const ATTOMOL = "amol";
-    const ZEPTOMOL = "zmol";
-    const YOCTOMOL = "ymol";
-    const KILOMOL = "kmol";
-    const MEGAMOL = "Mmol";
-    const GIGAMOL = "Gmol";
+    public const MOL = "mol";
+    public const MILLIMOL = "mmol";
+    public const MICROMOL = "μmol";
+    public const NANOMOL = "nmol";
+    public const PICOMOL = "pmol";
+    public const FEMTOMOL = "fmol";
+    public const ATTOMOL = "amol";
+    public const ZEPTOMOL = "zmol";
+    public const YOCTOMOL = "ymol";
+    public const KILOMOL = "kmol";
+    public const MEGAMOL = "Mmol";
+    public const GIGAMOL = "Gmol";
 
     protected string $base_unit_symbol = self::MOL;
 

@@ -5,7 +5,6 @@ namespace App\Twig\Components;
 
 use App\Entity\Toolbox\Toolbox;
 use App\Service\View\ListViewServiceInterface;
-use App\Service\View\TreeViewServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -45,8 +44,7 @@ class ListView implements ListViewServiceInterface
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, mixed>|ListViewMountInputData $data
@@ -106,7 +104,7 @@ class ListView implements ListViewServiceInterface
 
     public function getItemTools(object $item): ?Toolbox
     {
-       return $this->service->getItemTools($item);
+        return $this->service->getItemTools($item);
     }
 
     public function getPostItemComponent(object $item): ?array

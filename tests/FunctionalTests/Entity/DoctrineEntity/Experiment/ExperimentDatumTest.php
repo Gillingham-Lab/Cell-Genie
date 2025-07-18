@@ -6,15 +6,11 @@ namespace App\Tests\FunctionalTests\Entity\DoctrineEntity\Experiment;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDatum;
 use App\Entity\DoctrineEntity\Substance\Antibody;
-use App\Entity\DoctrineEntity\Substance\Substance;
 use App\Genie\Enums\DatumEnum;
-use App\Repository\Cell\CellRepository;
-use App\Repository\Substance\AntibodyRepository;
 use App\Service\Doctrine\Type\Ulid;
 use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 use Doctrine\Persistence\Proxy;
 use InvalidArgumentException;
 use LogicException;
@@ -47,10 +43,10 @@ class ExperimentDatumTest extends KernelTestCase
     public function integerDatumProvider(): array
     {
         return [
-            ["int64_positive", "int64", 2**62-1],
-            ["int64_negative", "int64", -2**62-1],
-            ["int64_positive", "int", 2**62-1],
-            ["int64_negative", "int", -2**62-1],
+            ["int64_positive", "int64", 2 ** 62 - 1],
+            ["int64_negative", "int64", -2 ** 62 - 1],
+            ["int64_positive", "int", 2 ** 62 - 1],
+            ["int64_negative", "int", -2 ** 62 - 1],
             ["int32_positive", "int32", 2147483647],
             ["int32_negative", "int32", -2147483648],
             ["int16_positive", "int16", 32767],
@@ -222,7 +218,7 @@ class ExperimentDatumTest extends KernelTestCase
             ->setValue($idObject)
         ;
 
-        $this->assertSame((string)$id, (string)$datum->getValue()[0]);
+        $this->assertSame((string) $id, (string) $datum->getValue()[0]);
         $this->assertSame($realClassName, $datum->getValue()[1]);
 
         // Persist
@@ -237,25 +233,23 @@ class ExperimentDatumTest extends KernelTestCase
         $repository = $this->entityManager->getRepository(ExperimentalDatum::class);
         $datum = $repository->find($datumId);
 
-        $this->assertSame((string)$id, (string)$datum->getValue()[0]);
+        $this->assertSame((string) $id, (string) $datum->getValue()[0]);
         $this->assertSame($realClassName, $datum->getValue()[1]);
 
         if ($id instanceof AbstractUid) {
-            $this->assertSame((string)$id, (string)$datum->getReferenceUuid());
+            $this->assertSame((string) $id, (string) $datum->getReferenceUuid());
         } else {
             // Some entities (cells ...) still have numeric ids
             // thus, their ID does not match the ulid returned by getReferenceUuid
             // We need to check that differently
             $pseudoUuid = Uuid::fromBinary(pack("P", 0) . pack("P", $id));
-            $this->assertSame((string)$pseudoUuid, (string)$datum->getReferenceUuid());
+            $this->assertSame((string) $pseudoUuid, (string) $datum->getReferenceUuid());
         }
     }
 
     public function testThrowsExceptionIfEntityDoesNotHaveGetIdMethod(): void
     {
-        $class = new class() {
-
-        };
+        $class = new class {};
 
         $object = new $class();
 
@@ -270,8 +264,9 @@ class ExperimentDatumTest extends KernelTestCase
 
     public function testThrowsExceptionIfEntityIdIsNotSupported(): void
     {
-        $class = new class() {
-            public function getId(): string {
+        $class = new class {
+            public function getId(): string
+            {
                 return "001";
             }
         };

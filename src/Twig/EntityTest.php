@@ -23,7 +23,7 @@ use Twig\TwigTest;
 
 class EntityTest extends AbstractExtension
 {
-    function getTests(): array
+    public function getTests(): array
     {
         return [
             new TwigTest("integer", fn(mixed $object) => is_int($object)),

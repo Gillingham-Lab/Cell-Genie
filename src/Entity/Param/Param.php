@@ -17,7 +17,7 @@ class Param
         if ($this->paramType !== null) {
             $this->assertParamType();
         } else {
-            $this->paramType = match(get_debug_type($this->value)) {
+            $this->paramType = match (get_debug_type($this->value)) {
                 "bool" => ParamTypeEnum::Bool,
                 "int" => ParamTypeEnum::Int,
                 "float" => ParamTypeEnum::Float,
@@ -62,7 +62,7 @@ class Param
             throw new TypeError("Parameter contains a bag and thus cannot be converted to scalar.");
         }
 
-        return (int)$this->getValue();
+        return (int) $this->getValue();
     }
 
     public function asFloat(): float
@@ -71,7 +71,7 @@ class Param
             throw new TypeError("Parameter contains a bag and thus cannot be converted to scalar.");
         }
 
-        return (float)$this->getValue();
+        return (float) $this->getValue();
     }
 
     public function asString(): string
@@ -80,7 +80,7 @@ class Param
             throw new TypeError("Parameter contains a bag and thus cannot be converted to scalar.");
         }
 
-        return (string)$this->getValue();
+        return (string) $this->getValue();
     }
 
     public function asBool(): bool
@@ -89,7 +89,7 @@ class Param
             throw new TypeError("Parameter contains a bag and thus cannot be converted to scalar.");
         }
 
-        return (bool)$this->getValue();
+        return (bool) $this->getValue();
     }
 
     public function getParam(string|int $param, null|bool|float|int|string $default = null): Param
@@ -104,7 +104,7 @@ class Param
     /**
      * @throws TypeError
      */
-    private function assertParamType(null|int|float|bool|string|ParamBag $value=null): void
+    private function assertParamType(null|int|float|bool|string|ParamBag $value = null): void
     {
         $throw = false;
 

@@ -7,8 +7,8 @@ use App\Twig\Components\Toolbox;
 
 class ToolboxColumn extends Column
 {
-    const renderTitle = false;
-    const component = true;
+    public const renderTitle = false;
+    public const component = true;
 
     public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
@@ -19,7 +19,7 @@ class ToolboxColumn extends Column
             "props" => [
                 "size" => "sm",
                 "toolbox" => $toolbox,
-            ]
+            ],
         ];
     }
 

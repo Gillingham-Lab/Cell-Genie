@@ -38,7 +38,7 @@ final class Version20220802081361 extends AbstractMigration
         foreach ($antibodyIdToUlid as $id => $ulid) {
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("antibody_vendor_documentation_files")
-                ->set("antibody_ulid",  ":ulid")
+                ->set("antibody_ulid", ":ulid")
                 ->where("antibody_id = :id")
                 ->setParameter("ulid", $ulid, "ulid")
                 ->setParameter("id", $id, "integer");

@@ -9,7 +9,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Psr\Log\LoggerInterface;
 
-
 final class Version20220727053312 extends AbstractMigration
 {
     public function __construct(Connection $connection, LoggerInterface $logger)

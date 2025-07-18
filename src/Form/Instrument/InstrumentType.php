@@ -14,7 +14,6 @@ use App\Form\VisualisationType;
 use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\TextEditorType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -98,7 +97,7 @@ class InstrumentType extends SaveableType
                         $qb = $er->createQueryBuilder("i")
                             ->addOrderBy("i.instrumentNumber", "ASC")
                             ->where("(i.collective = true or i.modular = true)")
-                            ;
+                        ;
 
                         if ($entity->getId()) {
                             $qb = $qb->andWhere("i.id != :ulid")
@@ -140,7 +139,7 @@ class InstrumentType extends SaveableType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("details", FormType::class, [
@@ -204,7 +203,7 @@ class InstrumentType extends SaveableType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_booking", FormType::class, [
@@ -227,18 +226,18 @@ class InstrumentType extends SaveableType
                     "help" => "A google API auth string for a service account. The calendar must be shared with writing access with the service account given in the auth string.",
                     "required" => false,
                     "empty_data" => null,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("users", FormType::class, [
                     "inherit_data" => true,
-                    "label" => "Users"
+                    "label" => "Users",
                 ])
                 ->add("users", InstrumentUserCollectionType::class, [
                     "label" => "Users",
                     "help" => "Configure users and their levels",
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_visualisation", FormType::class, [
@@ -249,7 +248,7 @@ class InstrumentType extends SaveableType
                     #"inherit_data" => true,
                     "label" => "Visualisation",
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -258,7 +257,7 @@ class InstrumentType extends SaveableType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
 

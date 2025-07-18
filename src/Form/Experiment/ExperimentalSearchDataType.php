@@ -24,9 +24,7 @@ class ExperimentalSearchDataType extends AbstractType
 {
     public function __construct(
         private readonly ExperimentalDataFormRowService $formRowService,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @param array{fields: Collection<int, FormRow>|array<int, FormRow>, fieldChoices: array<string, string[]>} $data
@@ -35,7 +33,7 @@ class ExperimentalSearchDataType extends AbstractType
     public static function serialize(SerializerInterface $serializer, array $data): array
     {
         return [
-            "fields" => array_map(fn ($elm) => $serializer->serialize($elm, "json"), is_array($data["fields"]) ? $data["fields"] : $data["fields"]->toArray()),
+            "fields" => array_map(fn($elm) => $serializer->serialize($elm, "json"), is_array($data["fields"]) ? $data["fields"] : $data["fields"]->toArray()),
             "fieldChoices" => $data["fieldChoices"],
         ];
     }

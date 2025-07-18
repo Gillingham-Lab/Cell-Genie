@@ -38,7 +38,7 @@ class CellGroup implements ChildParentInterface
     #[Gedmo\Versioned]
     private ?string $number = null;
 
-    #[ORM\Column(type: "string", length: 255, unique: True)]
+    #[ORM\Column(type: "string", length: 255, unique: true)]
     #[Assert\Length(max: 250)]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]

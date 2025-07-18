@@ -8,24 +8,20 @@ use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\User\User;
 use App\Genie\Enums\PrivacyLevel;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 readonly class CellCultureService
 {
     public function __construct(
         private CellService $cellService,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @throws LogicException if aliquot is empty
      */
     public function createCellCultureFromAliquot(
         User $user,
-        CellAliquot $aliquot
+        CellAliquot $aliquot,
     ): ?CellCulture {
         if ($aliquot->getVials() <= 0) {
             throw new LogicException("Cannot create cell culture from empty aliquot", code: 27_000_000);

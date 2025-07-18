@@ -6,7 +6,6 @@ namespace App\Tests\BasicTests\Entity\DoctrineEntity\Form;
 use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Genie\Enums\FormRowTypeEnum;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use TypeError;
 
 class FormRowTest extends TestCase

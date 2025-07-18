@@ -8,7 +8,6 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Table\Column;
 use App\Entity\Table\HtmlColumn;
 use App\Entity\Table\Table;
-use App\Entity\Table\ToggleColumn;
 use App\Entity\Table\ToolboxColumn;
 use App\Entity\Table\UrlColumn;
 use App\Entity\Toolbox\AddTool;
@@ -46,7 +45,7 @@ class ResourceController extends AbstractController
                 new AddTool(
                     path: $this->generateUrl("app_resources_new"),
                     enabled: $security->isGranted("new", "resource"),
-                )
+                ),
             ]),
             "table" => (new Table(
                 data: $resources,
@@ -58,8 +57,8 @@ class ResourceController extends AbstractController
                         ),
                         new TrashTool(
                             path: $this->generateUrl("app_resources_remove", ["resource" => $subject->getId()]),
-                            enabled: $security->isGranted("remove", $subject)
-                        )
+                            enabled: $security->isGranted("remove", $subject),
+                        ),
                     ])),
                     new Column("Category", fn(Resource $resource) => $resource->getCategory()),
                     new Column("Name", fn(Resource $resource) => $resource->getLongName()),
@@ -181,7 +180,7 @@ class ResourceController extends AbstractController
         $reply = [
             "results" => [
 
-            ]
+            ],
         ];
 
         $results = $resourceRepository->findCategories($query);

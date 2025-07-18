@@ -26,9 +26,7 @@ class CellCultureOtherType extends AbstractType
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository,
-    ) {
-
-    }
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

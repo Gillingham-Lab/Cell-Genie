@@ -31,12 +31,12 @@ class ApiController extends AbstractController
 
         if ($request->isMethod("get")) {
             $volumeDesired = floatval($request->query->get("volume", "1000.0"));
-            $concentrationFactor = floatval($request->query->get("concentrationFactor", (string)$recipe->getConcentrationFactor()));
+            $concentrationFactor = floatval($request->query->get("concentrationFactor", (string) $recipe->getConcentrationFactor()));
         } else {
             $content = json_decode($request->getContent(), true);
 
             if ($content) {
-                $volumeDesired = is_null($content["volume"]) ? 1000.0 :floatval($content["volume"]);
+                $volumeDesired = is_null($content["volume"]) ? 1000.0 : floatval($content["volume"]);
                 $concentrationFactor = is_null($content["concentrationFactor"]) ? $recipe->getConcentrationFactor() : floatval($content["concentrationFactor"]);
             } else {
                 throw new Exception("Content is empty. JSON request was probably malformed or empty.");
@@ -130,7 +130,7 @@ class ApiController extends AbstractController
         /** @var string[]|string $line */
         foreach ($lines as $line) {
             if (is_array($line)) {
-                $line = array_map(fn($x) => str_replace(["\t", "\r\n", "\n"], " ", (string)$x), $line);
+                $line = array_map(fn($x) => str_replace(["\t", "\r\n", "\n"], " ", (string) $x), $line);
                 $line = implode("\t", $line);
             }
 

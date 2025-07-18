@@ -42,7 +42,7 @@ final class Version20220727061636 extends AbstractMigration
         foreach ($chemicalIdToUlid as $id => $ulid) {
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("experiment_chemical")
-                ->set("chemical_ulid",  ":ulid")
+                ->set("chemical_ulid", ":ulid")
                 ->where("old_id = :id")
                 ->setParameter("ulid", $ulid, "ulid")
                 ->setParameter("id", $id, "integer");
@@ -52,7 +52,7 @@ final class Version20220727061636 extends AbstractMigration
 
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("recipe_ingredient")
-                ->set("chemical_ulid",  ":ulid")
+                ->set("chemical_ulid", ":ulid")
                 ->where("old_id = :id")
                 ->setParameter("ulid", $ulid, "ulid")
                 ->setParameter("id", $id, "integer");
@@ -76,7 +76,7 @@ final class Version20220727061636 extends AbstractMigration
         foreach ($proteinsToUlid as $id => $ulid) {
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("experiment_protein")
-                ->set("protein_ulid",  ":ulid")
+                ->set("protein_ulid", ":ulid")
                 ->where("old_id = :id")
                 ->setParameter("ulid", $ulid, "ulid")
                 ->setParameter("id", $id, "integer");
@@ -86,7 +86,7 @@ final class Version20220727061636 extends AbstractMigration
 
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("antibody_protein")
-                ->set("protein_ulid",  ":ulid")
+                ->set("protein_ulid", ":ulid")
                 ->where("old_id = :id")
                 ->setParameter("ulid", $ulid, "ulid")
                 ->setParameter("id", $id, "integer");
@@ -96,7 +96,5 @@ final class Version20220727061636 extends AbstractMigration
         }
     }
 
-    public function down(Schema $schema): void
-    {
-    }
+    public function down(Schema $schema): void {}
 }

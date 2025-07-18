@@ -20,9 +20,7 @@ readonly class ScientificNumberTransformer implements DataTransformerInterface
         private string $nan_value,
         private string $inf_value,
         private string $ninf_value,
-    ) {
-
-    }
+    ) {}
 
     public function transform(mixed $value): ?string
     {
@@ -39,14 +37,14 @@ readonly class ScientificNumberTransformer implements DataTransformerInterface
                 return $this->ninf_value;
             }
         } else {
-            return (string)$value;
+            return (string) $value;
         }
     }
 
     public function reverseTransform(mixed $value): float
     {
         if (is_numeric($value)) {
-            return (float)$value;
+            return (float) $value;
         } else {
             $value = strtolower($value);
 

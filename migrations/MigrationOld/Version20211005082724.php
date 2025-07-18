@@ -232,7 +232,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["antibody_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_16A87BE351162764"
+                name: "FK_16A87BE351162764",
             )
         ;
 
@@ -243,7 +243,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_16A87BE3FF444C8"
+                name: "FK_16A87BE3FF444C8",
             )
         ;
 
@@ -254,7 +254,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["owner_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_136F58B27E3C61F9"
+                name: "FK_136F58B27E3C61F9",
             )
         ;
 
@@ -265,7 +265,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_type_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_136F58B2EB0F4B39"
+                name: "FK_136F58B2EB0F4B39",
             )
         ;
 
@@ -276,7 +276,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_type_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "SET NULL"],
-                name: "FK_136F58B2EB0F4B39"
+                name: "FK_136F58B2EB0F4B39",
             )
         ;
 
@@ -287,7 +287,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_B6BB2618FF444C8"
+                name: "FK_B6BB2618FF444C8",
             )
         ;
 
@@ -298,7 +298,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["protein_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_B6BB261854985755"
+                name: "FK_B6BB261854985755",
             )
         ;
 
@@ -309,7 +309,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_B8F4E4F2FF444C8"
+                name: "FK_B8F4E4F2FF444C8",
             )
         ;
 
@@ -320,7 +320,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["chemical_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_B8F4E4F2E1770A76"
+                name: "FK_B8F4E4F2E1770A76",
             )
         ;
 
@@ -331,7 +331,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_D078464FFF444C8"
+                name: "FK_D078464FFF444C8",
             )
         ;
 
@@ -342,7 +342,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["cell_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_D078464FCB39D93A"
+                name: "FK_D078464FCB39D93A",
             )
         ;
 
@@ -353,7 +353,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["created_by_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_97219684B03A8386"
+                name: "FK_97219684B03A8386",
             )
         ;
 
@@ -364,7 +364,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["parent_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "SET NULL"],
-                name: "FK_97219684727ACA70"
+                name: "FK_97219684727ACA70",
             )
         ;
 
@@ -375,7 +375,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_6E25798CFF444C8"
+                name: "FK_6E25798CFF444C8",
             )
         ;
 
@@ -386,7 +386,7 @@ final class Version20211005082724 extends AbstractMigration
                 localColumnNames: ["experiment_id"],
                 foreignColumnNames: ["id"],
                 options: ["onDelete" => "CASCADE"],
-                name: "FK_AA3802E9FF444C8"
+                name: "FK_AA3802E9FF444C8",
             )
         ;
     }

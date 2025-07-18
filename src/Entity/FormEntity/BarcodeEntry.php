@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Entity\FormEntity;
 
-use App\Entity\DoctrineEntity\Barcode;
 use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Cell\CellCulture;
 use App\Entity\DoctrineEntity\Substance\Substance;
@@ -22,7 +21,8 @@ class BarcodeEntry
     private ?Substance $substance = null;
     private ?SubstanceLot $substanceLot = null;
 
-    public function __construct(string $barcode) {
+    public function __construct(string $barcode)
+    {
         $this->barcode = $barcode;
     }
 

@@ -3,14 +3,8 @@ declare(strict_types=1);
 
 namespace App\Repository\Traits;
 
-use Closure;
-use Doctrine\ORM\Query\Expr\Andx;
-use Doctrine\ORM\Query\Expr\Comparison;
-use Doctrine\ORM\Query\Expr\Func;
-use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Hoa\Stream\Composite;
 
 trait PaginatedRepositoryTrait
 {

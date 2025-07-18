@@ -26,9 +26,8 @@ class ProteinCrudController extends AbstractCrudController
     use VocabularyTrait;
 
     public function __construct(
-        readonly private VocabularyRepository $vocabularyRepository,
-    ) {
-    }
+        private readonly VocabularyRepository $vocabularyRepository,
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -74,7 +73,7 @@ class ProteinCrudController extends AbstractCrudController
             CollectionField::new("lots", "Lot entries")
                 ->useEntryCrudForm(LotCrudController::class)
                 ->hideOnIndex()
-                ->allowDelete(True),
+                ->allowDelete(true),
         ];
     }
 }

@@ -71,7 +71,7 @@ class AntibodyRepository extends SubstanceRepository implements PaginatedReposit
     {
         $searchService = $this->searchService;
 
-        $expressions = $this->searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $this->searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "antibodyNumber" => $searchService->searchWithStringLike($queryBuilder, "a.number", $searchValue),
             "antibodyType" => $searchService->searchWithStringLike($queryBuilder, "a.type", $searchValue),
             "rrid" => $searchService->searchWithStringLike($queryBuilder, "a.rrid", $searchValue),

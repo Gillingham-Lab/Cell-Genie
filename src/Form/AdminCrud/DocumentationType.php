@@ -43,8 +43,8 @@ class DocumentationType extends AbstractType
                 "mapped" => false,
                 "required" => true,
                 "constraints" => [
-                    new Assert\File(maxSize: "20480k")
-                ]
+                    new Assert\File(maxSize: "20480k"),
+                ],
             ])
         ;
     }

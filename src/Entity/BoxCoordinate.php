@@ -7,11 +7,11 @@ use InvalidArgumentException;
 
 class BoxCoordinate
 {
-    readonly private int $row;
-    readonly private int $col;
+    private readonly int $row;
+    private readonly int $col;
 
     public function __construct(
-        readonly private string $coordinate
+        private readonly string $coordinate,
     ) {
         $matches = [];
         $matchReturn = preg_match("#^(?P<row>[A-Z]+)(-?)(?P<col>[0-9]+)$#", $coordinate, $matches);
@@ -21,7 +21,7 @@ class BoxCoordinate
         }
 
         $rowNumber = $this->stringCoordinateToNumber($matches["row"]);
-        $colNumber = (int)$matches["col"];
+        $colNumber = (int) $matches["col"];
 
         $this->row = $rowNumber;
         $this->col = $colNumber;
@@ -32,7 +32,7 @@ class BoxCoordinate
         $length = strlen($stringCoordinate);
         $number = 0;
 
-        for ($i=0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; $i++) {
             $letter = $stringCoordinate[$i];
 
             $number = $number * 26 + (ord($letter) - ord("A")) + 1;

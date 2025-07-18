@@ -102,7 +102,7 @@ class CellCulture implements PrivacyAwareInterface
         } else {
             if ($this->parentCellCulture) {
                 $parentNumber = strlen($this->parentCellCulture->getNumber());
-                $parentName = substr($this->parentCellCulture->getName(), $parentNumber+2, -1);
+                $parentName = substr($this->parentCellCulture->getName(), $parentNumber + 2, -1);
                 return "{$this->getNumber()} ({$parentName})";
             } else {
                 return $this->getNumber();
@@ -140,7 +140,7 @@ class CellCulture implements PrivacyAwareInterface
     ])]
     public function getEndPassage(): ?int
     {
-        if (is_null($this->trashedOn)){
+        if (is_null($this->trashedOn)) {
             return null;
         }
 

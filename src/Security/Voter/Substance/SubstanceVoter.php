@@ -15,14 +15,14 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
  */
 class SubstanceVoter extends AbstractPrivacyAwareVoter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string NEW = "new";
-    const string ATTR_REMOVE = "remove";
-    const string ATTR_OWNS = "owns";
-    const string ATTR_ADD_LOT = "add_lot";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string NEW = "new";
+    public const string ATTR_REMOVE = "remove";
+    public const string ATTR_OWNS = "owns";
+    public const string ATTR_ADD_LOT = "add_lot";
 
-    const ATTRIBUTES = [
+    public const ATTRIBUTES = [
         self::ATTR_VIEW,
         self::ATTR_EDIT,
         self::NEW,
@@ -33,7 +33,7 @@ class SubstanceVoter extends AbstractPrivacyAwareVoter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if(!in_array($attribute, self::ATTRIBUTES)) {
+        if (!in_array($attribute, self::ATTRIBUTES)) {
             return false;
         }
 

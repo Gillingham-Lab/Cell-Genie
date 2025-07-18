@@ -8,7 +8,6 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Form\Experiment\ExperimentalRunDataType;
 use App\Service\Experiment\ExperimentalDataService;
-use App\Service\Experiment\ExperimentalModelService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,9 +46,7 @@ class ExperimentalRunDataForm extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ExperimentalDataService $experimentalDataService,
-    ) {
-
-    }
+    ) {}
 
     #[LiveAction]
     public function submit(
@@ -95,12 +92,12 @@ class ExperimentalRunDataForm extends AbstractController
             $this->initialFormData,
             [
                 "design" => $this->design,
-            ]
+            ],
         );
 
         $conditionsToModels = [];
         foreach ($this->initialFormData->getConditions() as $condition) {
-            $conditionsToModels[$condition->getName()] = array_map(fn (ExperimentalModel $model) => $model->getModel(), $condition->getModels()->toArray());
+            $conditionsToModels[$condition->getName()] = array_map(fn(ExperimentalModel $model) => $model->getModel(), $condition->getModels()->toArray());
         }
 
         $conditions = $form->get("_conditions")->get("conditions");

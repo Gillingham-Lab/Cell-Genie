@@ -35,7 +35,7 @@ final class Version20220616054742 extends AbstractMigration
             ["engineer_id"],
             ["id"],
             ["onDelete" => "SET NULL"],
-            "FK_CB8787E2F8D8CDF1"
+            "FK_CB8787E2F8D8CDF1",
         );
     }
 

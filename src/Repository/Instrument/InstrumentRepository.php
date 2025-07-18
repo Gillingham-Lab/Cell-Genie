@@ -19,7 +19,7 @@ class InstrumentRepository extends ServiceEntityRepository
         parent::__construct($registry, Instrument::class);
     }
 
-    public function find($id, $lockMode=null, $lockVersion=null): ?Instrument
+    public function find($id, $lockMode = null, $lockVersion = null): ?Instrument
     {
         return $this->createQueryBuilder("i")
             ->addSelect("iu")

@@ -52,6 +52,6 @@ final class Version20220729094540 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-       $this->throwIrreversibleMigrationException();
+        $this->throwIrreversibleMigrationException();
     }
 }

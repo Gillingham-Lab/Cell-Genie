@@ -7,12 +7,12 @@ use App\Genie\Pole\BaseUnit;
 
 class Amount extends BaseUnit
 {
-    const NONE = null;
-    const PERCENT = "%";
-    const PERMILLE = "‰";
-    const PARTSPERMILLION = "ppm";
-    const PARTSPERBILLION = "ppb";
-    const PARTSPERTRILLION = "ppt";
+    public const NONE = null;
+    public const PERCENT = "%";
+    public const PERMILLE = "‰";
+    public const PARTSPERMILLION = "ppm";
+    public const PARTSPERBILLION = "ppb";
+    public const PARTSPERTRILLION = "ppt";
 
     protected string $base_unit_symbol = "";
 

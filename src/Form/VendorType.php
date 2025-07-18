@@ -67,7 +67,7 @@ class VendorType extends AbstractType
             ->add("_privacy", PrivacyAwareType::class, [
                 "inherit_data" => true,
                 "label" => "Ownership",
-            ])
+            ]),
         );
     }
 

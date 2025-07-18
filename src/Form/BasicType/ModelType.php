@@ -14,9 +14,7 @@ class ModelType extends AbstractType
 {
     public function __construct(
         private readonly ExperimentalModelService $modelService,
-    ) {
-
-    }
+    ) {}
 
     public function getParent(): string
     {
@@ -27,7 +25,7 @@ class ModelType extends AbstractType
     {
         $availableModels = $this->modelService->list();
         $modelsIdentifier = array_keys($availableModels);
-        $modelsNames = array_map(fn (array $model) => $model["name"], $availableModels);
+        $modelsNames = array_map(fn(array $model) => $model["name"], $availableModels);
 
         $resolver->setDefaults([
             "choices" => array_combine($modelsNames, $modelsIdentifier),

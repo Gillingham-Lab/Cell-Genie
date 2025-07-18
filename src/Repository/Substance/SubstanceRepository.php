@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Repository\Substance;
 
@@ -54,7 +54,7 @@ class SubstanceRepository extends ServiceEntityRepository
             ->setParameter("lot", ($lot instanceof Lot ? $lot->getId() : $lot), "ulid")
             ->getQuery()
             ->getOneOrNullResult()
-            ;
+        ;
     }
 
     private function createSubstanceLotBaseQuery(): QueryBuilder
@@ -66,7 +66,7 @@ class SubstanceRepository extends ServiceEntityRepository
             ->groupBy("s")
             ->addGroupBy("l")
             ->addGroupBy("l")
-            ;
+        ;
     }
 
     public function findOneSubstanceLotByLot(string|lot $lot): ?SubstanceLot
@@ -83,7 +83,8 @@ class SubstanceRepository extends ServiceEntityRepository
         }
 
         foreach ($result->getLots() as $lot) {
-            if ($lot->getId() === null) {}
+            if ($lot->getId() === null) {
+            }
         }
 
         return new SubstanceLot($result[0], $result[1]);
@@ -133,7 +134,7 @@ class SubstanceRepository extends ServiceEntityRepository
             ->addGroupBy("l.id")
             ->getQuery()
             ->getResult()
-            ;
+        ;
     }
 
     /**

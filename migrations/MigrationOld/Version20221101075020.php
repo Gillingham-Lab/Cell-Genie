@@ -19,8 +19,5 @@ final class Version20221101075020 extends AbstractMigration
         $this->addSql("ALTER TABLE box DROP CONSTRAINT {$schema->getTable("box")->getPrimaryKey()->getName()} CASCADE");
     }
 
-    public function down(Schema $schema): void
-    {
-
-    }
+    public function down(Schema $schema): void {}
 }

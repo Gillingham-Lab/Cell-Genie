@@ -16,7 +16,7 @@ trait VendorTrait
     #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[ORM\OrderBy(["isPreferred" => "DESC"])]
     private ?Vendor $vendor = null;
-    
+
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $vendorPN = null;
 
@@ -59,7 +59,7 @@ trait VendorTrait
                 ->setRequired(false)
                 ->hideOnIndex()
                 ->autocomplete()
-                ->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.isPreferred", "DESC")->orderBy("entity.name", "ASC")),
+                ->setQueryBuilder(fn(QueryBuilder $builder) => $builder->orderBy("entity.isPreferred", "DESC")->orderBy("entity.name", "ASC")),
             TextField::new("vendorPN", "Vendor PN")
                 ->hideOnIndex()
                 ->setHelp("Product number of the vendor."),

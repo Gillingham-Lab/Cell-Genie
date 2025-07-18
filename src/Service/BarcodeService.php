@@ -24,11 +24,10 @@ class BarcodeService
         private CellRepository $cellRepository,
         private SubstanceRepository $substanceRepository,
         private LotRepository $lotRepository,
-    ) {
+    ) {}
 
-    }
-
-    public function populateFormEntity(Barcode $barcodeEntity, BarcodeEntry $barcodeEntry): void {
+    public function populateFormEntity(Barcode $barcodeEntity, BarcodeEntry $barcodeEntry): void
+    {
         $barcodeEntry->setBarcode($barcodeEntity->getBarcode());
 
         switch ($barcodeEntity->getReferencedTable()) {
@@ -55,7 +54,8 @@ class BarcodeService
         }
     }
 
-    public function populateFromFormEntity(Barcode $barcodeEntity, BarcodeEntry $barcodeEntry): void {
+    public function populateFromFormEntity(Barcode $barcodeEntity, BarcodeEntry $barcodeEntry): void
+    {
         $barcodeEntity->setBarcode($barcodeEntry->getBarcode());
 
         if ($barcodeEntry->getCellCulture()) {
@@ -63,7 +63,7 @@ class BarcodeService
             $barcodeEntity->setReferencedId($barcodeEntry->getCellCulture()->getId()->toBase58());
         } elseif ($barcodeEntry->getCell()) {
             $barcodeEntity->setReferencedTable(Cell::class);
-            $barcodeEntity->setReferencedId((string)$barcodeEntry->getCell()->getId());
+            $barcodeEntity->setReferencedId((string) $barcodeEntry->getCell()->getId());
         } elseif ($barcodeEntry->getSubstance()) {
             $barcodeEntity->setReferencedTable(Substance::class);
             $barcodeEntity->setReferencedId($barcodeEntry->getSubstance()->getUlid()->toBase58());

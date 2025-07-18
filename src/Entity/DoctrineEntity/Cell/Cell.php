@@ -140,7 +140,7 @@ class Cell implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?int $countOnConfluence = null;
 
-    #[ORM\Column(type: "string", length: 10, unique: True, nullable: true)]
+    #[ORM\Column(type: "string", length: 10, unique: true, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 10)]
     #[Gedmo\Versioned]

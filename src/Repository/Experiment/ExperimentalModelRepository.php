@@ -7,7 +7,6 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRunCondition;
 use App\Service\CacheKeyService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -67,10 +66,10 @@ class ExperimentalModelRepository extends ServiceEntityRepository
             ->select("em")
             ->addSelect("emp")
             ->where(
-                $qb->expr()->in("em.id", $subQuery)
+                $qb->expr()->in("em.id", $subQuery),
             )
             ->leftJoin("em.parent", "emp")
-            ->setParameter("conditions", array_map(fn (ExperimentalRunCondition $c) => $c->getId(), $conditions))
+            ->setParameter("conditions", array_map(fn(ExperimentalRunCondition $c) => $c->getId(), $conditions))
             ->setParameter("model", $model)
             ->getQuery()
             ->getResult()

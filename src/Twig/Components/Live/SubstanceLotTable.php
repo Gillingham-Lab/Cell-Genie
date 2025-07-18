@@ -46,7 +46,7 @@ class SubstanceLotTable extends AbstractController
                     ),
                     new ClipwareTool(
                         clipboardText: $this->substance->getCitation($lot),
-                    )
+                    ),
                 ])),
                 new Column("Nr", fn(Lot $lot) => $lot->getNumber(), bold: true),
                 new Column("Lot#", fn(Lot $lot) => $lot->getLotNumber()),

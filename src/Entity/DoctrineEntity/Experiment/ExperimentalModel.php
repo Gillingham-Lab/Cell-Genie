@@ -7,7 +7,6 @@ use App\Entity\Traits\Fields\IdTrait;
 use App\Repository\Experiment\ExperimentalModelRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity(repositoryClass: ExperimentalModelRepository::class)]
 class ExperimentalModel
 {
@@ -34,10 +33,7 @@ class ExperimentalModel
     #[ORM\Column(type: "json", nullable: true)]
     public ?array $result = [];
 
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     public function __toString(): string
     {

@@ -15,12 +15,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class CellAliquotVoter extends Voter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string ATTR_REMOVE = "remove";
-    const string ATTR_CONSUME = "consume";
-    const string ATTR_OWNS = "owns";
-    const string ATTR_ADD_CULTURE = "add_culture";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string ATTR_REMOVE = "remove";
+    public const string ATTR_CONSUME = "consume";
+    public const string ATTR_OWNS = "owns";
+    public const string ATTR_ADD_CULTURE = "add_culture";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -81,7 +81,7 @@ class CellAliquotVoter extends Voter
         }
 
         // If not, it depends on the privacy level and the group
-        return match($aliquot->getPrivacyLevel()) {
+        return match ($aliquot->getPrivacyLevel()) {
             PrivacyLevel::Public => true,
             PrivacyLevel::Group => $user and $aliquot->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
@@ -101,7 +101,7 @@ class CellAliquotVoter extends Voter
         }
 
         // If not, it depends on the privacy level and the group
-        return match($aliquot->getPrivacyLevel()) {
+        return match ($aliquot->getPrivacyLevel()) {
             PrivacyLevel::Public, PrivacyLevel::Group => $aliquot->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
         };
@@ -112,8 +112,7 @@ class CellAliquotVoter extends Voter
         // Removal is only possible by admins
         if (in_array("ROLE_GROUP_ADMIN", $user->getRoles()) and $aliquot->getGroup() === $user->getGroup()) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

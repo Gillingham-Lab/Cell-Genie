@@ -72,11 +72,11 @@ class SubstanceController extends AbstractController
 {
     #[Route("/substance/view/{substance}", name: "app_substance_view")]
     public function viewSubstance(
-        Substance $substance
+        Substance $substance,
     ): Response {
         $this->denyAccessUnlessGranted("view", $substance);
 
-        return match($substance::class) {
+        return match ($substance::class) {
             Antibody::class => $this->redirectToRoute("app_antibody_view", ["antibodyId" => $substance->getUlid()]),
             Chemical::class => $this->redirectToRoute("app_compound_view", ["compoundId" => $substance->getUlid()]),
             Oligo::class => $this->redirectToRoute("app_oligo_view", ["oligoId" => $substance->getUlid()]),
@@ -92,7 +92,7 @@ class SubstanceController extends AbstractController
     #[Route("/substance/lot/{lot}", name: "app_substance_lot_view")]
     public function viewLot(
         SubstanceRepository $substanceRepository,
-        Lot $lot
+        Lot $lot,
     ): Response {
         $this->denyAccessUnlessGranted("view", $lot);
         $substance = $substanceRepository->findOneByLot($lot);
@@ -118,7 +118,13 @@ class SubstanceController extends AbstractController
         string $type,
     ): Response {
         return $this->addOrEditSubstance(
-            $request, $user, $geneBankImporter, $entityManager, $fileUploader, null, $type,
+            $request,
+            $user,
+            $geneBankImporter,
+            $entityManager,
+            $fileUploader,
+            null,
+            $type,
         );
     }
 
@@ -134,7 +140,13 @@ class SubstanceController extends AbstractController
         ?Substance $substance = null,
     ): Response {
         return $this->addOrEditSubstance(
-            $request, $user, $geneBankImporter, $entityManager, $fileUploader, $substance, null,
+            $request,
+            $user,
+            $geneBankImporter,
+            $entityManager,
+            $fileUploader,
+            $substance,
+            null,
         );
     }
 
@@ -156,7 +168,7 @@ class SubstanceController extends AbstractController
         if ($new) {
             $this->denyAccessUnlessGranted("new", "Substance");
 
-            $substance = match($type) {
+            $substance = match ($type) {
                 "antibody" => new Antibody(),
                 "chemical" => new Chemical(),
                 "oligo" => new Oligo(),
@@ -171,7 +183,7 @@ class SubstanceController extends AbstractController
             $this->denyAccessUnlessGranted("edit", $substance);
         }
 
-        [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam, $icon] = match($substance::class) {
+        [$formType, $typeName, $overviewRoute, $specificRoute, $routeParam, $icon] = match ($substance::class) {
             Antibody::class => [AntibodyType::class, "Antibody", "app_antibodies", "app_antibody_view", "antibodyId", "antibody"],
             Chemical::class => [ChemicalType::class, "Chemical", "app_compounds", "app_compound_view", "compoundId", "compound"],
             Oligo::class => [OligoType::class, "Oligo", "app_oligos", "app_oligo_view", "oligoId", "oligo"],
@@ -242,7 +254,7 @@ class SubstanceController extends AbstractController
             "form" => $form,
             "returnTo" => $new ? $this->generateUrl($overviewRoute) : $this->generateUrl($specificRoute, [$routeParam => $substance->getUlid()]),
             "typeName" => $typeName,
-            "icon" => $icon
+            "icon" => $icon,
         ]);
     }
 
@@ -256,7 +268,7 @@ class SubstanceController extends AbstractController
         EntityManagerInterface $entityManager,
         LotRepository $lotRepository,
         FileUploader $fileUploader,
-        Substance $substance ,
+        Substance $substance,
         ?Lot $lot = null,
     ): Response {
         $new = !$lot;
@@ -369,8 +381,8 @@ class SubstanceController extends AbstractController
                     icon: "lot",
                     tooltip: "Register a new lot",
                     iconStack: "add",
-                )
-            ])
+                ),
+            ]),
         ]);
     }
 
@@ -399,7 +411,7 @@ class SubstanceController extends AbstractController
     #[IsGranted("view", "chemical")]
     public function viewCompound(
         #[MapEntity(mapping: ["compoundId" => "ulid"])]
-        Chemical $chemical
+        Chemical $chemical,
     ): Response {
         return $this->render("parts/substance/view_compound.html.twig", [
             "title" => $chemical->getShortName(),
@@ -428,7 +440,7 @@ class SubstanceController extends AbstractController
                     icon: "lot",
                     tooltip: "Register a new lot",
                     iconStack: "add",
-                )
+                ),
             ]),
         ]);
     }
@@ -477,7 +489,7 @@ class SubstanceController extends AbstractController
                     icon: "lot",
                     tooltip: "Register a new lot",
                     iconStack: "add",
-                )
+                ),
             ]),
         ]);
     }
@@ -496,7 +508,7 @@ class SubstanceController extends AbstractController
     #[IsGranted("view", "plasmid")]
     public function plasmids(
         #[MapEntity(mapping: ["plasmidId" => "ulid"])]
-        Plasmid $plasmid
+        Plasmid $plasmid,
     ): Response {
         return $this->render("parts/substance/view_plasmid.html.twig", [
             "title" => $plasmid->getShortName(),
@@ -525,18 +537,18 @@ class SubstanceController extends AbstractController
                     icon: "lot",
                     tooltip: "Register a new lot",
                     iconStack: "add",
-                )
+                ),
             ]),
             "annotations" => new Table(
                 data: $plasmid->getSequenceAnnotations(),
                 columns: [
-                    new Column("Name", fn (SequenceAnnotation $annotation) => $annotation->getAnnotationLabel()),
-                    new Column("Type", fn (SequenceAnnotation $annotation) => $annotation->getAnnotationType()),
-                    new Column("Spans", fn (SequenceAnnotation $annotation) => "{$annotation->getAnnotationStart()} .. {$annotation->getAnnotationEnd()}"),
-                    new ToggleColumn("Forward", fn (SequenceAnnotation $annotation) => !$annotation->isComplement()),
-                    new ColorColumn("Color", fn (SequenceAnnotation $annotation) => $annotation->getColor() ?? "grey"),
-                ]
-            )
+                    new Column("Name", fn(SequenceAnnotation $annotation) => $annotation->getAnnotationLabel()),
+                    new Column("Type", fn(SequenceAnnotation $annotation) => $annotation->getAnnotationType()),
+                    new Column("Spans", fn(SequenceAnnotation $annotation) => "{$annotation->getAnnotationStart()} .. {$annotation->getAnnotationEnd()}"),
+                    new ToggleColumn("Forward", fn(SequenceAnnotation $annotation) => !$annotation->isComplement()),
+                    new ColorColumn("Color", fn(SequenceAnnotation $annotation) => $annotation->getColor() ?? "grey"),
+                ],
+            ),
         ]);
     }
 
@@ -555,7 +567,7 @@ class SubstanceController extends AbstractController
     public function viewProtein(
         CellRepository $cellRepository,
         #[MapEntity(mapping: ["proteinId" => "ulid"])]
-        Protein $protein
+        Protein $protein,
     ): Response {
         $antibodies = [];
         /** @var Epitope $epitope */
@@ -596,31 +608,31 @@ class SubstanceController extends AbstractController
                     icon: "lot",
                     tooltip: "Register a new lot",
                     iconStack: "add",
-                )
+                ),
             ]),
             "antibodyTable" => new Table(
                 data: $antibodies,
                 columns: [
-                    new ToolboxColumn("", fn (Antibody $antibody) => new Toolbox([
+                    new ToolboxColumn("", fn(Antibody $antibody) => new Toolbox([
                         new ViewTool(
                             path: $this->generateUrl("app_antibody_view_number", ["antibodyNr" => $antibody->getNumber()]),
                             icon: "antibody",
                             iconStack: "view",
                         ),
                     ])),
-                    new Column("Number", fn (Antibody $antibody) => $antibody->getNumber()),
+                    new Column("Number", fn(Antibody $antibody) => $antibody->getNumber()),
                     new ComponentColumn("Lots", fn(Antibody $antibody) => [
                         EntityReference::class,
                         [
                             "entity" => $antibody->getAvailableLots(),
-                        ]
-                    ])
-                ]
+                        ],
+                    ]),
+                ],
             ),
             "associatedCells" => new Table(
                 data: $cells,
                 columns: [
-                    new ToolboxColumn("", fn (Cell $cell) => new Toolbox([
+                    new ToolboxColumn("", fn(Cell $cell) => new Toolbox([
                         new ViewTool(
                             path: $this->generateUrl("app_cell_view_number", ["cellNumber" => $cell->getCellNumber()]),
                             icon: "cell",
@@ -629,7 +641,7 @@ class SubstanceController extends AbstractController
                     ])),
                     new Column("Number", fn(Cell $cell) => $cell->getCellNumber()),
                     new Column("Name", fn(Cell $cell) => $cell->getName()),
-                    new ComponentColumn("Methods", function(Cell $cell) use ($protein) {
+                    new ComponentColumn("Methods", function (Cell $cell) use ($protein) {
                         $cellularProtein = $cell->getCellProteins()->filter(fn(CellProtein $cellProtein) => $cellProtein->getAssociatedProtein() === $protein)->first();
 
                         $detections = [];
@@ -649,11 +661,11 @@ class SubstanceController extends AbstractController
                             Metadata::class, [
                                 "md" => 1, "xl" => 1,
                                 "data" => $detections,
-                            ]
+                            ],
                         ];
-                    })
-                ]
-            )
+                    }),
+                ],
+            ),
         ]);
     }
 
@@ -672,9 +684,9 @@ class SubstanceController extends AbstractController
     public function viewEpitope(
         Epitope $epitope,
     ): Response {
-       return $this->render("parts/epitopes/epitope.html.twig", [
-           "epitope" => $epitope,
-       ]);
+        return $this->render("parts/epitopes/epitope.html.twig", [
+            "epitope" => $epitope,
+        ]);
     }
 
     #[Route("/epitope/new", name: "app_epitope_new")]
@@ -752,12 +764,12 @@ class SubstanceController extends AbstractController
                 "privacyLevel" => PrivacyLevel::Group,
                 "numberOfAliquotes" => 1,
                 "maxNumberOfAliquots" => 1,
-            ]
+            ],
         ];
 
-        $substanceFormImportType = match($type) {
+        $substanceFormImportType = match ($type) {
             "oligo" => ImportOligoType::class,
-            default => $this->createNotFoundException("Unsupported substance type.")
+            default => $this->createNotFoundException("Unsupported substance type."),
         };
 
         $builder = $this->createFormBuilder($data);
@@ -797,7 +809,7 @@ class SubstanceController extends AbstractController
         $validateOnly = $data["options"]["validateOnly"] ?? false;
         $ignoreErrors = $data["options"]["ignoreErrors"] ?? false;
 
-        $substanceClass = match($type) {
+        $substanceClass = match ($type) {
             "oligo" => Oligo::class,
             default => $this->createNotFoundException("Unsupported substance type"),
         };
@@ -858,7 +870,7 @@ class SubstanceController extends AbstractController
             } else {
                 $answer["numRowsCreated"] = 0;
             }
-        } elseif(!$validateOnly) {
+        } elseif (!$validateOnly) {
             $flush = true;
         } else {
             $answer["numRowsCreated"] = 0;
@@ -870,7 +882,7 @@ class SubstanceController extends AbstractController
             } catch (UniqueConstraintViolationException $e) {
                 $answer["db_errors"] = [
                     "type" => "UniqueConstraintViolation",
-                    "message" => $e->getMessage()
+                    "message" => $e->getMessage(),
                 ];
                 $answer["numRowsCreated"] = 0;
             }

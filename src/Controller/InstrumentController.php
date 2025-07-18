@@ -15,11 +15,9 @@ use App\Entity\Toolbox\Toolbox;
 use App\Form\Instrument\InstrumentType;
 use App\Form\Instrument\InstrumentUserType;
 use App\Form\Instrument\LogType;
-use App\Genie\Enums\GeneRegulation;
 use App\Genie\Enums\InstrumentRole;
 use App\Repository\Instrument\InstrumentRepository;
 use App\Repository\Instrument\InstrumentUserRepository;
-use App\Service\Doctrine\Type\Ulid;
 use App\Service\FileUploader;
 use App\Service\InstrumentBookingService;
 use DateInterval;
@@ -40,10 +38,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class InstrumentController extends AbstractController
 {
     public function __construct(
-        readonly private InstrumentRepository $instrumentRepository,
-    ) {
-
-    }
+        private readonly InstrumentRepository $instrumentRepository,
+    ) {}
 
     #[Route("/instruments", name: "app_instruments")]
     public function instruments(
@@ -61,8 +57,8 @@ class InstrumentController extends AbstractController
                     enabled: $this->isGranted("new", "Instrument"),
                     tooltip: "Add new instrument",
                     iconStack: "add",
-                )
-            ])
+                ),
+            ]),
         ]);
     }
 
@@ -82,7 +78,7 @@ class InstrumentController extends AbstractController
             new Tool(
                 path: $instrument->getParent() ? $this->generateUrl("app_instruments_view", ["instrument" => $instrument->getParent()->getId()]) : "",
                 icon: "instrument",
-                enabled: (bool)$instrument->getParent(),
+                enabled: (bool) $instrument->getParent(),
                 iconStack: "left",
             ),
             new EditTool(
@@ -95,7 +91,7 @@ class InstrumentController extends AbstractController
                 clipboardText: $instrument->getCitationText() ?? "",
                 enabled: !!$instrument->getCitationText(),
                 tooltip: "Copy instrument citation",
-            )
+            ),
         ]);
 
         return $this->render("parts/instruments/instrument.html.twig", [
@@ -120,7 +116,7 @@ class InstrumentController extends AbstractController
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
         Instrument $instrument,
-    ):Response {
+    ): Response {
         $this->denyAccessUnlessGranted("edit", $instrument);
 
         return $this->addOrEditInstruments($request, $entityManager, $fileUploader, $instrument);
@@ -171,8 +167,7 @@ class InstrumentController extends AbstractController
                 $this->addFlash("success", $message);
 
                 return $this->redirect($this->generateUrl("app_instruments_view", ["instrument" => $instrument->getId()]));
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 if ($new) {
                     $message = "Creating the entry was not possible. Reason: {$e->getMessage()}.";
                 } else {
@@ -211,13 +206,13 @@ class InstrumentController extends AbstractController
         // Calculate the date and time and stuff
         $startTime = new DateTime($request->get("start"), new DateTimeZone("Europe/Zurich"));
         $endTime = new DateTime($request->get("start"), new DateTimeZone("Europe/Zurich"));
-        $length = (float)($request->get("length"));
+        $length = (float) ($request->get("length"));
         if ($length <= 0) {
             $length = $instrument->getDefaultReservationLength();
         }
 
-        $hours = (int)floor($length);
-        $minutes = (int)round(($length - $hours)*60);
+        $hours = (int) floor($length);
+        $minutes = (int) round(($length - $hours) * 60);
 
         $endTime->add(DateInterval::createFromDateString("+ {$hours} hours + {$minutes} minutes"));
 
@@ -237,7 +232,7 @@ class InstrumentController extends AbstractController
     public function partialViaInstrumentUsers(
         Request $request,
         EntityManagerInterface $entityManager,
-        Instrument $instrument
+        Instrument $instrument,
     ): Response {
         $this->denyAccessUnlessGranted("view", $instrument);
 
@@ -252,7 +247,7 @@ class InstrumentController extends AbstractController
             $filteredUserList = $instrument->getUsers()->filter(
                 function (InstrumentUser $user) use ($newInstrumentUser) {
                     return $user->getUser() === $newInstrumentUser->getUser();
-                }
+                },
             );
 
             if ($filteredUserList->count() > 0) {
@@ -277,7 +272,7 @@ class InstrumentController extends AbstractController
 
     #[Route("parts/instruments/view/log/{instrument}", name: "app_instrument_view_log_partial")]
     public function partialViewInstrumentLog(
-        Instrument $instrument
+        Instrument $instrument,
     ): Response {
         $this->denyAccessUnlessGranted("view", $instrument);
 

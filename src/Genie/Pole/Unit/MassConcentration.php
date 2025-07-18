@@ -7,19 +7,19 @@ use App\Genie\Pole\BaseUnit;
 
 class MassConcentration extends BaseUnit
 {
-    const KILOGRAMPERLITER = "kg/L";
-    const GRAMPERLITER = "g/L";
-    const MILLIGRAMPERLITER = "mg/L";
-    const MICROGRAMPERLITER = "μg/L";
-    const NANOGRAMPERLITER = "ng/L";
+    public const KILOGRAMPERLITER = "kg/L";
+    public const GRAMPERLITER = "g/L";
+    public const MILLIGRAMPERLITER = "mg/L";
+    public const MICROGRAMPERLITER = "μg/L";
+    public const NANOGRAMPERLITER = "ng/L";
 
-    const GRAMPERMILLILITER = "g/mL";
-    const MILLIGRAMPERMILLILITER = "mg/mL";
-    const MICROGRAMPERMILLILITER = "μg/mL";
-    const NANOGRAMPERMILLILITER = "ng/mL";
+    public const GRAMPERMILLILITER = "g/mL";
+    public const MILLIGRAMPERMILLILITER = "mg/mL";
+    public const MICROGRAMPERMILLILITER = "μg/mL";
+    public const NANOGRAMPERMILLILITER = "ng/mL";
 
-    const MICROGRAMPERMICROLITER = "μg/μL";
-    const NANOGRAMPERMICROLITER = "ng/μL";
+    public const MICROGRAMPERMICROLITER = "μg/μL";
+    public const NANOGRAMPERMICROLITER = "ng/μL";
 
     protected string $base_unit_symbol = self::GRAMPERLITER;
 

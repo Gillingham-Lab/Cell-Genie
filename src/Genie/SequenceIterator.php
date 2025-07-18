@@ -13,9 +13,7 @@ class SequenceIterator implements IteratorAggregate
 {
     public function __construct(
         private string $sequence,
-    ) {
-
-    }
+    ) {}
 
     public function getIterator(): Traversable
     {
@@ -40,7 +38,7 @@ class SequenceIterator implements IteratorAggregate
                 if ($l === "[") {
                     // Start complex notation. Do not add [, this is part of the syntax.
                     $inComplex = true;
-                } elseif($l === "*" or $l === "p" or $l === ".") {
+                } elseif ($l === "*" or $l === "p" or $l === ".") {
                     // * (thiophosphate), p or . (phosphates) are not part of the sequence and thus are skipped.
                     continue;
                 } else {

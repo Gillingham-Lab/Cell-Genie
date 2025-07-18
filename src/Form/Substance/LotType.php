@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Form\Substance;
 
 use App\Entity\DoctrineEntity\Lot;
-use App\Entity\DoctrineEntity\Storage\Box;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
@@ -40,7 +39,7 @@ class LotType extends SaveableType
                     "label" => "Internal label",
                     "help" => "Usually gets appended to the substance name (eg, for AB001 it would be AB001.{number}).",
                 ])
-                ->add('lotNumber',TextType::class, options: [
+                ->add('lotNumber', TextType::class, options: [
                     "label" => "Lot number",
                     "help" => "Manufactures lot number (for publications)",
                 ])
@@ -66,7 +65,7 @@ class LotType extends SaveableType
                             ->addOrderBy("u.isActive", "DESC")
                             ->addOrderBy("u.fullName", "ASC");
                     },
-                    "group_by" => function(User $choice, $key, $value) {
+                    "group_by" => function (User $choice, $key, $value) {
                         return ($choice->getIsActive() ? "Active" : "Inactive");
                     },
                     "label" => "Bought by",
@@ -88,7 +87,7 @@ class LotType extends SaveableType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("storage", FormType::class, options: [
@@ -119,7 +118,7 @@ class LotType extends SaveableType
                 ->add("aliquoteSize", TextType::class, options: [
                     "label" => "Size of each aliquot",
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -128,7 +127,7 @@ class LotType extends SaveableType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
 
@@ -137,8 +136,8 @@ class LotType extends SaveableType
                 ->add(
                     $builder->create("vendor", VendorFieldType::class, options: [
                         "inherit_data" => true,
-                        "label" => "Vendor"
-                    ])
+                        "label" => "Vendor",
+                    ]),
                 )
             ;
         }

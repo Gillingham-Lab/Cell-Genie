@@ -5,7 +5,6 @@ namespace App\Service\Doctrine\Generator;
 
 use App\Service\Doctrine\Type\Ulid;
 use App\Service\Factory\UlidFactory;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Id\AbstractIdGenerator;
 

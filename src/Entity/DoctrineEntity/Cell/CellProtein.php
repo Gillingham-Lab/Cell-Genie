@@ -8,11 +8,9 @@ use App\Entity\FormEntity\DetectionEntry;
 use App\Entity\Traits\Fields\IdTrait;
 use App\Genie\Enums\GeneRegulation;
 use App\Repository\Cell\CellProteinRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CellProteinRepository::class)]
 class CellProtein

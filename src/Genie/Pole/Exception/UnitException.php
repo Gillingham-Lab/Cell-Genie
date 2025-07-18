@@ -5,7 +5,4 @@ namespace App\Genie\Pole\Exception;
 
 use Exception;
 
-class UnitException extends Exception
-{
-
-}
+class UnitException extends Exception {}

@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits\Privacy;
 
-
 use App\Entity\DoctrineEntity\User\UserGroup;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 trait GroupOwnerTrait

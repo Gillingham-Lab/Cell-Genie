@@ -20,8 +20,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use stdClass;
-use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -38,9 +36,7 @@ readonly class ExperimentalModelService
         private EntityManagerInterface $entityManager,
         private ExperimentalRunConditionRepository $conditionRepository,
         private CacheKeyService $cacheKeyService,
-    ) {
-
-    }
+    ) {}
 
     public function getCommand(): string
     {
@@ -55,7 +51,8 @@ readonly class ExperimentalModelService
      * @param literal-string $module
      * @param literal-string $params
      */
-    public function run(string $module, string ... $params): string {
+    public function run(string $module, string ... $params): string
+    {
         $descriptorSpec = [
             ["pipe", "r"],
             ["pipe", "w"],
@@ -86,7 +83,7 @@ readonly class ExperimentalModelService
         if ($errorContent) {
             $this->logger->debug("Error content contains something: " . $errorContent);
 
-            $lines = array_map(fn (string $str) => trim($str, characters: "\r"), explode("\n", $errorContent));
+            $lines = array_map(fn(string $str) => trim($str, characters: "\r"), explode("\n", $errorContent));
 
             $warnings = [];
             $errors = [];
@@ -124,7 +121,8 @@ readonly class ExperimentalModelService
     /**
      * @return array<string, mixed>
      */
-    public function list(): array {
+    public function list(): array
+    {
         $this->stopWatch->start("ExperimentalModelService.list");
 
         $models = $this->cache->get("ExperimentalModelService.list", function (ItemInterface $item): array {
@@ -154,7 +152,7 @@ readonly class ExperimentalModelService
 
         foreach ($conditions as $condition) {
             foreach ($designModels as $model) {
-                $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model->getName());
+                $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model->getName());
 
                 // If the condition appears in the selected model list, we restrict the models that will be fitted
                 if (isset($selectedModels[$condition->getName()])) {
@@ -233,7 +231,7 @@ readonly class ExperimentalModelService
                 "initial" => $this->getValuesForFieldName($environment, $paramConfig["initial"]),
                 "min" => $this->getValuesForFieldName($environment, $paramConfig["min"]),
                 "max" => $this->getValuesForFieldName($environment, $paramConfig["max"]),
-                "vary" => (bool)$paramConfig["vary"],
+                "vary" => (bool) $paramConfig["vary"],
             ];
         }
 
@@ -281,7 +279,7 @@ readonly class ExperimentalModelService
      */
     public function getValuesForFit(ExperimentalRunCondition $condition, string $fieldName): array
     {
-        $field = $condition->getExperimentalRun()->getDesign()->getFields()->findFirst(fn (int $index, ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $fieldName);
+        $field = $condition->getExperimentalRun()->getDesign()->getFields()->findFirst(fn(int $index, ExperimentalDesignField $field) => $field->getFormRow()->getFieldName() === $fieldName);
 
         if (!$field) {
             return [];
@@ -289,7 +287,7 @@ readonly class ExperimentalModelService
 
         $values = [];
         if ($field->getRole() === ExperimentalFieldRole::Datum) {
-            $dataSets = $condition->getExperimentalRun()->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition() === $condition);
+            $dataSets = $condition->getExperimentalRun()->getDataSets()->filter(fn(ExperimentalRunDataSet $dataSet) => $dataSet->getCondition() === $condition);
             foreach ($dataSets as $data) {
                 if ($data->getData()->containsKey($fieldName)) {
                     $values[] = $data->getDatum($fieldName)->getValue();
@@ -339,8 +337,8 @@ readonly class ExperimentalModelService
             }
 
             if ($field->getRole() === ExperimentalFieldRole::Datum) {
-                $dataSets = $condition->getExperimentalRun()->getDataSets()->filter(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getCondition() === $condition and $dataSet->getControlCondition() === null);
-                $values = array_map(fn (ExperimentalRunDataSet $dataSet) => $dataSet->getData()->containsKey($fieldName) ? $dataSet->getDatum($fieldName)->getValue() : null, $dataSets->toArray());
+                $dataSets = $condition->getExperimentalRun()->getDataSets()->filter(fn(ExperimentalRunDataSet $dataSet) => $dataSet->getCondition() === $condition and $dataSet->getControlCondition() === null);
+                $values = array_map(fn(ExperimentalRunDataSet $dataSet) => $dataSet->getData()->containsKey($fieldName) ? $dataSet->getDatum($fieldName)->getValue() : null, $dataSets->toArray());
                 $environment[$fieldName] = $values;
             } elseif ($field->getRole() === ExperimentalFieldRole::Top) {
                 $environment[$fieldName] = $run->getData()->containsKey($fieldName) ? $run->getDatum($fieldName)->getValue() : null;
@@ -370,7 +368,7 @@ readonly class ExperimentalModelService
 
         return $environment;
     }
-  
+
     /**
      * @return object
      */
@@ -406,7 +404,7 @@ readonly class ExperimentalModelService
 
         $values = array_map(function (array $value) {
             if (count($value) > 0 and is_array($value[0])) {
-                $value = array_map(fn ($v) => array_sum($v)/count($v), $value);
+                $value = array_map(fn($v) => array_sum($v) / count($v), $value);
             }
 
             if (count($value) === 0) {
@@ -414,8 +412,8 @@ readonly class ExperimentalModelService
             }
 
             try {
-                $value = array_filter($value, fn ($v) => !(is_nan($v) or is_infinite($v)));
-                return array_sum($value)/count($value);
+                $value = array_filter($value, fn($v) => !(is_nan($v) or is_infinite($v)));
+                return array_sum($value) / count($value);
             } catch (ErrorException | DivisionByZeroError $e) {
                 return 0;
             }
@@ -569,7 +567,7 @@ readonly class ExperimentalModelService
         ExperimentalRunCondition $condition,
     ): null|array {
         assert($field->getFormRow()->getType() === FormRowTypeEnum::ModelParameterType);
-        
+
         $numberTransformer = new ScientificNumberTransformer(["NAN"], ["Inf"], ["-Inf"], "NAN", "Inf", "-Inf");
 
         $fieldConfig = $field->getFormRow()->getConfiguration();
@@ -580,7 +578,7 @@ readonly class ExperimentalModelService
             return null;
         }
 
-        $conditionModel = $condition->getModels()->findFirst(fn (int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
+        $conditionModel = $condition->getModels()->findFirst(fn(int $index, ExperimentalModel $conditionModel) => $conditionModel->getName() === $model);
 
         if (!$conditionModel) {
             return null;

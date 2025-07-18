@@ -72,7 +72,7 @@ class Table
      * @param iterable<T> $data
      */
     public function setData(
-        iterable $data
+        iterable $data,
     ): static {
         $this->data = $data;
         return $this;

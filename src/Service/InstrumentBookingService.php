@@ -14,9 +14,7 @@ class InstrumentBookingService
 {
     public function __construct(
 
-    ) {
-
-    }
+    ) {}
 
     public function book(Instrument $instrument, User $user, DateTime $start, DateTime $end): bool
     {

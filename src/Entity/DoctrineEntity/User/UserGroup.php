@@ -11,7 +11,6 @@ use App\Repository\User\UserGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dunglas\DoctrineJsonOdm\Type\JsonDocumentType;
 use Gedmo\Mapping\Annotation\Loggable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 

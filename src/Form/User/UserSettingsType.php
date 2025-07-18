@@ -52,7 +52,7 @@ class UserSettingsType extends AbstractType
                     "label" => "Hide smiles in experimental data overview",
                     "empty_data" => null,
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("numbering", FormType::class, [
@@ -79,8 +79,8 @@ class UserSettingsType extends AbstractType
                         "help" => "Changing this will only effect newly created cells, and only if the user does not change the number manually.",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
+                        ],
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingCellCulture", FormGroupType::class, [
@@ -93,8 +93,8 @@ class UserSettingsType extends AbstractType
                         "help" => "Changing this will only effect newly created cell cultures, and only if the user does not change the number manually.",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
+                        ],
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingAntibody", FormGroupType::class, [
@@ -107,8 +107,8 @@ class UserSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
+                        ],
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingChemical", FormGroupType::class, [
@@ -121,8 +121,8 @@ class UserSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
+                        ],
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingOligo", FormGroupType::class, [
@@ -135,8 +135,8 @@ class UserSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
+                        ],
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingPlasmid", FormGroupType::class, [
@@ -149,8 +149,8 @@ class UserSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
+                        ],
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingProtein", FormGroupType::class, [
@@ -163,9 +163,9 @@ class UserSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
-                    ])
-                )
+                        ],
+                    ]),
+                ),
             )
         ;
     }
@@ -187,7 +187,7 @@ class UserSettingsType extends AbstractType
             "D, d. M. Y",
         ];
 
-        return array_combine(array_map(fn ($x) => $date->format($x), $formats), $formats);
+        return array_combine(array_map(fn($x) => $date->format($x), $formats), $formats);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

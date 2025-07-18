@@ -17,7 +17,7 @@ enum FormRowTypeEnum: string
 
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TextType => "String",
             self::TextAreaType => "Text",
             self::IntegerType => "Integer",

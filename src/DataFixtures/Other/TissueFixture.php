@@ -9,8 +9,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class TissueFixture extends Fixture
 {
-    const Kidney = "tissue.kidney";
-    const Cervix = "tissue.cervix";
+    public const Kidney = "tissue.kidney";
+    public const Cervix = "tissue.cervix";
 
     public function load(ObjectManager $manager): void
     {

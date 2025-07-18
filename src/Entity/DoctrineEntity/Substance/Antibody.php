@@ -61,7 +61,7 @@ class Antibody extends Substance
     #[Assert\Range(
         notInRangeMessage: "Storage temperature must between -200 °C and 25 °C.",
         min: -200,
-        max: 25
+        max: 25,
     )]
     private ?int $storageTemperature = 0;
 
@@ -286,7 +286,7 @@ class Antibody extends Substance
         return $this;
     }
 
-    public function getCitation(?Lot $lot=null): string
+    public function getCitation(?Lot $lot = null): string
     {
         $other = [
             $this->getVendor()?->getName() ?? "??",

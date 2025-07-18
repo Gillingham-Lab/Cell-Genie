@@ -25,11 +25,11 @@ class FormRowType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            "data_class" => FormRow::class
+            "data_class" => FormRow::class,
         ]);
 
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->allowedTypes(ExperimentalDesign::class, "null")
             ->default(null)
         ;
     }
@@ -46,7 +46,7 @@ class FormRowType extends AbstractType
                     "class" => FormRowTypeEnum::class,
                     "empty_data" => FormRowTypeEnum::TextType->value,
                     "required" => true,
-                    "choice_label" => fn (FormRowTypeEnum $typeEnum) => $typeEnum->getLabel(),
+                    "choice_label" => fn(FormRowTypeEnum $typeEnum) => $typeEnum->getLabel(),
                     "help" => "Changing the type while experiments are running can cause unexpected side effects.",
                 ])
                 ->add("label", TextType::class, [
@@ -54,7 +54,7 @@ class FormRowType extends AbstractType
                 ])
                 ->add("help", TextareaType::class, [
                     "required" => false,
-                ])
+                ]),
             )
         ;
 
@@ -65,7 +65,7 @@ class FormRowType extends AbstractType
                 $data = $event->getData();
 
                 $this->modifyFormOnType($builder, $form, $data, $options);
-            }
+            },
         );
 
         $builder->addEventListener(
@@ -75,7 +75,7 @@ class FormRowType extends AbstractType
                 $data = $event->getData();
 
                 $this->modifyFormOnType($builder, $form, $data, $options);
-            }
+            },
         );
     }
 
@@ -118,7 +118,7 @@ class FormRowType extends AbstractType
                 $options["design"] = $formOptions["design"];
             }
 
-            $form->add("configuration",  $formType, $options);
+            $form->add("configuration", $formType, $options);
         }
     }
 }

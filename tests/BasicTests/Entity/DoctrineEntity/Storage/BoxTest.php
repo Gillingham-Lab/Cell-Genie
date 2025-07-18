@@ -15,11 +15,11 @@ class BoxTest extends TestCase
         $name = "Box 1";
 
         // Test if no name was set
-        $this->assertSame("no rack | no name (1 × 1)", (string)$box);
+        $this->assertSame("no rack | no name (1 × 1)", (string) $box);
 
         // Set name and test
         $box->setName($name);
-        $this->assertSame("no rack | {$name} (1 × 1)", (string)$box);
+        $this->assertSame("no rack | {$name} (1 × 1)", (string) $box);
 
         // Set parent and test
         $rack = $this->createMock(Rack::class);
@@ -29,7 +29,7 @@ class BoxTest extends TestCase
         ;
 
         $box->setRack($rack);
-        $this->assertSame("Rack 1 | {$name} (1 × 1)", (string)$box);
+        $this->assertSame("Rack 1 | {$name} (1 × 1)", (string) $box);
     }
 
     public function testToPathname(): void

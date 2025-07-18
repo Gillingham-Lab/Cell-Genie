@@ -51,9 +51,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class CellController extends AbstractController
 {
     public function __construct(
-        readonly private EntityManagerInterface $entityManager,
-    ) {
-    }
+        private readonly EntityManagerInterface $entityManager,
+    ) {}
 
     #[Route("/cells", name: "app_cells")]
     #[Route("/cells/group/view/{cellGroup}", name: "app_cells_group")]
@@ -67,7 +66,7 @@ final class CellController extends AbstractController
                 new AddTool(
                     path: $this->generateUrl("app_cells_group_add"),
                     tooltip: "Add new cell group",
-                )
+                ),
             ]);
         }
 
@@ -77,7 +76,7 @@ final class CellController extends AbstractController
                 new AddTool(
                     path: $this->generateUrl("app_cell_add"),
                     tooltip: "Add new cell line",
-                )
+                ),
             ]);
         }
 
@@ -93,7 +92,8 @@ final class CellController extends AbstractController
     }
 
     #[Route("/cells/all", name: "app_cells_all")]
-    public function allCells(): Response {
+    public function allCells(): Response
+    {
         return $this->render("parts/cells/cells_list.html.twig") ;
     }
 
@@ -233,14 +233,14 @@ final class CellController extends AbstractController
                 icon: "cell",
                 buttonClass: "btn-secondary",
                 tooltip: "Browse cell group",
-                iconStack: "up"
+                iconStack: "up",
             ),
             new Tool(
                 path: $this->generateUrl("app_cells_all"),
                 icon: "cell",
                 buttonClass: "btn-secondary",
                 tooltip: "Search cells",
-                iconStack: "search"
+                iconStack: "search",
             ),
             new ClipwareTool(
                 clipboardText: $cell->getName() . ($cell->getRrid() ? " (RRID:{$cell->getRrid()})" : ""),
@@ -583,7 +583,7 @@ final class CellController extends AbstractController
         User $currentUser,
         CellCulture $cellCulture,
         ?string $eventType = null,
-        ?CellCultureEvent $cellCultureEvent = null
+        ?CellCultureEvent $cellCultureEvent = null,
     ): Response {
         if ($cellCulture->getTrashedOn()) {
             $this->addFlash("error", "Cannot add events for trashed cell cultures.");
@@ -591,7 +591,7 @@ final class CellController extends AbstractController
         }
 
         if ($eventType !== null) {
-            [$formType, $entityType] = match($eventType) {
+            [$formType, $entityType] = match ($eventType) {
                 "test" => [CellCultureEventTestType::class, CellCultureTestEvent::class],
                 "split" => [CellCultureSplittingType::class, CellCultureSplittingEvent::class],
                 default => [CellCultureOtherType::class, CellCultureOtherEvent::class],
@@ -599,7 +599,7 @@ final class CellController extends AbstractController
 
             $cellCultureEvent = new $entityType();
         } else {
-            $formType = match(get_class($cellCultureEvent)) {
+            $formType = match (get_class($cellCultureEvent)) {
                 CellCultureTestEvent::class => CellCultureEventTestType::class,
                 CellCultureSplittingEvent::class => CellCultureSplittingType::class,
                 default => CellCultureOtherType::class,
@@ -713,7 +713,7 @@ final class CellController extends AbstractController
         return $this->render("parts/cells/cell_culture.html.twig", [
             "culture" => $cellCulture,
             "startDate" => $cellCulture->getUnfrozenOn(),
-            "endDate" => $cellCulture->getTrashedOn() ?? new DateTime("now + 1 week")
+            "endDate" => $cellCulture->getTrashedOn() ?? new DateTime("now + 1 week"),
         ]);
     }
 

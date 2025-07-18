@@ -12,10 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 class MainController extends AbstractController
 {
     public function __construct(
-        readonly private MessageRepository $messageRepository,
-    ) {
-
-    }
+        private readonly MessageRepository $messageRepository,
+    ) {}
 
     #[Route("/", name: "app_homepage")]
     #[Route("/page_{pageNr<\d+?0>")]
@@ -29,7 +27,7 @@ class MainController extends AbstractController
 
         $paginator = new Paginator($query);
         $totalMessages = count($paginator);
-        $totalPages = ceil($totalMessages/$pageSize);
+        $totalPages = ceil($totalMessages / $pageSize);
 
         $messages = $paginator->getQuery()->setFirstResult($pageSize * ($pageNr - 1))->setMaxResults($pageSize)->getResult();
 
@@ -38,7 +36,7 @@ class MainController extends AbstractController
                 "messages" => $messages,
                 "pageSize" => $pageSize,
                 "totalPages" => $totalPages,
-            ]
+            ],
         ]);
     }
 }

@@ -55,7 +55,7 @@ class UserGroupSettingsType extends AbstractType
                     "help" => "Y = year, m = month, d = day",
                     "allow_add" => true,
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("numbering", FormType::class, [
@@ -77,7 +77,7 @@ class UserGroupSettingsType extends AbstractType
                     "empty_data" => 4,
                     "constraints" => [
                         new Range(min: 2, max: 30),
-                    ]
+                    ],
                 ])
                 ->add(
                     $builder->create("numberingCell", FormGroupType::class, [
@@ -90,12 +90,12 @@ class UserGroupSettingsType extends AbstractType
                         "help" => "Changing this will only effect newly created cells, and only if the user does not change the number manually.",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for cell numbering by default",
                         "required" => false,
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingCellCulture", FormGroupType::class, [
@@ -108,12 +108,12 @@ class UserGroupSettingsType extends AbstractType
                         "help" => "Changing this will only effect newly created cell cultures, and only if the user does not change the number manually.",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for cell culture numbering by default",
                         "required" => false,
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingAntibody", FormGroupType::class, [
@@ -126,12 +126,12 @@ class UserGroupSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for antibody numbering by default",
                         "required" => false,
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingChemical", FormGroupType::class, [
@@ -144,12 +144,12 @@ class UserGroupSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for chemical numbering by default",
                         "required" => false,
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingOligo", FormGroupType::class, [
@@ -162,12 +162,12 @@ class UserGroupSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for oligo numbering by default",
                         "required" => false,
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingPlasmid", FormGroupType::class, [
@@ -180,12 +180,12 @@ class UserGroupSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for plasmid numbering by default",
                         "required" => false,
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("numberingProtein", FormGroupType::class, [
@@ -198,13 +198,13 @@ class UserGroupSettingsType extends AbstractType
                         "empty_data" => "",
                         "constraints" => [
                             new Length(max: 4),
-                        ]
+                        ],
                     ])
                     ->add("userSigill", CheckboxType::class, [
                         "label" => "Use user sigill for protein numbering by default",
                         "required" => false,
-                    ])
-                )
+                    ]),
+                ),
             )
         ;
     }

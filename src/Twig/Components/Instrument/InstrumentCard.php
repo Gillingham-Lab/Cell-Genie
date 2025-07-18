@@ -21,10 +21,9 @@ class InstrumentCard
     public InstrumentRole $userRole;
 
     public function __construct(
-        readonly private UrlGeneratorInterface $urlGenerator,
-        readonly private Security $security,
-    ) {
-    }
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security,
+    ) {}
 
     /**
      * @param array<string, mixed> $props
@@ -42,7 +41,7 @@ class InstrumentCard
 
     public function getCardColor(): string
     {
-        return match($this->userRole) {
+        return match ($this->userRole) {
             InstrumentRole::Untrained => "text-secondary bg-secondary",
             InstrumentRole::Admin => "border-primary",
             InstrumentRole::Trained => "border-success",
@@ -52,7 +51,7 @@ class InstrumentCard
 
     public function isEnabled(): bool
     {
-        return match($this->userRole) {
+        return match ($this->userRole) {
             InstrumentRole::Untrained => false,
             default => true,
         };
@@ -75,7 +74,7 @@ class InstrumentCard
                 clipboardText: $this->instrument->getCitationText() ?? "",
                 enabled: !!$this->instrument->getCitationText(),
                 tooltip: "Copy citation",
-            )
+            ),
         ]);
     }
 }

@@ -29,15 +29,15 @@ class BoxMap implements JsonSerializable
     }
 
     public function __construct(
-        readonly private int $rows,
-        readonly private int $cols,
+        private readonly int $rows,
+        private readonly int $cols,
     ) {
         $map = [];
 
-        for ($i=0; $i<$rows; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
             $row = [];
 
-            for ($j=0; $j<$cols; $j++) {
+            for ($j = 0; $j < $cols; $j++) {
                 $row[] = null;
             }
 
@@ -69,15 +69,15 @@ class BoxMap implements JsonSerializable
                 // Check if the position is occupied in the box
                 if ($this->isOccupied($i, $j)) {
                     $object = $this->get($i, $j);
-                    yield new BoxMapPosition($i+1, $j+1, $object, $this->isDoublyOccupied($i, $j));
+                    yield new BoxMapPosition($i + 1, $j + 1, $object, $this->isDoublyOccupied($i, $j));
                 } else {
                     // If this is not the case, we can iterate from the loose list.
                     if (isset($this->loose[$this->loosePointer])) {
                         $object = $this->loose[$this->loosePointer];
-                        yield new BoxMapPosition($i+1, $j+1, $object, false, true);
+                        yield new BoxMapPosition($i + 1, $j + 1, $object, false, true);
                         $this->loosePointer++;
                     } else {
-                        yield new BoxMapPosition($i+1, $j+1, null);
+                        yield new BoxMapPosition($i + 1, $j + 1, null);
                     }
                 }
             }
@@ -101,18 +101,18 @@ class BoxMap implements JsonSerializable
      * @param int $shift
      * @return array{int, int}
      */
-    private function shift(int $row, int $col, int $shift=0): array
+    private function shift(int $row, int $col, int $shift = 0): array
     {
         if ($shift > 0) {
             $col += $shift;
 
-            if ($col>=$this->cols) {
-                $row += floor($col/$this->cols);
-                $col = $col%$this->cols;
+            if ($col >= $this->cols) {
+                $row += floor($col / $this->cols);
+                $col = $col % $this->cols;
             }
         }
 
-        return [(int)$row, $col];
+        return [(int) $row, $col];
     }
 
     /**
@@ -122,7 +122,7 @@ class BoxMap implements JsonSerializable
      * @param int $shift horizontal shift, automatically wraps
      * @return void
      */
-    public function set(int $row, int $col, ?object $object, int $shift=0): void
+    public function set(int $row, int $col, ?object $object, int $shift = 0): void
     {
         [$row, $col] = $this->shift($row, $col, $shift);
 
@@ -137,32 +137,32 @@ class BoxMap implements JsonSerializable
         $this->map[$row][$col] = $object;
     }
 
-    public function get(int $row, int $col, int $shift=0): ?object
+    public function get(int $row, int $col, int $shift = 0): ?object
     {
         [$row, $col] = $this->shift($row, $col, $shift);
         $this->assertCoordinatesWithinBounds($row, $col);
         return $this->map[$row][$col];
     }
 
-    public function getAtCoordinate(string $coordinate, int $shift=0): ?object
+    public function getAtCoordinate(string $coordinate, int $shift = 0): ?object
     {
         [$row, $col] = (new BoxCoordinate($coordinate))->getIntCoordinates();
-        return $this->get($row-1, $col-1, $shift);
+        return $this->get($row - 1, $col - 1, $shift);
     }
 
-    public function setAtCoordinate(string $coordinate, ?object $object, int $shift=0): void
+    public function setAtCoordinate(string $coordinate, ?object $object, int $shift = 0): void
     {
         [$row, $col] = (new BoxCoordinate($coordinate))->getIntCoordinates();
-        $this->set($row-1, $col-1, $object, $shift);
+        $this->set($row - 1, $col - 1, $object, $shift);
     }
 
-    public function isOccupied(int $row, int $col, int $shift=0): bool
+    public function isOccupied(int $row, int $col, int $shift = 0): bool
     {
         [$row, $col] = $this->shift($row, $col, $shift);
         return $this->map[$row][$col] !== null;
     }
 
-    public function isCoordinateOccupied(string $coordinate, int $shift=0): bool
+    public function isCoordinateOccupied(string $coordinate, int $shift = 0): bool
     {
         [$row, $col] = (new BoxCoordinate($coordinate))->getIntCoordinates();
         return $this->isOccupied($row, $col, $shift);
@@ -185,17 +185,17 @@ class BoxMap implements JsonSerializable
 
     public function isFull(): bool
     {
-        return ($this->rows*$this->cols - $this->count) <= 0;
+        return ($this->rows * $this->cols - $this->count) <= 0;
     }
 
     public function isOverfilled(): bool
     {
-        return ($this->rows*$this->cols - $this->count) < 0;
+        return ($this->rows * $this->cols - $this->count) < 0;
     }
 
     public function getSize(): int
     {
-        return $this->rows*$this->cols;
+        return $this->rows * $this->cols;
     }
 
     public function count(): int
@@ -203,7 +203,8 @@ class BoxMap implements JsonSerializable
         return $this->count;
     }
 
-    public function add(object $object, int $numberOfAliquots, ?string $lotCoordinate): void {
+    public function add(object $object, int $numberOfAliquots, ?string $lotCoordinate): void
+    {
         // Do not display lots with no aliquots.
         if ($numberOfAliquots === 0) {
             return;
@@ -211,7 +212,7 @@ class BoxMap implements JsonSerializable
 
         // If no coordinate is given, add loose.
         if (empty($lotCoordinate)) {
-            for ($i=0; $i < $numberOfAliquots; $i++) {
+            for ($i = 0; $i < $numberOfAliquots; $i++) {
                 $this->addLoose($object);
             }
         } else {

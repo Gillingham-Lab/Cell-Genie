@@ -64,7 +64,7 @@ class Substance implements JsonSerializable, PrivacyAwareInterface
             "type" => static::class,
             "shortName" => $this->getShortName(),
             "longName" => $this->getLongName(),
-            "number" => (method_exists($this, "getNumber") ? $this->getNumber() : null)
+            "number" => (method_exists($this, "getNumber") ? $this->getNumber() : null),
         ];
     }
 
@@ -120,7 +120,7 @@ class Substance implements JsonSerializable, PrivacyAwareInterface
         return $this;
     }
 
-    public function getCitation(?Lot $lot=null): string
+    public function getCitation(?Lot $lot = null): string
     {
         $other = [
         ];

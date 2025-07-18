@@ -9,7 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class OrganismFixture extends Fixture
 {
-    const Human = "organism.human";
+    public const Human = "organism.human";
 
     public function load(ObjectManager $manager): void
     {

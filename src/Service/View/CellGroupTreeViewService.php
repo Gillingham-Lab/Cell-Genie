@@ -23,8 +23,7 @@ class CellGroupTreeViewService implements TreeViewServiceInterface
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private Security $security,
-    ) {
-    }
+    ) {}
 
     public function getNodeIcon(?object $node = null): ?string
     {

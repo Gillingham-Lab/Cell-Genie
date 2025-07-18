@@ -6,11 +6,9 @@ namespace App\Tests\FunctionalTests\Security;
 
 use App\Entity\DoctrineEntity\Cell\CellGroup;
 use App\Repository\Cell\CellGroupRepository;
-use App\Repository\User\UserRepository;
 use App\Security\Voter\Cell\CellGroupVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -65,7 +63,7 @@ class CellGroupVoterTest extends KernelTestCase
     public function testVoterVotesDeniedIfTokenUserIsNotUser(): void
     {
         $token = $this->createMock(TokenInterface::class);
-        $token->method("getUser")->willReturnCallback(fn () => $this->createMock(UserInterface::class));
+        $token->method("getUser")->willReturnCallback(fn() => $this->createMock(UserInterface::class));
 
         /** @var CellGroupVoter $voter */
         $voter = static::getContainer()->get(CellGroupVoter::class);

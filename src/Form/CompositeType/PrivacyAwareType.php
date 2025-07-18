@@ -28,10 +28,8 @@ class PrivacyAwareType extends AbstractType
     }
 
     public function __construct(
-        private Security $security
-    ) {
-
-    }
+        private Security $security,
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {

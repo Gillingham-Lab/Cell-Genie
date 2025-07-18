@@ -40,10 +40,8 @@ class PlasmidType extends AbstractType
     }
 
     public function __construct(
-        private VocabularyRepository $vocabularyRepository
-    ) {
-
-    }
+        private VocabularyRepository $vocabularyRepository,
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -51,7 +49,7 @@ class PlasmidType extends AbstractType
             ->add(
                 $builder->create("_general", FormType::class, [
                     "inherit_data" => true,
-                    "label" => "General information"
+                    "label" => "General information",
                 ])
                 ->add("number", EnumeratedType::class, [
                     "label" => "Number",
@@ -69,7 +67,7 @@ class PlasmidType extends AbstractType
                 ])
                 ->add("createdBy", UserEntityType::class, [
                     "label" => "Created by",
-                    "help" => "Who made this plasmid?"
+                    "help" => "Who made this plasmid?",
                 ])
                 ->add("labjournal", TextType::class, [
                     "label" => "Lab journal entry",
@@ -84,12 +82,12 @@ class PlasmidType extends AbstractType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_features", FormType::class, [
                     "inherit_data" => true,
-                    "label" => "General features"
+                    "label" => "General features",
                 ])
                 ->add("growthResistance", ... $this->getTextOrChoiceOptions("plasmidResistance", [
                     "label" => "Growth resistance",
@@ -105,7 +103,7 @@ class PlasmidType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.name", "ASC")
-                            ;
+                        ;
                     },
                     "empty_data" => null,
                     "placeholder" => "Select an organism",
@@ -132,7 +130,7 @@ class PlasmidType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.shortName", "ASC")
-                            ;
+                        ;
                     },
                     'empty_data' => [],
                     'by_reference' => false,
@@ -140,7 +138,7 @@ class PlasmidType extends AbstractType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_structure", FormType::class, [
@@ -201,7 +199,7 @@ class PlasmidType extends AbstractType
                         'by_reference' => false,
                         "required" => false,
                         "placeholder" => "Empty",
-                    ])
+                    ]),
                 )
                 ->add("sequence", TextareaType::class, [
                     "label" => "Sequence",
@@ -210,7 +208,7 @@ class PlasmidType extends AbstractType
                 ])
                 ->add("sequenceAnnotations", SequenceAnnotationCollectionType::class, [
                     "label" => "Sequence annotations",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -233,7 +231,7 @@ class PlasmidType extends AbstractType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
     }

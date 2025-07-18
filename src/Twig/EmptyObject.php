@@ -13,7 +13,7 @@ class EmptyObject extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction("createEmptyCell", fn () => new Cell()),
+            new TwigFunction("createEmptyCell", fn() => new Cell()),
             new TwigFunction("createEmptyInstrument", fn() => new Instrument()),
         ];
     }

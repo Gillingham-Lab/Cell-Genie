@@ -7,15 +7,15 @@ use App\Genie\Pole\CompositeUnit;
 
 class MolarConcentration extends CompositeUnit
 {
-    const MOLAR = "M";
-    const MILLIMOLAR = "mM";
-    const MICROMOLAR = "μM";
-    const NANOMOLAR = "nM";
-    const PICOMOLAR = "pM";
-    const FEMTOMOLAR = "fM";
-    const ATTOMOLAR = "aM";
-    const ZEPTOMOLAR = "zM";
-    const YOCTOMOLAR = "yM";
+    public const MOLAR = "M";
+    public const MILLIMOLAR = "mM";
+    public const MICROMOLAR = "μM";
+    public const NANOMOLAR = "nM";
+    public const PICOMOLAR = "pM";
+    public const FEMTOMOLAR = "fM";
+    public const ATTOMOLAR = "aM";
+    public const ZEPTOMOLAR = "zM";
+    public const YOCTOMOLAR = "yM";
 
     protected string $base_unit_symbol = self::MOLAR;
 

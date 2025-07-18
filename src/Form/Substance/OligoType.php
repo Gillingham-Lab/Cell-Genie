@@ -43,7 +43,7 @@ class OligoType extends AbstractType
             ->add(
                 $builder->create("general", FormType::class, [
                     "inherit_data" => true,
-                    "label" => "General information"
+                    "label" => "General information",
                 ])
                 ->add("shortName", EnumeratedType::class, [
                     "label" => "Short name",
@@ -68,7 +68,7 @@ class OligoType extends AbstractType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("structure", FormType::class, [
@@ -92,10 +92,10 @@ class OligoType extends AbstractType
                                 ->addOrderBy("e.shortName", "ASC")
                                 ->andWhere("e.ulid != :currentId")
                                 ->setParameter("currentId", $currentId)
-                                ;
+                            ;
                         },
                         "group_by" => function (Substance $e) {
-                            return match($e::class) {
+                            return match ($e::class) {
                                 Antibody::class => "Antibody",
                                 Chemical::class => "Compound",
                                 Oligo::class => "Oligo",
@@ -116,10 +116,10 @@ class OligoType extends AbstractType
                                 ->addOrderBy("e.shortName", "ASC")
                                 ->andWhere("e.ulid != :currentId")
                                 ->setParameter("currentId", $currentId)
-                                ;
+                            ;
                         },
                         "group_by" => function (Substance $e) {
-                            return match($e::class) {
+                            return match ($e::class) {
                                 Antibody::class => "Antibody",
                                 Chemical::class => "Compound",
                                 Oligo::class => "Oligo",
@@ -132,7 +132,7 @@ class OligoType extends AbstractType
                         "required" => false,
                         "multiple" => false,
                         "allow_empty" => true,
-                    ])
+                    ]),
                 )
                 ->add("molecularMass", NumberType::class, [
                     "label" => "Molecular mass [Da]",
@@ -149,7 +149,7 @@ class OligoType extends AbstractType
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("e")
                             ->addOrderBy("e.shortName", "ASC")
-                            ;
+                        ;
                     },
                     'empty_data' => [],
                     'by_reference' => false,
@@ -157,7 +157,7 @@ class OligoType extends AbstractType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -166,7 +166,7 @@ class OligoType extends AbstractType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
         parent::buildForm($builder, $options);

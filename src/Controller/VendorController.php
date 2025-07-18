@@ -42,7 +42,7 @@ class VendorController extends AbstractController
                 new AddTool(
                     path: $this->generateUrl("app_vendors_new"),
                     enabled: $security->isGranted("new", "vendor"),
-                )
+                ),
             ]),
             "table" => (new Table(
                 data: $vendors,

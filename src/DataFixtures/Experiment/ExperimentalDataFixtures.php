@@ -28,30 +28,34 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
         $condition1 = (new ExperimentalRunCondition())
             ->setName("Condition 1")
             ->setControl(false)
-            ->addData((new ExperimentalDatum())
+            ->addData(
+                (new ExperimentalDatum())
                 ->setName("_compound")
                 ->setType(DatumEnum::EntityReference)
-                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_I_COMPOUND_REFERENCE, Chemical::class))
+                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_I_COMPOUND_REFERENCE, Chemical::class)),
             )
-            ->addData((new ExperimentalDatum())
+            ->addData(
+                (new ExperimentalDatum())
                 ->setName("_time")
                 ->setType(DatumEnum::UInt16)
-                ->setValue(24)
+                ->setValue(24),
             )
         ;
 
         $condition2 = (new ExperimentalRunCondition())
             ->setName("Condition 2")
             ->setControl(false)
-            ->addData((new ExperimentalDatum())
+            ->addData(
+                (new ExperimentalDatum())
                 ->setName("_compound")
                 ->setType(DatumEnum::EntityReference)
-                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_II_COMPOUND_REFERENCE, Chemical::class))
+                ->setValue($this->getReference(CompoundFixtures::PENICILLIN_II_COMPOUND_REFERENCE, Chemical::class)),
             )
-            ->addData((new ExperimentalDatum())
+            ->addData(
+                (new ExperimentalDatum())
                 ->setName("_time")
                 ->setType(DatumEnum::UInt16)
-                ->setValue(24)
+                ->setValue(24),
             )
         ;
 
@@ -61,21 +65,25 @@ class ExperimentalDataFixtures extends Fixture implements DependentFixtureInterf
             ->setScientist($scientist)
             ->addCondition($condition1)
             ->addCondition($condition2)
-            ->addDataSet((new ExperimentalRunDataSet())
+            ->addDataSet(
+                (new ExperimentalRunDataSet())
                 ->setCondition($condition1)
-                ->addData((new ExperimentalDatum())
+                ->addData(
+                    (new ExperimentalDatum())
                     ->setName("_MIC")
                     ->setType(DatumEnum::Float32)
-                    ->setValue(150)
-                )
+                    ->setValue(150),
+                ),
             )
-            ->addDataSet((new ExperimentalRunDataSet())
+            ->addDataSet(
+                (new ExperimentalRunDataSet())
                 ->setCondition($condition2)
-                ->addData((new ExperimentalDatum())
+                ->addData(
+                    (new ExperimentalDatum())
                     ->setName("_MIC")
                     ->setType(DatumEnum::Float32)
-                    ->setValue(140)
-                )
+                    ->setValue(140),
+                ),
             )
             ->setOwner($scientist)
             ->setGroup($scientist->getGroup())

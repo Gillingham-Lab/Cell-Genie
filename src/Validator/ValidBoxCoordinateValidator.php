@@ -13,9 +13,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class ValidBoxCoordinateValidator extends ConstraintValidator
 {
     public function __construct(
-    ) {
-
-    }
+    ) {}
 
     public function validate(mixed $value, Constraint $constraint): void
     {
@@ -23,7 +21,7 @@ class ValidBoxCoordinateValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ValidBoxCoordinate::class);
         }
 
-        if ($value === null ||$value === "") {
+        if ($value === null || $value === "") {
             return;
         }
 

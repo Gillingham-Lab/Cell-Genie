@@ -4,17 +4,12 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\DoctrineEntity\Cell\CellProtein;
-use App\Entity\DoctrineEntity\Substance\Protein;
 use App\Form\BasicType\FancyCollectionType;
 use App\Genie\Enums\GeneRegulation;
-use Doctrine\DBAL\Types\TextType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * @extends AbstractType<CellProtein>
@@ -34,7 +29,7 @@ class CellularProteinCollectionType extends AbstractType
                 "class" => GeneRegulation::class,
             ])
             ->add("description", options: [
-                "help" => "Context or details about the protein."
+                "help" => "Context or details about the protein.",
             ])
             ->add("detection", type: FancyCollectionType::class, options: [
                 "prototype" => true,

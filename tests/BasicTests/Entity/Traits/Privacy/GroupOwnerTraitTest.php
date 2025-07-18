@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tests\BasicTests\Entity\Traits\Privacy;
 
-use App\Entity\DoctrineEntity\User\User;
 use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\Traits\Privacy\GroupOwnerTrait;
-use App\Entity\Traits\Privacy\OwnerTrait;
 use PHPUnit\Framework\TestCase;
 
 class GroupOwnerTraitTest extends TestCase

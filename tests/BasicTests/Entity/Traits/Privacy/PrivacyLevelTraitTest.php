@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Tests\BasicTests\Entity\Traits\Privacy;
 
-use App\Entity\DoctrineEntity\User\User;
-use App\Entity\Traits\Privacy\OwnerTrait;
 use App\Entity\Traits\Privacy\PrivacyLevelTrait;
 use App\Genie\Enums\PrivacyLevel;
 use PHPUnit\Framework\TestCase;

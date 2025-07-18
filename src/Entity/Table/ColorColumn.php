@@ -7,7 +7,7 @@ use App\Twig\Components\ColorPreview;
 
 class ColorColumn extends Column
 {
-    const component = true;
+    public const component = true;
 
     public function getRender(object|array $row, bool $spreadDatum = false): mixed
     {
@@ -17,7 +17,7 @@ class ColorColumn extends Column
             "component" => ColorPreview::class,
             "props" => [
                 "color" => $color,
-            ]
+            ],
         ];
     }
 

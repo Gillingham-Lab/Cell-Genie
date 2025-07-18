@@ -7,15 +7,15 @@ use App\Genie\Pole\BaseUnit;
 
 class Volume extends BaseUnit
 {
-    const LITER = "L";
-    const MILLILITER = "mL";
-    const MICROLITER = "μL";
-    const NANOLITER = "nL";
-    const PICOLITER = "pL";
-    const FEMTOLITER = "fL";
-    const ATTOLITER = "aL";
-    const ZEPTOLITER = "zL";
-    const YOCTOLITER = "yL";
+    public const LITER = "L";
+    public const MILLILITER = "mL";
+    public const MICROLITER = "μL";
+    public const NANOLITER = "nL";
+    public const PICOLITER = "pL";
+    public const FEMTOLITER = "fL";
+    public const ATTOLITER = "aL";
+    public const ZEPTOLITER = "zL";
+    public const YOCTOLITER = "yL";
 
     protected string $base_unit_symbol = self::LITER;
 

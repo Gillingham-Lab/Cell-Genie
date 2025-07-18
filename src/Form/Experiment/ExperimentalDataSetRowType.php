@@ -20,9 +20,7 @@ class ExperimentalDataSetRowType extends AbstractType
 {
     public function __construct(
         private readonly ExperimentalDataFormRowService $formRowService,
-    ) {
-
-    }
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {

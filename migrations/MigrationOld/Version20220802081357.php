@@ -40,7 +40,7 @@ final class Version20220802081357 extends AbstractMigration
 
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("antibody")
-                ->set("ulid",  ":param")
+                ->set("ulid", ":param")
                 ->where("id = :id")
                 ->setParameter("param", $ulid, "ulid")
                 ->setParameter("id", $row["id"], "integer");
@@ -51,7 +51,7 @@ final class Version20220802081357 extends AbstractMigration
 
             $updateQuery = $this->connection->createQueryBuilder()
                 ->update("antibody_lots")
-                ->set("antibody_ulid",  ":param")
+                ->set("antibody_ulid", ":param")
                 ->where("antibody_id = :id")
                 ->setParameter("param", $ulid, "ulid")
                 ->setParameter("id", $row["id"], "integer");

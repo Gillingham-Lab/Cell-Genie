@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Repository\Substance;
 
@@ -10,7 +10,6 @@ use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Repository\User\UserGroupRepository;
 use App\Repository\User\UserRepository;
 use App\Service\Doctrine\SearchService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
@@ -62,7 +61,7 @@ class OligoRepository extends SubstanceRepository implements PaginatedRepository
     public static function createFromArray(
         UserRepository $userRepository,
         UserGroupRepository $groupRepository,
-        array $data
+        array $data,
     ): Oligo {
         $oligo = new Oligo();
         $oligo->setShortName($data["shortName"]);
@@ -118,7 +117,7 @@ class OligoRepository extends SubstanceRepository implements PaginatedRepository
     {
         $searchService = $this->searchService;
 
-        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
                 $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),

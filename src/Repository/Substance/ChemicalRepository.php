@@ -3,14 +3,11 @@ declare(strict_types=1);
 
 namespace App\Repository\Substance;
 
-use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -67,7 +64,7 @@ class ChemicalRepository extends SubstanceRepository implements PaginatedReposit
     {
         $searchService = $this->searchService;
 
-        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
                 $searchService->searchWithStringLike($queryBuilder, "c.shortName", $searchValue),

@@ -15,9 +15,7 @@ class GeneBankImporter
 {
     public function __construct(
         private LoggerInterface $logger,
-    ) {
-
-    }
+    ) {}
     /**
      * @param Collection<int, File> $files
      * @throws ImportError
@@ -35,7 +33,7 @@ class GeneBankImporter
             if ($file->isFreshlyUploaded() and (
                 str_ends_with($file->getOriginalFileName(), ".gb") or
                 str_ends_with($file->getOriginalFileName(), ".gbk")
-                )
+            )
             ) {
                 $this->logger->info("Imports file {$file->getOriginalFileName()}.");
 

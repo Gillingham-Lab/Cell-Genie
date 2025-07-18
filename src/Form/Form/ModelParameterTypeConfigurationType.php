@@ -5,10 +5,8 @@ namespace App\Form\Form;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
-use App\Entity\DoctrineEntity\Form\FormRow;
 use App\Form\BasicType\FancyChoiceType;
 use App\Form\BasicType\FormGroupType;
-use App\Genie\Enums\FormRowTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,7 +25,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->allowedTypes(ExperimentalDesign::class, "null")
             ->default(null)
         ;
     }
@@ -51,7 +49,9 @@ class ModelParameterTypeConfigurationType extends AbstractType
 
         $builder
             ->add(
-                "model", FancyChoiceType::class, [
+                "model",
+                FancyChoiceType::class,
+                [
                     "label" => "Model",
                     "required" => true,
                     "choices" => $modelChoices,
@@ -79,7 +79,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
                 $data = $event->getData();
 
                 $this->modifyFormOnType($builder, $form, $data, $options);
-            }
+            },
         );
 
         $builder->addEventListener(
@@ -89,7 +89,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
                 $data = $event->getData();
 
                 $this->modifyFormOnType($builder, $form, $data, $options);
-            }
+            },
         );
     }
 
@@ -112,7 +112,7 @@ class ModelParameterTypeConfigurationType extends AbstractType
         /** @var ExperimentalDesign $design */
         $design = $formOptions['design'];
         $models = $design->getModels();
-        $model = $models->findFirst(fn (int $key, ExperimentalModel $model) => $model->getName() === $formData["model"]);
+        $model = $models->findFirst(fn(int $key, ExperimentalModel $model) => $model->getName() === $formData["model"]);
 
         if ($model === null) {
             return;

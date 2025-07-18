@@ -30,7 +30,7 @@ class GenBankImport
      * @throws ImportError
      */
     public function __construct(
-        string $content
+        string $content,
     ) {
         $this->parse(trim($content));
     }
@@ -108,7 +108,7 @@ class GenBankImport
         $definition = implode(" ", $definition);
 
         if (str_ends_with($definition, "..")) {
-            $definition = substr($definition, 0, strlen($definition)-1);
+            $definition = substr($definition, 0, strlen($definition) - 1);
         }
 
         if ($definition === ".") {
@@ -125,7 +125,7 @@ class GenBankImport
     {
         $accession = preg_split("#\s{2,}#", $buffer[0])[1];
         if (str_ends_with($accession, ".")) {
-            $accession = substr($accession, 0, strlen($accession)-1);
+            $accession = substr($accession, 0, strlen($accession) - 1);
         }
 
         $this->data["metadata"]["accession"] = $accession;
@@ -138,7 +138,7 @@ class GenBankImport
     {
         $version = preg_split("#\s{2,}#", $buffer[0])[1];
         if (str_ends_with($version, ".")) {
-            $version = substr($version, 0, strlen($version)-1);
+            $version = substr($version, 0, strlen($version) - 1);
         }
 
         $this->data["metadata"]["version"] = $version;
@@ -153,7 +153,7 @@ class GenBankImport
         $columWidth = 0;
         $firstLineLength = strlen($buffer[0]);
 
-        for ($i=strlen("FEATURES"); $i < $firstLineLength; $i++) {
+        for ($i = strlen("FEATURES"); $i < $firstLineLength; $i++) {
             if ($buffer[0][$i] !== " ") {
                 $columWidth = $i;
                 break;
@@ -190,12 +190,12 @@ class GenBankImport
 
                 if (str_starts_with($secondPart, "join(")) {
                     $spans = explode(",", substr($secondPart, strlen("join("), -1));
-                    $spans = array_map(fn ($x) => explode("..", $x, 2), $spans);
+                    $spans = array_map(fn($x) => explode("..", $x, 2), $spans);
 
                     $firstSpan = $spans[0][0];
 
                     if (count($spans) > 1) {
-                        $lastSpan = $spans[count($spans)-1][1] ?? $spans[count($spans)-1][0];
+                        $lastSpan = $spans[count($spans) - 1][1] ?? $spans[count($spans) - 1][0];
                     } else {
                         $lastSpan = $spans[0][1] ?? $spans[0][0];
                     }

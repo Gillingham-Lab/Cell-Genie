@@ -8,7 +8,6 @@ use App\Form\BasicType\FancyEntityType;
 use App\Form\BasicType\FormGroupType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -35,7 +34,7 @@ class BoxPositionType extends AbstractType
                     return $er->createQueryBuilder("b")
                         ->addOrderBy("b.name", "ASC");
                 },
-                "group_by" => function(Box $choice, $key, $value) {
+                "group_by" => function (Box $choice, $key, $value) {
                     return ($choice->getRack());
                 },
                 'empty_data' => null,

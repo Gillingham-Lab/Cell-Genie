@@ -23,47 +23,45 @@ use Symfony\Component\Routing\Attribute\Route;
 class BarcodeController extends AbstractController
 {
     public function __construct(
-        readonly private BarcodeRepository $barcodeRepository,
-    ) {
-
-    }
+        private readonly BarcodeRepository $barcodeRepository,
+    ) {}
 
     #[Route("/barcode/{barcode}", name: "app_barcode")]
     public function redirectBarcode(
         BarcodeService $barcodeService,
-        string $barcode
+        string $barcode,
     ): Response {
         $barcodeEntity = $this->barcodeRepository->findOneBy(["barcode" => $barcode]);
 
         if ($barcodeEntity) {
             //$barcodeObject = $barcodeService->getObjectFromBarcode($barcodeEntity);
 
-            $routeParams = match($barcodeEntity->getReferencedTable()) {
+            $routeParams = match ($barcodeEntity->getReferencedTable()) {
                 CellCulture::class => [
                     "route" => "app_cell_culture_view",
                     "params" => [
-                        "cellCulture" => $barcodeEntity->getReferencedId()
-                    ]
+                        "cellCulture" => $barcodeEntity->getReferencedId(),
+                    ],
                 ],
                 Cell::class => [
                     "route" => "app_cell_view",
                     "params" => [
-                        "cellId" => $barcodeEntity->getReferencedId()
-                    ]
+                        "cellId" => $barcodeEntity->getReferencedId(),
+                    ],
                 ],
                 Substance::class => [
                     "route" => "app_substance_view",
                     "params" => [
                         "substance" => $barcodeEntity->getReferencedId(),
-                    ]
+                    ],
                 ],
                 Lot::class, SubstanceLot::class => [
                     "route" => "app_substance_lot_view",
                     "params" => [
                         "lot" => $barcodeEntity->getReferencedId(),
-                    ]
+                    ],
                 ],
-                default => throw new Exception("Unknown barcode entity type.")
+                default => throw new Exception("Unknown barcode entity type."),
             };
 
             // Redirect to target
@@ -79,7 +77,7 @@ class BarcodeController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         BarcodeService $barcodeService,
-        string $barcode
+        string $barcode,
     ): Response {
         $barcodeEntity = $this->barcodeRepository->findOneBy(["barcode" => $barcode]);
 

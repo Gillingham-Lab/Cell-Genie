@@ -9,16 +9,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class PrivacyFilterEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private Security $security,
         private EntityManagerInterface $entityManager,
-    ) {
-
-    }
+    ) {}
 
     public static function getSubscribedEvents(): array
     {

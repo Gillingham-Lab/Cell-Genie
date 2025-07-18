@@ -36,9 +36,8 @@ class AntibodyCrudController extends AbstractCrudController
     use FileUploadTrait;
 
     public function __construct(
-        readonly private VocabularyRepository $vocabularyRepository,
-    ) {
-    }
+        private readonly VocabularyRepository $vocabularyRepository,
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -66,7 +65,7 @@ class AntibodyCrudController extends AbstractCrudController
             ChoiceField::new("type", label: "Antibody type")
                 ->onlyOnIndex()
                 ->setChoices(function () {
-                    $choices = array_map(static fn (?AntibodyType $type) => [$type->value => $type->name], AntibodyType::cases());
+                    $choices = array_map(static fn(?AntibodyType $type) => [$type->value => $type->name], AntibodyType::cases());
                     return array_merge(...$choices);
                 })
                 ->setRequired(true)
@@ -78,7 +77,7 @@ class AntibodyCrudController extends AbstractCrudController
             ChoiceField::new("type", label: "Antibody type")
                 ->onlyOnForms()
                 ->setChoices(function () {
-                    $choices = array_map(static fn (?AntibodyType $type) => [$type->value => $type], AntibodyType::cases());
+                    $choices = array_map(static fn(?AntibodyType $type) => [$type->value => $type], AntibodyType::cases());
                     return array_merge(...$choices);
                 })
                 ->setRequired(true)
@@ -131,7 +130,7 @@ class AntibodyCrudController extends AbstractCrudController
             CollectionField::new("lots", "Lot entries")
                 ->useEntryCrudForm(LotCrudController::class)
                 ->hideOnIndex()
-                ->allowDelete(True),
+                ->allowDelete(true),
 
             FormField::addTab("Documentation"),
             CollectionField::new("vendorDocumentation", "Attachments")
@@ -139,7 +138,7 @@ class AntibodyCrudController extends AbstractCrudController
                 ->setEntryType(DocumentationType::class)
                 ->setEntryIsComplex(true)
                 ->hideOnIndex()
-                ->allowDelete(True),
+                ->allowDelete(true),
         ];
     }
 

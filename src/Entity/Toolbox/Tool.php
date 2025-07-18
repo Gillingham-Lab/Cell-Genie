@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Entity\Toolbox;
 
-use Closure;
-
 class Tool
 {
     /**
@@ -28,9 +26,7 @@ class Tool
         private readonly string $confirmationText = "Are you sure?",
         private readonly ?string $iconStack = null,
         private readonly array $otherAttributes = [],
-    ) {
-
-    }
+    ) {}
 
     public function getPath(): string
     {

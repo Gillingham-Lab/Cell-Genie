@@ -8,7 +8,6 @@ use App\Repository\Interface\PaginatedRepositoryInterface;
 use App\Repository\Traits\HasAvailableLotSearchTrait;
 use App\Repository\Traits\PaginatedRepositoryTrait;
 use App\Service\Doctrine\SearchService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,7 +39,7 @@ class PlasmidRepository extends SubstanceRepository implements PaginatedReposito
             ->addGroupBy("l.id")
             ->getQuery()
             ->getResult()
-            ;
+        ;
     }
 
     private function getBaseQuery(): QueryBuilder
@@ -83,7 +82,7 @@ class PlasmidRepository extends SubstanceRepository implements PaginatedReposito
     {
         $searchService = $this->searchService;
 
-        $expressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $expressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "number" => $searchService->searchWithString($queryBuilder, "p.number", $searchValue),
             "shortName" => $searchService->searchWithStringLike($queryBuilder, "p.shortName", $searchValue),
             "anyName" =>  $queryBuilder->expr()->orX(
@@ -98,7 +97,7 @@ class PlasmidRepository extends SubstanceRepository implements PaginatedReposito
             default => null,
         });
 
-        $havingExpressions = $searchService->createExpressions($searchFields, fn (string $searchField, mixed $searchValue): mixed => match($searchField) {
+        $havingExpressions = $searchService->createExpressions($searchFields, fn(string $searchField, mixed $searchValue): mixed => match ($searchField) {
             "expressesProtein" => $searchValue === true ? $queryBuilder->expr()->gt("COUNT(ep)", 0) : $queryBuilder->expr()->eq("COUNT(ep)", 0),
             default => null,
         });

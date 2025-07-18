@@ -1,16 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Controller\Admin\Crud\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellCultureSplittingEvent;
-use App\Entity\DoctrineEntity\Cell\CellCultureTestEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -48,7 +45,7 @@ class CellCultureSplittingEventCrudController extends AbstractCrudController
                 ->setHelp("A short text describing how you split the cells (cell amount, or % of cells ...)"),
             TextField::new("newFlask")
                 ->setLabel("New Flask")
-                ->setHelp("What flask did you change into?")
+                ->setHelp("What flask did you change into?"),
         ];
     }
 }

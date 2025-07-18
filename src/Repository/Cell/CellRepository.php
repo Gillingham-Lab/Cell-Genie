@@ -107,14 +107,14 @@ class CellRepository extends ServiceEntityRepository
     private function addOrderBy(QueryBuilder $queryBuilder, array $orderBy): QueryBuilder
     {
         foreach ($orderBy as $fieldName => $order) {
-            $field = match($fieldName) {
+            $field = match ($fieldName) {
                 "group" => "go.group",
                 "cellNumber" => "c.cellNumber",
                 "name" => "c.name",
                 default => throw new ValueError("{$fieldName} is not supported."),
             };
 
-            $order = match($order) {
+            $order = match ($order) {
                 "DESC", "descending" => "DESC",
                 default => "ASC",
             };
@@ -140,7 +140,7 @@ class CellRepository extends ServiceEntityRepository
                 continue;
             }
 
-            [$searchField, $searchType] = match($searchField) {
+            [$searchField, $searchType] = match ($searchField) {
                 "cellNumber" => ["c.cellNumber", "string"],
                 "cellIdentifier" => [["cg.rrid", "cg.cellosaurusId"], "string"],
                 "cellName" => ["c.name", "string"],
@@ -243,7 +243,7 @@ class CellRepository extends ServiceEntityRepository
 
         if ($orderBy) {
             foreach ($orderBy as $col => $order) {
-                $qb = $qb->addOrderBy("c.".$col, $order);
+                $qb = $qb->addOrderBy("c." . $col, $order);
             }
         }
 

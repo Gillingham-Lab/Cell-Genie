@@ -21,7 +21,7 @@ final class Version20210819114215 extends AbstractMigration
     {
         $table = $schema->getTable("lot");
         $table->addColumn("box_id", "integer")
-            ->setNotnull(False)
+            ->setNotnull(false)
             ->setDefault(null);
         $table->addForeignKeyConstraint("box", ["box_id"], ["id"], name: "FK_B81291BD8177B3F");
         $table->addIndex(["box_id"], "IDX_B81291BD8177B3F");

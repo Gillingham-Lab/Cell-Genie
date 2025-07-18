@@ -39,7 +39,7 @@ class DocumentationType extends AbstractType
                     "icon_stack" => "view",
                 ])
                 ->add("uploadedBy", FancyEntityType::class, options: ["class" => User::class, "disabled" => true, "allow_empty" => true])
-                ->add("uploadedOn", DateTimeType::class, options: ["disabled" => true])
+                ->add("uploadedOn", DateTimeType::class, options: ["disabled" => true]),
             )
             ->add(
                 $builder->create("_metadata", FormGroupType::class, [
@@ -58,7 +58,7 @@ class DocumentationType extends AbstractType
                 ->add("contentSize", options: [
                     "label" => "Size (in bytes)",
                     "disabled" => true,
-                ])
+                ]),
             )
             ->add("uploadedFile", FileType::class, options: [
                 "label" => "Upload or replace file",
@@ -66,8 +66,8 @@ class DocumentationType extends AbstractType
                 "mapped" => false,
                 "required" => true,
                 "constraints" => [
-                    new Assert\File(maxSize: "20M")
-                ]
+                    new Assert\File(maxSize: "20M"),
+                ],
             ])
         ;
     }

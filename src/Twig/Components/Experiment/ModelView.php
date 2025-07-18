@@ -42,9 +42,7 @@ class ModelView
         private readonly ExperimentalModelRepository $modelRepository,
         private readonly ExperimentalModelService $modelService,
         private readonly Stopwatch $stopwatch,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @param AttributeStructure $attributes
@@ -112,7 +110,7 @@ class ModelView
                         $referenceConditions = $this->conditionRepository->getReferenceConditions($condition);
 
                         $modelFit = $condition->getModels()->findFirst(
-                            fn (int $index, ExperimentalModel $model) => $model->getModel() === $this->model->getModel()
+                            fn(int $index, ExperimentalModel $model) => $model->getModel() === $this->model->getModel(),
                         );
 
                         $referenceModel = $modelFit?->getReferenceModel();
@@ -127,10 +125,10 @@ class ModelView
                             "fit" => $modelFit,
                             "referenceFit" => $referenceFits,
                         ];
-                    }
+                    },
                 );
 
-                $conditionModels = $conditionModels->filter(fn ($x) => isset($x["condition"]));
+                $conditionModels = $conditionModels->filter(fn($x) => isset($x["condition"]));
             }
         }
 
@@ -169,17 +167,18 @@ class ModelView
             return $table->toArray();
         }
 
-        $table->addColumn(new Column("Condition", fn ($row) => $row["condition"]->getName()));
+        $table->addColumn(new Column("Condition", fn($row) => $row["condition"]->getName()));
 
         foreach ($this->model->getConfiguration()["params"] as $param => $paramPresets) {
             $vary = $modelConfiguration["params"][$param]["vary"] ? "" : " (constant)";
             $table->addColumn(new ComponentColumn(
-                $param . $vary, function ($row) use ($param) {
+                $param . $vary,
+                function ($row) use ($param) {
                     if ($row["model"] === null) {
                         return [
                             Datum::class, [
                                 "datum" => null,
-                            ]
+                            ],
                         ];
                     }
 
@@ -193,16 +192,16 @@ class ModelView
                                 "ci" => $modelResults["ci"],
                                 "lowerCi" => $modelResults["params"][$param]["ci"][0] ?? null,
                                 "upperCi" => $modelResults["params"][$param]["ci"][1] ?? null,
-                            ]
+                            ],
                         ];
                     } else {
                         return [
                             Datum::class, [
                                 "datum" => null,
-                            ]
+                            ],
                         ];
                     }
-                }
+                },
             ));
         }
 

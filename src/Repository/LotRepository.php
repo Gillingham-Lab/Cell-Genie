@@ -52,7 +52,7 @@ class LotRepository extends ServiceEntityRepository
         UserRepository $userRepository,
         UserGroupRepository $groupRepository,
         BoxRepository $boxRepository,
-        array $data
+        array $data,
     ): Lot {
         $lot = new Lot();
         $lot->setNumber($data["number"]);
@@ -78,7 +78,9 @@ class LotRepository extends ServiceEntityRepository
 
     protected static function tryDate(?string $date): ?DateTimeInterface
     {
-        if ($date === null) {return null;}
+        if ($date === null) {
+            return null;
+        }
 
         $parsedDate = DateTime::createFromFormat("Y-m-d", $date);
 
@@ -101,11 +103,11 @@ class LotRepository extends ServiceEntityRepository
     public function getLotsWithSubstance(string $class, array $lotIds): array
     {
         if (!is_subclass_of($class, Substance::class)) {
-            throw new TypeError("Only subclasses of " . Substance::class ." are accepted for getLotsWithSubstance, {$class} was given.");
+            throw new TypeError("Only subclasses of " . Substance::class . " are accepted for getLotsWithSubstance, {$class} was given.");
         }
 
         $query = $this->getEntityManager()->createQuery(
-            "SELECT s, l FROM ". $class ." s LEFT JOIN s.lots l WHERE l.id IN (:ids)"
+            "SELECT s, l FROM " . $class . " s LEFT JOIN s.lots l WHERE l.id IN (:ids)",
         )->setParameter("ids", $lotIds);
 
         $results = $query->getResult();

@@ -85,7 +85,7 @@ class File
 
     public function __toString(): string
     {
-        $size = round($this->contentSize/(1024*1024), 2);
+        $size = round($this->contentSize / (1024 * 1024), 2);
         if ($size > 0) {
             $size = ", {$size} MiB";
         } else {
@@ -216,10 +216,10 @@ class File
 
     public function getFileType(): FileType
     {
-        return match($this->contentType) {
+        return match ($this->contentType) {
             "application/pdf" => FileType::Pdf,
             "application/vnd.openxmlformats-officedocument.presentationml.presentation" => FileType::PowerPoint,
-            default => match($this->getFileExtension()) {
+            default => match ($this->getFileExtension()) {
                 "doc", "docx" => FileType::Word,
                 "ppt", "pptx" => FileType::PowerPoint,
                 "xls", "xlsx" => FileType::Excel,

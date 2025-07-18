@@ -71,7 +71,7 @@ class Rack implements PrivacyAwareInterface
         return $this->getName() ?? "unknown";
     }
 
-    public function getPathName(): ? string
+    public function getPathName(): ?string
     {
         if ($this->getParent() and substr_count($this->getParent()->getPathName(), " | ") < 10) {
             $name = $this->getParent()->getPathName() . " | ";

@@ -10,7 +10,6 @@ use App\Form\SaveableType;
 use App\Form\VisualisationType;
 use App\Repository\Storage\RackRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,16 +23,14 @@ class RackType extends SaveableType
 {
     public function __construct(
         private RackRepository $rackRepository,
-    ) {
-
-    }
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $rackRepository = $this->rackRepository;
         $currentEntity = $builder->getData();
 
-        $parentChoices = function() use ($rackRepository, $currentEntity) {
+        $parentChoices = function () use ($rackRepository, $currentEntity) {
             if ($currentEntity->getUlid() === null) {
                 $results = $rackRepository->getTree();
             } else {
@@ -43,7 +40,7 @@ class RackType extends SaveableType
             $choices = [];
             foreach ($results as $result) {
                 $label = trim($result["sort_path"]);
-                $label = substr($label, 2, strlen($label)-4);
+                $label = substr($label, 2, strlen($label) - 4);
                 $label = implode(' | ', explode('","', $label));
 
                 $choices[$label] = $result[0];
@@ -83,15 +80,15 @@ class RackType extends SaveableType
                 ->add("parent", FancyChoiceType::class, [
                     "label" => "Parent location",
                     "choices" => $parentChoices(),
-                    "group_by" => function(Rack $rack) { return $rack->getParent()?->getPathName(); },
+                    "group_by" => function (Rack $rack) { return $rack->getParent()?->getPathName(); },
                     "placeholder" => "Empty",
                     "required" => false,
                     "allow_empty" => true,
                 ])
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
-                    "label" => "Ownership"
-                ])
+                    "label" => "Ownership",
+                ]),
             )
             ->add(
                 $builder->create("_visualisation", FormType::class, [
@@ -102,7 +99,7 @@ class RackType extends SaveableType
                     #"inherit_data" => true,
                     "label" => "Visualisation",
                     "required" => false,
-                ])
+                ]),
             )
         ;
 

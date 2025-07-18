@@ -21,10 +21,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class UserType extends SaveableType
 {
     public function __construct(
-        private Security $security
-    ) {
-
-    }
+        private Security $security,
+    ) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -80,7 +78,7 @@ class UserType extends SaveableType
                     ])
                     ->add("isAdmin", options: [
                         "disabled" => !($this->security->isGranted("ROLE_ADMIN") and !($this->security->getUser() === $entity)),
-                    ])
+                    ]),
             )
         ;
 

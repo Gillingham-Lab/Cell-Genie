@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Twig\Components;
 
-use App\Entity\Interface\ChildParentInterface;
 use App\Entity\Toolbox\Toolbox as ToolboxEntity;
 use App\Service\View\TreeViewServiceInterface;
 use Doctrine\Common\Collections\Collection;
@@ -51,8 +50,7 @@ class TreeView implements TreeViewServiceInterface
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
-    ) {
-    }
+    ) {}
 
     /**
      * @param TreeViewMountInputData $data
@@ -102,7 +100,7 @@ class TreeView implements TreeViewServiceInterface
 
     public function getNodeLabel(object $node): string
     {
-        return $this->service?->getNodeLabel($node) ?? (string)$node;
+        return $this->service?->getNodeLabel($node) ?? (string) $node;
     }
 
     public function getNodeUrl(object $node): string

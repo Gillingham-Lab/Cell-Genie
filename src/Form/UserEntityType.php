@@ -6,7 +6,6 @@ namespace App\Form;
 use App\Entity\DoctrineEntity\User\User;
 use App\Form\BasicType\FancyEntityType;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -27,7 +26,7 @@ class UserEntityType extends AbstractType
             "query_builder" => function (EntityRepository $er) {
                 return $er->createQueryBuilder("e")
                     ->addOrderBy("e.fullName", "ASC")
-                    ;
+                ;
             },
             "group_by" => function (User $user) {
                 return $user->getIsActive() ? "Active" : "Inactive";

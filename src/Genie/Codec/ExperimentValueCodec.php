@@ -33,9 +33,8 @@ readonly class ExperimentValueCodec
 {
     public function __construct(
         /** @var TType */
-        private DatumEnum $type
-    ) {
-    }
+        private DatumEnum $type,
+    ) {}
 
     public function normalizeUuidDatum(string|AbstractUid $value): string
     {
@@ -95,7 +94,7 @@ readonly class ExperimentValueCodec
 
     public function encode(mixed $value): string
     {
-        $encodedValue = match($this->type) {
+        $encodedValue = match ($this->type) {
             DatumEnum::Int, DatumEnum::Int64 => pack("J", $value),
             DatumEnum::Int32, DatumEnum::UInt32 => pack("N", $value),
             DatumEnum::Int16, DatumEnum::UInt16 => pack("n", $value),
@@ -106,9 +105,9 @@ readonly class ExperimentValueCodec
             DatumEnum::ErrorFloat => $this->packErrorFloat($value),
             DatumEnum::Uuid => $this->normalizeUuidDatum($value),
             DatumEnum::EntityReference => $this->normalizeEntityDatum($value),
-            DatumEnum::String => (string)$value,
+            DatumEnum::String => (string) $value,
             DatumEnum::Date => pack("J", $this->normalizeDateDatum($value)),
-            DatumEnum::Image => empty($value) ? "" : (string)$value,
+            DatumEnum::Image => empty($value) ? "" : (string) $value,
         };
 
         return $encodedValue;
@@ -143,7 +142,7 @@ readonly class ExperimentValueCodec
             $value = $stream;
         }
 
-        $decodedValue = match($this->type) {
+        $decodedValue = match ($this->type) {
             DatumEnum::Int, DatumEnum::Int64 => unpack("J", $value)[1],
             DatumEnum::Int32, DatumEnum::UInt32 => unpack("N", $value)[1],
             DatumEnum::Int16, DatumEnum::UInt16 => unpack("n", $value)[1],
@@ -162,11 +161,11 @@ readonly class ExperimentValueCodec
         // We always store as little-endian. As PHP only supports unsigned integers with guaranteed byte order, the
         // value first gets unpacked as an unsigned integer and then gets converted to the signed variant.
         if ($this->type === DatumEnum::Int64 or $this->type === DatumEnum::Int) {
-            $decodedValue = $decodedValue >= 2**63 ? $decodedValue - 2**64 : $decodedValue;
+            $decodedValue = $decodedValue >= 2 ** 63 ? $decodedValue - 2 ** 64 : $decodedValue;
         } elseif ($this->type === DatumEnum::Int32) {
-            $decodedValue = $decodedValue >= 2**31 ? $decodedValue - 2**32 : $decodedValue;
+            $decodedValue = $decodedValue >= 2 ** 31 ? $decodedValue - 2 ** 32 : $decodedValue;
         } elseif ($this->type === DatumEnum::Int16) {
-            $decodedValue = $decodedValue >= 2**15 ? $decodedValue - 2**16 : $decodedValue;
+            $decodedValue = $decodedValue >= 2 ** 15 ? $decodedValue - 2 ** 16 : $decodedValue;
         }
 
         return $decodedValue;

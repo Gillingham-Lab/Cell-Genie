@@ -22,8 +22,7 @@ class ConsumableTreeViewService implements TreeViewServiceInterface
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
-    ) {
-    }
+    ) {}
 
     public function getNodeIcon(?object $node = null): string
     {
@@ -83,7 +82,7 @@ class ConsumableTreeViewService implements TreeViewServiceInterface
                 "showNumbers" => true,
                 "color" => $barColor,
                 "minWidth" => 10,
-            ]
+            ],
         ];
     }
 
@@ -94,7 +93,7 @@ class ConsumableTreeViewService implements TreeViewServiceInterface
                 "loading" => "lazy",
                 "category" => $node,
                 "includingChildren" => true,
-            ]
+            ],
         ];
     }
 

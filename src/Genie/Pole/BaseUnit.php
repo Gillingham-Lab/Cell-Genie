@@ -21,10 +21,7 @@ abstract class BaseUnit implements UnitInterface
     /** @var array<class-string<static>, static> */
     protected static array $instance = [];
 
-    final protected function __construct()
-    {
-
-    }
+    final protected function __construct() {}
 
     public static function getInstance(): static
     {
@@ -91,13 +88,13 @@ abstract class BaseUnit implements UnitInterface
     /** @inheritDoc */
     public function convertValueToClosestUnit(float $value): array
     {
-        $magnitude = (int)floor(log10($value) + 0.3010299958);
+        $magnitude = (int) floor(log10($value) + 0.3010299958);
 
-        $magnitude1K = (int)floor($magnitude/3);
+        $magnitude1K = (int) floor($magnitude / 3);
 
         $magnitude1KToUnit = [];
         foreach ($this->unitStringFactors as $unitString => $unitFactor) {
-            $unitFactorMagnitude1K = intdiv((int)floor(log10($unitFactor)), 3);
+            $unitFactorMagnitude1K = intdiv((int) floor(log10($unitFactor)), 3);
 
             if (!isset($magnitude1KToUnit[$unitFactorMagnitude1K])) {
                 $magnitude1KToUnit[$unitFactorMagnitude1K] = $unitString;
@@ -125,8 +122,10 @@ abstract class BaseUnit implements UnitInterface
         if (!$this->supportsInterconversionFrom($quantity->getUnit())) {
             throw new UnitInterconversionNotSupportedException(
                 sprintf(
-                    "%s does not support the conversion from %s", $this::class, $quantity->getUnit()::class
-                )
+                    "%s does not support the conversion from %s",
+                    $this::class,
+                    $quantity->getUnit()::class,
+                ),
             );
         }
 
@@ -141,7 +140,7 @@ abstract class BaseUnit implements UnitInterface
                     "%s does not support the conversion to %s",
                     $this::class,
                     $targetUnit::class,
-                )
+                ),
             );
         }
 

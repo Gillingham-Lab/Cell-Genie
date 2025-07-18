@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait ShortNameTrait
 {
-    #[ORM\Column(type: "string", length: 50, unique: True)]
+    #[ORM\Column(type: "string", length: 50, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 2,

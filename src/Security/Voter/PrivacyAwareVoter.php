@@ -7,16 +7,15 @@ use App\Entity\DoctrineEntity\User\User;
 use App\Entity\Interface\PrivacyAwareInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @extends AbstractPrivacyAwareVoter<self::ATTR_*, PrivacyAwareInterface>
  */
 class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string ATTR_REMOVE = "remove";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string ATTR_REMOVE = "remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -42,12 +41,12 @@ class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
         string $attribute,
         mixed $subject,
         TokenInterface $token,
-        ?Vote $vote = null
+        ?Vote $vote = null,
     ): bool {
         /** @var User $user */
         $user = $token->getUser();
 
-        return match($attribute) {
+        return match ($attribute) {
             self::ATTR_VIEW => $this->canView($user, $subject),
             self::ATTR_EDIT => $this->canEdit($user, $subject),
             self::ATTR_REMOVE => $this->canRemove($user, $subject),

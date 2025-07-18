@@ -25,7 +25,7 @@ class LogType extends SaveableType
 
             ])
             ->add("logType", EnumType::class, [
-                "class" => Enums\LogType::class
+                "class" => Enums\LogType::class,
             ])
             ->add("_privacy", PrivacyAwareType::class, [
                 "inherit_data" => true,
@@ -40,7 +40,7 @@ class LogType extends SaveableType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            "data_class" => Log::class
+            "data_class" => Log::class,
         ]);
     }
 }

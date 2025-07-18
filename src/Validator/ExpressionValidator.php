@@ -18,7 +18,7 @@ class ExpressionValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ValidExpression::class);
         }
 
-        if ($value === null ||$value === "") {
+        if ($value === null || $value === "") {
             return;
         }
 

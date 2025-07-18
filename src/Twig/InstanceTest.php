@@ -8,7 +8,7 @@ use Twig\TwigTest;
 
 class InstanceTest extends AbstractExtension
 {
-    function getTests(): array
+    public function getTests(): array
     {
         return [
             new TwigTest("instanceof", fn(mixed $var, $instance) => $var instanceof $instance),

@@ -7,7 +7,6 @@ use App\Entity\Traits\CommentTrait;
 use App\Entity\Traits\Fields\MolecularMassTrait;
 use App\Entity\Traits\LabJournalTrait;
 use App\Entity\Traits\SequenceTrait;
-use App\Form\Substance\OligoType;
 use App\Genie\Enums\OligoTypeEnum;
 use App\Repository\Substance\OligoRepository;
 use Doctrine\ORM\Mapping as ORM;

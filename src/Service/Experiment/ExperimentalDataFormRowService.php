@@ -182,7 +182,7 @@ class ExperimentalDataFormRowService
      */
     public function getFieldConfiguration(FormRow $row): array
     {
-        return match($row->getType()) {
+        return match ($row->getType()) {
             FormRowTypeEnum::TextType => $this->getTextTypeConfig($row),
             FormRowTypeEnum::TextAreaType => $this->getTextAreaTypeConfig($row),
             FormRowTypeEnum::IntegerType => $this->getIntegerTypeConfig($row),
@@ -198,7 +198,8 @@ class ExperimentalDataFormRowService
     /**
      * @return array{class-string<TextType>, array{constraints: Constraint[]}, DatumEnum::String}
      */
-    public function getTextTypeConfig(FormRow $row): array {
+    public function getTextTypeConfig(FormRow $row): array
+    {
         $fieldConfig = [];
         $configuration = $row->getConfiguration();
 
@@ -250,17 +251,17 @@ class ExperimentalDataFormRowService
             if ($bytes !== 8) {
                 if ($unsigned) {
                     $minimum = 0;
-                    $maximum = 2**(8*$bytes)-1;
+                    $maximum = 2 ** (8 * $bytes) - 1;
                 } else {
-                    $minimum = -2**(8*$bytes-1);
-                    $maximum = 2**(8*$bytes-1)-1;
+                    $minimum = -2 ** (8 * $bytes - 1);
+                    $maximum = 2 ** (8 * $bytes - 1) - 1;
                 }
             } else {
                 $minimum = PHP_INT_MIN;
                 $maximum = PHP_INT_MAX;
             }
 
-            $datumType = match($bytes) {
+            $datumType = match ($bytes) {
                 1 => $unsigned ? DatumEnum::UInt8 : DatumEnum::Int8,
                 2 => $unsigned ? DatumEnum::UInt16 : DatumEnum::Int16,
                 4 => $unsigned ? DatumEnum::UInt32 : DatumEnum::Int32,
@@ -268,7 +269,7 @@ class ExperimentalDataFormRowService
             };
 
             $fieldConfig["constraints"] = [
-                new Range(min: $minimum, max: $maximum)
+                new Range(min: $minimum, max: $maximum),
             ];
         }
 
@@ -339,7 +340,7 @@ class ExperimentalDataFormRowService
     public function getEntityTypeConfig(FormRow $formRow): array
     {
         $configuration = $formRow->getConfiguration();
-        $classes = explode("|", (string)$configuration["entityType"]);
+        $classes = explode("|", (string) $configuration["entityType"]);
 
         $fieldConfig = [
             "empty_data" => null,
@@ -353,7 +354,7 @@ class ExperimentalDataFormRowService
                     ->select("s")
                     ->leftJoin("s.lots", "l")
                     ->addSelect("l")
-                    ->addOrderBy(method_exists($classes[1], "getNumber") ? "s.number": "s.shortName", "ASC")
+                    ->addOrderBy(method_exists($classes[1], "getNumber") ? "s.number" : "s.shortName", "ASC")
                 ;
 
                 $entries = $query->getQuery()->getResult();
@@ -371,7 +372,7 @@ class ExperimentalDataFormRowService
                     foreach ($substance->getLots() as $lot) {
                         $subChoices[$toStringCallback($substance, $lot)] = $lot;
                     }
-                    $choices[(string)$substance] = $subChoices;
+                    $choices[(string) $substance] = $subChoices;
                 }
 
                 $fieldConfig["choices"] = $choices;
@@ -415,7 +416,7 @@ class ExperimentalDataFormRowService
             TextType::class, [
                 "disabled" => true,
             ],
-            DatumEnum::String
+            DatumEnum::String,
         ];
     }
 }

@@ -1,11 +1,9 @@
 <?php
 declare(strict_types=1);
 
-
 namespace App\Controller\Admin\Crud\Antibody;
 
 use App\Entity\DoctrineEntity\Epitope;
-use App\Entity\EpitopeProtein;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;

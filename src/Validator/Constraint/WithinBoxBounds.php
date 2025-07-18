@@ -18,7 +18,7 @@ class WithinBoxBounds extends Constraint
         public string $coordinateField,
         public string $boxField,
         ?array $groups = null,
-        mixed $payload = null
+        mixed $payload = null,
     ) {
         parent::__construct([], $groups, $payload);
     }

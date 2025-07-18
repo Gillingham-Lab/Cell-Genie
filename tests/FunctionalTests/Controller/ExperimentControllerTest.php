@@ -3,21 +3,15 @@ declare(strict_types=1);
 
 namespace App\FunctionalTests\Tests\Controller;
 
-use App\Controller\ExperimentController;
 use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
 use App\Genie\Enums\FormRowTypeEnum;
-use App\Genie\Enums\PrivacyLevel;
 use App\Repository\Experiment\ExperimentalDesignRepository;
 use App\Repository\Experiment\ExperimentalRunRepository;
 use App\Repository\Substance\ChemicalRepository;
 use App\Repository\User\UserRepository;
 use App\Tests\TestTraits\NestedFormAssertions;
-use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ExperimentControllerTest extends WebTestCase
@@ -112,7 +106,7 @@ class ExperimentControllerTest extends WebTestCase
         $this->assertNotNull($pen2);
 
         // Check the results
-        $content_lines = array_map(fn ($row) => explode("\t", $row), explode("\n", trim($response->getContent())));
+        $content_lines = array_map(fn($row) => explode("\t", $row), explode("\n", trim($response->getContent())));
 
         $this->assertStringStartsWith("#TotalNumberOfRows\t2\n", $response->getContent());
         $this->assertCount(4, $content_lines);
@@ -154,7 +148,7 @@ class ExperimentControllerTest extends WebTestCase
         $this->assertSame("text/plain; charset=UTF-8", $response->headers->get('Content-Type'));
 
         // Check the results
-        $content_lines = array_map(fn ($row) => explode("\t", $row), explode("\n", trim($response->getContent())));
+        $content_lines = array_map(fn($row) => explode("\t", $row), explode("\n", trim($response->getContent())));
 
         $this->assertCount(3, $content_lines);
         $this->assertCount(3, $content_lines[1]);
@@ -379,31 +373,31 @@ class ExperimentControllerTest extends WebTestCase
                         "data" => [
                             "_compound" => $pen1->getUlid()->toRfc4122(),
                             "_time" => "24",
-                        ]
+                        ],
                     ],
                     "1" => [
                         "name" => "Condition 2",
                         "data" => [
                             "_compound" => $pen2->getUlid()->toRfc4122(),
                             "_time" => "24",
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
             "_dataSets" => [
                 "dataSets" => [
                     "0" => [
                         "data" => [
                             "_MIC" => "150",
-                        ]
+                        ],
                     ],
                     "1" => [
                         "data" => [
                             "_MIC" => "140",
-                        ]
+                        ],
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->assertNestedFormValues($form, "experimental_run_data", $expectedValues);
@@ -459,7 +453,7 @@ class ExperimentControllerTest extends WebTestCase
         }
 
         foreach ($experimentalRun->getDataSets() as $dataSet) {
-            $micValue = (string)$dataSet->getDatum("_MIC")->getValue();
+            $micValue = (string) $dataSet->getDatum("_MIC")->getValue();
             $this->assertStringContainsString($micValue, $dataContent);
         }
     }

@@ -55,7 +55,7 @@ final class Version20221017124758 extends AbstractMigration
             ->dropColumn("amount_ordered")
             ->dropColumn("amount_left")
             ->dropColumn("purification")
-            ;
+        ;
 
         $t = $schema->getTable("substance_file");
         $t->removeForeignKey("fk_c7e39da0232d562b");

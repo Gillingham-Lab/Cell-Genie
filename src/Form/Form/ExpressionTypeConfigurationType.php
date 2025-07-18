@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Form\Form;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDesignField;
 use App\Form\BasicType\ExpressionType;
 use App\Form\BasicType\FormGroupType;
 use App\Service\Experiment\ExperimentalModelService;
@@ -21,13 +20,12 @@ class ExpressionTypeConfigurationType extends AbstractType
 {
     public function __construct(
         private readonly ExperimentalModelService $modelService,
-    ) {
-    }
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->allowedTypes(ExperimentalDesign::class, "null")
             ->default(null)
         ;
     }
@@ -48,7 +46,9 @@ class ExpressionTypeConfigurationType extends AbstractType
 
         $builder
             ->add(
-                "expression", ExpressionType::class, [
+                "expression",
+                ExpressionType::class,
+                [
                     "label" => "Expression",
                     "required" => false,
                     "environment" => $environment,

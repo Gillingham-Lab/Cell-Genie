@@ -17,7 +17,6 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use UnhandledMatchError;
 
 /**
  * @phpstan-import-type ArrayTableShape from Table
@@ -30,7 +29,7 @@ class ExperimentalDesignTable extends AbstractController
     use PaginatedRepositoryTrait;
 
     public function __construct(
-       ExperimentalDesignRepository $repository,
+        ExperimentalDesignRepository $repository,
     ) {
         $this->setRepository($repository);
         $this->setPaginatedOrderBy(["number" => "ASC"]);
@@ -74,7 +73,7 @@ class ExperimentalDesignTable extends AbstractController
                     new AddTool(
                         path: $this->generateUrl("app_experiments_run_new", ["design" => $design->getId()]),
                         tooltip: "Add experiment",
-                    )
+                    ),
                 ])),
                 new Column("Nr", fn(ExperimentalDesign $design) => $design->getNumber(), bold: true),
                 new Column("Name", fn(ExperimentalDesign $design) => $design->getShortName()),

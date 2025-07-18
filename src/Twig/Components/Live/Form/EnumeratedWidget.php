@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -24,7 +23,5 @@ class EnumeratedWidget
     public ?FormView $formView;
 
     #[LiveAction]
-    public function generate(): void
-    {
-    }
+    public function generate(): void {}
 }

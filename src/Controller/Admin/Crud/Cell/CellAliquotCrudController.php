@@ -29,9 +29,7 @@ class CellAliquotCrudController extends AbstractCrudController
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository,
-    ) {
-
-    }
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -52,9 +50,9 @@ class CellAliquotCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             AssociationField::new("cell")
-                ->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.cellNumber", "ASC")),
+                ->setQueryBuilder(fn(QueryBuilder $builder) => $builder->orderBy("entity.cellNumber", "ASC")),
             DateField::new('aliquoted_on')->setFormat("yyyy-MM-dd")->setRequired(false),
-            AssociationField::new('aliquoted_by')->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.fullName", "ASC")),
+            AssociationField::new('aliquoted_by')->setQueryBuilder(fn(QueryBuilder $builder) => $builder->orderBy("entity.fullName", "ASC")),
             $this->textFieldOrChoices("cryoMedium")
                 ->hideOnIndex(),
 
@@ -105,14 +103,16 @@ class CellAliquotCrudController extends AbstractCrudController
                     'choices' => PrivacyLevel::cases(),
                 ])
                 ->formatValue(function ($value, ?CellAliquot $entity) {
-                    if ($entity === NULL) return '';
+                    if ($entity === null) {
+                        return '';
+                    }
 
                     return sprintf(
                         '<span class="badge text-uppercase">%s</span>',
                         $entity->getPrivacyLevel()->label(),
                     );
                 })
-                ->setHelp("Read access; write access is never public.")
+                ->setHelp("Read access; write access is never public."),
         ];
     }
 }

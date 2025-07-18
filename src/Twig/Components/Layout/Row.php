@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Layout;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
@@ -40,27 +39,27 @@ class Row
         $classes = [];
 
         if ($this->cols) {
-            $classes[] = "row-cols-".$this->cols;
+            $classes[] = "row-cols-" . $this->cols;
         }
 
         if ($this->sm) {
-            $classes[] = "row-cols-sm-".$this->sm;
+            $classes[] = "row-cols-sm-" . $this->sm;
         }
 
         if ($this->md) {
-            $classes[] = "row-cols-md-".$this->md;
+            $classes[] = "row-cols-md-" . $this->md;
         }
 
         if ($this->lg) {
-            $classes[] = "row-cols-lg-".$this->lg;
+            $classes[] = "row-cols-lg-" . $this->lg;
         }
 
         if ($this->xl) {
-            $classes[] = "row-cols-xl-".$this->xl;
+            $classes[] = "row-cols-xl-" . $this->xl;
         }
 
         if ($this->xxl) {
-            $classes[] = "row-cols-xxl-".$this->xxl;
+            $classes[] = "row-cols-xxl-" . $this->xxl;
         }
 
         return implode(" ", $classes);

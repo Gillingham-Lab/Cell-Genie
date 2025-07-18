@@ -15,9 +15,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class CellGroupVoter extends Voter
 {
-    const string ATTR_NEW = "new";
-    const string ATTR_EDIT = "edit";
-    const string ATTR_REMOVE = "remove";
+    public const string ATTR_NEW = "new";
+    public const string ATTR_EDIT = "edit";
+    public const string ATTR_REMOVE = "remove";
 
     protected function supports(string $attribute, mixed $subject): bool
     {

@@ -33,7 +33,7 @@ class CellAliquotRepository extends ServiceEntityRepository
         }
 
         return $qb->select("ca")
-            ->distinct(True)
+            ->distinct(true)
             ->leftJoin("ca.box", "b", Join::ON)
             ->where("ca.box IN (:boxes)")
             ->setParameter("boxes", $boxUlids)

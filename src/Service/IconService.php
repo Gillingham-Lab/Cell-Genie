@@ -27,9 +27,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class IconService
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
-    ) {
-    }
+        private readonly EntityManagerInterface $entityManager,
+    ) {}
 
     /**
      * @param object|array{object}|null $object
@@ -45,9 +44,9 @@ class IconService
             return $this->get($object[0]);
         }
 
-        return match(get_class($object)) {
+        return match (get_class($object)) {
             SubstanceLot::class => "lot",
-            default => match($this->entityManager->getClassMetadata(get_class($object))->getName()) {
+            default => match ($this->entityManager->getClassMetadata(get_class($object))->getName()) {
                 CellGroup::class, Cell::class => "cell",
                 Plasmid::class => "plasmid",
                 Oligo::class => "oligo",
@@ -67,7 +66,7 @@ class IconService
                 Consumable::class => "consumable",
                 ConsumableCategory::class => ["consumable", "box"],
                 default => null,
-            }
+            },
         };
     }
 }

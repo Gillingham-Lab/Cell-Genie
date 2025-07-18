@@ -3,11 +3,8 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations2024;
 
-use App\Entity\DoctrineEntity\Cell\Cell;
-use App\Service\Doctrine\Type\Ulid;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 use Psr\Log\LoggerInterface;
 

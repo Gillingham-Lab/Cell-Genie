@@ -6,7 +6,6 @@ namespace DoctrineMigrations2024;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Migrations\AbstractMigration;
 use Psr\Log\LoggerInterface;
@@ -173,13 +172,13 @@ final class Version20240730060724 extends AbstractMigration
                 ->setParameter("id", $cellCultureId)
                 ->setParameter("ulid", $newAliquotId)
                 ->executeStatement()
-                ;
+            ;
 
             $this->logger->debug($updateCellCultureQuery->getSQL() . ", for id={$cellCultureId} and aliquot id {$oldAliquotId}=>{$newAliquotId}");
         }
 
 
-        $this->logger->info(count($this->cellCultures)." cell cultures found.");
+        $this->logger->info(count($this->cellCultures) . " cell cultures found.");
         $this->logger->info("$affectedRows cell cultures updated.");
     }
 

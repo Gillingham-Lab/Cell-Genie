@@ -20,13 +20,13 @@ class NumberSearchType extends AbstractType
         $minOptions = [
             "label" => "Min",
             "attr" => [
-                "placeholder" => "Min"
+                "placeholder" => "Min",
             ],
         ];
         $maxOptions = [
             "label" => "Max",
             "attr" => [
-                "placeholder" => "Max"
+                "placeholder" => "Max",
             ],
         ];
 
@@ -34,11 +34,11 @@ class NumberSearchType extends AbstractType
             $builder
                 ->add("min", ScientificNumberType::class, [
                     ...$minOptions,
-                    ...$options["scientific_number_options"]
+                    ...$options["scientific_number_options"],
                 ])
                 ->add("max", ScientificNumberType::class, [
                     ...$maxOptions,
-                    ...$options["scientific_number_options"]
+                    ...$options["scientific_number_options"],
                 ])
             ;
 

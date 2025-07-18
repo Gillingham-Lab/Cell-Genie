@@ -19,9 +19,7 @@ class RackCrudController extends AbstractCrudController
 {
     public function __construct(
         private RackRepository $rackRepository,
-    ) {
-
-    }
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -42,13 +40,13 @@ class RackCrudController extends AbstractCrudController
 
             ChoiceField::new("parent")
                 ->onlyOnForms()
-                ->setChoices(function() use ($repository, $currentEntity) {
+                ->setChoices(function () use ($repository, $currentEntity) {
                     $results = $repository->getTree($currentEntity);
 
                     $choices = [];
                     foreach ($results as $result) {
                         $label = trim($result["sort_path"]);
-                        $label = substr($label, 2, strlen($label)-4);
+                        $label = substr($label, 2, strlen($label) - 4);
                         $label = implode(' | ', explode('","', $label));
 
                         $choices[$label] = $result[0];
@@ -56,8 +54,8 @@ class RackCrudController extends AbstractCrudController
 
                     return $choices;
                 })
-                ,
-                /*->setCustomOption("choices", )
+            ,
+            /*->setCustomOption("choices", )
                 ->setCustomOption("choice_label", function(Rack $rack) {
                     return $rack->getPathName();
                 })

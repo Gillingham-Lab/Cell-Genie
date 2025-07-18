@@ -16,22 +16,22 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
  */
 class CellCultureVoter extends AbstractPrivacyAwareVoter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string ATTR_NEW = "new";
-    const string ATTR_REMOVE = "remove";
-    const string ATTR_OWNS = "owns";
-    const string ATTR_TRASH = "trash";
-    const string ATTR_ADD_EVENT = "add_event";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string ATTR_NEW = "new";
+    public const string ATTR_REMOVE = "remove";
+    public const string ATTR_OWNS = "owns";
+    public const string ATTR_TRASH = "trash";
+    public const string ATTR_ADD_EVENT = "add_event";
 
-    const array ATTRIBUTES = [
+    public const array ATTRIBUTES = [
         self::ATTR_VIEW,
         self::ATTR_EDIT,
         self::ATTR_NEW,
         self::ATTR_REMOVE,
         self::ATTR_OWNS,
         self::ATTR_TRASH,
-        self::ATTR_ADD_EVENT
+        self::ATTR_ADD_EVENT,
     ];
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -65,7 +65,7 @@ class CellCultureVoter extends AbstractPrivacyAwareVoter
         assert($user instanceof User);
 
         if ($subject instanceof CellCulture) {
-            return match($attribute) {
+            return match ($attribute) {
                 self::ATTR_VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
                 self::ATTR_EDIT, self::ATTR_TRASH, self::ATTR_ADD_EVENT => $this->canEdit($user, $subject),
                 self::ATTR_OWNS => $subject->getOwner() === $user,
@@ -73,7 +73,7 @@ class CellCultureVoter extends AbstractPrivacyAwareVoter
                 default => false,
             };
         } elseif ($subject instanceof CellCultureEvent) {
-            return match($attribute) {
+            return match ($attribute) {
                 self::ATTR_VIEW => ($user->getGroup() === $subject->getGroup() or $user === $subject->getOwner() or $subject->getGroup() === null or $subject->getOwner() === null),
                 self::ATTR_EDIT, self::ATTR_REMOVE => $this->canEdit($user, $subject),
                 self::ATTR_OWNS => $subject->getOwner() === $user,

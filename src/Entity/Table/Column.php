@@ -7,9 +7,9 @@ use Closure;
 
 class Column
 {
-    const raw = false;
-    const component = false;
-    const renderTitle = true;
+    public const raw = false;
+    public const component = false;
+    public const renderTitle = true;
 
     public function __construct(
         private readonly string $title,
@@ -17,9 +17,7 @@ class Column
         public readonly bool $bold = false,
         private readonly ?Closure $tooltip = null,
         private readonly ?int $widthRecommendation = null,
-    ) {
-
-    }
+    ) {}
 
     public function getTitle(): string
     {

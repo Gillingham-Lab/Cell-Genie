@@ -5,7 +5,6 @@ namespace App\Entity\Traits\Privacy;
 
 use App\Genie\Enums\PrivacyLevel;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 

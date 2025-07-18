@@ -14,8 +14,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class RackFixtures extends Fixture implements DependentFixtureInterface
 {
-    const RACK_1 = "rack.1";
-    const RACK_2 = "rack.2";
+    public const RACK_1 = "rack.1";
+    public const RACK_2 = "rack.2";
 
     public function getDependencies(): array
     {
@@ -48,10 +48,10 @@ class RackFixtures extends Fixture implements DependentFixtureInterface
         $boxes[1]->addChild($boxes[6]);
 
         // Set ownership
-        array_map(fn (Rack $box) => $this->setMainGroupOwner($box), $boxes);
+        array_map(fn(Rack $box) => $this->setMainGroupOwner($box), $boxes);
 
         // Persist
-        array_map(fn (Rack $box) => $manager->persist($box), $boxes);
+        array_map(fn(Rack $box) => $manager->persist($box), $boxes);
 
         // Add references
         $this->setReference(self::RACK_1, $boxes[0]);

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Trait;
 
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;

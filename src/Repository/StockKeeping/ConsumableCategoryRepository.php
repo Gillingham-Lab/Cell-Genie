@@ -43,7 +43,8 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
     /**
      * @return ConsumableCategory[]
      */
-    public function findAllWithConsumablesAndLots(): array {
+    public function findAllWithConsumablesAndLots(): array
+    {
         $result = $this->createQueryBuilder("cc")
             ->addSelect("c")
             ->addSelect("cl")
@@ -62,7 +63,8 @@ class ConsumableCategoryRepository extends ServiceEntityRepository
      * @param ConsumableCategory[] $categories
      * @return ConsumableCategory[]
      */
-    private function setUpRelations(array $categories): array {
+    private function setUpRelations(array $categories): array
+    {
         $metadata = $this->em->getClassMetadata(ConsumableCategory::class);
         $idField = $metadata->reflFields["id"];
         $parentField = $metadata->reflFields["parent"];

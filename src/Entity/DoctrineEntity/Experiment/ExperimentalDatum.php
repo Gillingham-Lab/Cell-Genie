@@ -9,14 +9,9 @@ use App\Genie\Enums\DatumEnum;
 use App\Repository\Experiment\ExperimentalDatumRepository;
 use App\Service\Doctrine\Type\Ulid;
 use App\Service\Doctrine\Type\UlidType;
-use DateTime;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use InvalidArgumentException;
 use LogicException;
-use Symfony\Component\Uid\AbstractUid;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -48,7 +43,7 @@ class ExperimentalDatum
         insertable: false,
         updatable: false,
         columnDefinition: "uuid GENERATED ALWAYS AS (CASE WHEN type = 'entityReference' OR type = 'uuid' THEN CAST(ENCODE(substring(value from 0 for 17), 'hex') AS uuid) ELSE null END) STORED",
-        generated: "ALWAYS"
+        generated: "ALWAYS",
     )]
     private ?Ulid $referenceUuid = null;
 

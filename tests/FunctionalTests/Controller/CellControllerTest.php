@@ -11,11 +11,8 @@ use App\Repository\Cell\CellCultureRepository;
 use App\Repository\Cell\CellGroupRepository;
 use App\Repository\Cell\CellRepository;
 use App\Repository\User\UserRepository;
-use App\Security\Voter\Cell\CellGroupVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\CssSelector\CssSelectorConverter;
 
 class CellControllerTest extends WebTestCase
 {

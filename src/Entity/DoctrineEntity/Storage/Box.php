@@ -9,7 +9,6 @@ use App\Entity\Traits\Privacy\PrivacyAwareTrait;
 use App\Repository\Storage\BoxRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,7 +24,7 @@ class Box implements PrivacyAwareInterface
         min: 3,
         max: 255,
         minMessage: "Box name must contain at least 3 characters",
-        maxMessage: "Only 255 characters allowed"
+        maxMessage: "Only 255 characters allowed",
     )]
     #[Assert\NotBlank]
     #[Gedmo\Versioned]
@@ -54,9 +53,7 @@ class Box implements PrivacyAwareInterface
     #[Gedmo\Versioned]
     private ?Rack $rack = null;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function __toString(): string
     {

@@ -17,12 +17,12 @@ use Doctrine\Persistence\ObjectManager;
 
 class CellAliquotFixture extends Fixture implements DependentFixtureInterface
 {
-    const HEK293 = "cell.aliquot.HEK293";
-    const OldHEK293 = "cell.aliquot.HEK293.old";
-    const HEK293T = "cell.aliquot.HEK293T";
-    const HCT116 = "cell.aliquot.HCT116";
-    const HeLa = "cell.aliquot.HeLa";
-    const EColi = "cell.aliquot.EColi";
+    public const HEK293 = "cell.aliquot.HEK293";
+    public const OldHEK293 = "cell.aliquot.HEK293.old";
+    public const HEK293T = "cell.aliquot.HEK293T";
+    public const HCT116 = "cell.aliquot.HCT116";
+    public const HeLa = "cell.aliquot.HeLa";
+    public const EColi = "cell.aliquot.EColi";
 
     public function getDependencies(): array
     {
@@ -41,7 +41,7 @@ class CellAliquotFixture extends Fixture implements DependentFixtureInterface
             $this->getEColiAliquot(),
         ];
 
-        array_map(fn (CellAliquot $aliquot) => $manager->persist($aliquot), $aliquots);
+        array_map(fn(CellAliquot $aliquot) => $manager->persist($aliquot), $aliquots);
         $manager->flush();
     }
 

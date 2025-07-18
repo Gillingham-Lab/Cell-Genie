@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace App\Service\Doctrine\Filter;
 
-use App\Entity\Interface\GroupAwareInterface;
 use App\Entity\Interface\PrivacyAwareInterface;
 use App\Genie\Enums\PrivacyLevel;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
 
@@ -30,7 +28,7 @@ class PrivacyFilter extends SQLFilter
         $privacyLevelGroup = PrivacyLevel::Group->value;
         $privacyLevelPublic = PrivacyLevel::Public->value;
 
-        $groupFilter = strlen($current_group) > 10 ?  "OR {$groupField} = $current_group" : "";
+        $groupFilter = strlen($current_group) > 10 ? "OR {$groupField} = $current_group" : "";
 
         return "(
             {$privacyField} = {$privacyLevelPublic}

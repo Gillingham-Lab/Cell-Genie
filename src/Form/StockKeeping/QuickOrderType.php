@@ -9,8 +9,6 @@ use App\Form\BasicType\FancyEntityType;
 use App\Form\SaveableType;
 use App\Genie\Enums\Availability;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -45,7 +43,7 @@ class QuickOrderType extends SaveableType
                 "required" => true,
                 "empty_data" => 1,
                 "constraints" => [
-                    new Assert\Range(min: 0)
+                    new Assert\Range(min: 0),
                 ],
             ])
             ->add("unitSize", IntegerType::class, [
@@ -53,7 +51,7 @@ class QuickOrderType extends SaveableType
                 "required" => true,
                 "empty_data" => 1,
                 "constraints" => [
-                    new Assert\Range(min: 0)
+                    new Assert\Range(min: 0),
                 ],
             ])
             ->add("priceValue", MoneyType::class, options: [
@@ -75,14 +73,14 @@ class QuickOrderType extends SaveableType
                 "class" => Availability::class,
                 "constraints" => [
                     new Assert\NotBlank(),
-                ]
+                ],
             ])
             ->add("location", FancyEntityType::class, [
                 "class" => Rack::class,
                 "label" => "Location",
                 "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
-                "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
-                "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
+                "choice_label" => function (Rack $rack) { return $rack->getPathName(); },
+                "choice_value" => function (?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("r")
                         ->select("r")
@@ -90,7 +88,7 @@ class QuickOrderType extends SaveableType
                         ->leftJoin("r.boxes", "b")
                         ->groupBy("r.ulid")
                         ->addGroupBy("b.ulid")
-                        ;
+                    ;
                 },
                 'empty_data' => [],
                 'by_reference' => false,

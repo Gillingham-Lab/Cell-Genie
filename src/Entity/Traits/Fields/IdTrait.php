@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 trait IdTrait
 {
     #[Groups([
-        "twig", "component"
+        "twig", "component",
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]

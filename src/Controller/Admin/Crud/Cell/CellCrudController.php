@@ -35,9 +35,7 @@ class CellCrudController extends AbstractCrudController
 
     public function __construct(
         private VocabularyRepository $vocabularyRepository,
-    ) {
-
-    }
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -80,7 +78,7 @@ class CellCrudController extends AbstractCrudController
             AssociationField::new("engineer")->hideOnIndex(),
             AssociationField::new("parent")
                 ->hideOnIndex()
-                ->setQueryBuilder(fn (QueryBuilder $builder) => $builder->orderBy("entity.cellNumber", "ASC")),
+                ->setQueryBuilder(fn(QueryBuilder $builder) => $builder->orderBy("entity.cellNumber", "ASC")),
             TextEditorField::new("engineeringDescription")
                 ->setHelp("Details on what was modified compared to the parent cell. Please reference lab journal or publications for more details, too.")
                 ->hideOnIndex(),

@@ -14,12 +14,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class UserVoter extends Voter
 {
-    const string ATTR_VIEW = "view";
-    const string NEW = "new";
-    const string ATTR_EDIT = "edit";
-    const string ATTR_CHANGE_GROUP = "change_group";
-    const string ATTR_CHANGE_PASSWORD = "change_password";
-    const string ATTR_CHANGE_IDENTITY = "change_identity";
+    public const string ATTR_VIEW = "view";
+    public const string NEW = "new";
+    public const string ATTR_EDIT = "edit";
+    public const string ATTR_CHANGE_GROUP = "change_group";
+    public const string ATTR_CHANGE_PASSWORD = "change_password";
+    public const string ATTR_CHANGE_IDENTITY = "change_identity";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -59,7 +59,7 @@ class UserVoter extends Voter
         }
 
         if ($subject instanceof User) {
-            return match($attribute) {
+            return match ($attribute) {
                 self::NEW, self::ATTR_CHANGE_IDENTITY => in_array("ROLE_ADMIN", $currentUser->getRoles()) or in_array("ROLE_GROUP_ADMIN", $currentUser->getRoles()),
                 self::ATTR_EDIT, self::ATTR_CHANGE_PASSWORD => $currentUser === $subject or in_array("ROLE_ADMIN", $currentUser->getRoles()) or in_array("ROLE_GROUP_ADMIN", $currentUser->getRoles()),
                 self::ATTR_CHANGE_GROUP => in_array("ROLE_ADMIN", $currentUser->getRoles()),

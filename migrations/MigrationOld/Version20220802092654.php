@@ -9,7 +9,6 @@ use Doctrine\Migrations\AbstractMigration;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Uid\Ulid;
 
-
 final class Version20220802092654 extends AbstractMigration
 {
     private LoggerInterface $logger;
@@ -144,7 +143,5 @@ final class Version20220802092654 extends AbstractMigration
         $conn->commit();
     }
 
-    public function down(Schema $schema): void
-    {
-    }
+    public function down(Schema $schema): void {}
 }

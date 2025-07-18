@@ -16,12 +16,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class CellVoter extends Voter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string NEW = "new";
-    const string ATTR_REMOVE = "remove";
-    const string ATTR_ADD_ALIQUOT = "add_aliquot";
-    const string ATTR_OWNS = "owns";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string NEW = "new";
+    public const string ATTR_REMOVE = "remove";
+    public const string ATTR_ADD_ALIQUOT = "add_aliquot";
+    public const string ATTR_OWNS = "owns";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -97,7 +97,7 @@ class CellVoter extends Voter
             return true;
         }
 
-        return match($cell->getPrivacyLevel()) {
+        return match ($cell->getPrivacyLevel()) {
             PrivacyLevel::Public, PrivacyLevel::Group => $cell->getGroup() === $user->getGroup(),
             PrivacyLevel::Private => false,
         };

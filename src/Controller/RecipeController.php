@@ -11,10 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class RecipeController extends AbstractController
 {
     public function __construct(
-        readonly private RecipeRepository $recipeRepository,
-    ) {
-
-    }
+        private readonly RecipeRepository $recipeRepository,
+    ) {}
 
     #[Route("/recipes", name: "app_recipes")]
     public function compounds(): Response
@@ -22,7 +20,7 @@ class RecipeController extends AbstractController
         $recipes = $this->recipeRepository->findBy([], orderBy: ["category" => "ASC", "shortName" => "ASC"]);
 
         return $this->render("parts/recipes/recipes.html.twig", [
-            "recipes" => $recipes
+            "recipes" => $recipes,
         ]);
     }
 

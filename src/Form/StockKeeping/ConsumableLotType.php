@@ -48,7 +48,7 @@ class ConsumableLotType extends SaveableType
             ])
             ->add("unitSize", IntegerType::class, [
                 "label" => "Pieces per package unit",
-                "help" => "For example, if a typical order comes with 5 packs, each with 200 tubes, then this should be 200."
+                "help" => "For example, if a typical order comes with 5 packs, each with 200 tubes, then this should be 200.",
             ])
             ->add("numberOfUnits", IntegerType::class, [
                 "label" => "Number of units per package",
@@ -61,8 +61,8 @@ class ConsumableLotType extends SaveableType
                 "class" => Rack::class,
                 "label" => "Location",
                 "help" => "Location of this lot.",
-                "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
-                "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
+                "choice_label" => function (Rack $rack) { return $rack->getPathName(); },
+                "choice_value" => function (?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("r")
                         ->select("r")
@@ -70,7 +70,7 @@ class ConsumableLotType extends SaveableType
                         ->leftJoin("r.boxes", "b")
                         ->groupBy("r.ulid")
                         ->addGroupBy("b.ulid")
-                        ;
+                    ;
                 },
                 'empty_data' => [],
                 'by_reference' => false,
@@ -97,7 +97,7 @@ class ConsumableLotType extends SaveableType
                 "class" => Availability::class,
                 "constraints" => [
                     new Assert\NotBlank(),
-                ]
+                ],
             ])
             ->add("arrivedOn", DateType::class, [
                 "label" => "Arrived on",

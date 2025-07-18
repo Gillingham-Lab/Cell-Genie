@@ -16,7 +16,7 @@ class NiceRoundFilter extends AbstractExtension
                     $x = floatval($x);
                 }
 
-                $log = (int)floor(log10($x));
+                $log = (int) floor(log10($x));
                 $roundDigits = ($log - ($digits - 1));
 
                 return round($x, -$roundDigits);

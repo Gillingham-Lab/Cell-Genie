@@ -22,13 +22,12 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher,
-    ) {
-    }
+    ) {}
 
     public function getDependencies(): array
     {
         return [
-            GroupFixtures::class
+            GroupFixtures::class,
         ];
     }
 
@@ -84,7 +83,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user = (new User())
             ->setEmail("flemming@example.com")
             ->setFullName("Alexander Flemming")
-            ->setIsAdmin(False)
+            ->setIsAdmin(false)
             ->setIsActive(true)
             ->setOffice("P3N-C")
             ->setTitle("Sir")
@@ -101,7 +100,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user = (new User())
             ->setEmail("hodgkin@example.com")
             ->setFullName("Dorothy Hodgkin")
-            ->setIsAdmin(False)
+            ->setIsAdmin(false)
             ->setIsActive(true)
             ->setOffice("P3N-X")
             ->setTitle("Prof. Dr")
@@ -118,7 +117,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user = (new User())
             ->setEmail("scientist{$number}@example.com")
             ->setFullName("Scientist {$number}")
-            ->setIsAdmin(False)
+            ->setIsAdmin(false)
             ->setIsActive(true)
             ->setOffice("P3N-00{$number}")
             ->setRoles([])

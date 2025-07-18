@@ -5,7 +5,4 @@ namespace App\Genie\Exceptions;
 
 use Exception;
 
-class GinException extends Exception
-{
-
-}
+class GinException extends Exception {}

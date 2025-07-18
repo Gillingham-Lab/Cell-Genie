@@ -43,7 +43,7 @@ class VisualisationType extends AbstractType
                     "icon_stack" => "view",
                 ])
                 ->add("uploadedBy", FancyEntityType::class, options: ["class" => User::class, "disabled" => true, "allow_empty" => true])
-                ->add("uploadedOn", DateTimeType::class, options: ["disabled" => true, "html5" => false, "widget" => "single_text", "format" => "yyyy-MM-dd HH:mm:ss"])
+                ->add("uploadedOn", DateTimeType::class, options: ["disabled" => true, "html5" => false, "widget" => "single_text", "format" => "yyyy-MM-dd HH:mm:ss"]),
             )
             ->add(
                 $builder->create("_metadata", FormGroupType::class, [
@@ -62,7 +62,7 @@ class VisualisationType extends AbstractType
                 ->add("contentSize", options: [
                     "label" => "Size (in bytes)",
                     "disabled" => true,
-                ])
+                ]),
             )
             ->add("uploadedFile", FileType::class, options: [
                 "label" => "Upload or replace file",
@@ -77,9 +77,9 @@ class VisualisationType extends AbstractType
                             "image/jpg",
                             "image/jpeg",
                             "image/webp",
-                        ]
+                        ],
                     ),
-                ]
+                ],
             ])
         ;
     }

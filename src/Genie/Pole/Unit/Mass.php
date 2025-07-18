@@ -7,30 +7,30 @@ use App\Genie\Pole\BaseUnit;
 
 class Mass extends BaseUnit
 {
-    const GRAM = "g";
+    public const GRAM = "g";
 
-    const MILLIGRAM = "mg";
-    const MICROGRAM = "μg";
-    const NANOGRAM = "ng";
-    const PICOGRAM = "pg";
-    const FEMTOGRAM = "fg";
-    const ATTOGRAM = "ag";
-    const ZEPTOGRAM = "zg";
-    const YOCTOGRAM = "yg";
+    public const MILLIGRAM = "mg";
+    public const MICROGRAM = "μg";
+    public const NANOGRAM = "ng";
+    public const PICOGRAM = "pg";
+    public const FEMTOGRAM = "fg";
+    public const ATTOGRAM = "ag";
+    public const ZEPTOGRAM = "zg";
+    public const YOCTOGRAM = "yg";
 
-    const KILOGRAM = "kg";
-    const MEGAGRAM = "Mg";
-    const GIGAGRAM = "Gg";
-    const TERAGRAM = "Tg";
-    const PETAGRAM = "Pg";
-    const EXAGRAM = "Eg";
-    const ZETTAGRAM = "Zg";
-    const YOTTAGRAM = "Yg";
+    public const KILOGRAM = "kg";
+    public const MEGAGRAM = "Mg";
+    public const GIGAGRAM = "Gg";
+    public const TERAGRAM = "Tg";
+    public const PETAGRAM = "Pg";
+    public const EXAGRAM = "Eg";
+    public const ZETTAGRAM = "Zg";
+    public const YOTTAGRAM = "Yg";
 
-    const TON = " t";
-    const KILOTON = " kt";
-    const MEGATON = " Mt";
-    const GIGATON = " Gt";
+    public const TON = " t";
+    public const KILOTON = " kt";
+    public const MEGATON = " Mt";
+    public const GIGATON = " Gt";
 
     protected string $base_unit_symbol = self::GRAM;
 

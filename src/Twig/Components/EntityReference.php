@@ -28,9 +28,7 @@ class EntityReference
     public function __construct(
         private readonly IconService $iconService,
         private readonly EntityResolver $entityResolver,
-    ) {
-
-    }
+    ) {}
 
     /**
      * @param array<string, mixed> $attributes

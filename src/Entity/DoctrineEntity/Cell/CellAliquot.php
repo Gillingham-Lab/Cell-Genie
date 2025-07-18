@@ -154,7 +154,7 @@ class CellAliquot implements JsonSerializable, PrivacyAwareInterface
                 "id" => $this->getCell()->getId()->toRfc4122(),
                 "number" => $this->getCell()->getCellNumber(),
                 "name" => $this->getCell()->getName(),
-            ]
+            ],
         ];
     }
 

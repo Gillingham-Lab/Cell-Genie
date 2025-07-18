@@ -9,7 +9,7 @@ use Twig\TwigTest;
 
 class AvailabilityTest extends AbstractExtension
 {
-    function getTests(): array
+    public function getTests(): array
     {
         return [
             new TwigTest("isAvailable", fn(Availability $availability) => $availability === Availability::Available),

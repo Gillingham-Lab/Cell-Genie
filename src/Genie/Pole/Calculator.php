@@ -59,7 +59,7 @@ class Calculator
 
     protected function tryToFindOperationUnitResult(string $operation, Quantity $quantity1, Quantity $quantity2): UnitInterface
     {
-        $lookupArray = match($operation) {
+        $lookupArray = match ($operation) {
             "*" => $this->multiplications,
             "/" => $this->divisions,
             default => throw new OperationNotSupported("The operation '{$operation}' is not supported by the calculator"),

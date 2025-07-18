@@ -17,10 +17,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsLiveComponent]
 class ConsumableLotItem extends AbstractController
@@ -44,7 +42,7 @@ class ConsumableLotItem extends AbstractController
 
     public function getLotClass(): string
     {
-        return match($this->lot->getAvailability()) {
+        return match ($this->lot->getAvailability()) {
             Availability::Ordered => "bg-warning-subtle",
             Availability::Empty => "bg-secondary-subtle",
             default => "",
@@ -75,7 +73,7 @@ class ConsumableLotItem extends AbstractController
         FlashBagAwareSessionInterface $flashBag,
     ): void {
         $consumable = $this->lot->getConsumable();
-        $isNowEmpty = False;
+        $isNowEmpty = false;
 
         try {
             // If the package is pristine, we also set the opened date
@@ -197,8 +195,8 @@ class ConsumableLotItem extends AbstractController
                 otherAttributes: [
                     "data-action" => "live#action",
                     "data-live-action-param" => "trashLot",
-                ]
-            )
+                ],
+            ),
         ]);
     }
 }

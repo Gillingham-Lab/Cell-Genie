@@ -215,13 +215,13 @@ class Consumable implements PrivacyAwareInterface
 
     public function getCurrentStock(): int
     {
-        $availableLots = $this->lots->filter(fn (ConsumableLot $lot) => $lot->getAvailability() === Availability::Available);
+        $availableLots = $this->lots->filter(fn(ConsumableLot $lot) => $lot->getAvailability() === Availability::Available);
         return $this->sumLots($availableLots);
     }
 
     public function getOrderedStock(): int
     {
-        $orderedLots = $this->lots->filter(fn (ConsumableLot $lot) => $lot->getAvailability() === Availability::Ordered or  $lot->getAvailability() === Availability::InPreparation);
+        $orderedLots = $this->lots->filter(fn(ConsumableLot $lot) => $lot->getAvailability() === Availability::Ordered or  $lot->getAvailability() === Availability::InPreparation);
         return $this->sumLots($orderedLots);
     }
 
@@ -232,9 +232,9 @@ class Consumable implements PrivacyAwareInterface
     private function sumLots(Collection $lots): int
     {
         if ($this->consumePackage) {
-            $method = fn (ConsumableLot $lot): int => $lot->getNumberOfUnits() - $lot->getUnitsConsumed();
+            $method = fn(ConsumableLot $lot): int => $lot->getNumberOfUnits() - $lot->getUnitsConsumed();
         } else {
-            $method = fn (ConsumableLot $lot): int => $lot->getTotalAvailablePieces();
+            $method = fn(ConsumableLot $lot): int => $lot->getTotalAvailablePieces();
         }
 
         $stock = 0;

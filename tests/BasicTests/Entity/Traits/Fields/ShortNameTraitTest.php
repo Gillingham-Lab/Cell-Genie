@@ -36,7 +36,7 @@ class ShortNameTraitTest extends TestCase
     {
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);
 
-        $this->assertSame("unknown", (string)$testClass);
+        $this->assertSame("unknown", (string) $testClass);
     }
 
     public function testSettingShortNameCausesToStringConversionToReturnIt(): void
@@ -45,6 +45,6 @@ class ShortNameTraitTest extends TestCase
         $testClass = $this->getObjectForTrait(ShortNameTrait::class);
 
         $this->assertSame($testClass, $testClass->setShortName("Short Name"));
-        $this->assertSame("Short Name", (string)$testClass);
+        $this->assertSame("Short Name", (string) $testClass);
     }
 }

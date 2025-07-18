@@ -92,7 +92,7 @@ class ConsumableLot
     }
 
     public function setLotIdentifier(
-        string $lotIdentifier
+        string $lotIdentifier,
     ): self {
         $this->lotIdentifier = $lotIdentifier;
         return $this;

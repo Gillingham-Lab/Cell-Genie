@@ -26,9 +26,7 @@ class EntityResolver
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $router,
-    ) {
-
-    }
+    ) {}
 
     public function getEntityClass(?object $object): ?string
     {
@@ -60,7 +58,7 @@ class EntityResolver
 
             $class = $this->entityManager->getClassMetadata(get_class($object))->getName();
 
-            return match($class) {
+            return match ($class) {
                 Cell::class => $this->router->generate("app_cell_view_number", ["cellNumber" => $object->getCellNumber()]),
                 CellGroup::class => $this->router->generate("app_cells_group", ["cellGroup" => $object->getId()]),
                 Plasmid::class, Oligo::class, Protein::class, Chemical::class, Antibody::class => $this->router->generate("app_substance_view", ["substance" => $object->getUlid()]),

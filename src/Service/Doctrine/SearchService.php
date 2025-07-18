@@ -24,7 +24,7 @@ class SearchService
         }
 
         if (str_ends_with($searchValue, "$")) {
-            $searchValue = substr($searchValue, 0, strlen($searchValue)-1);
+            $searchValue = substr($searchValue, 0, strlen($searchValue) - 1);
         } elseif (!str_ends_with($searchValue, "%")) {
             $searchValue = $searchValue . "%";
         }
@@ -44,7 +44,7 @@ class SearchService
             }
             return $qb->expr()->orX(...$expressions);
         } else {
-            return match($type) {
+            return match ($type) {
                 "string" => $this->searchWithStringLike($qb, $field, $value),
                 "int" => $this->searchWithInteger($qb, $field, $value),
                 "ulid" => $this->searchWithUlid($qb, $field, $value),
@@ -74,7 +74,7 @@ class SearchService
         $value = $this->parse($value);
 
         $qb->setParameter($fieldName, $value);
-        return $qb->expr()->like((string)$qb->expr()->lower($field), ":$fieldName");
+        return $qb->expr()->like((string) $qb->expr()->lower($field), ":$fieldName");
     }
 
     public function searchWithInteger(QueryBuilder $qb, string $field, int|string $value): Comparison
@@ -118,10 +118,10 @@ class SearchService
      */
     public function addExpressionsToHavingQuery(QueryBuilder $queryBuilder, array $expressions): QueryBuilder
     {
-        return match(count($expressions)) {
+        return match (count($expressions)) {
             0 => $queryBuilder,
             1 => $queryBuilder->andHaving($expressions[0]),
-            default => $queryBuilder->andHaving($queryBuilder->expr()->andX(...$expressions))
+            default => $queryBuilder->andHaving($queryBuilder->expr()->andX(...$expressions)),
         };
     }
 
@@ -138,7 +138,7 @@ class SearchService
                 continue;
             }
 
-            $expression = $match($searchField ,$searchValue);
+            $expression = $match($searchField, $searchValue);
 
             if ($expression !== null) {
                 $expressions[] = $expression;

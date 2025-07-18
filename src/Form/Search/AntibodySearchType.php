@@ -48,7 +48,7 @@ class AntibodySearchType extends AbstractType
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("e")
                         ->addOrderBy("e.shortName", "ASC")
-                        ;
+                    ;
                 },
                 "choice_value" => function (Epitope|null|string $entity) {
                     if (is_string($entity)) {
@@ -68,7 +68,7 @@ class AntibodySearchType extends AbstractType
                 "query_builder" => function (EntityRepository $er) {
                     return $er->createQueryBuilder("e")
                         ->addOrderBy("e.shortName", "ASC")
-                        ;
+                    ;
                 },
                 "choice_value" => function (Epitope|null|string $entity) {
                     if (is_string($entity)) {

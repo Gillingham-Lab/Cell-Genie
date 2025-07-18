@@ -77,8 +77,7 @@ final class SubstanceTable extends AbstractController
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, mixed> $props
@@ -137,7 +136,7 @@ final class SubstanceTable extends AbstractController
             return null;
         }
 
-        $table = match($this->type) {
+        $table = match ($this->type) {
             "antibody" => $this->getAntibodyTable(),
             "chemical" => $this->getChemicalTable(),
             "oligo" => $this->getOligoTable(),
@@ -251,14 +250,14 @@ final class SubstanceTable extends AbstractController
                         path: $this->generateUrl("app_substance_add_lot", ["substance" => $antibody->getUlid()]),
                         enabled: $this->isGranted("add_lot", $antibody),
                         tooltip: "Add lot",
-                    )
+                    ),
                 ])),
                 new Column("Nr", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getNumber(), bold: true),
                 new ComponentColumn("", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => [
                     "Icon",
                     [
-                        "icon" => "antibody.{$antibody->getType()->value}"
-                    ]
+                        "icon" => "antibody.{$antibody->getType()->value}",
+                    ],
                 ]),
                 new Column("Type", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getType()->value),
                 new Column("Available Lots (total)", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
@@ -271,14 +270,14 @@ final class SubstanceTable extends AbstractController
                     "EntityReference",
                     [
                         "entity" => $antibody->getEpitopeTargets(),
-                    ]
+                    ],
                 ]),
 
                 new ComponentColumn("AB Epitope", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => [
                     "EntityReference",
                     [
                         "entity" => $antibody->getEpitopes(),
-                    ]
+                    ],
                 ]),
                 new ToggleColumn("Validated internally", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getValidatedInternally()),
                 new ToggleColumn("Validated externally", fn(Antibody $antibody, int $lotCount, int $hasAvailableLot) => $antibody->getValidatedExternally()),
@@ -287,7 +286,7 @@ final class SubstanceTable extends AbstractController
                     [
                         "title" => $antibody->getRrid(),
                         "href" => "https://scicrunch.org/resolver/{$antibody->getRrid()}",
-                    ]
+                    ],
                 ]),
             ],
             spreadDatum: true,
@@ -297,32 +296,42 @@ final class SubstanceTable extends AbstractController
 
     #[LiveListener("search.antibody")]
     public function onAntibodySearch(
-        #[LiveArg] ?string $antibodyNumber = null,
-        #[LiveArg] ?string $antibodyType = null,
-        #[LiveArg] ?string $antibodyName = null,
-        #[LiveArg] ?string $hasAvailableLots = null,
-        #[LiveArg] ?string $internallyValidated = null,
-        #[LiveArg] ?string $externallyValidated = null,
-        #[LiveArg] ?string $rrid = null,
-        #[LiveArg] ?string $hasEpitope = null,
-        #[LiveArg] ?string $targetsEpitope = null,
-        #[LiveArg] ?string $productNumber = null,
+        #[LiveArg]
+        ?string $antibodyNumber = null,
+        #[LiveArg]
+        ?string $antibodyType = null,
+        #[LiveArg]
+        ?string $antibodyName = null,
+        #[LiveArg]
+        ?string $hasAvailableLots = null,
+        #[LiveArg]
+        ?string $internallyValidated = null,
+        #[LiveArg]
+        ?string $externallyValidated = null,
+        #[LiveArg]
+        ?string $rrid = null,
+        #[LiveArg]
+        ?string $hasEpitope = null,
+        #[LiveArg]
+        ?string $targetsEpitope = null,
+        #[LiveArg]
+        ?string $productNumber = null,
     ): void {
         $this->search = [
             "antibodyNumber" => $antibodyNumber,
             "antibodyType" => $antibodyType,
             "antibodyName" => $antibodyName,
-            "hasAvailableLot" => match($hasAvailableLots) {
+            "hasAvailableLot" => match ($hasAvailableLots) {
                 "true" => true,
                 "false" => false,
                 default => null,
             },
-            "internallyValidated" => match($internallyValidated) {
+            "internallyValidated" => match ($internallyValidated) {
                 "true" => true,
                 "false" => false,
                 default => null,
             },
-            "externallyValidated" => match($externallyValidated) {
+            "externallyValidated" => match ($externallyValidated) {
                 "true" => true,
                 "false" => false,
                 default => null,
@@ -362,7 +371,7 @@ final class SubstanceTable extends AbstractController
                         path: $this->generateUrl("app_substance_add_lot", ["substance" => $chemical->getUlid()]),
                         enabled: $this->isGranted("add_lot", $chemical),
                         tooltip: "Add lot",
-                    )
+                    ),
                 ])),
                 new ComponentColumn("Structure", fn(Chemical $chemical, int $lotCount, int $hasAvailableLot) => [
                     SmilesViewer::class, [
@@ -381,16 +390,20 @@ final class SubstanceTable extends AbstractController
 
     #[LiveListener("search.chemical")]
     public function onChemicalSearch(
-        #[LiveArg] ?string $shortName = null,
-        #[LiveArg] ?string $anyName = null,
-        #[LiveArg] ?string $casNumber = null,
-        #[LiveArg] ?string $hasAvailableLots = null,
+        #[LiveArg]
+        ?string $shortName = null,
+        #[LiveArg]
+        ?string $anyName = null,
+        #[LiveArg]
+        ?string $casNumber = null,
+        #[LiveArg]
+        ?string $hasAvailableLots = null,
     ): void {
         $this->search = [
             "shortName" => $shortName,
             "anyName" => $anyName,
             "casNumber" => $casNumber,
-            "hasAvailableLot" => match($hasAvailableLots) {
+            "hasAvailableLot" => match ($hasAvailableLots) {
                 "true" => true,
                 "false" => false,
                 default => null,
@@ -426,7 +439,7 @@ final class SubstanceTable extends AbstractController
                         path: $this->generateUrl("app_substance_add_lot", ["substance" => $oligo->getUlid()]),
                         enabled: $this->isGranted("add_lot", $oligo),
                         tooltip: "Add lot",
-                    )
+                    ),
                 ])),
                 new Column("Name", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getShortName(), bold: true),
                 new Column("Type", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getOligoTypeEnum()?->value),
@@ -434,11 +447,11 @@ final class SubstanceTable extends AbstractController
                 new Column("Available Lots (total)", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
                 new ComponentColumn("Start conjugate", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => [
                     EntityReference::class,
-                    ["entity" => $oligo->getStartConjugate()]
+                    ["entity" => $oligo->getStartConjugate()],
                 ]),
                 new ComponentColumn("End conjugate", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => [
                     EntityReference::class,
-                    ["entity" => $oligo->getEndConjugate()]
+                    ["entity" => $oligo->getEndConjugate()],
                 ]),
                 new Column("Sequence", fn(Oligo $oligo, int $lotCount, int $hasAvailableLot) => $oligo->getSequence()),
             ],
@@ -448,20 +461,27 @@ final class SubstanceTable extends AbstractController
 
     #[LiveListener("search.oligo")]
     public function onOligoSearch(
-        #[LiveArg] ?string $shortName = null,
-        #[LiveArg] ?string $anyName = null,
-        #[LiveArg] ?string $sequence = null,
-        #[LiveArg] ?string $hasAvailableLots = null,
-        #[LiveArg] ?string $oligoType = null,
-        #[LiveArg] ?string $startConjugate = null,
-        #[LiveArg] ?string $endConjugate = null,
+        #[LiveArg]
+        ?string $shortName = null,
+        #[LiveArg]
+        ?string $anyName = null,
+        #[LiveArg]
+        ?string $sequence = null,
+        #[LiveArg]
+        ?string $hasAvailableLots = null,
+        #[LiveArg]
+        ?string $oligoType = null,
+        #[LiveArg]
+        ?string $startConjugate = null,
+        #[LiveArg]
+        ?string $endConjugate = null,
     ): void {
         $this->search = [
             "shortName" => $shortName,
             "anyName" => $anyName,
             "oligoType" => $oligoType,
             "sequence" => $sequence,
-            "hasAvailableLot" => match($hasAvailableLots) {
+            "hasAvailableLot" => match ($hasAvailableLots) {
                 "true" => true,
                 "false" => false,
                 default => null,
@@ -499,18 +519,18 @@ final class SubstanceTable extends AbstractController
                         path: $this->generateUrl("app_substance_add_lot", ["substance" => $plasmid->getUlid()]),
                         enabled: $this->isGranted("add_lot", $plasmid),
                         tooltip: "Add lot",
-                    )
+                    ),
                 ])),
                 new Column("Number", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getNumber(), bold: true),
                 new Column("Name", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getShortName()),
-                new Column("Length (kbp)", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getSequenceLength()/1000),
+                new Column("Length (kbp)", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getSequenceLength() / 1000),
                 new Column("Available Lots (total)", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => "{$hasAvailableLot} ($lotCount)"),
                 new Column("Plasmid growth resistance", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => implode(", ", $plasmid->getGrowthResistance())),
                 new ComponentColumn("Expressed protein", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => [
                     EntityReference::class,
                     [
                         "entity" => $plasmid->getExpressedProteins(),
-                    ]
+                    ],
                 ]),
                 new Column("Expression host", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => $plasmid->getExpressionIn()),
                 new Column("Expression resistance", fn(Plasmid $plasmid, int $lotCount, int $hasAvailableLot) => implode(", ", $plasmid->getExpressionResistance())),
@@ -522,28 +542,38 @@ final class SubstanceTable extends AbstractController
 
     #[LiveListener("search.plasmid")]
     public function onPlasmidSearch(
-        #[LiveArg] ?string $number = null,
-        #[LiveArg] ?string $shortName = null,
-        #[LiveArg] ?string $anyName = null,
-        #[LiveArg] ?string $sequence = null,
-        #[LiveArg] ?string $hasAvailableLots = null,
-        #[LiveArg] ?string $growthResistance = null,
-        #[LiveArg] ?string $expressionResistance = null,
-        #[LiveArg] ?string $expressionOrganism = null,
-        #[LiveArg] ?string $expressedProtein = null,
-        #[LiveArg] ?string $expressesProtein = null,
+        #[LiveArg]
+        ?string $number = null,
+        #[LiveArg]
+        ?string $shortName = null,
+        #[LiveArg]
+        ?string $anyName = null,
+        #[LiveArg]
+        ?string $sequence = null,
+        #[LiveArg]
+        ?string $hasAvailableLots = null,
+        #[LiveArg]
+        ?string $growthResistance = null,
+        #[LiveArg]
+        ?string $expressionResistance = null,
+        #[LiveArg]
+        ?string $expressionOrganism = null,
+        #[LiveArg]
+        ?string $expressedProtein = null,
+        #[LiveArg]
+        ?string $expressesProtein = null,
     ): void {
         $this->search = [
             "number" => $number,
             "shortName" => $shortName,
             "anyName" => $anyName,
             "sequence" => $sequence,
-            "hasAvailableLot" => match($hasAvailableLots) {
+            "hasAvailableLot" => match ($hasAvailableLots) {
                 "true" => true,
                 "false" => false,
                 default => null,
             },
-            "expressesProtein" => match($expressesProtein) {
+            "expressesProtein" => match ($expressesProtein) {
                 "true" => true,
                 "false" => false,
                 default => null,
@@ -588,14 +618,14 @@ final class SubstanceTable extends AbstractController
                         path: $this->generateUrl("app_substance_add_lot", ["substance" => $protein->getUlid()]),
                         enabled: $this->isGranted("add_lot", $protein),
                         tooltip: "Add lot",
-                    )
+                    ),
                 ])),
                 new Column("Name", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => $protein->getShortName()),
                 new ComponentColumn("Protein Atlas", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => [
                     ExternalUrl::class, [
                         "title" => $protein->getProteinAtlasUri() === null ? "" : $getLastElementOfArray(explode("/", $protein->getProteinAtlasUri())),
                         "href" => $protein->getProteinAtlasUri(),
-                    ]
+                    ],
                 ]),
                 new Column("Origin organism", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => $protein->getOrganism()),
                 new Column("Length (aa)", fn(Protein $protein, int $lotCount, int $hasAvailableLot) => $protein->getFastaSequence() !== null ? strlen($protein->getFastaSequence()) : 0),
@@ -616,7 +646,7 @@ final class SubstanceTable extends AbstractController
                     EntityReference::class,
                     [
                         "entity" => $protein->getEpitopes(),
-                    ]
+                    ],
                 ]),
             ],
             spreadDatum: true,
@@ -625,23 +655,29 @@ final class SubstanceTable extends AbstractController
 
     #[LiveListener("search.protein")]
     public function onProteinSearch(
-        #[LiveArg] ?string $shortName = null,
-        #[LiveArg] ?string $anyName = null,
-        #[LiveArg] ?string $sequence = null,
-        #[LiveArg] ?string $hasAvailableLots = null,
-        #[LiveArg] ?string $hasAntibodies = null,
-        #[LiveArg] ?string $originOrganism = null,
+        #[LiveArg]
+        ?string $shortName = null,
+        #[LiveArg]
+        ?string $anyName = null,
+        #[LiveArg]
+        ?string $sequence = null,
+        #[LiveArg]
+        ?string $hasAvailableLots = null,
+        #[LiveArg]
+        ?string $hasAntibodies = null,
+        #[LiveArg]
+        ?string $originOrganism = null,
     ): void {
         $this->search = [
             "shortName" => $shortName,
             "anyName" => $anyName,
             "sequence" => $sequence,
-            "hasAvailableLot" => match($hasAvailableLots) {
+            "hasAvailableLot" => match ($hasAvailableLots) {
                 "true" => true,
                 "false" => false,
                 default => null,
             },
-            "hasAntibodies" => match($hasAntibodies) {
+            "hasAntibodies" => match ($hasAntibodies) {
                 "true" => true,
                 "false" => false,
                 default => null,

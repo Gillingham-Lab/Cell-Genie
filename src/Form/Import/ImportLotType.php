@@ -53,7 +53,7 @@ class ImportLotType extends AbstractType
                     return $er->createQueryBuilder("b")
                         ->addOrderBy("b.name", "ASC");
                 },
-                "group_by" => function(Box $choice, $key, $value) {
+                "group_by" => function (Box $choice, $key, $value) {
                     return ($choice->getRack());
                 },
             ])

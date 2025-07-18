@@ -7,13 +7,13 @@ use App\Genie\Pole\BaseUnit;
 
 class MolarMass extends BaseUnit
 {
-    const GRAMPERMOLE = "g/mol";
-    const KILOGRAMPERMOLE = "kg/mol";
-    const MEGAGRAMPERMOLE = "Mg/mol";
+    public const GRAMPERMOLE = "g/mol";
+    public const KILOGRAMPERMOLE = "kg/mol";
+    public const MEGAGRAMPERMOLE = "Mg/mol";
 
-    const DALTON = "Da";
-    const KILODALTON = "kDa";
-    const MEGADALTON = "MDa";
+    public const DALTON = "Da";
+    public const KILODALTON = "kDa";
+    public const MEGADALTON = "MDa";
 
     protected string $base_unit_symbol = self::GRAMPERMOLE;
 

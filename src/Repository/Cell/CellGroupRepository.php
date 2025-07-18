@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Repository\Cell;
 
 use App\Entity\DoctrineEntity\Cell\CellGroup;
-use App\Repository\Traits\SearchTermTrait;
 use App\Service\Doctrine\SearchService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -58,7 +57,7 @@ class CellGroupRepository extends ServiceEntityRepository
 
         if ($orderBy) {
             foreach ($orderBy as $col => $order) {
-                $qb = $qb->addOrderBy("c.".$col, $order);
+                $qb = $qb->addOrderBy("c." . $col, $order);
             }
         }
 
@@ -85,7 +84,7 @@ class CellGroupRepository extends ServiceEntityRepository
 
         if ($orderBy) {
             foreach ($orderBy as $col => $order) {
-                $qb = $qb->addOrderBy("c.".$col, $order);
+                $qb = $qb->addOrderBy("c." . $col, $order);
             }
         }
 

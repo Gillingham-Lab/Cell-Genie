@@ -46,7 +46,7 @@ class ProteinSearchType extends AbstractType
                 "required" => false,
                 "choice_value" => function (Organism|null|string $entity) {
                     if (is_string($entity)) {
-                        return (int)$entity;
+                        return (int) $entity;
                     } else {
                         return $entity?->getId();
                     }

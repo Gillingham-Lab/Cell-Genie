@@ -15,8 +15,7 @@ class NotLoopedValidator extends ConstraintValidator
 {
     public function __construct(
         private PropertyAccessorInterface $accessor,
-    ) {
-    }
+    ) {}
 
     public function validate(mixed $entity, Constraint $constraint): void
     {
@@ -85,7 +84,8 @@ class NotLoopedValidator extends ConstraintValidator
      * @param Collection<int, mixed> $children
      * @return bool
      */
-    private function checkChildrenTree(mixed $entity, NotLooped $constraint, Collection $children, int $level, int $maxLevel = 10): bool {
+    private function checkChildrenTree(mixed $entity, NotLooped $constraint, Collection $children, int $level, int $maxLevel = 10): bool
+    {
         if ($level === $maxLevel) {
             return true;
         }
@@ -100,7 +100,7 @@ class NotLoopedValidator extends ConstraintValidator
             }
 
             $subChildren = $this->accessor->getValue($child, $constraint->childrenField);
-            $result = $this->checkChildrenTree($entity, $constraint, $subChildren, $level+1, $maxLevel);
+            $result = $this->checkChildrenTree($entity, $constraint, $subChildren, $level + 1, $maxLevel);
 
             if (!$result) {
                 return false;

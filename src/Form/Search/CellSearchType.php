@@ -48,7 +48,7 @@ class CellSearchType extends AbstractType
                     } else {
                         return $entity?->getId()?->toRfc4122();
                     }
-                }
+                },
             ])
             ->add("isCancer", ChoiceType::class, [
                 "label" => "Is a cancer cell line",
@@ -72,25 +72,25 @@ class CellSearchType extends AbstractType
                 "label" => "Organism",
                 "class" => Organism::class,
                 "required" => false,
-                "choice_value" =>function (Organism|null|string $entity) {
+                "choice_value" => function (Organism|null|string $entity) {
                     if (is_string($entity)) {
                         return $entity;
                     } else {
                         return $entity?->getId();
                     }
-                }
+                },
             ])
             ->add("tissue", EntityType::class, [
                 "label" => "Tissue",
                 "class" => Tissue::class,
                 "required" => false,
-                "choice_value" =>function (Tissue|null|string $entity) {
+                "choice_value" => function (Tissue|null|string $entity) {
                     if (is_string($entity)) {
                         return $entity;
                     } else {
                         return $entity?->getId();
                     }
-                }
+                },
             ])
         ;
     }

@@ -26,10 +26,8 @@ class CellCultureDiagram
     public int $leftMargin = 210;
 
     public function __construct(
-        private readonly CellCultureRepository $cultureRepository
-    ) {
-
-    }
+        private readonly CellCultureRepository $cultureRepository,
+    ) {}
 
     /**
      * @param array<string, mixed> $props

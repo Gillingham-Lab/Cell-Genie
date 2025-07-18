@@ -69,7 +69,8 @@ final class Version20220921143129 extends AbstractMigration
             ->executeStatement();
     }
 
-    private function getEntriesFrom(string $table, string $field1, string $field2): array {
+    private function getEntriesFrom(string $table, string $field1, string $field2): array
+    {
         return $this->connection->createQueryBuilder()
             ->select("sub.$field1 AS epitope_id")
             ->addSelect("sub.$field2 AS substance_ulid")
@@ -77,7 +78,8 @@ final class Version20220921143129 extends AbstractMigration
             ->fetchAllAssociative();
     }
 
-    private function getAntibodyEntries(): array {
+    private function getAntibodyEntries(): array
+    {
         return $this->connection->createQueryBuilder()
             ->select("ab.ulid AS substance_ulid")
             ->addSelect("ab.host_organism_id AS epitope_id")

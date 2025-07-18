@@ -5,5 +5,5 @@ namespace App\Entity\Table;
 
 class HtmlColumn extends Column
 {
-    const raw = true;
+    public const raw = true;
 }

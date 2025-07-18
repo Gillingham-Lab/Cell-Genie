@@ -17,7 +17,7 @@ class ValidExpression extends Constraint
         /** @var array<int, string> */
         public readonly array $environment = [],
         ?array $groups = null,
-        mixed $payload = null
+        mixed $payload = null,
     ) {
         parent::__construct([], $groups, $payload);
     }

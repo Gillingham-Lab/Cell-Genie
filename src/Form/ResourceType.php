@@ -52,7 +52,7 @@ class ResourceType extends SaveableType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_visualisation", FormType::class, [
@@ -63,7 +63,7 @@ class ResourceType extends SaveableType
                     #"inherit_data" => true,
                     "label" => "Visualisation",
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -72,7 +72,7 @@ class ResourceType extends SaveableType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
 

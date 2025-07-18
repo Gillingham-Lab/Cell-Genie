@@ -17,12 +17,12 @@ use Doctrine\Persistence\ObjectManager;
 
 class CellGroupFixture extends Fixture implements DependentFixtureInterface
 {
-    const HCT116 = "CellGroup.HCT116";
-    const HEK293 = "CellGroup.HEK293";
-    const HEK293T = "CellGroup.HEK293T";
-    const HeLa = "CellGroup.HELA";
-    const Empty = "CellGroup.empty";
-    const EColi = "CellGroup.EColi";
+    public const HCT116 = "CellGroup.HCT116";
+    public const HEK293 = "CellGroup.HEK293";
+    public const HEK293T = "CellGroup.HEK293T";
+    public const HeLa = "CellGroup.HELA";
+    public const Empty = "CellGroup.empty";
+    public const EColi = "CellGroup.EColi";
 
     public function getDependencies(): array
     {
@@ -45,7 +45,7 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
             $this->getEColi(),
         ];
 
-        array_map(fn ($e) => $manager->persist($e), $cells);
+        array_map(fn($e) => $manager->persist($e), $cells);
         $manager->flush();
     }
 
@@ -123,7 +123,7 @@ class CellGroupFixture extends Fixture implements DependentFixtureInterface
         $cellGroup = (new CellGroup())
             ->setName("Empty")
             ->setNumber("Empty")
-            ;
+        ;
 
         $this->setReference(self::Empty, $cellGroup);
         return $cellGroup;

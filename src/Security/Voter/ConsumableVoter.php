@@ -19,11 +19,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class ConsumableVoter extends Voter
 {
-    const string ATTR_VIEW = "view";
-    const string ATTR_EDIT = "edit";
-    const string NEW = "new";
-    const string ATTR_ADD_TO = "add_to";
-    const string ATTR_TRASH = "trash";
+    public const string ATTR_VIEW = "view";
+    public const string ATTR_EDIT = "edit";
+    public const string NEW = "new";
+    public const string ATTR_ADD_TO = "add_to";
+    public const string ATTR_TRASH = "trash";
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -67,7 +67,7 @@ class ConsumableVoter extends Voter
             return true;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::ATTR_VIEW => $this->canView($user, $subject),
             self::NEW => $this->canCreate($user, $subject),
             self::ATTR_ADD_TO => $this->canAddTo($user, $subject),

@@ -8,7 +8,6 @@ use App\Form\Experiment\ExperimentalDesignType;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -40,9 +39,7 @@ class ExperimentalDesignForm extends AbstractController
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-    ) {
-
-    }
+    ) {}
 
     #[LiveAction]
     public function submit(): ?Response
@@ -75,7 +72,7 @@ class ExperimentalDesignForm extends AbstractController
 
             return $formEntity;
         } catch (Exception $e) {
-            $this->errors = "Failed to save properly due to an error (".get_class($e)."): {$e->getMessage()}.";
+            $this->errors = "Failed to save properly due to an error (" . get_class($e) . "): {$e->getMessage()}.";
             throw new UnprocessableEntityHttpException('Form validation failed in component');
         }
     }

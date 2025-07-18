@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations2024;
 
-use App\Entity\DoctrineEntity\Cell\Cell;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;

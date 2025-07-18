@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Form\Substance;
 
-use App\Entity\DoctrineEntity\Substance\Antibody;
 use App\Form\SaveableType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -31,7 +30,7 @@ class SubstanceType extends AbstractType
                     $builder->create("_lots", FormType::class, [
                         "inherit_data" => true,
                         "label" => "Lots",
-                        "auto_initialize" => false
+                        "auto_initialize" => false,
                     ])
                     ->add("lots", LotCollectionType::class, [
                         "label" => "Lots",
@@ -39,7 +38,7 @@ class SubstanceType extends AbstractType
                             "hideVendor" => $options["hide_lot_vendor"],
                         ],
                         "required" => true,
-                    ])->getForm()
+                    ])->getForm(),
                 );
             });
         }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Repository\Cell;
 
@@ -25,7 +25,7 @@ class CellCultureRepository extends ServiceEntityRepository
         DateTimeInterface $start,
         DateTimeInterface $end,
         ?string $incubator = null,
-        ?string $scientist = null
+        ?string $scientist = null,
     ): array {
         // Joins on events not possible due to https://github.com/doctrine/orm/pull/9743
         $qb = $this->createQueryBuilder("cc");
@@ -49,7 +49,7 @@ class CellCultureRepository extends ServiceEntityRepository
                     ->orX("cc.unfrozenOn >= :start and cc.unfrozenOn <= :end")
                     ->add("cc.trashedOn >= :start and cc.trashedOn <= :end")
                     ->add("cc.unfrozenOn < :start and cc.trashedOn IS NULL")
-                    ->add("cc.unfrozenOn < :start and cc.trashedOn > :end")
+                    ->add("cc.unfrozenOn < :start and cc.trashedOn > :end"),
             )
             ->setParameter("start", $start)
             ->setParameter("end", $end)

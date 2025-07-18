@@ -31,7 +31,7 @@ trait HasAttachmentsTrait
                 ->setEntryType(DocumentationType::class)
                 ->setEntryIsComplex(true)
                 ->hideOnIndex()
-                ->allowDelete(True),
+                ->allowDelete(true),
         ];
     }
 

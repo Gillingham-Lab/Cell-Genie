@@ -14,9 +14,8 @@ use Symfony\Component\Validator\Exception\InvalidOptionsException;
 class UniqueCollectionFieldValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly PropertyAccessorInterface $accessor
-    ) {
-    }
+        private readonly PropertyAccessorInterface $accessor,
+    ) {}
 
     public function validate(mixed $value, Constraint $constraint): void
     {

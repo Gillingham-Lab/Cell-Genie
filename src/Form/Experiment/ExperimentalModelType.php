@@ -28,8 +28,7 @@ class ExperimentalModelType extends AbstractType
 {
     public function __construct(
         private readonly ExperimentalModelService $modelService,
-    ) {
-    }
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -38,7 +37,7 @@ class ExperimentalModelType extends AbstractType
         ]);
 
         $resolver->define("design")
-            ->allowedTypes( ExperimentalDesign::class, "null")
+            ->allowedTypes(ExperimentalDesign::class, "null")
             ->default(null)
         ;
 
@@ -70,7 +69,7 @@ class ExperimentalModelType extends AbstractType
                     "allow_extra_fields" => true,
                     "row_attr" => [
                         "class" => "no-fieldset",
-                    ]
+                    ],
                 ])
                 ->add("_xy", XYFieldType::class, [
                     "label" => "X/Y Fields",
@@ -83,7 +82,7 @@ class ExperimentalModelType extends AbstractType
                         "help" => "Set initial values for the parameters. These values will be used as default values 
                             for the model before optimisation is run. By setting min or max, you can limit the valid
                             bounds for the parameter fit. Turn off 'vary' to fix the parameter to the initial value.",
-                    ])
+                    ]),
                 )
                 ->add(
                     $builder->create("evaluation", FormGroupType::class, [
@@ -97,13 +96,13 @@ class ExperimentalModelType extends AbstractType
                     ->add("max", NumberType::class, [
                         "label" => "Maximum value for fit",
                         "empty_data" => null,
-                    ])
-                )
+                    ]),
+                ),
             )
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->onPreSetData($builder, $event, $availableModels, $options));
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->onPreSubmit($builder, $event, $availableModels, $options));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, fn(FormEvent $event) => $this->onPreSetData($builder, $event, $availableModels, $options));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, fn(FormEvent $event) => $this->onPreSubmit($builder, $event, $availableModels, $options));
     }
 
     /**
@@ -242,7 +241,7 @@ class ExperimentalModelType extends AbstractType
             $params->add($param, ExperimentalModelParamType::class, [
                 "label" => $model["param_help"][$param]["label"] ?? $param,
                 "help" => $model["param_help"][$param]["help"] ?? null,
-                "environment" => ["ref", ... array_map(fn (ExperimentalDesignField $field) => $field->getFormRow()->getFieldName(), $design->getFields()->toArray())],
+                "environment" => ["ref", ... array_map(fn(ExperimentalDesignField $field) => $field->getFormRow()->getFieldName(), $design->getFields()->toArray())],
             ]);
         }
     }

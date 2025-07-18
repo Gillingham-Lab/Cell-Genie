@@ -23,7 +23,9 @@ class TextAreaTypeConfigurationType extends AbstractType
     {
         $builder
             ->add(
-                "length_min", IntegerType::class, [
+                "length_min",
+                IntegerType::class,
+                [
                     "label" => "Minimum length",
                     "required" => false,
                     "constraints" => [
@@ -32,7 +34,9 @@ class TextAreaTypeConfigurationType extends AbstractType
                 ],
             )
             ->add(
-                "length_max", IntegerType::class, [
+                "length_max",
+                IntegerType::class,
+                [
                     "label" => "Maximum length",
                     "required" => false,
                     "constraints" => [

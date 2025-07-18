@@ -11,10 +11,8 @@ class SubstanceLot
 {
     public function __construct(
         private Substance $substance,
-        private Lot $lot
-    ) {
-
-    }
+        private Lot $lot,
+    ) {}
 
     public function getId(): ?Ulid
     {
@@ -26,11 +24,13 @@ class SubstanceLot
         return "{$this->substance}.{$this->lot}";
     }
 
-    public function getSubstance(): Substance {
+    public function getSubstance(): Substance
+    {
         return $this->substance;
     }
 
-    public function getLot(): Lot {
+    public function getLot(): Lot
+    {
         return $this->lot;
     }
 }

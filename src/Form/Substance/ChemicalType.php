@@ -35,7 +35,7 @@ class ChemicalType extends AbstractType
             ->add(
                 $builder->create("general", FormType::class, [
                     "inherit_data" => true,
-                    "label" => "General information"
+                    "label" => "General information",
                 ])
                 ->add("shortName", EnumeratedType::class, [
                     "label" => "Short name",
@@ -49,7 +49,7 @@ class ChemicalType extends AbstractType
                 ])
                 ->add("iupacName", TextType::class, [
                     "label" => "IUPAC name",
-                    "help" => "Systematic name according to IUPAC rules (or whatever ChemDraw generates)."
+                    "help" => "Systematic name according to IUPAC rules (or whatever ChemDraw generates).",
                 ])
                 ->add("casNumber", TextType::class, [
                     "label" => "CAS number",
@@ -63,7 +63,7 @@ class ChemicalType extends AbstractType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("structure", FormType::class, [
@@ -71,7 +71,7 @@ class ChemicalType extends AbstractType
                     "label" => "Structure",
                 ])
                 ->add("chemicalStructure", ChemicalStructureType::class, [
-                    "label" => "Structure"
+                    "label" => "Structure",
                 ])
                 ->add("density", NumberType::class, [
                     "label" => "Density [g/L]",
@@ -92,7 +92,7 @@ class ChemicalType extends AbstractType
                     "required" => false,
                     "multiple" => true,
                     "allow_empty" => true,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -101,7 +101,7 @@ class ChemicalType extends AbstractType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
 

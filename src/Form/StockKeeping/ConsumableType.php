@@ -7,7 +7,6 @@ use App\Entity\DoctrineEntity\Instrument;
 use App\Entity\DoctrineEntity\StockManagement\Consumable;
 use App\Entity\DoctrineEntity\StockManagement\ConsumableCategory;
 use App\Entity\DoctrineEntity\Storage\Rack;
-use App\Form\BasicType\FancyCurrencyType;
 use App\Form\BasicType\FancyEntityType;
 use App\Form\Collection\AttachmentCollectionType;
 use App\Form\CompositeType\PriceType;
@@ -18,7 +17,6 @@ use App\Form\SaveableType;
 use App\Form\VisualisationType;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -62,11 +60,11 @@ class ConsumableType extends SaveableType
                 ])
                 ->add("productNumber", TextType::class, [
                     "label" => "Product Number",
-                    "help" => "Can be the same as the vendor product number, but could differ if the vendor is only reselling (such as Brunschwig)"
+                    "help" => "Can be the same as the vendor product number, but could differ if the vendor is only reselling (such as Brunschwig)",
                 ])
                 ->add("unitSize", IntegerType::class, [
                     "label" => "Pieces per package unit",
-                    "help" => "For example, if a typical order comes with 5 packs, each with 200 tubes, then this should be 200."
+                    "help" => "For example, if a typical order comes with 5 packs, each with 200 tubes, then this should be 200.",
                 ])
                 ->add("numberOfUnits", IntegerType::class, [
                     "label" => "Number of units per package",
@@ -83,8 +81,8 @@ class ConsumableType extends SaveableType
                     "class" => Rack::class,
                     "label" => "Location",
                     "help" => "Typical location this consumable can be found. Will be used as default for lots and can be customized for each lot.",
-                    "choice_label" => function(Rack $rack) { return $rack->getPathName(); },
-                    "choice_value" => function(?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
+                    "choice_label" => function (Rack $rack) { return $rack->getPathName(); },
+                    "choice_value" => function (?Rack $rack) { return $rack?->getUlid()?->toBase58(); },
                     "query_builder" => function (EntityRepository $er) {
                         return $er->createQueryBuilder("r")
                             ->select("r")
@@ -92,7 +90,7 @@ class ConsumableType extends SaveableType
                             ->leftJoin("r.boxes", "b")
                             ->groupBy("r.ulid")
                             ->addGroupBy("b.ulid")
-                            ;
+                        ;
                     },
                     'empty_data' => [],
                     'by_reference' => false,
@@ -126,7 +124,7 @@ class ConsumableType extends SaveableType
                 ->add("_privacy", PrivacyAwareType::class, [
                     "inherit_data" => true,
                     "label" => "Ownership",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_visualisation", FormType::class, [
@@ -137,7 +135,7 @@ class ConsumableType extends SaveableType
                     #"inherit_data" => true,
                     "label" => "Visualisation",
                     "required" => false,
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_ordering", FormType::class, [
@@ -150,15 +148,15 @@ class ConsumableType extends SaveableType
                 ])
                 ->add("idealStock", NumberType::class, [
                     "label" => "Ideal stock",
-                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
+                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces.",
                 ])
                 ->add("orderLimit", NumberType::class, [
                     "label" => "Minimum number before ordering is recommended",
-                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
+                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces.",
                 ])
                 ->add("criticalLimit", NumberType::class, [
                     "label" => "Absolute minimum before ordering is required",
-                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces."
+                    "help" => "If the option 'consume package' is turned on, the warning is displayed if the number of packages is less or equal that number. If not, it is the number of pieces.",
                 ])
                 ->add("pricePerPackage", PriceType::class, [
                     "label" => "Price per package",
@@ -166,7 +164,7 @@ class ConsumableType extends SaveableType
                 ->add("expectedDeliveryTime", TextType::class, [
                     "label" => "Expected delivery time",
                     "help" => "An approximate time until delivery usually arrives.",
-                ])
+                ]),
             )
             ->add(
                 $builder->create("_attachments", FormType::class, [
@@ -175,7 +173,7 @@ class ConsumableType extends SaveableType
                 ])
                 ->add("attachments", AttachmentCollectionType::class, [
                     "label" => "Attachments",
-                ])
+                ]),
             )
         ;
 

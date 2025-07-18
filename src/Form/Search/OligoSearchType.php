@@ -10,9 +10,7 @@ use App\Form\BasicType\FancyEntityType;
 use App\Genie\Enums\OligoTypeEnum;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -53,7 +51,7 @@ class OligoSearchType extends AbstractType
                     return $er->createQueryBuilder("e")
                         ->join(Oligo::class, "o", Join::WITH, "e.ulid = o.startConjugate")
                         ->addOrderBy("e.shortName", "ASC")
-                        ;
+                    ;
                 },
                 "choice_value" => function (Substance|null|string $entity) {
                     if (is_string($entity)) {
@@ -74,7 +72,7 @@ class OligoSearchType extends AbstractType
                     return $er->createQueryBuilder("e")
                         ->join(Oligo::class, "o", Join::WITH, "e.ulid = o.endConjugate")
                         ->addOrderBy("e.shortName", "ASC")
-                        ;
+                    ;
                 },
                 "choice_value" => function (Substance|null|string $entity) {
                     if (is_string($entity)) {

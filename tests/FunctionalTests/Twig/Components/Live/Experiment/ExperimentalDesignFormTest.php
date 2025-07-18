@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Tests\FunctionalTests\Twig\Components\Live\Experiment;
 
-use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Genie\Enums\ExperimentalFieldRole;
 use App\Genie\Enums\ExperimentalFieldVariableRoleEnum;
 use App\Genie\Enums\FormRowTypeEnum;
@@ -12,7 +11,6 @@ use App\Repository\User\UserGroupRepository;
 use App\Repository\User\UserRepository;
 use App\Twig\Components\Live\Experiment\ExperimentalDesignForm;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
@@ -77,15 +75,15 @@ class ExperimentalDesignFormTest extends WebTestCase
                             "configuration" => [
                                 "length_min" => null,
                                 "length_max" => null,
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
                 "_models" => [
                     "models" => [
 
-                    ]
-                ]
+                    ],
+                ],
             ])
             ->call("save")
             ->response()
@@ -126,10 +124,10 @@ class ExperimentalDesignFormTest extends WebTestCase
                                     "label" => "Test",
                                     "help" => "",
                                 ],
-                            ]
-                        ]
-                    ]
-                ]
+                            ],
+                        ],
+                    ],
+                ],
             ])
             ->call("submit")
             ->response()
@@ -161,8 +159,8 @@ class ExperimentalDesignFormTest extends WebTestCase
                 ],
                 "_fields" => [
                     "fields" => [
-                    ]
-                ]
+                    ],
+                ],
             ])
             ->call("submit")
         ;
@@ -199,10 +197,10 @@ class ExperimentalDesignFormTest extends WebTestCase
                                     "type" => FormRowTypeEnum::TextType->value,
                                     "label" => "Test",
                                     "help" => "",
-                                ]
-                            ]
-                        ]
-                    ]
+                                ],
+                            ],
+                        ],
+                    ],
                 ])
                 ->call("submit")
                 ->response()

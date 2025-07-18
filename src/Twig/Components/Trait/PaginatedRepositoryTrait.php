@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Twig\Components\Trait;
 
 use App\Repository\Interface\PaginatedRepositoryInterface;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use UnhandledMatchError;

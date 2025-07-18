@@ -6,7 +6,6 @@ namespace App\Entity\Traits\Fields;
 use App\Service\Doctrine\Generator\UlidGenerator;
 use App\Service\Doctrine\Type\Ulid;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 trait NewIdTrait
