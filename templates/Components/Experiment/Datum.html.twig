@@ -2,7 +2,9 @@
     <!-- Components::Experiment::Datum -->
     {%- if datum is array -%}
         {% if formRow.type.value == "modelParameter" %}
-            {{ datum[1]|roundScientifically }}±{{ datum[2]|roundScientifically }} ({{ datum[3]|roundScientifically }}–{{ datum[4]|roundScientifically }})
+            <div style="white-space: pre; white-space-collapse: collapse">
+                {{ datum[1]|roundScientifically|number_format(null, ".", " ") }}±{{ datum[2]|roundScientifically|number_format(null, ".", " ") }} ({{ datum[3]|roundScientifically|number_format(null, ".", " ") }}–{{ datum[4]|roundScientifically|number_format(null, ".", " ") }})
+            </div>
         {% else %}
             {%- for subDatum in datum -%}
                 <twig:Experiment:Datum :datum="subDatum" :field="field" :formRow="formRow" />
