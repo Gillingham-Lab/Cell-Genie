@@ -482,7 +482,7 @@ readonly class ExperimentalDataService
                                     ->select("l$abbreviation_suffix.id")
                                     ->from(Substance::class, "s$abbreviation_suffix")
                                     ->join("s$abbreviation_suffix.lots", "l$abbreviation_suffix")
-                                    ->where("s$abbreviation_suffix = :$referencesParamName")
+                                    ->where("s$abbreviation_suffix IN(:$referencesParamName)")
                                     ->getDql(),
                             ))
                             ->getDQL(),
