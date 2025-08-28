@@ -19,6 +19,7 @@ class ToolboxColumn extends Column
             "props" => [
                 "size" => "sm",
                 "toolbox" => $toolbox,
+                "asDropdown" => true,
             ],
         ];
     }

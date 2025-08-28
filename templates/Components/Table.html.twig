@@ -21,6 +21,7 @@
                         {%- set currentColumn = table.columns[loop.index0] -%}
 
                         <td class="{{ currentColumn.bold ? "fw-bold" }}">
+
                             {%- if rowColumn.raw -%}
                                 {{ rowColumn.value|raw }}
                             {%- elseif rowColumn.component -%}
@@ -33,8 +34,6 @@
                                 {%- else -%}
                                     <a href="{{ rowColumn.value }}">{{ rowColumn.value }} <twig:Icon icon="external" /></a>
                                 {%- endif -%}
-                            {%- elseif currentColumn.type == "App\\Entity\\Table\\ToolboxColumn" -%}
-                                <twig:Toolbox size="sm" toolbox="{{ rowColumn.value }}" />
                             {%- else -%}
                                 {%- if rowColumn.tooltip -%}
                                     <span data-toggle="tooltip" data-placement="bottom" title="{{ rowColumn.tooltip|escape("html_attr") }}">{{ rowColumn.value }}</span>

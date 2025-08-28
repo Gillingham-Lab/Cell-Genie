@@ -361,6 +361,7 @@ final class SubstanceTable extends AbstractController
                     ),
                     new ClipwareTool(
                         clipboardText: $chemical->getCitation(),
+                        tooltip: "Copy citation",
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_substance_edit", ["substance" => $chemical->getUlid()]),
@@ -429,6 +430,7 @@ final class SubstanceTable extends AbstractController
                     ),
                     new ClipwareTool(
                         clipboardText: $oligo->getCitation(),
+                        tooltip: "Copy citation",
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_substance_edit", ["substance" => $oligo->getUlid()]),
@@ -509,6 +511,7 @@ final class SubstanceTable extends AbstractController
                     ),
                     new ClipwareTool(
                         clipboardText: $plasmid->getCitation(),
+                        tooltip: "Copy citation",
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_substance_edit", ["substance" => $plasmid->getUlid()]),
@@ -608,6 +611,7 @@ final class SubstanceTable extends AbstractController
                     ),
                     new ClipwareTool(
                         clipboardText: $protein->getCitation(),
+                        tooltip: "Copy citation",
                     ),
                     new EditTool(
                         path: $this->generateUrl("app_substance_edit", ["substance" => $protein->getUlid()]),
