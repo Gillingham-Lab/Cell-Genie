@@ -73,6 +73,9 @@ class ApiController extends AbstractController
             // Adjust quantity for the desired concentration factor
             $amountQuantityForVolume = $calculator->multiply($amountQuantityForVolume, $adjustedConcentrationFactor);
 
+            $densityQuantity = null;
+            $chemicalVolumeQuantity = null;
+
             // If a molar mass is given and the calculated amount is a molar amount, we convert the value to mass instead.
             if ($amountQuantityForVolume->isUnit(MolarAmount::class) and $chemical->getMolecularMass() > 1) {
                 $molarMass = MolarMass::create($chemical->getMolecularMass(), "g/mol");
@@ -83,9 +86,6 @@ class ApiController extends AbstractController
                 if ($chemical->getDensity() > 0) {
                     $densityQuantity = MassConcentration::create($chemical->getDensity(), "g/mL");
                     $chemicalVolumeQuantity = $calculator->divide($amountQuantityForVolume, $densityQuantity);
-                } else {
-                    $densityQuantity = null;
-                    $chemicalVolumeQuantity = null;
                 }
             }
 
