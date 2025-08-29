@@ -18,9 +18,7 @@
                 <twig:ElementCard title="Metadata">
                     <twig:Layout:Row class="p-3">
                         <twig:Layout:Col class="col-sm-12 col-md-8 col-lg-3">
-                            <div class="px-3 font-monospace">
-                                {{ protein.fastaSequence }}
-                            </div>
+                            <twig:Sequence :sequence="protein.fastaSequence" type="peptide" />
                         </twig:Layout:Col>
                         <twig:Layout:Col class="col-sm-12 col-md-4 col-lg-9">
                             <twig:Metadata data="{{ {

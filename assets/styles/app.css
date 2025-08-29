@@ -83,3 +83,67 @@ img.greyscale {
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%);
 }
+
+.gin-sequence-widget {
+    .gin-sequence-widget-content {
+        margin-top: 2rlh;
+
+        font-family: var(--bs-font-monospace) !important;
+        font-size: 1rem;
+
+        position: relative;
+        z-index: 1;
+    }
+
+    .sequence {
+        position: relative;
+        width: 100%;
+        z-index: 5;
+
+        .group {
+            float: left;
+            width: 10ch;
+            margin-right: 1rem;
+            margin-bottom: 1.5rem;
+
+            ::after {
+                content: ' ';
+            }
+
+            :last-child {
+                clear: both;
+            }
+        }
+    }
+
+    .sequence-enumeration {
+        position: absolute;
+        top: -1.1rlh;
+        left: 0;
+        width: 100%;
+        z-index: 3;
+
+        /*background-color: blue;
+        opacity: 0.5;*/
+
+        .counter {
+            text-align: right;
+            float: left;
+            width: 10ch;
+            margin-right: 1rem;
+            margin-bottom: 1.5rem;
+
+            ::after {
+                content: ' ';
+            }
+
+            :last-child {
+                clear: both;
+            }
+        }
+    }
+
+    .nine {
+        width: 9ch !important;
+    }
+}

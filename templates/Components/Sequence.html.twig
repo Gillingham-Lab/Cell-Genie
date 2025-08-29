@@ -1,0 +1,10 @@
+<div {{ attributes.defaults({}) }}>
+    <div class="gin-sequence-widget" {{ stimulus_controller('SequenceWidget', {
+        "sequence": sequence,
+        "type": type.value,
+    }) }}>
+        <div class="gin-sequence-widget-content" {{ stimulus_target('SequenceWidget', "content") }}>
+            {{ sequence }}
+        </div>
+    </div>
+</div>
