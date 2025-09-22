@@ -10,7 +10,7 @@ trait VisualisationTrait
 {
     #[ORM\ManyToOne(targetEntity: File::class, cascade: ["persist", "remove"], fetch: "EAGER")]
     #[ORM\JoinColumn(onDelete: "SET NULL")]
-    private ?File $visualisation;
+    private ?File $visualisation = null;
 
     public function getVisualisation(): ?File
     {
