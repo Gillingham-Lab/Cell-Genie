@@ -139,7 +139,12 @@ readonly class ExperimentalDataService
         /** @var Paginator<ExperimentalRunCondition> $paginatedConditions */
         $paginatedConditions = new Paginator($queryBuilder->getQuery(), fetchJoinCollection: true);
 
-        $conditionIds = array_unique(array_map(fn(ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(), $paginatedConditions->getIterator()->getArrayCopy()));
+        $conditionIds = array_unique(
+            array_map(
+                callback: fn(ExperimentalRunCondition $condition) => $condition->getId()->toRfc4122(),
+                array: $paginatedConditions->getIterator()->getArrayCopy(),
+            )
+        );
 
         $this->logger->debug("ExperimentalDataService.getPaginatedResults: Retrieving collected conditions");
         $this->stopwatch->start("experimentalDataService.getPaginatedResults.HydratedConditionDatum");
@@ -468,6 +473,7 @@ readonly class ExperimentalDataService
                 );
             } else {
                 if (str_starts_with($fieldRow->getFormRow()->getConfiguration()["entityType"], Lot::class)) {
+                    // If the entity type is a combined field of Lot|Substance, lets search for *all* lots and add them to the query
                     return $queryBuilder->expr()->in(
                         "exrc.id",
                         $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName)
@@ -483,6 +489,12 @@ readonly class ExperimentalDataService
                             ))
                             ->getDQL(),
                     );
+                } else {
+                    // If not, there is something weird going on. Let's log this.
+                    $this->logger->critical("{$fieldRow->getFormRow()->getConfiguration()['entityType']} does not start with ". Lot::class .", but it should.");
+
+                    // And, as we've bound already some parameters, this is going to fail anyway, so lets throw an exception here.
+                    throw new Exception("{$fieldRow->getFormRow()->getConfiguration()['entityType']} does not start with ". Lot::class .", but it should.");
                 }
             }
         } elseif ($fieldRow->getFormRow()->getType() === FormRowTypeEnum::TextType) {
@@ -519,6 +531,12 @@ readonly class ExperimentalDataService
 
             $searchValue = $transformer->transform($searchValue);
             $searchQuery = $this->getSearchQueryBuilderForFieldType($fieldRow->getRole(), $abbreviation_suffix, $nameParamName);
+
+            // Do not search anything if both min and max are null
+            if (is_nan($searchValue["min"]) and is_nan($searchValue["max"])) {
+                return null;
+            }
+
             $queryBuilder->setParameter($nameParamName, $searchField);
 
             // Determine the sign
