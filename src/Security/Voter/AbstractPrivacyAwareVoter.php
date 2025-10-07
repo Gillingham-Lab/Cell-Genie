@@ -16,19 +16,19 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 abstract class AbstractPrivacyAwareVoter extends Voter
 {
-    protected function canEdit(User $user, PrivacyAwareInterface $entity): bool
+    protected function canEdit(?User $user, PrivacyAwareInterface $entity): bool
     {
         if ($entity->getGroup() === null) {
             return true;
         }
 
         return match ($entity->getPrivacyLevel()) {
-            PrivacyLevel::Public, PrivacyLevel::Group => $entity->getOwner() === $user || $entity->getGroup() === $user->getGroup(),
-            PrivacyLevel::Private => false,
+            PrivacyLevel::Public, PrivacyLevel::Group => $entity->getOwner() === $user || $entity->getGroup() === $user?->getGroup(),
+            PrivacyLevel::Private => $entity->getOwner() === $user?->getGroup(),
         };
     }
 
-    protected function canView(User $user, PrivacyAwareInterface $entity): bool
+    protected function canView(?User $user, PrivacyAwareInterface $entity): bool
     {
         if ($entity->getGroup() === null) {
             return true;
@@ -36,20 +36,20 @@ abstract class AbstractPrivacyAwareVoter extends Voter
 
         return match ($entity->getPrivacyLevel()) {
             PrivacyLevel::Public => true,
-            PrivacyLevel::Group => $entity->getGroup() === $user->getGroup(),
-            PrivacyLevel::Private => false,
+            PrivacyLevel::Group => $entity->getGroup() === $user?->getGroup(),
+            PrivacyLevel::Private => $entity->getOwner() === $user,
         };
     }
 
-    protected function canRemove(User $user, PrivacyAwareInterface $entity): bool
+    protected function canRemove(?User $user, PrivacyAwareInterface $entity): bool
     {
-        if ($entity->getGroup() === null && in_array(UserRole::GroupAdmin->value, $user->getRoles())) {
+        if ($entity->getGroup() === null && in_array(UserRole::GroupAdmin->value, $user?->getRoles())) {
             return true;
         }
 
         return match ($entity->getPrivacyLevel()) {
-            PrivacyLevel::Public, PrivacyLevel::Group => $entity->getOwner() === $user || ($entity->getGroup() === $user->getGroup() && in_array(UserRole::GroupAdmin->value, $user->getRoles())),
-            PrivacyLevel::Private => false,
+            PrivacyLevel::Public, PrivacyLevel::Group => $entity->getOwner() === $user || ($entity->getGroup() === $user?->getGroup() && in_array(UserRole::GroupAdmin->value, $user?->getRoles())),
+            PrivacyLevel::Private => $entity->getOwner() === $user,
         };
     }
 }

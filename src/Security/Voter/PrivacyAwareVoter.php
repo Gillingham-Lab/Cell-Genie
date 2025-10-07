@@ -43,7 +43,7 @@ class PrivacyAwareVoter extends AbstractPrivacyAwareVoter
         TokenInterface $token,
         ?Vote $vote = null,
     ): bool {
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $token->getUser();
 
         return match ($attribute) {
