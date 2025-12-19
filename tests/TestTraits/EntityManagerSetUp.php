@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\TestTraits;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -10,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 trait EntityManagerSetUp
 {
+    private ?EntityManagerInterface $entityManager;
+
     protected function setUp(): void
     {
         $kernel = self::bootKernel();

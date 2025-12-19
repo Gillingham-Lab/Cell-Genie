@@ -47,6 +47,12 @@ class InstrumentType extends SaveableType
                     "label" => "Instrument Number",
                     "help" => "An internal number for referencing the instrument. Please use the following naming scheme: XX-YY-ZZ, where X notes a instrument type (LC for HPLCs, PC for PCR), YY denotes the vendor (AG for Agilent, TF for Thermo Fisher) and ZZ an increasing number.",
                 ])
+                ->add("active", CheckboxType::class, [
+                    "label" => "Active",
+                    "help" => "Turn off if the instrument is currently inactive or has been decommissioned.",
+                    "required" => false,
+                    "empty_data" => null,
+                ])
                 ->add("location", TextType::class, [
                     "label" => "Location",
                     "help" => "Where is the machine located?",

@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -133,6 +134,9 @@ class Instrument implements PrivacyAwareInterface
     /** @var Collection<int, Consumable> */
     #[ORM\ManyToMany(targetEntity: Consumable::class, inversedBy: 'instruments')]
     private Collection $consumables;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ["default" => true])]
+    private $active = true;
 
     public function __construct()
     {
@@ -458,7 +462,7 @@ class Instrument implements PrivacyAwareInterface
         return $this->consumables;
     }
 
-    public function addConsumable(Consumable $consumable): static
+    public function addConsumable(Consumable $consumable): self
     {
         if (!$this->consumables->contains($consumable)) {
             $this->consumables->add($consumable);
@@ -467,10 +471,21 @@ class Instrument implements PrivacyAwareInterface
         return $this;
     }
 
-    public function removeConsumable(Consumable $consumable): static
+    public function removeConsumable(Consumable $consumable): self
     {
         $this->consumables->removeElement($consumable);
 
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active = true): self
+    {
+        $this->active = $active;
         return $this;
     }
 }

@@ -41,16 +41,25 @@ class InstrumentCard
 
     public function getCardColor(): string
     {
+        if (!$this->isEnabled()) {
+            return "text-secondary bg-secondary";
+        }
+
+
         return match ($this->userRole) {
-            InstrumentRole::Untrained => "text-secondary bg-secondary",
             InstrumentRole::Admin => "border-primary",
-            InstrumentRole::Trained => "border-success",
-            default => "",
+            default => "border-success",
         };
     }
 
     public function isEnabled(): bool
     {
+        // Instrument is never enabled if its not active
+        if ($this->instrument->isActive() === false) {
+            return false;
+        }
+
+        // Instrument is only enabled if the user is trained.
         return match ($this->userRole) {
             InstrumentRole::Untrained => false,
             default => true,

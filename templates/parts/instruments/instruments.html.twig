@@ -18,7 +18,20 @@
                 <twig:Layout:Col type="outer">
                     <twig:ElementCard title="Instruments" icon="instrument">
                         <twig:Layout:Row cols="1" md="2" xl="3" class="gx-3 gy-5">
-                            {% for row in instruments|filter(e => e.instrument.parent is null)|sort((a, b) => a.role == b.role ? a.instrument.instrumentNumber <=> b.instrument.instrumentNumber : (a.role == "untrained" ? 1 : 0)) %}
+                            {% set mainInstruments = instruments|filter(e => e.instrument.parent is null) %}
+                            {% set activeInstruments = mainInstruments|filter(e => e.instrument.active) %}
+                            {% set inactiveInstruments = mainInstruments|filter(e => not e.instrument.active) %}
+
+                            {% for row in activeInstruments|sort((a, b) => a.role == b.role ? a.instrument.instrumentNumber <=> b.instrument.instrumentNumber : (a.role == "untrained" ? 1 : 0)) %}
+                                {% set role = row.role %}
+                                {% set instrument = row.instrument %}
+
+                                <twig:Layout:Col type="normal">
+                                    <twig:Instrument:InstrumentCard :instrument="instrument" :userRole="role" />
+                                </twig:Layout:Col>
+                            {% endfor %}
+
+                            {% for row in inactiveInstruments %}
                                 {% set role = row.role %}
                                 {% set instrument = row.instrument %}
 
