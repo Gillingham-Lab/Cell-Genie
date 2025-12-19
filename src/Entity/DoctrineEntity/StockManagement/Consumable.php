@@ -66,7 +66,6 @@ class Consumable implements PrivacyAwareInterface
     /** @var Collection<int, ConsumableLot>  */
     #[ORM\OneToMany(mappedBy: "consumable", targetEntity: ConsumableLot::class, cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
     #[ORM\OrderBy(["boughtOn" => "ASC"])]
-    #[Assert\Valid]
     #[Groups(["extended"])]
     private Collection $lots;
 
