@@ -27,7 +27,7 @@
                         "My training level": userRole.value,
                         "Training required": ["boolean", instrument.requiresTraining],
                         "Group": instrument.group.shortName,
-                        "Contact": "",
+                        "Contact": ["entity", instrument.responsibleUsers],
                         "Room": instrument.location,
                         "Reservation needed": ["boolean", instrument.requiresReservation],
                     } }}"/>

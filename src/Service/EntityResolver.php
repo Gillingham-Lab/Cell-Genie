@@ -16,6 +16,8 @@ use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\User\User;
+use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\SubstanceLot;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
@@ -68,6 +70,7 @@ class EntityResolver
                 Lot::class => $this->router->generate("app_substance_lot_view", ["lot" => $object->getId()]),
                 ExperimentalRunCondition::class => $this->router->generate("app_experiments_run_view", ["run" => $object->getExperimentalRun()->getId()]),
                 Instrument::class => $this->router->generate("app_instruments_view", ["instrument" => $object->getId()]),
+                User::class => $this->router->generate("app_user", ["user" => $object->getId()]),
                 default => null,
             };
         } catch (MappingException $mappingException) {

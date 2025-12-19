@@ -19,6 +19,8 @@ use App\Repository\Instrument\InstrumentRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -289,6 +291,19 @@ class Instrument implements PrivacyAwareInterface
     public function getUsers(): Collection
     {
         return $this->users;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getResponsibleUsers(): Collection
+    {
+        $criteria = (new Criteria())
+            ->where(
+                Criteria::expr()->eq("role", InstrumentRole::Responsible),
+            );
+
+        return $this->users->matching($criteria)->map(fn(InstrumentUser $user) => $user->getUser());
     }
 
     public function setUserRole(User $user, InstrumentRole $role): self

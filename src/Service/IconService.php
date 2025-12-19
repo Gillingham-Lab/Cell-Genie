@@ -19,6 +19,8 @@ use App\Entity\DoctrineEntity\Substance\Chemical;
 use App\Entity\DoctrineEntity\Substance\Oligo;
 use App\Entity\DoctrineEntity\Substance\Plasmid;
 use App\Entity\DoctrineEntity\Substance\Protein;
+use App\Entity\DoctrineEntity\User\User;
+use App\Entity\DoctrineEntity\User\UserGroup;
 use App\Entity\SubstanceLot;
 use App\Genie\Enums\AntibodyType;
 use ArrayAccess;
@@ -65,6 +67,8 @@ class IconService
                 Instrument::class => "instrument",
                 Consumable::class => "consumable",
                 ConsumableCategory::class => ["consumable", "box"],
+                User::class => "user",
+                UserGroup::class => "group",
                 default => null,
             },
         };
