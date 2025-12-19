@@ -188,14 +188,14 @@
                     </twig:Layout:Col>
                 {% endif %}
 
-
+                {% if instrument.attachments|length %}
+                    <twig:Layout:Col>
+                        <twig:ElementCard title="Attachments" icon="attachment" iconStack="instrument">
+                            <twig:Attachments :attachments="instrument.attachments" />
+                        </twig:ElementCard>
+                    </twig:Layout:Col>
+                {% endif %}
             </twig:Layout:Row>
-
-            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
-
-                {# Attachments #}
-                {{ attachments(instrument.attachments) }}
-            </div>
         </div>
     </div>
 {% endblock %}
