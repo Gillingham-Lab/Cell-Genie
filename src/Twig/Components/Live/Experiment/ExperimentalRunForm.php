@@ -6,6 +6,7 @@ namespace App\Twig\Components\Live\Experiment;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Form\Experiment\ExperimentalRunType;
+use App\Twig\Components\Trait\ResettableSaveFlagTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,7 +21,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 #[AsLiveComponent(template: "Components/Form/TabbedForm.html.twig")]
 class ExperimentalRunForm extends AbstractController
 {
-    use DefaultActionTrait;
+    use ResettableSaveFlagTrait;
     use ComponentWithFormTrait;
 
     #[LiveProp]
@@ -75,6 +76,7 @@ class ExperimentalRunForm extends AbstractController
             }
 
             $this->entityManager->flush();
+            $this->saved = true;
 
             $this->addFlash("success", "Saved");
 

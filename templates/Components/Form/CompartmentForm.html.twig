@@ -41,6 +41,14 @@
     </div>
 
     <twig:Layout:Row cols="1">
+        {% if saved is defined and saved %}
+            <twig:Layout:Col type="inner">
+                <div class="alert alert-success w-100" data-loading="hide">
+                    Successfully saved!
+                </div>
+            </twig:Layout:Col>
+        {% endif %}
+
         <twig:Layout:Col type="inner">
             {% block content %}
                 <div>
@@ -48,10 +56,26 @@
                         {{ form_rest(form) }}
                     </div>
 
-                    <div>
-                        <button class="btn btn-primary" data-action="live#action:prevent" data-live-action-param="submit">{{ submitButtonLabel }}</button>
+                    <div class="d-inline-flex">
+                        <button class="btn btn-primary d-inline-flex" data-action="live#action:prevent" data-live-action-param="submit">
+                                <span>
+                                    {{ submitButtonLabel }}
+                                </span>
+
+                            <span class="spinner-border spinner-border-sm" role="status" data-loading="action(submit)|show">
+                                    <span class="visually-hidden">Loading...</span>
+                                </span>
+                        </button>
                         {# <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="remember">Remember</button>  #}
-                        <button class="btn btn-outline-primary" data-action="live#action:prevent" data-live-action-param="save">{{ saveButtonLabel }}</button>
+                        <button class="btn btn-outline-primary d-inline-flex" data-action="live#action:prevent" data-live-action-param="save">
+                                <span>
+                                    {{ saveButtonLabel }}
+                                </span>
+
+                            <span class="spinner-border spinner-border-sm" role="status" data-loading="action(save)|show">
+                                    <span class="visually-hidden">Loading...</span>
+                                </span>
+                        </button>
                     </div>
                 </div>
             {% endblock %}

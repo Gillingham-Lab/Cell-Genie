@@ -8,6 +8,7 @@ use App\Entity\DoctrineEntity\Experiment\ExperimentalModel;
 use App\Entity\DoctrineEntity\Experiment\ExperimentalRun;
 use App\Form\Experiment\ExperimentalRunDataType;
 use App\Service\Experiment\ExperimentalDataService;
+use App\Twig\Components\Trait\ResettableSaveFlagTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +25,7 @@ use Symfony\UX\LiveComponent\LiveCollectionTrait;
 #[AsLiveComponent(template: "Components/Form/CompartmentForm.html.twig")]
 class ExperimentalRunDataForm extends AbstractController
 {
-    use DefaultActionTrait;
+    use ResettableSaveFlagTrait;
     use ComponentWithFormTrait;
     use LiveCollectionTrait;
 
@@ -75,6 +76,7 @@ class ExperimentalRunDataForm extends AbstractController
 
         try {
             $this->entityManager->flush();
+            $this->saved = true;
             return $formEntity;
         } catch (Exception $e) {
             $this->addFlash("error", "Saving was not possible: {$e->getMessage()}");

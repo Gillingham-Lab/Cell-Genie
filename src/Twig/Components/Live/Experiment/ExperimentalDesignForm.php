@@ -5,6 +5,7 @@ namespace App\Twig\Components\Live\Experiment;
 
 use App\Entity\DoctrineEntity\Experiment\ExperimentalDesign;
 use App\Form\Experiment\ExperimentalDesignType;
+use App\Twig\Components\Trait\ResettableSaveFlagTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +22,7 @@ use Symfony\UX\LiveComponent\LiveCollectionTrait;
 #[AsLiveComponent(template: "Components/Form/TabbedForm.html.twig")]
 class ExperimentalDesignForm extends AbstractController
 {
-    use DefaultActionTrait;
+    use ResettableSaveFlagTrait;
     use ComponentWithFormTrait;
     use LiveCollectionTrait;
 
@@ -68,6 +69,7 @@ class ExperimentalDesignForm extends AbstractController
 
             $this->entityManager->flush();
 
+            $this->saved = true;
             $this->addFlash("success", "Saved");
 
             return $formEntity;
