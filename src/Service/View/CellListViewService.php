@@ -27,12 +27,12 @@ class CellListViewService implements ListViewServiceInterface
     {
         usort($items, function (Cell $a, Cell $b): int {
             if ($a->getGroup() !== $b->getGroup()) {
-                /** @var User $user */
+                /** @var ?User $user */
                 $user = $this->security->getUser();
 
-                if ($a->getGroup() === $user->getGroup()) {
+                if ($a->getGroup() === $user?->getGroup()) {
                     return -1;
-                } elseif ($b->getGroup() !== $user->getGroup()) {
+                } elseif ($b->getGroup() !== $user?->getGroup()) {
                     return 1;
                 } else {
                     return $a->getGroup()->getShortName() <=> $b->getGroup()->getShortName();
