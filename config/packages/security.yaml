@@ -45,4 +45,5 @@ security:
         - { path: ^/login$, roles: PUBLIC_ACCESS }
         - { path: ^/cells, roles: PUBLIC_ACCESS }
         - { path: ^/api/public, roles: PUBLIC_ACCESS }
+        - { path: ^/download/picture, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
