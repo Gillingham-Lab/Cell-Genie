@@ -18,7 +18,11 @@
                 <twig:ElementCard title="Metadata">
                     <twig:Layout:Row class="p-3">
                         <twig:Layout:Col class="col-sm-12 col-md-8 col-lg-3">
-                            <twig:Sequence :sequence="protein.fastaSequence" type="peptide" />
+                            {% if protein.fastaSequence %}
+                                <twig:Sequence :sequence="protein.fastaSequence" type="peptide" />
+                            {% else %}
+                                No sequence given
+                            {% endif %}
                         </twig:Layout:Col>
                         <twig:Layout:Col class="col-sm-12 col-md-4 col-lg-9">
                             <twig:Metadata data="{{ {
