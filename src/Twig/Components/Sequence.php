@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Twig\Components;
@@ -13,6 +14,9 @@ use Symfony\UX\TwigComponent\Attribute\PreMount;
 #[AsTwigComponent]
 class Sequence
 {
+    public protected(set) bool $isComposite = false;
+    public protected(set) array $individualSequences = [];
+
     public string $sequence;
     public OligoTypeEnum $type;
     public OligoTypeEnum $defaultType = OligoTypeEnum::Peptide;
@@ -60,6 +64,36 @@ class Sequence
             })
         ;
 
-        return $resolver->resolve($data);
+        $data = $resolver->resolve($data);
+
+        $this->detectAndParseCompositeSequences($data["sequence"]);
+
+        return $data;
+    }
+
+    public function detectAndParseCompositeSequences(string $sequence): void
+    {
+        $parts = explode(">", $sequence);
+
+        if (count($parts) > 1) {
+            $this->isComposite = true;
+            foreach ($parts as $part) {
+                if (trim($part) === "") {
+                    continue;
+                }
+                $subParts = explode("\n", $part, 2);
+                $subParts = array_map("trim", $subParts);
+
+                if ($subParts[0] === "") {
+                    continue;
+                }
+
+                if (count($subParts) < 2) {
+                    $this->individualSequences[] = ["title" => $subParts[0], "sequence" => ""];
+                } else {
+                    $this->individualSequences[] = ["title" => $subParts[0], "sequence" => $subParts[1]];
+                }
+            }
+        }
     }
 }

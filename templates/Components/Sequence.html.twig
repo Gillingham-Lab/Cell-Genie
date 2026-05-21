@@ -1,10 +1,59 @@
 <div {{ attributes.defaults({}) }}>
-    <div class="gin-sequence-widget" {{ stimulus_controller('SequenceWidget', {
-        "sequence": sequence,
-        "type": type.value,
-    }) }}>
-        <div class="gin-sequence-widget-content" {{ stimulus_target('SequenceWidget', "content") }}>
-            {{ sequence }}
+    {% if isComposite %}
+        <twig:Layout:Tabbed class="pe-5">
+            {% set tabs = "" %}
+            {% set tab_containers = "" %}
+
+            {% for _seqPart in individualSequences %}
+                {% set key = "gin-sequence-" ~ loop.index0 %}
+                {% set active = loop.index0 == 0 ? true : false %}
+
+                {% set tabs %}
+                    {{ tabs }}
+
+                    <twig:Layout:Tab
+                        :key="key"
+                        :active="active"
+                        :label="_seqPart.title"
+                    />
+                {% endset %}
+
+                {% set tab_containers %}
+                    {{ tab_containers }}
+
+                    <twig:Layout:TabContent
+                        :key="key"
+                        :active="active"
+                        :label="_seqPart.title"
+                    >
+                        <div class="gin-sequence-widget" {{ stimulus_controller('SequenceWidget', {
+                            "sequence": _seqPart.sequence,
+                            "type": type.value,
+                        }) }}>
+                            <div class="gin-sequence-widget-content" {{ stimulus_target('SequenceWidget', "content") }}>
+                                {{ sequence }}
+                            </div>
+                        </div>
+                    </twig:Layout:TabContent>
+                {% endset %}
+            {% endfor %}
+
+            <twig:Layout:Tabs>
+                {{ tabs }}
+            </twig:Layout:Tabs>
+
+            <twig:Layout:TabContentContainer>
+                {{ tab_containers }}
+            </twig:Layout:TabContentContainer>
+        </twig:Layout:Tabbed>
+    {% else %}
+        <div class="gin-sequence-widget" {{ stimulus_controller('SequenceWidget', {
+            "sequence": sequence,
+            "type": type.value,
+        }) }}>
+            <div class="gin-sequence-widget-content" {{ stimulus_target('SequenceWidget', "content") }}>
+                {{ sequence }}
+            </div>
         </div>
-    </div>
+    {% endif %}
 </div>
